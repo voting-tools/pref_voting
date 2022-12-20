@@ -302,13 +302,11 @@ class MajorityGraph(object):
 
         Args:
             cmap (dict, optional): The cmap used to map candidates to candidate names
-
-
         """
-        
+
         cycles = self.cycles()
         
-        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}: \n")
+        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n")
         for cycle in cycles: 
             cmap = cmap if cmap is not None else self.cmap
             cmap_inverse = {cname: c for c, cname in cmap.items()}
@@ -752,15 +750,14 @@ class MarginGraph(MajorityGraph):
 
         Args:
             cmap (dict, optional): The cmap used to map candidates to candidate names.
-            
+
         """
         
         cycles = self.cycles()
         
-        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}: \n")
+        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n")
         for cycle in cycles: 
             cmap = cmap if cmap is not None else self.cmap
-            cmap_inverse = {cname: c for c, cname in cmap.items()}
             mg_with_cycle = nx.DiGraph()
 
             mg_with_cycle.add_nodes_from([cmap[c] for c in self.candidates])
