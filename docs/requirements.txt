@@ -10,7 +10,7 @@ sphinx-tabs
 sphinx-togglebutton 
 tabulate 
 matplotlib
-networkx
+networkx>=2.0.0
 pref_voting
 scipy
 multiprocess
