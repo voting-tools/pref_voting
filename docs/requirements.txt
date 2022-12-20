@@ -1,0 +1,16 @@
+furo 
+myst-parser 
+myst-parser[linkify]
+Sphinx 
+sphinx-copybutton 
+sphinx-exec-code 
+sphinx-external-toc 
+sphinx-panels 
+sphinx-tabs 
+sphinx-togglebutton 
+tabulate 
+matplotlib
+networkx
+pref_voting
+scipy
+multiprocess

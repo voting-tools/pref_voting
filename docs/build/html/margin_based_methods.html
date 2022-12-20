@@ -1,0 +1,1310 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Combined Methods" href="combined_methods.html" /><link rel="prev" title="C1 Methods" href="c1_methods.html" />
+
+    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Margin Methods - Preferential Voting Tools</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Preferential Voting Tools</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-scroll"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Preferential Voting Tools</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Elections</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="edata_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles_with_ties.html">Profiles with Ties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="margin_graphs.html">(Weighted) Majority Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_profiles.html">Generate Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_weighted_majority_graphs.html">Generate Weighted Majority Graphs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Voting Methods</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scoring_methods.html">Positional Scoring Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="iterative_methods.html">Iterative Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c1_methods.html">C1 Methods</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Margin Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="tex2jax_ignore mathjax_ignore section" id="margin-methods">
+<h1>Margin Methods<a class="headerlink" href="#margin-methods" title="Permalink to this headline">#</a></h1>
+<p>Suppose that <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is a profile.   We write <span class="math notranslate nohighlight">\(\mathcal{M}(\mathbf{P})\)</span> for the margin graph of <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>.</p>
+<p>A voting method <span class="math notranslate nohighlight">\(F\)</span> is <strong>margin-based</strong> if it satisfies the following invariance property: For all <span class="math notranslate nohighlight">\(\mathbf{P}, \mathbf{P}'\)</span>, if <span class="math notranslate nohighlight">\(\mathcal{M}(\mathbf{P})= \mathcal{M}(\mathbf{P}')\)</span>, then <span class="math notranslate nohighlight">\(F(\mathbf{P}) = F(\mathbf{P}')\)</span>.</p>
+<div class="section" id="minimax">
+<h2>Minimax<a class="headerlink" href="#minimax" title="Permalink to this headline">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.minimax">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">minimax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#minimax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.minimax" title="Permalink to this definition">#</a></dt>
+<dd><p>The Minimax winners are the candidates with the smallest maximum pairwise defeat.  That is, for each candidate <span class="math notranslate nohighlight">\(a\)</span> find the biggest margin of a candidate <span class="math notranslate nohighlight">\(b\)</span> over <span class="math notranslate nohighlight">\(a\)</span>, then elect the candidate(s) with the smallest such loss. Also known as the Simpson-Kramer Rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.minimax_scores" title="pref_voting.margin_based_methods.minimax_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.minimax_scores()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+    
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display_margin_graph</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_minimax.png" class="plot-directive" src="_images/mg_ex_minimax.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">minimax</span>
+
+<span class="n">minimax</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Minimax winners are {1, 3}
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="minimax-scores">
+<h3>Minimax Scores<a class="headerlink" href="#minimax-scores" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.minimax_scores">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">minimax_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'margins'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#minimax_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.minimax_scores" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the minimax scores for each candidate, where the minimax score for <span class="math notranslate nohighlight">\(c\)</span> is -1 * the maximum pairwise majority loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>score_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Options include “margins” (the default), “winning” assings to each candidate <span class="math notranslate nohighlight">\(c\)</span> the maximum support of a candidate majority preferred to <span class="math notranslate nohighlight">\(c\)</span>,  and “pairwise_opposition” assings to each candidate <span class="math notranslate nohighlight">\(c\)</span> the maximum support of any candidate over <span class="math notranslate nohighlight">\(c\)</span>.   These scores only lead to different results on non-linear profiles.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary associating each candidate with its minimax score.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.minimax" title="pref_voting.margin_based_methods.minimax"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.minimax()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+    
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display_margin_graph</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_minimax.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_minimax.png" class="plot-directive" src="_images/mg_ex_minimax.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">minimax_scores</span><span class="p">,</span> <span class="n">minimax</span>
+
+<span class="n">minimax</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">minimax_scores</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Minimax winners are {1, 3}
+{0: -3, 1: -1, 2: -3, 3: -1}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="beat-path">
+<h2>Beat Path<a class="headerlink" href="#beat-path" title="Permalink to this headline">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.beat_path">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">beat_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#beat_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.beat_path" title="Permalink to this definition">#</a></dt>
+<dd><p>For candidates <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, a <strong>path</strong> from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> is a sequence
+<span class="math notranslate nohighlight">\(x_1, \ldots, x_n\)</span> of distinct candidates  with  <span class="math notranslate nohighlight">\(x_1=a\)</span> and <span class="math notranslate nohighlight">\(x_n=b\)</span> such that
+for <span class="math notranslate nohighlight">\(1\leq k\leq n-1\)</span>, <span class="math notranslate nohighlight">\(x_k\)</span> is majority preferred to <span class="math notranslate nohighlight">\(x_{k+1}\)</span>.  The <strong>strength of a path</strong>
+is the minimal margin along that path.  Say that <span class="math notranslate nohighlight">\(a\)</span> defeats <span class="math notranslate nohighlight">\(b\)</span> according to Beat Path if the the strength of the strongest path from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> is greater than the strength of the strongest path from <span class="math notranslate nohighlight">\(b\)</span> to <span class="math notranslate nohighlight">\(a\)</span>. Then, the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.beat_path_faster" title="pref_voting.margin_based_methods.beat_path_faster"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path_faster()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.beat_path_defeat" title="pref_voting.margin_based_methods.beat_path_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path_defeat()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">beat_path</span>
+
+<span class="n">beat_path</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Beat Path winner is {3}
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="beat-path-faster">
+<h3>Beat Path Faster<a class="headerlink" href="#beat-path-faster" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.beat_path_faster">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">beat_path_faster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#beat_path_faster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.beat_path_faster" title="Permalink to this definition">#</a></dt>
+<dd><p>An implementation of Beat Path using a variation of the Floyd Warshall-Algorithm
+See <a class="reference external" href="https://en.wikipedia.org/wiki/Schulze_method#Implementation">https://en.wikipedia.org/wiki/Schulze_method#Implementation</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.beat_path" title="pref_voting.margin_based_methods.beat_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.beat_path_defeat" title="pref_voting.margin_based_methods.beat_path_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path_defeat()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">beat_path_faster</span>
+
+<span class="n">beat_path</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">beat_path_faster</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Beat Path winner is {3}
+Beat Path winner is {3}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="beat-path-defeat">
+<h3>Beat Path Defeat<a class="headerlink" href="#beat-path-defeat" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.beat_path_defeat">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">beat_path_defeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#beat_path_defeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.beat_path_defeat" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the defeat relation for Beat Path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A networkx DiGraph representing the Beat Path defeat relation.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.beat_path" title="pref_voting.margin_based_methods.beat_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.beat_path_faster" title="pref_voting.margin_based_methods.beat_path_faster"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.beat_path_faster()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">beat_path_defeat</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display_with_defeat</span><span class="p">(</span><span class="n">beat_path_defeat</span><span class="p">(</span><span class="n">mg</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_defeat.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_defeat.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_defeat.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_defeat.png" class="plot-directive" src="_images/mg_ex_bp_defeat.png" />
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="split-cycle">
+<h2>Split Cycle<a class="headerlink" href="#split-cycle" title="Permalink to this headline">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.split_cycle">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">split_cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#split_cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.split_cycle" title="Permalink to this definition">#</a></dt>
+<dd><p>A <strong>majority cycle</strong> is a sequence <span class="math notranslate nohighlight">\(x_1, \ldots ,x_n\)</span> of distinct candidates with <span class="math notranslate nohighlight">\(x_1=x_n\)</span> such that for <span class="math notranslate nohighlight">\(1 \leq k \leq n-1\)</span>,  <span class="math notranslate nohighlight">\(x_k\)</span> is majority preferred to <span class="math notranslate nohighlight">\(x_{k+1}\)</span>.  The Split Cycle winners are determined as follows:</p>
+<ol class="arabic simple">
+<li><p>In each cycle, identify the head-to-head win(s) with the smallest margin of victory in that cycle.</p></li>
+<li><p>After completing step 1 for all cycles, discard the identified wins. All remaining wins count as defeats of the losing candidates.</p></li>
+</ol>
+<p>The candidates that are undefeated are the Split Cycle winners.</p>
+<p>See <a class="reference external" href="https://github.com/epacuit/splitcycle">https://github.com/epacuit/splitcycle</a> and the paper <a class="reference external" href="https://arxiv.org/abs/2004.02350">https://arxiv.org/abs/2004.02350</a> for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle_faster" title="pref_voting.margin_based_methods.split_cycle_faster"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle_faster()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle_defeat" title="pref_voting.margin_based_methods.split_cycle_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle_defeat()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">split_cycle</span>
+
+<span class="n">split_cycle</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Split Cycle winners are {2, 3}
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="split-cycle-faster">
+<h3>Split Cycle Faster<a class="headerlink" href="#split-cycle-faster" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.split_cycle_faster">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">split_cycle_faster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#split_cycle_faster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.split_cycle_faster" title="Permalink to this definition">#</a></dt>
+<dd><p>An implementation of Split Cycle based on the Floyd-Warshall Algorithm.</p>
+<p>See <a class="reference external" href="https://github.com/epacuit/splitcycle">https://github.com/epacuit/splitcycle</a> and the paper <a class="reference external" href="https://arxiv.org/abs/2004.02350">https://arxiv.org/abs/2004.02350</a> for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle" title="pref_voting.margin_based_methods.split_cycle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle_defeat" title="pref_voting.margin_based_methods.split_cycle_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle_defeat()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">split_cycle</span><span class="p">,</span> <span class="n">split_cycle_faster</span>
+
+<span class="n">split_cycle</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">split_cycle_faster</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Split Cycle winners are {2, 3}
+Split Cycle winners are {2, 3}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="split-cycle-defeat">
+<h3>Split Cycle Defeat<a class="headerlink" href="#split-cycle-defeat" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.split_cycle_defeat">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">split_cycle_defeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#split_cycle_defeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.split_cycle_defeat" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Split Cycle defeat relation.</p>
+<p>See <a class="reference external" href="https://arxiv.org/abs/2008.08451">https://arxiv.org/abs/2008.08451</a> for an extended discussion of this notion of defeat in an election.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A networkx DiGraph representing the Beat Path defeat relation.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle" title="pref_voting.margin_based_methods.split_cycle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.split_cycle_faster" title="pref_voting.margin_based_methods.split_cycle_faster"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.split_cycle_faster()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">split_cycle_defeat</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display_with_defeat</span><span class="p">(</span><span class="n">split_cycle_defeat</span><span class="p">(</span><span class="n">mg</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_sc_defeat.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_sc_defeat.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_sc_defeat.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_sc_defeat.png" class="plot-directive" src="_images/mg_ex_sc_defeat.png" />
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="ranked-pairs">
+<h2>Ranked Pairs<a class="headerlink" href="#ranked-pairs" title="Permalink to this headline">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs" title="Permalink to this definition">#</a></dt>
+<dd><p>Order the edges in the margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle.  If there are ties in the margins, break the ties using a tie-breaking rule: a linear ordering over the edges.   A candidate is a Ranked Pairs winner if it wins according to some tie-breaking rule. Also known as Tideman’s Rule.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method can take a very long time to find winners.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_zt" title="pref_voting.margin_based_methods.ranked_pairs_zt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_zt()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_defeats" title="pref_voting.margin_based_methods.ranked_pairs_defeats"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_defeats()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs</span>
+
+<span class="n">ranked_pairs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Ranked Pairs winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="ranked-pairs-with-test">
+<h3>Ranked Pairs with Test<a class="headerlink" href="#ranked-pairs-with-test" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs_with_test">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs_with_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs_with_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the Ranked Pairs winners, but include a test to determined if it will take too long to compute the Ranked Pairs winners. If the calculation of the winners will take too long, return None.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This voting method that might return None rather than a list of candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_zt" title="pref_voting.margin_based_methods.ranked_pairs_zt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_zt()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_defeats" title="pref_voting.margin_based_methods.ranked_pairs_defeats"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_defeats()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_rp_with_test.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_with_test.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_with_test.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_rp_with_test.png" class="plot-directive" src="_images/mg_ex_rp_with_test.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs_with_test</span>
+
+<span class="n">ranked_pairs_with_test</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Ranked Pairs winning set is not available
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="ranked-pairs-defeats">
+<h3>Ranked Pairs Defeats<a class="headerlink" href="#ranked-pairs-defeats" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs_defeats">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs_defeats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs_defeats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs_defeats" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Ranked Pairs defeat relations produced by the Ranked Pairs algorithm.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Unlike the other functions that return a single defeat relation, this returns a list of defeat relations.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A networkx DiGraph representing the Beat Path defeat relation.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs" title="pref_voting.margin_based_methods.ranked_pairs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_rp_defeats.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_defeats.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_defeats.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_rp_defeats.png" class="plot-directive" src="_images/mg_ex_rp_defeats.png" />
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs_defeats</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span>
+<span class="n">rp_defeats</span> <span class="o">=</span> <span class="n">ranked_pairs_defeats</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">rpd</span> <span class="ow">in</span> <span class="n">rp_defeats</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rpd</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[(0, 1), (0, 2), (1, 3), (2, 3), (2, 1)]
+[(0, 1), (2, 3), (2, 1), (3, 0)]
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="ranked-pairs-from-stacks">
+<h3>Ranked Pairs from Stacks<a class="headerlink" href="#ranked-pairs-from-stacks" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.is_stack">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">is_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cand_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#is_stack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.is_stack" title="Permalink to this definition">#</a></dt>
+<dd><p>A <strong>stack</strong> is a linear order <span class="math notranslate nohighlight">\(L\)</span> on the candidate such that for all candidates <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, if <span class="math notranslate nohighlight">\(aLb\)</span>, then there are distinct candidates <span class="math notranslate nohighlight">\(x_1,\dots,x_n\)</span> with <span class="math notranslate nohighlight">\(x_1=a\)</span> and <span class="math notranslate nohighlight">\(x_n=b\)</span> such that <span class="math notranslate nohighlight">\(x_i L x_{i+1}\)</span> and for all <span class="math notranslate nohighlight">\(i\in \{1,\dots, n-1\}\)</span>, the margin of <span class="math notranslate nohighlight">\(x_1\)</span> over <span class="math notranslate nohighlight">\(x_{i+1}\)</span> is greater than or equal to the margin of <span class="math notranslate nohighlight">\(b\)</span> over <span class="math notranslate nohighlight">\(a\)</span>.</p>
+<p>This definition is due to Zavist and Tideman 1989, and is used as an alternative characterization of Ranked Pairs: <span class="math notranslate nohighlight">\(a\)</span> is a Ranked Pairs winner if and only if <span class="math notranslate nohighlight">\(a\)</span> is the maximum element of some stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>cand_list</strong> (<em>list</em>) – The list of candidates that may be a stack</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if <code class="docutils literal notranslate"><span class="pre">cand_list</span></code> is a stack and False otherwise</p>
+</dd>
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_rp_stacks.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_stacks.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_rp_stacks.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_rp_stacks.png" class="plot-directive" src="_images/mg_ex_rp_stacks.png" />
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">is_stack</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="k">for</span> <span class="n">clist</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">mg</span><span class="o">.</span><span class="n">candidates</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">clist</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;is&#39;</span> <span class="k">if</span> <span class="n">is_stack</span><span class="p">(</span><span class="n">mg</span><span class="p">,</span> <span class="n">clist</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;is not&#39;</span><span class="si">}</span><span class="s2"> a stack&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(0, 1, 2) is a stack
+(0, 2, 1) is not a stack
+(1, 0, 2) is not a stack
+(1, 2, 0) is a stack
+(2, 0, 1) is not a stack
+(2, 1, 0) is not a stack
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs_from_stacks">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs_from_stacks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs_from_stacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs_from_stacks" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the Ranked Pairs winners by iterating over all permutations of candidates (restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if not None), and checking if the list is a stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs" title="pref_voting.margin_based_methods.ranked_pairs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.is_stack" title="pref_voting.margin_based_methods.is_stack"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.is_stack()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="n">mg</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.py">Source code</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.png">png</a>, <a class="reference external" href="./margin_graphs_examples/mg_ex_bp_rp.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/mg_ex_bp_rp.png" class="plot-directive" src="_images/mg_ex_bp_rp.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs</span><span class="p">,</span> <span class="n">ranked_pairs_from_stacks</span>
+
+<span class="n">ranked_pairs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">ranked_pairs_from_stacks</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Ranked Pairs winner is {2}
+Ranked Pairs winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="ranked-pairs-with-tiebreaking">
+<h3>Ranked Pairs with Tiebreaking<a class="headerlink" href="#ranked-pairs-with-tiebreaking" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs_tb">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs_tb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tie_breaker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs_tb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs_tb" title="Permalink to this definition">#</a></dt>
+<dd><p>Ranked Pairs with a fixed linear order on the candidates to break any ties in the margins.
+Since the tie_breaker is a linear order, this method is resolute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs" title="pref_voting.margin_based_methods.ranked_pairs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_from_stacks" title="pref_voting.margin_based_methods.ranked_pairs_from_stacks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_from_stacks()</span></code></a></p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs_from_stacks</span><span class="p">,</span> <span class="n">ranked_pairs_tb</span><span class="p">,</span> <span class="n">ranked_pairs_zt</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">ranked_pairs_from_stacks</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ranked_pairs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ranked_pairs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ranked_pairs_zt</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 2 |
+| 3 | 3 | 3 | 1 |
+| 1 | 1 | 2 | 3 |
+| 0 | 2 | 0 | 0 |
++---+---+---+---+
+Ranked Pairs winners are {1, 2, 3}
+Ranked Pairs T winner is {1}
+Ranked Pairs T winner is {3}
+Ranked Pairs ZT winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.ranked_pairs_zt">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">ranked_pairs_zt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#ranked_pairs_zt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.ranked_pairs_zt" title="Permalink to this definition">#</a></dt>
+<dd><p>Ranked pairs where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  This is known as Ranked Pairs ZT, for Zavist Tideman.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – A profile of linear orders</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs" title="pref_voting.margin_based_methods.ranked_pairs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_from_stacks" title="pref_voting.margin_based_methods.ranked_pairs_from_stacks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_from_stacks()</span></code></a></p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">ranked_pairs_from_stacks</span><span class="p">,</span> <span class="n">ranked_pairs_tb</span><span class="p">,</span> <span class="n">ranked_pairs_zt</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">ranked_pairs_from_stacks</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ranked_pairs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ranked_pairs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ranked_pairs_zt</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 2 |
+| 3 | 3 | 3 | 1 |
+| 1 | 1 | 2 | 3 |
+| 0 | 2 | 0 | 0 |
++---+---+---+---+
+Ranked Pairs winners are {1, 2, 3}
+Ranked Pairs T winner is {1}
+Ranked Pairs T winner is {3}
+Ranked Pairs ZT winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="river">
+<h3>River<a class="headerlink" href="#river" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.river">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">river</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#river"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.river" title="Permalink to this definition">#</a></dt>
+<dd><p>Order the edges in the weak margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle <em>and edges in which there is already an edge pointing to the target</em>.  Break ties using a tie-breaking  linear ordering over the edges.  A candidate is a River winner if it wins according to some tie-breaking rule. See <a class="reference external" href="https://electowiki.org/wiki/River">https://electowiki.org/wiki/River</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">river</span><span class="p">,</span> <span class="n">ranked_pairs</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)])</span>
+
+<span class="n">ranked_pairs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">river</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Ranked Pairs winner is {1}
+River winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.river_with_test">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">river_with_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#river_with_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.river_with_test" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the River winners with a test to determined if it will take too long to compute the River winners. If the calculation of the winners will take too long, return None.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This voting method that might return None rather than a list of candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.ranked_pairs_with_test" title="pref_voting.margin_based_methods.ranked_pairs_with_test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.ranked_pairs_with_test()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.river" title="pref_voting.margin_based_methods.river"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.river()</span></code></a></p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="stable-voting">
+<h2>Stable Voting<a class="headerlink" href="#stable-voting" title="Permalink to this headline">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.stable_voting">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">stable_voting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#stable_voting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.stable_voting" title="Permalink to this definition">#</a></dt>
+<dd><p>Implementation of  Stable Voting from <a class="reference external" href="https://arxiv.org/abs/2108.00542">https://arxiv.org/abs/2108.00542</a>.</p>
+<p>Stable Voting is a recursive voting method defined as follows:</p>
+<ol class="arabic simple">
+<li><p>If there is only one candidate in the profile, then that candidate is the winner.</p></li>
+<li><p>Order the pairs <span class="math notranslate nohighlight">\((a,b)\)</span> of candidates from largest to smallest value of the margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> such that <span class="math notranslate nohighlight">\(a\)</span> is undefeated according to Split Cycle, and declare as Stable Voting winners the candidate(s) <span class="math notranslate nohighlight">\(a\)</span> from the earliest pair(s) <span class="math notranslate nohighlight">\((a,b)\)</span> such that <span class="math notranslate nohighlight">\(a\)</span> is a Simple Stable Voting winner in the election without <span class="math notranslate nohighlight">\(b\)</span>.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.simple_stable_faster()</span></code>, <a class="reference internal" href="#pref_voting.margin_based_methods.simple_stable_voting" title="pref_voting.margin_based_methods.simple_stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.simple_stable_voting()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">stable_voting</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)])</span>
+
+<span class="n">stable_voting</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Stable Voting winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="stable-voting-faster">
+<h3>Stable Voting Faster<a class="headerlink" href="#stable-voting-faster" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.stable_voting_faster">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">stable_voting_faster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#stable_voting_faster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.stable_voting_faster" title="Permalink to this definition">#</a></dt>
+<dd><p>Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.simple_stable_voting" title="pref_voting.margin_based_methods.simple_stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.simple_stable_voting()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.stable_voting" title="pref_voting.margin_based_methods.stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.stable_voting()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">stable_voting</span><span class="p">,</span> <span class="n">stable_voting_faster</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)])</span>
+
+<span class="n">stable_voting_faster</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">stable_voting</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Stable Voting winner is {2}
+Stable Voting winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="simple-stable-voting">
+<h3>Simple Stable Voting<a class="headerlink" href="#simple-stable-voting" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.simple_stable_voting">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">simple_stable_voting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#simple_stable_voting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.simple_stable_voting" title="Permalink to this definition">#</a></dt>
+<dd><p>Implementation of  Simple Stable Voting from <a class="reference external" href="https://arxiv.org/abs/2108.00542">https://arxiv.org/abs/2108.00542</a>.</p>
+<p>Simple Stable Voting is a recursive voting method defined as follows:</p>
+<ol class="arabic simple">
+<li><p>If there is only one candidate in the profile, then that candidate is the winner.</p></li>
+<li><p>Order the pairs <span class="math notranslate nohighlight">\((a,b)\)</span> of candidates from largest to smallest value of the margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span>, and declare as Simple Stable Voting winners the candidate(s) <span class="math notranslate nohighlight">\(a\)</span> from the earliest pair(s) <span class="math notranslate nohighlight">\((a,b)\)</span> such that <span class="math notranslate nohighlight">\(a\)</span> is a Simple Stable Voting winner in the election without <span class="math notranslate nohighlight">\(b\)</span>.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.simple_stable_voting_faster" title="pref_voting.margin_based_methods.simple_stable_voting_faster"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.simple_stable_voting_faster()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.stable_voting" title="pref_voting.margin_based_methods.stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.stable_voting()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">simple_stable_voting</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)])</span>
+
+<span class="n">simple_stable_voting</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Simple Stable Voting winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="simple-stable-voting-faster">
+<h3>Simple Stable Voting Faster<a class="headerlink" href="#simple-stable-voting-faster" title="Permalink to this headline">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.margin_based_methods.simple_stable_voting_faster">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.margin_based_methods.</span></span><span class="sig-name descname"><span class="pre">simple_stable_voting_faster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/margin_based_methods.html#simple_stable_voting_faster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.margin_based_methods.simple_stable_voting_faster" title="Permalink to this definition">#</a></dt>
+<dd><p>Simple Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winnerFirst check if there is a Condorcet winner.  If so, return the Condorcet winner, otherwise find the Simple Stable Voting winnner using _simple_stable_voting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>margin</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>strength_function</strong> (<em>function</em><em>, </em><em>optional</em>) – The strength function to be used to calculate the strength of a path.   The default is the margin method of <code class="docutils literal notranslate"><span class="pre">edata</span></code>.   This only matters when the ballots are not linear orders.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sorted list of candidates.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.margin_based_methods.simple_stable_voting" title="pref_voting.margin_based_methods.simple_stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.simple_stable_voting()</span></code></a>, <a class="reference internal" href="#pref_voting.margin_based_methods.stable_voting" title="pref_voting.margin_based_methods.stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.margin_based_methods.stable_voting()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">simple_stable_voting</span><span class="p">,</span> <span class="n">simple_stable_voting_faster</span>
+
+<span class="n">mg</span> <span class="o">=</span> <span class="n">MarginGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)])</span>
+
+<span class="n">simple_stable_voting_faster</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+<span class="n">simple_stable_voting</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">mg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Simple Stable Voting winner is {2}
+Simple Stable Voting winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="combined_methods.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Combined Methods</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="c1_methods.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">C1 Methods</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Margin Methods</a><ul>
+<li><a class="reference internal" href="#minimax">Minimax</a><ul>
+<li><a class="reference internal" href="#minimax-scores">Minimax Scores</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#beat-path">Beat Path</a><ul>
+<li><a class="reference internal" href="#beat-path-faster">Beat Path Faster</a></li>
+<li><a class="reference internal" href="#beat-path-defeat">Beat Path Defeat</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#split-cycle">Split Cycle</a><ul>
+<li><a class="reference internal" href="#split-cycle-faster">Split Cycle Faster</a></li>
+<li><a class="reference internal" href="#split-cycle-defeat">Split Cycle Defeat</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ranked-pairs">Ranked Pairs</a><ul>
+<li><a class="reference internal" href="#ranked-pairs-with-test">Ranked Pairs with Test</a></li>
+<li><a class="reference internal" href="#ranked-pairs-defeats">Ranked Pairs Defeats</a></li>
+<li><a class="reference internal" href="#ranked-pairs-from-stacks">Ranked Pairs from Stacks</a></li>
+<li><a class="reference internal" href="#ranked-pairs-with-tiebreaking">Ranked Pairs with Tiebreaking</a></li>
+<li><a class="reference internal" href="#river">River</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stable-voting">Stable Voting</a><ul>
+<li><a class="reference internal" href="#stable-voting-faster">Stable Voting Faster</a></li>
+<li><a class="reference internal" href="#simple-stable-voting">Simple Stable Voting</a></li>
+<li><a class="reference internal" href="#simple-stable-voting-faster">Simple Stable Voting Faster</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    </body>
+</html>

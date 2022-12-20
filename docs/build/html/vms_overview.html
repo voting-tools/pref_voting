@@ -1,0 +1,877 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Positional Scoring Rules" href="scoring_methods.html" /><link rel="prev" title="Generate Weighted Majority Graphs" href="generate_weighted_majority_graphs.html" />
+
+    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Overview - Preferential Voting Tools</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Preferential Voting Tools</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-scroll"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Preferential Voting Tools</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Elections</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="edata_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles_with_ties.html">Profiles with Ties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="margin_graphs.html">(Weighted) Majority Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_profiles.html">Generate Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_weighted_majority_graphs.html">Generate Weighted Majority Graphs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Voting Methods</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scoring_methods.html">Positional Scoring Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="iterative_methods.html">Iterative Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c1_methods.html">C1 Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="margin_based_methods.html">Margin Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="tex2jax_ignore mathjax_ignore section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h1>
+<p>Voting methods are defined as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Voting Method Name&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">name_of_voting_method</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># edata can be a Profile, ProfileWithTies, MajorityGraph, and/or MarginGraph</span>
+    <span class="c1"># if curr_cands is not None, restrict the election to curr_cands</span>
+    <span class="c1"># voting methods return a sorted list of candidates</span>
+</pre></div>
+</div>
+<p>The decorator <code class="docutils literal notranslate"><span class="pre">vm</span></code> adds the following attribute and methods to a voting method:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.name</span></code>: The Human-readable name of the voting method</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.display</span></code>: Display the winners</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.choose</span></code>: Choose a random winner from the set of winners</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.set_name</span></code>: set the name of the voting method.</p></li>
+</ol>
+<p>For instance, the voting method <a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.plurality" title="pref_voting.scoring_methods.plurality"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plurality()</span></code></a> can be used as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.scoring_methods</span> <span class="kn">import</span> <span class="n">plurality</span>
+
+<span class="n">cmap</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;d&quot;</span><span class="p">}</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">plurality</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">plurality</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">plurality</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">plurality</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span>
+<span class="n">plurality</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">plurality</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 3 | 2 | 3 | 1 |
++---+---+---+---+
+| 0 | 2 | 1 | 3 |
+| 1 | 0 | 3 | 1 |
+| 2 | 1 | 0 | 0 |
+| 3 | 3 | 2 | 2 |
++---+---+---+---+
+Plurality
+[0, 1]
+[2]
+1
+Plurality winners are {0, 1}
+Plurality winners are {a, b}
+</pre></div>
+</div>
+<div class="section" id="votingmethod-class">
+<h2>VotingMethod Class<a class="headerlink" href="#votingmethod-class" title="Permalink to this headline">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.voting_method.</span></span><span class="sig-name descname"><span class="pre">VotingMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod" title="Permalink to this definition">#</a></dt>
+<dd><p>A class to add functionality to voting methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm</strong> (<em>function</em>) – An implementation of a voting method. The function should accept a Profile, ProfileWithTies, MajorityGraph, and/or MarginGraph, and a keyword parameter <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> to find the winner after restricting to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code>.</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – The Human-readable name of the voting method.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod.choose">
+<span class="sig-name descname"><span class="pre">choose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod.choose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod.choose" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a randomly chosen element from the winning set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod.display" title="Permalink to this definition">#</a></dt>
+<dd><p>Display the winning set of candidates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod.set_name">
+<span class="sig-name descname"><span class="pre">set_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod.set_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod.set_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the name of the voting method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.voting_method.vm">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.voting_method.</span></span><span class="sig-name descname"><span class="pre">vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#vm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.vm" title="Permalink to this definition">#</a></dt>
+<dd><p>A decorator used when creating a voting method.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="voting-methods">
+<h2>Voting Methods<a class="headerlink" href="#voting-methods" title="Permalink to this headline">#</a></h2>
+<p>The main voting methods that are implemented with a checkmark in a column if the voting method can compute the winners for the type of input.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Voting Method</p></th>
+<th class="head"><p>Profile</p></th>
+<th class="head"><p>ProfileWithTies</p></th>
+<th class="head"><p>MajorityGraph</p></th>
+<th class="head"><p>MarginGraph</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Anti Plurality</p>
+<p><a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.anti_plurality" title="pref_voting.scoring_methods.anti_plurality"><code class="xref py py-meth docutils literal notranslate"><span class="pre">anti_plurality()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Baldwin</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.baldwin" title="pref_voting.iterative_methods.baldwin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">baldwin()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Baldwin PUT</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.baldwin_put" title="pref_voting.iterative_methods.baldwin_put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">baldwin_put()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Banks</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.banks" title="pref_voting.other_methods.banks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">banks()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Beat Path</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.beat_path" title="pref_voting.margin_based_methods.beat_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">beat_path()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Blacks</p>
+<p><a class="reference internal" href="combined_methods.html#pref_voting.combined_methods.blacks" title="pref_voting.combined_methods.blacks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">blacks()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Borda</p>
+<p><a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.borda" title="pref_voting.scoring_methods.borda"><code class="xref py py-meth docutils literal notranslate"><span class="pre">borda()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Bucklin</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.bucklin" title="pref_voting.other_methods.bucklin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bucklin()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Condorcet</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.condorcet" title="pref_voting.c1_methods.condorcet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">condorcet()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Coombs</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.coombs" title="pref_voting.iterative_methods.coombs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coombs()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Coombs PUT</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.coombs_put" title="pref_voting.iterative_methods.coombs_put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coombs_put()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Copeland</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.copeland" title="pref_voting.c1_methods.copeland"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Daunou</p>
+<p><a class="reference internal" href="combined_methods.html#pref_voting.combined_methods.daunou" title="pref_voting.combined_methods.daunou"><code class="xref py py-meth docutils literal notranslate"><span class="pre">daunou()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>GOCHA</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.gocha" title="pref_voting.c1_methods.gocha"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gocha()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Instant Runoff</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.instant_runoff" title="pref_voting.iterative_methods.instant_runoff"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instant_runoff()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Instant Runoff PUT</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.instant_runoff_put" title="pref_voting.iterative_methods.instant_runoff_put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instant_runoff_put()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Iterated Removal of Condorcet Losers</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.iterated_removal_cl" title="pref_voting.iterative_methods.iterated_removal_cl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterated_removal_cl()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Iterated Removal of Split Cycle Losers</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.iterated_split_cycle" title="pref_voting.iterative_methods.iterated_split_cycle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterated_split_cycle()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Kemmeny-Young</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.kemmeny_young" title="pref_voting.other_methods.kemmeny_young"><code class="xref py py-meth docutils literal notranslate"><span class="pre">kemmeny_young()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Llull</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.llull" title="pref_voting.c1_methods.llull"><code class="xref py py-meth docutils literal notranslate"><span class="pre">llull()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Majority</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.majority" title="pref_voting.other_methods.majority"><code class="xref py py-meth docutils literal notranslate"><span class="pre">majority()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Minimax</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.minimax" title="pref_voting.margin_based_methods.minimax"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minimax()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Plurality</p>
+<p><a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.plurality" title="pref_voting.scoring_methods.plurality"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plurality()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>PluralityWRunoff</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.plurality_with_runoff" title="pref_voting.iterative_methods.plurality_with_runoff"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plurality_with_runoff()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Ranked Pairs</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs" title="pref_voting.margin_based_methods.ranked_pairs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ranked_pairs()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>River</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.river" title="pref_voting.margin_based_methods.river"><code class="xref py py-meth docutils literal notranslate"><span class="pre">river()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Simple Stable Voting</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.simple_stable_voting" title="pref_voting.margin_based_methods.simple_stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simple_stable_voting()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Simplified Bucklin</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.simplified_bucklin" title="pref_voting.other_methods.simplified_bucklin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simplified_bucklin()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Slater</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.slater" title="pref_voting.other_methods.slater"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slater()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Smith IRV</p>
+<p><a class="reference internal" href="combined_methods.html#pref_voting.combined_methods.smith_irv" title="pref_voting.combined_methods.smith_irv"><code class="xref py py-meth docutils literal notranslate"><span class="pre">smith_irv()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Split Cycle</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.split_cycle" title="pref_voting.margin_based_methods.split_cycle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">split_cycle()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Stable Voting</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.stable_voting" title="pref_voting.margin_based_methods.stable_voting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stable_voting()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Strict Nanson</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.strict_nanson" title="pref_voting.iterative_methods.strict_nanson"><code class="xref py py-meth docutils literal notranslate"><span class="pre">strict_nanson()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Top Cycle</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.top_cycle" title="pref_voting.c1_methods.top_cycle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">top_cycle()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Uncovered Set (Gillies Version)</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_gill" title="pref_voting.c1_methods.uc_gill"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_gill()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Uncovered Set (Fishburn Version)</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_fish" title="pref_voting.c1_methods.uc_fish"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_fish()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Uncovered Set (Bordes Version)</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_bordes" title="pref_voting.c1_methods.uc_bordes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_bordes()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Uncovered Set (McKelvey Version)</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_mckelvey" title="pref_voting.c1_methods.uc_mckelvey"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_mckelvey()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Weak Nanson</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.weak_nanson" title="pref_voting.iterative_methods.weak_nanson"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weak_nanson()</span></code></a></p>
+</th>
+<td><p><span class="math notranslate nohighlight">\(\checkmark\)</span></p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="explanations">
+<h2>Explanations<a class="headerlink" href="#explanations" title="Permalink to this headline">#</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Voting Method</p></th>
+<th class="head"><p>Explanation Function</p></th>
+<th class="head"><p>Information Provided</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Baldwin</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.baldwin" title="pref_voting.iterative_methods.baldwin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">baldwin()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.baldwin_with_explanation" title="pref_voting.iterative_methods.baldwin_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">baldwin_with_explanation()</span></code></a></p></td>
+<td><p>The candidates that are eliminated and the Borda scores of the remaining candidates (in the profile restricted to candidates that have not been eliminated)</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Banks</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.banks" title="pref_voting.other_methods.banks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">banks()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.banks_with_explanation" title="pref_voting.other_methods.banks_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">banks_with_explanation()</span></code></a></p></td>
+<td><p>The maximal chains in the majority graph</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Borda</p>
+<p><a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.borda" title="pref_voting.scoring_methods.borda"><code class="xref py py-meth docutils literal notranslate"><span class="pre">borda()</span></code></a></p>
+</th>
+<td><p>Profile method: <a class="reference internal" href="profiles.html#pref_voting.profiles.Profile.borda_scores" title="pref_voting.profiles.Profile.borda_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">borda_scores()</span></code></a></p></td>
+<td><p>The Borda score for each candidate</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Bucklin</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.bucklin" title="pref_voting.other_methods.bucklin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bucklin()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.bucklin_with_explanation" title="pref_voting.other_methods.bucklin_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bucklin_with_explanation()</span></code></a></p></td>
+<td><p>The score for each candidate</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Coombs</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.coombs" title="pref_voting.iterative_methods.coombs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coombs()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.coombs_with_explanation" title="pref_voting.iterative_methods.coombs_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coombs_with_explanation()</span></code></a></p></td>
+<td><p>The order of elimination of the candidates</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Copeland</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.copeland" title="pref_voting.c1_methods.copeland"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland()</span></code></a></p>
+</th>
+<td><p>Profile method: <a class="reference internal" href="profiles.html#pref_voting.profiles.Profile.copeland_scores" title="pref_voting.profiles.Profile.copeland_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland_scores()</span></code></a></p>
+<p>Majority/Margin Graph method: <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores" title="pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland_scores()</span></code></a></p>
+</td>
+<td><p>The Copeland score for each candidate.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Instant Runoff</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.instant_runoff" title="pref_voting.iterative_methods.instant_runoff"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instant_runoff()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.instant_runoff_with_explanation" title="pref_voting.iterative_methods.instant_runoff_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instant_runoff_with_explanation()</span></code></a></p></td>
+<td><p>The order of elimination of the candidates</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Iterated Removal of Condorcet Losers</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.iterated_removal_cl" title="pref_voting.iterative_methods.iterated_removal_cl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterated_removal_cl()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.iterated_removal_cl_with_explanation" title="pref_voting.iterative_methods.iterated_removal_cl_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterated_removal_cl_with_explanation()</span></code></a></p></td>
+<td><p>The order of elimination of the candidates</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Llull</p>
+<p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.llull" title="pref_voting.c1_methods.llull"><code class="xref py py-meth docutils literal notranslate"><span class="pre">llull()</span></code></a></p>
+</th>
+<td><p>Profile method: <a class="reference internal" href="profiles.html#pref_voting.profiles.Profile.copeland_scores" title="pref_voting.profiles.Profile.copeland_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland_scores()</span></code></a></p>
+<p>Majority/Margin Graph method: <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores" title="pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copeland_scores()</span></code></a></p>
+<p>use score=(1, 0.5, 0)</p>
+</td>
+<td><p>The Llull score for each candidate.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Minimax</p>
+<p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.minimax" title="pref_voting.margin_based_methods.minimax"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minimax()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.minimax_scores" title="pref_voting.margin_based_methods.minimax_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minimax_scores()</span></code></a></p></td>
+<td><p>The minimax score for each candidate</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Plurality</p>
+<p><a class="reference internal" href="scoring_methods.html#pref_voting.scoring_methods.plurality" title="pref_voting.scoring_methods.plurality"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plurality()</span></code></a></p>
+</th>
+<td><p>Profile method: <a class="reference internal" href="profiles.html#pref_voting.profiles.Profile.plurality_scores" title="pref_voting.profiles.Profile.plurality_scores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plurality_scores()</span></code></a></p></td>
+<td><p>The Plurality score for each candidate</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Simplified Bucklin</p>
+<p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.simplified_bucklin" title="pref_voting.other_methods.simplified_bucklin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simplified_bucklin()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.simplified_bucklin_with_explanation" title="pref_voting.other_methods.simplified_bucklin_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simplified_bucklin_with_explanation()</span></code></a></p></td>
+<td><p>The score for each candidate</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Strict Nanson</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.strict_nanson" title="pref_voting.iterative_methods.strict_nanson"><code class="xref py py-meth docutils literal notranslate"><span class="pre">strict_nanson()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.strict_nanson_with_explanation" title="pref_voting.iterative_methods.strict_nanson_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">strict_nanson_with_explanation()</span></code></a></p></td>
+<td><p>The order of elimination of the candidates and the Borda scores of the candidates  (in the profile restricted to candidates that have not been eliminated)</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Weak Nanson</p>
+<p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.weak_nanson" title="pref_voting.iterative_methods.weak_nanson"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weak_nanson()</span></code></a></p>
+</th>
+<td><p><a class="reference internal" href="iterative_methods.html#pref_voting.iterative_methods.weak_nanson_with_explanation" title="pref_voting.iterative_methods.weak_nanson_with_explanation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weak_nanson_with_explanation()</span></code></a></p></td>
+<td><p>The order of elimination of the candidates and the Borda scores of the candidates  (in the profile restricted to candidates that have not been eliminated)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="defeat-relations">
+<h2>Defeat Relations<a class="headerlink" href="#defeat-relations" title="Permalink to this headline">#</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Function</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.beat_path_defeat" title="pref_voting.margin_based_methods.beat_path_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">beat_path_defeat()</span></code></a></p></th>
+<td><p>Returns a single networkx DiGraph. For candidates <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, a <strong>path</strong> from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> is a sequence <span class="math notranslate nohighlight">\(x_1, \ldots, x_n\)</span> of distinct candidates  with  <span class="math notranslate nohighlight">\(x_1=a\)</span> and <span class="math notranslate nohighlight">\(x_n=b\)</span> such that for <span class="math notranslate nohighlight">\(1\leq k\leq n-1\)</span>, <span class="math notranslate nohighlight">\(x_k\)</span> is majority preferred to <span class="math notranslate nohighlight">\(x_{k+1}\)</span>.  The <strong>strength of a path</strong> is the minimal margin along that path.  Candidate <span class="math notranslate nohighlight">\(a\)</span> defeats <span class="math notranslate nohighlight">\(b\)</span> according to Beat Path if the the strength of the strongest path from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> is greater than the strength of the strongest path from <span class="math notranslate nohighlight">\(b\)</span> to <span class="math notranslate nohighlight">\(a\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.kemmeny_young_rankings" title="pref_voting.other_methods.kemmeny_young_rankings"><code class="xref py py-meth docutils literal notranslate"><span class="pre">kemmeny_young_rankings()</span></code></a></p></th>
+<td><p>Returns a list of lists of candidates.  A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters’ rankings.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_defeats" title="pref_voting.margin_based_methods.ranked_pairs_defeats"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ranked_pairs_defeats()</span></code></a></p></th>
+<td><p>Returns a list of networkx DiGraphs. Order the edges in the margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle.  If there are ties in the margins, break the ties using a tiebreaking rule (i.e., a linear ordering over the edges).  Each tie-breaking rule generates a Ranked Pairs defeat relation where <span class="math notranslate nohighlight">\(a\)</span> defeats <span class="math notranslate nohighlight">\(b\)</span> if the edge from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> in the margin graph is locked-in using the tiebreaking rule.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="other_methods.html#pref_voting.other_methods.slater_rankings" title="pref_voting.other_methods.slater_rankings"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slater_rankings()</span></code></a></p></th>
+<td><p>Returns a list of lists of candidates.  A Slater ranking <span class="math notranslate nohighlight">\(R\)</span> is a linear order  of the candidates that minimises the number of edges in the majority graph have to be turned around before to obtain <span class="math notranslate nohighlight">\(R\)</span>.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="margin_based_methods.html#pref_voting.margin_based_methods.split_cycle_defeat" title="pref_voting.margin_based_methods.split_cycle_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">split_cycle_defeat()</span></code></a></p></th>
+<td><p>Returns a single networkx DiGraph. A <strong>majority cycle</strong> is a sequence <span class="math notranslate nohighlight">\(x_1, \ldots ,x_n\)</span> of distinct candidates with <span class="math notranslate nohighlight">\(x_1=x_n\)</span> such that for <span class="math notranslate nohighlight">\(1 \leq k \leq n-1\)</span>,  <span class="math notranslate nohighlight">\(x_k\)</span> is majority preferred to <span class="math notranslate nohighlight">\(x_{k+1}\)</span>. 1. In each cycle, identify the head-to-head win(s) with the smallest margin of victory in that cycle.  2. After completing step 1 for all cycles, discard the identified wins. All remaining wins count as defeats of the losing candidates.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.top_cycle_defeat" title="pref_voting.c1_methods.top_cycle_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">top_cycle_defeat()</span></code></a></p></th>
+<td><p>Returns a single networkx DiGraph. Candidate <span class="math notranslate nohighlight">\(a\)</span> defeats candidate <span class="math notranslate nohighlight">\(b\)</span> when <span class="math notranslate nohighlight">\(a\)</span> is in the Smith Set, but <span class="math notranslate nohighlight">\(b\)</span> is not.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_gill_defeat" title="pref_voting.c1_methods.uc_gill_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_gill_defeat()</span></code></a></p></th>
+<td><p>Returns a single networkx DiGraph. Given candidates <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, say that <span class="math notranslate nohighlight">\(a\)</span> defeats <span class="math notranslate nohighlight">\(b\)</span> in the election if <span class="math notranslate nohighlight">\(a\)</span> is majority preferred to <span class="math notranslate nohighlight">\(b\)</span> and <span class="math notranslate nohighlight">\(a\)</span> left covers <span class="math notranslate nohighlight">\(b\)</span>: i.e., for all <span class="math notranslate nohighlight">\(c\)</span>, if <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(a\)</span>,  then <span class="math notranslate nohighlight">\(c\)</span> majority preferred to <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="c1_methods.html#pref_voting.c1_methods.uc_fish_defeat" title="pref_voting.c1_methods.uc_fish_defeat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uc_fish_defeat()</span></code></a></p></th>
+<td><p>Returns a single networkx DiGraph. Given candidates <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, say that <span class="math notranslate nohighlight">\(a\)</span> defeats <span class="math notranslate nohighlight">\(b\)</span> in the election <span class="math notranslate nohighlight">\(a\)</span> left covers <span class="math notranslate nohighlight">\(b\)</span>: i.e., for all <span class="math notranslate nohighlight">\(c\)</span>, if <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(a\)</span>,  then <span class="math notranslate nohighlight">\(c\)</span> majority preferred to <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="scoring_methods.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Positional Scoring Rules</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="generate_weighted_majority_graphs.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Generate Weighted Majority Graphs</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#votingmethod-class">VotingMethod Class</a></li>
+<li><a class="reference internal" href="#voting-methods">Voting Methods</a></li>
+<li><a class="reference internal" href="#explanations">Explanations</a></li>
+<li><a class="reference internal" href="#defeat-relations">Defeat Relations</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    </body>
+</html>
