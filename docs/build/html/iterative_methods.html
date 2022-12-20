@@ -1,0 +1,1591 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="C1 Methods" href="c1_methods.html" /><link rel="prev" title="Positional Scoring Rules" href="scoring_methods.html" />
+
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>Iterative Methods - Preferential Voting Tools</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Preferential Voting Tools</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-scroll"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Preferential Voting Tools</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Elections</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="edata_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles_with_ties.html">Profiles with Ties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="margin_graphs.html">(Weighted) Majority Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_profiles.html">Generate Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_weighted_majority_graphs.html">Generate Weighted Majority Graphs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Voting Methods</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scoring_methods.html">Positional Scoring Rules</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Iterative Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c1_methods.html">C1 Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="margin_based_methods.html">Margin Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section class="tex2jax_ignore mathjax_ignore" id="iterative-methods">
+<h1>Iterative Methods<a class="headerlink" href="#iterative-methods" title="Permalink to this heading">#</a></h1>
+<p>The voting methods defined below all follow a similar procedure: iteratively remove “poorly performing” candidates from the profile until there is a candidate with that is the majority winner. The voting methods differ in how they answer the following two questions:</p>
+<ol class="arabic simple">
+<li><p>What does it mean for a candidate to “perform poorly”?  Different definitions of a poorly performing candidate include the fewest number of first-place votes, the most last-place votes, the least Borda score, etc.</p></li>
+<li><p>How to break ties when there are more than one candidate that is identified as “poorly performing”?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).   A second approach is to use so-called <em>parallel-universe tiebreaking</em>. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).</p></li>
+</ol>
+<p>To illustrate the difference with respect to the first question, consider the voting methods Instant Runoff and Coombs.   According to Instant Runoff, a candidate is “poorly performing” if that candidate has the fewest number first-place votes, and according to Coombs, a cnadidate is “poorly performing” if that candidate has the most last-place votes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">coombs</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Instant Runoff winner is {1}
+Coombs winner is {2}
+</pre></div>
+</div>
+<p>To illustrate the difference with respect to the first question, consider Instant Runoff and Instant Runoff PUT that uses parallel-universe tiebreaking.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">instant_runoff_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 1 | 2 | 0 |
+| 2 | 1 | 1 |
+| 0 | 0 | 2 |
++---+---+---+
+Instant Runoff winners are {0, 1, 2}
+Instant Runoff PUT winners are {1, 2}
+</pre></div>
+</div>
+<section id="instant-runoff">
+<h2>Instant Runoff<a class="headerlink" href="#instant-runoff" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff" title="Permalink to this definition">#</a></dt>
+<dd><p>If there is a majority winner then that candidate is the  winner.  If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters.  Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If there is  more than one candidate with the fewest number of first-place votes, then <em>all</em> such candidates are removed from the profile.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Instant Runoff is also known as “Ranked Choice”, “Hare”, and “Alternative Vote”.</p>
+<p>Related functions:  <a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_tb" title="pref_voting.iterative_methods.instant_runoff_tb"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.instant_runoff_tb()</span></code></a>, <a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_put" title="pref_voting.iterative_methods.instant_runoff_put"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.instant_runoff_put()</span></code></a>, <a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_with_explanation" title="pref_voting.iterative_methods.instant_runoff_with_explanation"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.instant_runoff_with_explanation()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">ranked_choice</span><span class="p">,</span> <span class="n">alterantive_vote</span><span class="p">,</span> <span class="n">hare</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ranked_choice</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">alterantive_vote</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">hare</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Instant Runoff winner is {1}
+Ranked Choice winner is {1}
+Alternative Vote winner is {1}
+Hare winner is {1}
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="instant-runoff-tb">
+<h3>Instant Runoff TB<a class="headerlink" href="#instant-runoff-tb" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_tb">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_tb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tie_breaker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_tb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_tb" title="Permalink to this definition">#</a></dt>
+<dd><p>Instant Runoff (<code class="docutils literal notranslate"><span class="pre">instant_runoff</span></code>) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>tie_breaker</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of the candidates in the profile to be used as a tiebreaker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_tb</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 2, 0]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 1 | 2 | 0 |
+| 2 | 1 | 1 |
+| 0 | 0 | 2 |
++---+---+---+
+no tiebreaker
+Instant Runoff winners are {0, 1, 2}
+tie_breaker = [0, 1, 2]
+Instant Runoff TB winner is {1}
+tie_breaker = [1, 2, 0]
+Instant Runoff TB winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="instant-runoff-put">
+<h3>Instant Runoff PUT<a class="headerlink" href="#instant-runoff-put" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_put">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_put" title="Permalink to this definition">#</a></dt>
+<dd><p>Instant Runoff (<a href="#id1"><span class="problematic" id="id2">:fun:`instant_runoff`</span></a>) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will take a long time on profiles with many candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_tb</span><span class="p">,</span> <span class="n">instant_runoff_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 2, 1]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 0, 2]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 2, 0]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 0, 1]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 1, 0]&quot;</span><span class="p">)</span>
+<span class="n">instant_runoff_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">instant_runoff_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 1 | 2 | 0 |
+| 2 | 1 | 1 |
+| 0 | 0 | 2 |
++---+---+---+
+no tiebreaker
+Instant Runoff winners are {0, 1, 2}
+tie_breaker = [0, 1, 2]
+Instant Runoff TB winner is {1}
+tie_breaker = [0, 2, 1]
+Instant Runoff TB winner is {1}
+tie_breaker = [1, 0, 2]
+Instant Runoff TB winner is {2}
+tie_breaker = [1, 2, 0]
+Instant Runoff TB winner is {2}
+tie_breaker = [2, 0, 1]
+Instant Runoff TB winner is {1}
+tie_breaker = [2, 1, 0]
+Instant Runoff TB winner is {1}
+
+Instant Runoff PUT winners are {1, 2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="instant-runoff-with-explanation">
+<h3>Instant Runoff with Explanation<a class="headerlink" href="#instant-runoff-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Instant Runoff with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A sorted list of candidates</p>
+<p>A list describing the order in which candidates are eliminated</p>
+</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_with_explanation</span>
+
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">instant_runoff_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">instant_runoff_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>  <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">instant_runoff_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Instant Runoff winner is {1}
+winning set: [1]
+order of elimination: [[2]]
++---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 1 | 2 | 0 |
+| 2 | 1 | 1 |
+| 0 | 0 | 2 |
++---+---+---+
+Instant Runoff winners are {0, 1, 2}
+winning set: [0, 1, 2]
+order of elimination: [[0, 1, 2]]
++---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+
+| 2 | 2 | 3 | 3 | 0 |
+| 0 | 0 | 0 | 2 | 2 |
+| 1 | 3 | 1 | 1 | 1 |
+| 3 | 1 | 2 | 0 | 3 |
++---+---+---+---+---+
+Instant Runoff winner is {2}
+winning set: [2]
+order of elimination: [[1], [0]]
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="plurality-with-runoff">
+<h2>Plurality With Runoff<a class="headerlink" href="#plurality-with-runoff" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.plurality_with_runoff">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">plurality_with_runoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#plurality_with_runoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.plurality_with_runoff" title="Permalink to this definition">#</a></dt>
+<dd><p>If there is a majority winner then that candidate is the plurality with runoff winner. If there is no majority winner, then hold a runoff with  the top two candidates: either two (or more candidates) with the most first place votes or the candidate with the most first place votes and the candidate with the 2nd highest first place votes are ranked first by the fewest number of voters.   A candidate is a Plurality with Runoff winner in the profile restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if it is a winner in a runoff between two pairs of first- or second- ranked candidates. If the candidates are all tied for the most first place votes, then all candidates are winners.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Plurality with Runoff is the same as Instant Runoff when there are 3 candidates, but give different answers with 4 or more candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">plurality_with_runoff</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">plurality_with_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+
+| 2 | 1 | 2 | 2 | 1 | 2 |
++---+---+---+---+---+---+
+| 0 | 3 | 2 | 1 | 2 | 0 |
+| 1 | 1 | 0 | 2 | 3 | 3 |
+| 2 | 2 | 3 | 3 | 0 | 2 |
+| 3 | 0 | 1 | 0 | 1 | 1 |
++---+---+---+---+---+---+
+Instant Runoff winner is {0}
+PluralityWRunoff winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="coombs">
+<h2>Coombs<a class="headerlink" href="#coombs" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.coombs">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">coombs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#coombs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.coombs" title="Permalink to this definition">#</a></dt>
+<dd><p>If there is a majority winner then that candidate is the Coombs winner.     If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If there is  more than one candidate with the largest number of last-place votes, then <em>all</em> such candidates are removed from the profile.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.coombs_with_tb()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.coomb_put()</span></code>, <a class="reference internal" href="#pref_voting.iterative_methods.coombs_with_explanation" title="pref_voting.iterative_methods.coombs_with_explanation"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.coombs_with_explanation()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">coombs</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Coombs winner is {2}
+Instant Runoff winner is {1}
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="coombs-tb">
+<h3>Coombs TB<a class="headerlink" href="#coombs-tb" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.coombs_tb">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">coombs_tb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tie_breaker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#coombs_tb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.coombs_tb" title="Permalink to this definition">#</a></dt>
+<dd><p>Coombs with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,….,num_cands-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>tie_breaker</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of the candidates in the profile to be used as a tiebreaker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">coombs</span><span class="p">,</span> <span class="n">coombs_tb</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 1, 0]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+
+| 1 | 1 | 1 | 2 | 1 |
++---+---+---+---+---+
+| 2 | 0 | 1 | 2 | 0 |
+| 0 | 2 | 0 | 1 | 1 |
+| 1 | 1 | 2 | 0 | 2 |
++---+---+---+---+---+
+no tiebreaker
+Coombs winners are {0, 1, 2}
+tie_breaker = [0, 1, 2]
+Coombs TB winner is {2}
+tie_breaker = [2, 1, 0]
+Coombs TB winner is {0}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="coombs-put">
+<h3>Coombs PUT<a class="headerlink" href="#coombs-put" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.coombs_put">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">coombs_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#coombs_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.coombs_put" title="Permalink to this definition">#</a></dt>
+<dd><p>Coombs with parallel universe tie-breaking (PUT).  Apply the Coombs method with a tie-breaker for each possible linear order over the candidates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will take a long time on profiles with many candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">coombs</span><span class="p">,</span> <span class="n">coombs_tb</span><span class="p">,</span> <span class="n">coombs_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 2, 1]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 0, 2]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 2, 0]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 0, 1]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 1, 0]&quot;</span><span class="p">)</span>
+<span class="n">coombs_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">coombs_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 2 | 1 | 1 |
++---+---+---+
+| 2 | 1 | 0 |
+| 0 | 0 | 1 |
+| 1 | 2 | 2 |
++---+---+---+
+no tiebreaker
+Coombs winner is {0}
+tie_breaker = [0, 1, 2]
+Coombs TB winner is {2}
+tie_breaker = [0, 2, 1]
+Coombs TB winner is {0}
+tie_breaker = [1, 0, 2]
+Coombs TB winner is {2}
+tie_breaker = [1, 2, 0]
+Coombs TB winner is {0}
+tie_breaker = [2, 0, 1]
+Coombs TB winner is {0}
+tie_breaker = [2, 1, 0]
+Coombs TB winner is {0}
+
+Coombs PUT winners are {0, 2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="coombs-with-explanation">
+<h3>Coombs with Explanation<a class="headerlink" href="#coombs-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.coombs_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">coombs_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#coombs_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.coombs_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Coombs with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A sorted list of candidates</p>
+<p>A list describing the order in which candidates are eliminated</p>
+</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">coombs</span><span class="p">,</span> <span class="n">coombs_with_explanation</span>
+
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">coombs_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">coombs</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">coombs_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Coombs winner is {2}
+winning set: [2]
+order of elimination: [[0]]
++---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 1 | 2 | 2 | 1 |
+| 0 | 3 | 0 | 2 |
+| 3 | 1 | 3 | 3 |
+| 2 | 0 | 1 | 0 |
++---+---+---+---+
+Coombs winner is {2}
+winning set: [2]
+order of elimination: [[0], [1]]
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="baldwin">
+<h2>Baldwin<a class="headerlink" href="#baldwin" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.baldwin">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">baldwin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#baldwin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.baldwin" title="Permalink to this definition">#</a></dt>
+<dd><p>Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Baldwin is a Condorcet consistent voting method means that if a Condorcet winner exists, then Baldwin will elect the Condorcet winner.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.baldwin_with_tb()</span></code>, <a class="reference internal" href="#pref_voting.iterative_methods.baldwin" title="pref_voting.iterative_methods.baldwin"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.baldwin()</span></code></a>, <a class="reference internal" href="#pref_voting.iterative_methods.baldwin_with_explanation" title="pref_voting.iterative_methods.baldwin_with_explanation"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.baldwin_with_explanation()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">baldwin</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">baldwin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 2 | 1 | 1 |
++---+---+---+
+| 1 | 3 | 2 |
+| 0 | 1 | 0 |
+| 2 | 0 | 3 |
+| 3 | 2 | 1 |
++---+---+---+
+Baldwin winner is {1}
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="baldwin-tb">
+<h3>Baldwin TB<a class="headerlink" href="#baldwin-tb" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.baldwin_tb">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">baldwin_tb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tie_breaker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#baldwin_tb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.baldwin_tb" title="Permalink to this definition">#</a></dt>
+<dd><p>Baldwin with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,….,num_cands-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>tie_breaker</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of the candidates in the profile to be used as a tiebreaker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">baldwin</span><span class="p">,</span> <span class="n">baldwin_tb</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">baldwin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2, 3]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 1, 0, 3]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 0 | 1 | 2 |
+| 2 | 3 | 3 |
+| 1 | 0 | 0 |
+| 3 | 2 | 1 |
++---+---+---+
+no tiebreaker
+Baldwin winner is {0}
+tie_breaker = [0, 1, 2, 3]
+Baldwin TB winner is {2}
+tie_breaker = [2, 1, 0, 3]
+Baldwin TB winner is {3}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="baldwin-put">
+<h3>Baldwin PUT<a class="headerlink" href="#baldwin-put" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.baldwin_put">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">baldwin_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#baldwin_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.baldwin_put" title="Permalink to this definition">#</a></dt>
+<dd><p>Baldwin with parallel universe tie-breaking (PUT).  Apply the Baldwin method with a tie-breaker for each possible linear order over the candidates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will take a long time on profiles with many candidates.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">baldwin</span><span class="p">,</span> <span class="n">baldwin_tb</span><span class="p">,</span> <span class="n">baldwin_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no tiebreaker&quot;</span><span class="p">)</span>
+<span class="n">baldwin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 1, 2]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [0, 2, 1]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 0, 2]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [1, 2, 0]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 0, 1]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tie_breaker = [2, 1, 0]&quot;</span><span class="p">)</span>
+<span class="n">baldwin_tb</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">baldwin_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 3 | 2 |
++---+---+---+
+| 1 | 0 | 2 |
+| 2 | 1 | 0 |
+| 0 | 2 | 1 |
++---+---+---+
+no tiebreaker
+Baldwin winner is {0}
+tie_breaker = [0, 1, 2]
+Baldwin TB winner is {2}
+tie_breaker = [0, 2, 1]
+Baldwin TB winner is {0}
+tie_breaker = [1, 0, 2]
+Baldwin TB winner is {2}
+tie_breaker = [1, 2, 0]
+Baldwin TB winner is {0}
+tie_breaker = [2, 0, 1]
+Baldwin TB winner is {0}
+tie_breaker = [2, 1, 0]
+Baldwin TB winner is {0}
+
+Baldwin PUT winners are {0, 2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="baldwin-with-explanation">
+<h3>Baldwin with Explanation<a class="headerlink" href="#baldwin-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.baldwin_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">baldwin_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#baldwin_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.baldwin_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A sorted list of candidates</p>
+<p>A list describing for each round, the candidates that are eliminated and the Borda scores of the remaining candidates (in the profile restricted to candidates that have not been eliminated)</p>
+</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">baldwin</span><span class="p">,</span> <span class="n">baldwin_with_explanation</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">baldwin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">baldwin_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">baldwin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">baldwin_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;winning set: </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order of elimination: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
++---+---+---+
+Baldwin winner is {2}
+winning set: [2]
+order of elimination: [[[0], {0: 4, 1: 5, 2: 6}], [[1], {1: 2, 2: 3}]]
++---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 1 | 2 | 2 | 1 |
+| 0 | 3 | 0 | 2 |
+| 3 | 1 | 3 | 3 |
+| 2 | 0 | 1 | 0 |
++---+---+---+---+
+Baldwin winners are {1, 2}
+winning set: [1, 2]
+order of elimination: [[[0], {0: 4, 1: 7, 2: 8, 3: 5}], [[3], {1: 4, 2: 5, 3: 3}], [[1, 2], {1: 2, 2: 2}]]
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="nanson">
+<h2>Nanson<a class="headerlink" href="#nanson" title="Permalink to this heading">#</a></h2>
+<section id="strict-nanson">
+<h3>Strict Nanson<a class="headerlink" href="#strict-nanson" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.strict_nanson">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">strict_nanson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#strict_nanson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.strict_nanson" title="Permalink to this definition">#</a></dt>
+<dd><p>Iteratively remove all candidates with the  Borda score strictly below the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Strict Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Strict Nanson will elect the Condorcet winner.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.iterative_methods.strict_nanson_with_explanation" title="pref_voting.iterative_methods.strict_nanson_with_explanation"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.strict_nanson_with_explanation()</span></code></a>, <a class="reference internal" href="#pref_voting.iterative_methods.weak_nanson" title="pref_voting.iterative_methods.weak_nanson"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.weak_nanson()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">strict_nanson</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">strict_nanson</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 0 |
+| 1 | 2 | 3 | 3 |
+| 0 | 1 | 0 | 2 |
+| 3 | 3 | 2 | 1 |
++---+---+---+---+
+Strict Nanson winner is {0}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="strict-nanson-with-explanation">
+<h3>Strict Nanson with Explanation<a class="headerlink" href="#strict-nanson-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.strict_nanson_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">strict_nanson_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#strict_nanson_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.strict_nanson_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A sorted list of candidates</p>
+<p>A list describing for each round, the candidates that are eliminated and the Borda scores of the remaining candidates (in the profile restricted to candidates that have not been eliminated)</p>
+</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">strict_nanson_with_explanation</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">strict_nanson_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 0 |
+| 1 | 2 | 3 | 3 |
+| 0 | 1 | 0 | 2 |
+| 3 | 3 | 2 | 1 |
++---+---+---+---+
+([0], [{&#39;avg_borda_score&#39;: 7.5, &#39;elim_cands&#39;: [3], &#39;borda_scores&#39;: {0: 9, 1: 8, 2: 9, 3: 4}}, {&#39;avg_borda_score&#39;: 5.0, &#39;elim_cands&#39;: [1], &#39;borda_scores&#39;: {0: 5, 1: 4, 2: 6}}, {&#39;avg_borda_score&#39;: 2.5, &#39;elim_cands&#39;: [2], &#39;borda_scores&#39;: {0: 3, 2: 2}}])
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="weak-nanson">
+<h3>Weak Nanson<a class="headerlink" href="#weak-nanson" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.weak_nanson">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">weak_nanson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#weak_nanson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.weak_nanson" title="Permalink to this definition">#</a></dt>
+<dd><p>Iteratively remove all candidates with Borda score less than or equal the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Weak Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Weak Nanson will elect the Condorcet winner.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pref_voting.iterative_methods.weak_nanson_with_explanation" title="pref_voting.iterative_methods.weak_nanson_with_explanation"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.weak_nanson_with_explanation()</span></code></a>, <a class="reference internal" href="#pref_voting.iterative_methods.strict_nanson" title="pref_voting.iterative_methods.strict_nanson"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.strict_nanson()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">weak_nanson</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">weak_nanson</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 0 |
+| 1 | 2 | 3 | 3 |
+| 0 | 1 | 0 | 2 |
+| 3 | 3 | 2 | 1 |
++---+---+---+---+
+Weak Nanson winner is {2}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="weak-nanson-with-explanation">
+<h3>Weak Nanson with Explanation<a class="headerlink" href="#weak-nanson-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.weak_nanson_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">weak_nanson_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#weak_nanson_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.weak_nanson_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A sorted list of candidates</p>
+<p>A list describing for each round, the candidates that are eliminated and the Borda scores of the remaining candidates (in the profile restricted to candidates that have not been eliminated)</p>
+</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">weak_nanson_with_explanation</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weak_nanson_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 1 | 0 |
+| 1 | 2 | 3 | 3 |
+| 0 | 1 | 0 | 2 |
+| 3 | 3 | 2 | 1 |
++---+---+---+---+
+([2], [{&#39;avg_borda_score&#39;: 7.5, &#39;elim_cands&#39;: [3], &#39;borda_scores&#39;: {0: 9, 1: 8, 2: 9, 3: 4}}, {&#39;avg_borda_score&#39;: 5.0, &#39;elim_cands&#39;: [0, 1], &#39;borda_scores&#39;: {0: 5, 1: 4, 2: 6}}])
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="iterative-removal-of-condorcet-loser">
+<h2>Iterative Removal of Condorcet Loser<a class="headerlink" href="#iterative-removal-of-condorcet-loser" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.iterated_removal_cl">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">iterated_removal_cl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#iterated_removal_cl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.iterated_removal_cl" title="Permalink to this definition">#</a></dt>
+<dd><p>Iteratively remove candidates that are Condorcet losers until there are no Condorcet losers.   A candidate <span class="math notranslate nohighlight">\(c\)</span> is a <strong>Condorcet loser</strong> when every other candidate is majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><em>MajorityGraph</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>condorcet_loser</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="profiles.html#pref_voting.profiles.Profile.condorcet_loser" title="pref_voting.profiles.Profile.condorcet_loser"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.profiles.Profile.condorcet_loser()</span></code></a>,  <a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.condorcet_loser" title="pref_voting.profiles_with_ties.ProfileWithTies.condorcet_loser"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.profiles_with_ties.ProfileWithTies.condorcet_loser()</span></code></a>, <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser" title="pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.profiles_with_ties</span> <span class="kn">import</span> <span class="n">ProfileWithTies</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">iterated_removal_cl</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">iterated_removal_cl</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">iterated_removal_cl</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_graph</span><span class="p">())</span>
+<span class="n">iterated_removal_cl</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">margin_graph</span><span class="p">())</span>
+
+<span class="n">prof2</span> <span class="o">=</span> <span class="n">ProfileWithTies</span><span class="p">([{</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">},</span> <span class="p">{</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">},</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">}],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof2</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">iterated_removal_cl</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 2 | 3 | 1 |
+| 1 | 1 | 1 | 2 |
+| 3 | 0 | 2 | 3 |
+| 0 | 3 | 0 | 0 |
++---+---+---+---+
+Iterated Removal Condorcet Loser winners are {1, 2}
+Iterated Removal Condorcet Loser winners are {1, 2}
+Iterated Removal Condorcet Loser winners are {1, 2}
++-----+---+---+---+
+|  1  | 1 | 1 | 1 |
++-----+---+---+---+
+| 2 1 | 2 | 3 | 1 |
+|  3  | 1 | 1 | 2 |
+|  0  | 0 | 2 | 3 |
+|     | 3 | 0 | 0 |
++-----+---+---+---+
+Iterated Removal Condorcet Loser winner is {1}
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="iterative-removal-of-condorcet-loser-with-explanation">
+<h3>Iterative Removal of Condorcet Loser with Explanation<a class="headerlink" href="#iterative-removal-of-condorcet-loser-with-explanation" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.iterated_removal_cl_with_explanation">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">iterated_removal_cl_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#iterated_removal_cl_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.iterated_removal_cl_with_explanation" title="Permalink to this definition">#</a></dt>
+<dd><p>Iterated Removal Condorcet Loser with an explanation. In addition to the winner(s), return the order of elimination, where each candidate in the list is a Condorcet loser in the profile (restricted to the remaining candidates).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><em>MajorityGraph</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data that has a <cite>condorcet_loser</cite> method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">iterated_removal_cl_with_explanation</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">ws</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">iterated_removal_cl_with_explanation</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The winning set is </span><span class="si">{</span><span class="n">ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The order of elimination is </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 2 | 3 | 1 |
+| 1 | 1 | 1 | 2 |
+| 3 | 0 | 2 | 3 |
+| 0 | 3 | 0 | 0 |
++---+---+---+---+
+The winning set is [1, 2]
+The order of elimination is [0, 3]
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="iterative-removal-of-split-cycle-losers">
+<h2>Iterative Removal of Split Cycle Losers<a class="headerlink" href="#iterative-removal-of-split-cycle-losers" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.iterated_split_cycle">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">iterated_split_cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#iterated_split_cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.iterated_split_cycle" title="Permalink to this definition">#</a></dt>
+<dd><p>Iteratively remove candidates that are not Split Cycle winners until there is a unique winner or all remaining candidates are Split Cycle winners.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edata</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a><em>, </em><a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><em>MajorityGraph</em></a><em>, </em><a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><em>MarginGraph</em></a>) – Any election data with a margin method.</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A sorted list of candidates</p>
+</dd>
+<dt class="field-even">Example<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">iterated_split_cycle</span>
+<span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">split_cycle_faster</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">split_cycle_faster</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">iterated_split_cycle</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 2 |
++---+---+---+---+---+---+
+| 2 | 2 | 3 | 2 | 3 | 1 |
+| 0 | 3 | 1 | 1 | 0 | 2 |
+| 3 | 0 | 2 | 3 | 1 | 3 |
+| 1 | 1 | 0 | 0 | 2 | 0 |
++---+---+---+---+---+---+
+Split Cycle winners are {1, 2}
+Iterated Split Cycle winner is {1}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="c1_methods.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">C1 Methods</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="scoring_methods.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Positional Scoring Rules</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Iterative Methods</a><ul>
+<li><a class="reference internal" href="#instant-runoff">Instant Runoff</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff"><code class="docutils literal notranslate"><span class="pre">instant_runoff()</span></code></a></li>
+<li><a class="reference internal" href="#instant-runoff-tb">Instant Runoff TB</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_tb"><code class="docutils literal notranslate"><span class="pre">instant_runoff_tb()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instant-runoff-put">Instant Runoff PUT</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_put"><code class="docutils literal notranslate"><span class="pre">instant_runoff_put()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instant-runoff-with-explanation">Instant Runoff with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_with_explanation"><code class="docutils literal notranslate"><span class="pre">instant_runoff_with_explanation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plurality-with-runoff">Plurality With Runoff</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.plurality_with_runoff"><code class="docutils literal notranslate"><span class="pre">plurality_with_runoff()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coombs">Coombs</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.coombs"><code class="docutils literal notranslate"><span class="pre">coombs()</span></code></a></li>
+<li><a class="reference internal" href="#coombs-tb">Coombs TB</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.coombs_tb"><code class="docutils literal notranslate"><span class="pre">coombs_tb()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coombs-put">Coombs PUT</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.coombs_put"><code class="docutils literal notranslate"><span class="pre">coombs_put()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coombs-with-explanation">Coombs with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.coombs_with_explanation"><code class="docutils literal notranslate"><span class="pre">coombs_with_explanation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#baldwin">Baldwin</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.baldwin"><code class="docutils literal notranslate"><span class="pre">baldwin()</span></code></a></li>
+<li><a class="reference internal" href="#baldwin-tb">Baldwin TB</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.baldwin_tb"><code class="docutils literal notranslate"><span class="pre">baldwin_tb()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#baldwin-put">Baldwin PUT</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.baldwin_put"><code class="docutils literal notranslate"><span class="pre">baldwin_put()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#baldwin-with-explanation">Baldwin with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.baldwin_with_explanation"><code class="docutils literal notranslate"><span class="pre">baldwin_with_explanation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nanson">Nanson</a><ul>
+<li><a class="reference internal" href="#strict-nanson">Strict Nanson</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.strict_nanson"><code class="docutils literal notranslate"><span class="pre">strict_nanson()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#strict-nanson-with-explanation">Strict Nanson with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.strict_nanson_with_explanation"><code class="docutils literal notranslate"><span class="pre">strict_nanson_with_explanation()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#weak-nanson">Weak Nanson</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.weak_nanson"><code class="docutils literal notranslate"><span class="pre">weak_nanson()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#weak-nanson-with-explanation">Weak Nanson with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.weak_nanson_with_explanation"><code class="docutils literal notranslate"><span class="pre">weak_nanson_with_explanation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#iterative-removal-of-condorcet-loser">Iterative Removal of Condorcet Loser</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.iterated_removal_cl"><code class="docutils literal notranslate"><span class="pre">iterated_removal_cl()</span></code></a></li>
+<li><a class="reference internal" href="#iterative-removal-of-condorcet-loser-with-explanation">Iterative Removal of Condorcet Loser with Explanation</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.iterated_removal_cl_with_explanation"><code class="docutils literal notranslate"><span class="pre">iterated_removal_cl_with_explanation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#iterative-removal-of-split-cycle-losers">Iterative Removal of Split Cycle Losers</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.iterated_split_cycle"><code class="docutils literal notranslate"><span class="pre">iterated_split_cycle()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

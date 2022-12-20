@@ -144,7 +144,7 @@ class Ranking(object):
     def first(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the best ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.value()) if cs is None else [self.rmap[c] for c in cs]
+        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs]
         _cands = list(self.rmap.keys()) if cs is None else cs
         min_rank = min(_ranks)
         return sorted([c for c in _cands if self.rmap[c] == min_rank])
@@ -690,14 +690,15 @@ class ProfileWithTies(object):
         """
         rankings, rcounts = self.rankings_counts
         
-        report = dict()
+        rs = dict()
         for r, c in zip(rankings, rcounts): 
-            if str(r) in report.keys(): 
-                report[str(r)] += c
+            if str(r) in rs.keys(): 
+                rs[str(r)] += c
             else: 
-                report[str(r)] = c
+                rs[str(r)] = c
                 
-        return report
+        for r,c in rs: 
+            print(f"{r} {c}")
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
         """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).

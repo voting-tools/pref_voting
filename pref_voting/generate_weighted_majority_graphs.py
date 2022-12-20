@@ -135,7 +135,7 @@ def generate_covariance_matrix(num_candidates):
 def generate_edge_ordered_tournament_infinite_limit(num_candidates): 
     """
     Using the ideas from Section 9 of the paper 
-    *An Analysis of Random Elections with Large Numbers of Voters∗ by Matthew Harrison-Trainor 
+    *An Analysis of Random Elections with Large Numbers of Voters* by Matthew Harrison-Trainor 
     (https://arxiv.org/abs/2009.02979) and the code provided at  
     https://github.com/MatthewHT/RandomMarginGraphs/, generate a qualitative margin graph for 
     ``num_candidates`` candidates.
