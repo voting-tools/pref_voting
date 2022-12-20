@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Profiles with Ties" href="profiles_with_ties.html" /><link rel="prev" title="Overview" href="edata_overview.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>Profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -212,7 +212,7 @@
           <div class="tex2jax_ignore mathjax_ignore section" id="profiles">
 <h1>Profiles<a class="headerlink" href="#profiles" title="Permalink to this headline">#</a></h1>
 <p>Suppose that <span class="math notranslate nohighlight">\(X\)</span> is a set of <span class="math notranslate nohighlight">\(n\)</span> candidates.  A <strong>strict linear order</strong> of <span class="math notranslate nohighlight">\(X\)</span>, also called a <strong>ranking</strong> of <span class="math notranslate nohighlight">\(X\)</span>, is a relation <span class="math notranslate nohighlight">\(R\subseteq X\times X\)</span> that is</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p><em>asymmteric</em>: for all <span class="math notranslate nohighlight">\(x, y\in X\)</span>, if <span class="math notranslate nohighlight">\(x\mathrel{R} y\)</span> then not-<span class="math notranslate nohighlight">\(y\mathrel{R}x\)</span>,</p></li>
 <li><p><em>transitive</em>: for all <span class="math notranslate nohighlight">\(x, y,z\in X\)</span>, if <span class="math notranslate nohighlight">\(x\mathrel{R} y\)</span>  and <span class="math notranslate nohighlight">\(y\mathrel{R} z\)</span> then <span class="math notranslate nohighlight">\(x\mathrel{R}z\)</span>; and</p></li>
 <li><p><em>complete</em>: for all <span class="math notranslate nohighlight">\(x,y\in X\)</span>, either <span class="math notranslate nohighlight">\(x\mathrel{R} y\)</span> or <span class="math notranslate nohighlight">\(y\mathrel{R}x\)</span>.</p></li>
@@ -220,7 +220,7 @@
 <p>When <span class="math notranslate nohighlight">\(x\mathrel{R}y\)</span>, we say “<span class="math notranslate nohighlight">\(x\)</span> is ranked above <span class="math notranslate nohighlight">\(y\)</span>” or “<span class="math notranslate nohighlight">\(x\)</span> is preferred to <span class="math notranslate nohighlight">\(y\)</span>”.   Let <span class="math notranslate nohighlight">\(\mathcal{L}(X)\)</span> be the set of all strict linear orders over <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>An <strong>anonymous profile</strong> is function <span class="math notranslate nohighlight">\(\mathbf{P}:\mathcal{L}(X)\rightarrow \mathbb{N}\)</span> assigning a non-negative number to each ranking.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Profile</span></code> class represents an anonymous profile.  There are two important assumptions when defining a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>When there are <span class="math notranslate nohighlight">\(n\)</span> candidates,  the  candidates are <span class="math notranslate nohighlight">\(0, 1, 2, \ldots, n-1\)</span>.</p></li>
 <li><p>A strict linear order of <span class="math notranslate nohighlight">\(X\)</span> is represented by a list of elements from <span class="math notranslate nohighlight">\(X\)</span> of length <span class="math notranslate nohighlight">\(n\)</span> in which each element of <span class="math notranslate nohighlight">\(X\)</span> appears in the list. For instance, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0,</span> <span class="pre">2]</span></code> represents the rankings <span class="math notranslate nohighlight">\(L\)</span> where:
 <span class="math notranslate nohighlight">\(1\mathrel{L} 2, 0\mathrel{L}2, \mbox{ and } 1\mathrel{L} 2.\)</span></p></li>
@@ -241,7 +241,7 @@ The candidates are [0, 1, 2]
 </pre></div>
 </div>
 <p>There are two optional keyword parameters for a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>:</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">rcounts</span></code> is a list of integers specifying the number of voters with a given ranking.  If <code class="docutils literal notranslate"><span class="pre">rankings</span></code> is the list of rankings, then it is assumed that the number of voters that submitted ranking <code class="docutils literal notranslate"><span class="pre">rankings[i]</span></code> is <code class="docutils literal notranslate"><span class="pre">rcounts[i]</span></code>.  If <code class="docutils literal notranslate"><span class="pre">rcounts</span></code> is not provided, the default value is 1 for each ranking.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cmap</span></code> is a dictionary mapping the candidates to their name.   This is used when displaying a profile.</p></li>
 </ol>
@@ -270,7 +270,7 @@ The candidates are [0, 1, 2]
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>There are two things to keep in mind when defining a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
-<ol class="arabic">
+<ol>
 <li><p>The length of <code class="docutils literal notranslate"><span class="pre">rcounts</span></code> must be the equal to the number of rankings used to define the profile.</p></li>
 <li><p>You cannot skip a number when defining the rankings. That is, the following will produce an error:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
@@ -283,7 +283,7 @@ The candidates are [0, 1, 2]
 </div>
 <div class="section" id="profile-methods">
 <h2>Profile Methods<a class="headerlink" href="#profile-methods" title="Permalink to this headline">#</a></h2>
-<p>See the <span class="xref myst">next section</span> for a complete list of the methods associated with a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
+<p>See the <a class="reference external" href="#profile-class">next section</a> for a complete list of the methods associated with a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
 <div class="section" id="margins">
 <h3>Margins<a class="headerlink" href="#margins" title="Permalink to this headline">#</a></h3>
 <p>The <strong>margin</strong> of <span class="math notranslate nohighlight">\(x\)</span> over <span class="math notranslate nohighlight">\(y\)</span> in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is</p>
@@ -318,7 +318,7 @@ The margin of 2 over 1 is -5
 </pre></div>
 </div>
 <p>There are a number of other methods that related to the margins of a profile.</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p><span class="math notranslate nohighlight">\(x\)</span> is <strong>majority preferred</strong> to <span class="math notranslate nohighlight">\(y\)</span> in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> if <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(x,y) &gt; 0\)</span></p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
@@ -341,7 +341,7 @@ The margin of 2 over 1 is -5
 1 is majority prefered over 2 is True
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
+<ol class="simple">
 <li><p>The <strong>margin matrix</strong> for a profile <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>  is a matrix where the <span class="math notranslate nohighlight">\((i,j)\)</span>-entry is <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(i,j)\)</span>.</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
@@ -368,13 +368,13 @@ The margin matrix for the profile is: [[0, 3, -1], [-3, 0, 5], [1, -5, 0]]
 +----+----+----+
 </pre></div>
 </div>
-<ol class="arabic simple" start="3">
+<ol class="simple">
 <li><p>The <a class="reference internal" href="margin_graphs.html"><span class="doc std std-doc"><strong>margin graph</strong></span></a> is created using <code class="docutils literal notranslate"><span class="pre">.margin_graph()</span></code> and can be displayed using <code class="docutils literal notranslate"><span class="pre">.display_margin_graph()</span></code>.</p></li>
 </ol>
 </div>
 <div class="section" id="voting-theoretic-attributes-of-profiles">
 <h3>Voting-Theoretic Attributes of Profiles<a class="headerlink" href="#voting-theoretic-attributes-of-profiles" title="Permalink to this headline">#</a></h3>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>Condorcet candidates:</p>
 <ul class="simple">
 <li><p>A candidate <span class="math notranslate nohighlight">\(x\)</span> is a  <strong>Condorcet winner</strong> if <span class="math notranslate nohighlight">\(x\)</span> is majority preferred to every other candidate.</p></li>
@@ -454,7 +454,7 @@ The Condorcet loser is None
 The weak Condorcet winner(s) is(are) [0]
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
+<ol class="simple">
 <li><p>Scoring candidates:</p>
 <ul class="simple">
 <li><p>The <strong>Plurality score</strong> of a candidate <span class="math notranslate nohighlight">\(c\)</span> in a profile <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is the number of voters that rank <span class="math notranslate nohighlight">\(c\)</span> is first place.</p></li>
@@ -490,7 +490,7 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 <h2>Profile Class<a class="headerlink" href="#profile-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rankings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcounts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rankings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcounts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile" title="Permalink to this definition">#</a></dt>
 <dd><p>An anonymous profile of linear rankings of <span class="math notranslate nohighlight">\(n\)</span> candidates.  It is assumed that the candidates are named <span class="math notranslate nohighlight">\(0, 1, \ldots, n-1\)</span> and a ranking of the candidates is a list of candidate names.  For instance, the list <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2,</span> <span class="pre">1]</span></code> represents the ranking in which <span class="math notranslate nohighlight">\(0\)</span> is ranked above <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(2\)</span> is ranked above <span class="math notranslate nohighlight">\(1\)</span>, and <span class="math notranslate nohighlight">\(0\)</span> is ranked above <span class="math notranslate nohighlight">\(1\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -562,7 +562,7 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.counts">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">counts</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.counts" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of the counts of  the rankings in the profile.   The type is a list of integers.</p>
 </dd></dl>
 
@@ -646,7 +646,7 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.from_string">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile.from_string" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile.from_string" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a profile described by <code class="docutils literal notranslate"><span class="pre">e_str</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">e_str</span></code> must be in the format produced by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">pref_voting.Profile.write()</span></code> function.</p>
 </dd></dl>
@@ -759,13 +759,13 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.rankings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rankings</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.rankings" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rankings</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.rankings" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of all the rankings in the profile .   The type is a list of tuples of integers.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.rankings_counts">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rankings_counts</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.rankings_counts" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rankings_counts</span></span><a class="headerlink" href="#pref_voting.profiles.Profile.rankings_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the submitted rankings and the list of counts.</p>
 </dd></dl>
 
@@ -1024,7 +1024,7 @@ The string encoding:
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="C1 Methods" href="c1_methods.html" /><link rel="prev" title="Positional Scoring Rules" href="scoring_methods.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>Iterative Methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -212,7 +212,7 @@
           <div class="tex2jax_ignore mathjax_ignore section" id="iterative-methods">
 <h1>Iterative Methods<a class="headerlink" href="#iterative-methods" title="Permalink to this headline">#</a></h1>
 <p>The voting methods defined below all follow a similar procedure: iteratively remove “poorly performing” candidates from the profile until there is a candidate with that is the majority winner. The voting methods differ in how they answer the following two questions:</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>What does it mean for a candidate to “perform poorly”?  Different definitions of a poorly performing candidate include the fewest number of first-place votes, the most last-place votes, the least Borda score, etc.</p></li>
 <li><p>How to break ties when there are more than one candidate that is identified as “poorly performing”?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).   A second approach is to use so-called <em>parallel-universe tiebreaking</em>. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).</p></li>
 </ol>
@@ -1531,7 +1531,7 @@ Iterated Split Cycle winner is {1}
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

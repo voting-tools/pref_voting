@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Generate Weighted Majority Graphs" href="generate_weighted_majority_graphs.html" /><link rel="prev" title="(Weighted) Majority Graphs" href="margin_graphs.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>Generate Profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -212,7 +212,7 @@
           <div class="tex2jax_ignore mathjax_ignore section" id="generate-profiles">
 <h1>Generate Profiles<a class="headerlink" href="#generate-profiles" title="Permalink to this headline">#</a></h1>
 <p>We have included  the following probability models:</p>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>IC:  Impartial Culture Model - generate a profile by sampling  from a uniform distribution over profiles with <span class="math notranslate nohighlight">\(n\)</span> candidates and <span class="math notranslate nohighlight">\(m\)</span> voters.   This is the default probaiblity that used to generate a profile.</p></li>
 <li><p>URN: Urn model -  In the Polya-Eggenberger urn model, to generate a profile given a parameter <span class="math notranslate nohighlight">\(\alpha\in [0,\infty)\)</span>, each voter in turn randomly draws a linear order from an urn. Initially the urn is the set of all linear orders on the <span class="math notranslate nohighlight">\(n\)</span> candidates. If a voter randomly chooses <span class="math notranslate nohighlight">\(L\)</span> from the urn, we return <span class="math notranslate nohighlight">\(L\)</span> to the urn plus <span class="math notranslate nohighlight">\(\alpha n!\)</span> copies of <span class="math notranslate nohighlight">\(L\)</span>. IC is the special case where <span class="math notranslate nohighlight">\(\alpha=0\)</span>. The Impartial Anonymous Culture (IAC) is the special case where <span class="math notranslate nohighlight">\(\alpha=1/n!\)</span>.</p>
 <ul class="simple">
@@ -251,72 +251,72 @@
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Profile generated using the IC probability model
-+---+---+---+---+
-| 1 | 1 | 2 | 1 |
-+---+---+---+---+
-| 2 | 2 | 1 | 1 |
-| 1 | 0 | 0 | 2 |
-| 0 | 1 | 2 | 0 |
-+---+---+---+---+
++---+---+---+
+| 3 | 1 | 1 |
++---+---+---+
+| 0 | 1 | 1 |
+| 1 | 2 | 0 |
+| 2 | 0 | 2 |
++---+---+---+
 
 
 Profile generated using the IAC probability model
-+---+---+
-| 4 | 1 |
-+---+---+
-| 2 | 1 |
-| 0 | 0 |
-| 1 | 2 |
-+---+---+
++---+---+---+
+| 2 | 1 | 2 |
++---+---+---+
+| 0 | 2 | 0 |
+| 2 | 1 | 1 |
+| 1 | 0 | 2 |
++---+---+---+
 
 
 Profile generated using the MALLOWS-0.8 probability model
-+---+---+---+
-| 1 | 2 | 2 |
-+---+---+---+
-| 1 | 2 | 0 |
-| 0 | 0 | 2 |
-| 2 | 1 | 1 |
-+---+---+---+
++---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+
+| 0 | 1 | 1 | 2 | 2 |
+| 2 | 0 | 2 | 0 | 1 |
+| 1 | 2 | 0 | 1 | 0 |
++---+---+---+---+---+
 
 
 Profile generated using the MALLOWS-0.2 probability model
-+---+
-| 5 |
-+---+
-| 2 |
-| 1 |
-| 0 |
-+---+
++---+---+
+| 4 | 1 |
++---+---+
+| 2 | 0 |
+| 0 | 1 |
+| 1 | 2 |
++---+---+
 
 
 Profile generated using the MALLOWS-R probability model
-+---+---+
-| 2 | 3 |
-+---+---+
-| 1 | 0 |
-| 0 | 2 |
-| 2 | 1 |
-+---+---+
++---+---+---+---+
+| 1 | 1 | 1 | 2 |
++---+---+---+---+
+| 2 | 1 | 0 | 1 |
+| 0 | 0 | 1 | 2 |
+| 1 | 2 | 2 | 0 |
++---+---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-0.4 probability model
-+---+---+
-| 2 | 3 |
-+---+---+
-| 2 | 0 |
-| 1 | 2 |
-| 0 | 1 |
-+---+---+
++---+---+---+
+| 2 | 2 | 1 |
++---+---+---+
+| 0 | 2 | 0 |
+| 2 | 0 | 1 |
+| 1 | 1 | 2 |
++---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-0.375 probability model
 +---+---+
 | 4 | 1 |
 +---+---+
-| 0 | 0 |
-| 1 | 2 |
-| 2 | 1 |
+| 2 | 0 |
+| 0 | 2 |
+| 1 | 1 |
 +---+---+
 
 
@@ -324,75 +324,85 @@ Profile generated using the MALLOWS-RELPHI-0 probability model
 +---+
 | 5 |
 +---+
+| 1 |
 | 2 |
 | 0 |
-| 1 |
 +---+
 
 
 Profile generated using the MALLOWS-RELPHI-1 probability model
-+---+---+---+---+
-| 2 | 1 | 1 | 1 |
-+---+---+---+---+
-| 2 | 1 | 2 | 1 |
-| 0 | 2 | 1 | 0 |
-| 1 | 0 | 0 | 2 |
-+---+---+---+---+
++---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 1 | 0 |
+| 0 | 2 | 1 |
+| 1 | 0 | 2 |
++---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-R probability model
 +---+---+---+
 | 3 | 1 | 1 |
 +---+---+---+
-| 2 | 1 | 2 |
+| 1 | 1 | 0 |
 | 0 | 2 | 1 |
-| 1 | 0 | 0 |
+| 2 | 0 | 2 |
 +---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-R2 probability model
++---+---+
+| 4 | 1 |
++---+---+
+| 0 | 2 |
+| 2 | 0 |
+| 1 | 1 |
++---+---+
+
+
+Profile generated using the MALLOWS_2REF-0.8 probability model
++---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+
+| 2 | 1 | 2 | 0 | 1 |
+| 1 | 0 | 0 | 1 | 2 |
+| 0 | 2 | 1 | 2 | 0 |
++---+---+---+---+---+
+
+
+Profile generated using the MALLOWS_2REF-RELPHI-R probability model
++---+---+
+| 2 | 3 |
++---+---+
+| 2 | 1 |
+| 0 | 0 |
+| 1 | 2 |
++---+---+
+
+
+Profile generated using the MALLOWS_2REF-RELPHI-R2 probability model
++---+---+
+| 1 | 4 |
++---+---+
+| 0 | 1 |
+| 2 | 2 |
+| 1 | 0 |
++---+---+
+
+
+Profile generated using the URN-10 probability model
 +---+
 | 5 |
 +---+
 | 2 |
-| 0 |
 | 1 |
+| 0 |
 +---+
 
 
-Profile generated using the MALLOWS_2REF-0.8 probability model
-+---+---+---+
-| 3 | 1 | 1 |
-+---+---+---+
-| 0 | 0 | 2 |
-| 2 | 1 | 0 |
-| 1 | 2 | 1 |
-+---+---+---+
-
-
-Profile generated using the MALLOWS_2REF-RELPHI-R probability model
-+---+---+---+---+
-| 1 | 2 | 1 | 1 |
-+---+---+---+---+
-| 1 | 1 | 2 | 0 |
-| 2 | 0 | 1 | 2 |
-| 0 | 2 | 0 | 1 |
-+---+---+---+---+
-
-
-Profile generated using the MALLOWS_2REF-RELPHI-R2 probability model
-+---+---+---+---+---+
-| 1 | 1 | 1 | 1 | 1 |
-+---+---+---+---+---+
-| 0 | 2 | 1 | 2 | 0 |
-| 1 | 0 | 0 | 1 | 2 |
-| 2 | 1 | 2 | 0 | 1 |
-+---+---+---+---+---+
-
-
-Profile generated using the URN-10 probability model
+Profile generated using the URN-0.1 probability model
 +---+---+
-| 4 | 1 |
+| 3 | 2 |
 +---+---+
 | 1 | 1 |
 | 0 | 2 |
@@ -400,43 +410,33 @@ Profile generated using the URN-10 probability model
 +---+---+
 
 
-Profile generated using the URN-0.1 probability model
-+---+---+---+
-| 1 | 3 | 1 |
-+---+---+---+
-| 0 | 0 | 1 |
-| 1 | 2 | 2 |
-| 2 | 1 | 0 |
-+---+---+---+
-
-
 Profile generated using the URN-0.3 probability model
 +---+---+---+
-| 2 | 1 | 2 |
+| 1 | 2 | 2 |
 +---+---+---+
+| 1 | 2 | 0 |
 | 2 | 1 | 1 |
-| 1 | 0 | 2 |
-| 0 | 2 | 0 |
+| 0 | 0 | 2 |
 +---+---+---+
 
 
 Profile generated using the URN-R probability model
 +---+---+---+
-| 2 | 1 | 2 |
+| 3 | 1 | 1 |
 +---+---+---+
-| 2 | 1 | 1 |
-| 0 | 2 | 0 |
+| 2 | 2 | 1 |
 | 1 | 0 | 2 |
+| 0 | 1 | 0 |
 +---+---+---+
 
 
 Profile generated using the SinglePeaked probability model
 +---+---+---+
-| 1 | 3 | 1 |
+| 3 | 1 | 1 |
 +---+---+---+
-| 0 | 2 | 1 |
-| 1 | 1 | 0 |
-| 2 | 0 | 2 |
+| 2 | 1 | 0 |
+| 1 | 0 | 1 |
+| 0 | 2 | 2 |
 +---+---+---+
 </pre></div>
 </div>
@@ -479,53 +479,53 @@ Profile generated using the SinglePeaked probability model
 <span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+
-| 2 | 2 | 1 | 2 | 1 | 1 | 1 |
-+---+---+---+---+---+---+---+
-| 1 | 2 | 3 | 1 | 0 | 0 | 3 |
-| 3 | 3 | 2 | 0 | 2 | 1 | 1 |
-| 2 | 0 | 1 | 3 | 1 | 3 | 2 |
-| 0 | 1 | 0 | 2 | 3 | 2 | 0 |
-+---+---+---+---+---+---+---+
-+---+---+---+---+---+---+---+---+---+
-| 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 |
-+---+---+---+---+---+---+---+---+---+
-| 2 | 0 | 0 | 2 | 1 | 0 | 2 | 2 | 1 |
-| 3 | 3 | 3 | 3 | 0 | 1 | 1 | 1 | 3 |
-| 1 | 1 | 2 | 0 | 3 | 2 | 0 | 3 | 2 |
-| 0 | 2 | 1 | 1 | 2 | 3 | 3 | 0 | 0 |
-+---+---+---+---+---+---+---+---+---+
-+---+---+---+---+
-| 2 | 3 | 2 | 3 |
-+---+---+---+---+
-| 0 | 2 | 2 | 3 |
-| 2 | 0 | 3 | 2 |
-| 1 | 3 | 1 | 0 |
-| 3 | 1 | 0 | 1 |
-+---+---+---+---+
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+---+
+| 3 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+---+
-| 1 | 3 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 1 | 2 | 1 | 3 | 3 | 0 | 2 | 0 |
+| 2 | 1 | 2 | 2 | 2 | 2 | 0 | 1 |
+| 3 | 0 | 0 | 0 | 1 | 1 | 1 | 3 |
+| 0 | 3 | 3 | 1 | 0 | 3 | 3 | 2 |
 +---+---+---+---+---+---+---+---+
-| 3 | 0 | 1 | 2 | 0 | 0 | 0 | 0 |
-| 2 | 1 | 0 | 0 | 3 | 1 | 2 | 2 |
-| 0 | 2 | 2 | 1 | 2 | 3 | 1 | 3 |
-| 1 | 3 | 3 | 3 | 1 | 2 | 3 | 1 |
++---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 2 | 1 | 2 | 1 | 1 |
++---+---+---+---+---+---+---+---+
+| 2 | 1 | 3 | 0 | 0 | 3 | 0 | 0 |
+| 0 | 3 | 1 | 3 | 3 | 0 | 2 | 1 |
+| 1 | 2 | 0 | 2 | 1 | 1 | 3 | 3 |
+| 3 | 0 | 2 | 1 | 2 | 2 | 1 | 2 |
 +---+---+---+---+---+---+---+---+
 +---+---+---+---+---+
-| 1 | 5 | 1 | 2 | 1 |
+| 1 | 2 | 3 | 3 | 1 |
 +---+---+---+---+---+
-| 0 | 2 | 0 | 1 | 0 |
-| 2 | 1 | 2 | 2 | 3 |
-| 1 | 0 | 3 | 0 | 2 |
-| 3 | 3 | 1 | 3 | 1 |
+| 3 | 2 | 0 | 1 | 0 |
+| 0 | 1 | 1 | 3 | 2 |
+| 2 | 0 | 3 | 2 | 1 |
+| 1 | 3 | 2 | 0 | 3 |
++---+---+---+---+---+
++---+---+---+---+---+---+---+---+
+| 2 | 1 | 1 | 1 | 1 | 2 | 1 | 1 |
++---+---+---+---+---+---+---+---+
+| 3 | 3 | 3 | 1 | 2 | 2 | 1 | 3 |
+| 2 | 2 | 0 | 3 | 1 | 1 | 0 | 1 |
+| 1 | 0 | 2 | 2 | 0 | 3 | 3 | 2 |
+| 0 | 1 | 1 | 0 | 3 | 0 | 2 | 0 |
++---+---+---+---+---+---+---+---+
++---+---+---+---+---+
+| 4 | 1 | 3 | 1 | 1 |
++---+---+---+---+---+
+| 0 | 0 | 0 | 2 | 1 |
+| 1 | 1 | 3 | 0 | 0 |
+| 3 | 2 | 1 | 3 | 3 |
+| 2 | 3 | 2 | 1 | 2 |
 +---+---+---+---+---+
 +---+---+---+---+---+---+
-| 2 | 1 | 2 | 2 | 2 | 1 |
+| 1 | 4 | 2 | 1 | 1 | 1 |
 +---+---+---+---+---+---+
-| 2 | 1 | 3 | 1 | 0 | 1 |
-| 3 | 0 | 2 | 2 | 1 | 2 |
-| 1 | 2 | 1 | 0 | 2 | 3 |
-| 0 | 3 | 0 | 3 | 3 | 0 |
+| 1 | 2 | 0 | 1 | 3 | 2 |
+| 2 | 1 | 1 | 2 | 2 | 3 |
+| 3 | 0 | 2 | 0 | 1 | 1 |
+| 0 | 3 | 3 | 3 | 0 | 0 |
 +---+---+---+---+---+---+
 </pre></div>
 </div>
@@ -564,29 +564,29 @@ Profile generated using the SinglePeaked probability model
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
-| 1 | 2 | 5 | 2 |
+| 4 | 1 | 3 | 2 |
 +---+---+---+---+
-| 3 | 2 | 2 | 1 |
-| 1 | 3 | 3 | 2 |
-| 0 | 1 | 0 | 3 |
-| 2 | 0 | 1 | 0 |
+| 2 | 3 | 3 | 3 |
+| 1 | 2 | 2 | 1 |
+| 3 | 1 | 0 | 0 |
+| 0 | 0 | 1 | 2 |
 +---+---+---+---+
-+---+---+---+---+---+
-| 5 | 2 | 1 | 1 | 1 |
-+---+---+---+---+---+
-| 1 | 1 | 1 | 0 | 1 |
-| 2 | 3 | 2 | 1 | 3 |
-| 3 | 0 | 0 | 3 | 2 |
-| 0 | 2 | 3 | 2 | 0 |
-+---+---+---+---+---+
-+---+---+---+---+---+---+
-| 2 | 3 | 2 | 1 | 1 | 1 |
-+---+---+---+---+---+---+
-| 1 | 1 | 3 | 1 | 0 | 3 |
-| 2 | 0 | 2 | 0 | 3 | 0 |
-| 0 | 2 | 0 | 3 | 1 | 1 |
-| 3 | 3 | 1 | 2 | 2 | 2 |
-+---+---+---+---+---+---+
++---+---+---+---+---+---+---+
+| 1 | 2 | 1 | 2 | 2 | 1 | 1 |
++---+---+---+---+---+---+---+
+| 2 | 3 | 1 | 2 | 0 | 3 | 2 |
+| 1 | 1 | 0 | 3 | 2 | 2 | 3 |
+| 3 | 2 | 2 | 1 | 3 | 0 | 0 |
+| 0 | 0 | 3 | 0 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+
++---+---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 2 | 1 |
++---+---+---+---+---+---+---+---+---+
+| 1 | 1 | 2 | 0 | 3 | 2 | 3 | 1 | 3 |
+| 0 | 0 | 0 | 1 | 2 | 1 | 2 | 2 | 1 |
+| 2 | 3 | 1 | 3 | 1 | 3 | 0 | 0 | 2 |
+| 3 | 2 | 3 | 2 | 0 | 0 | 1 | 3 | 0 |
++---+---+---+---+---+---+---+---+---+
 </pre></div>
 </div>
 </dd></dl>
@@ -623,9 +623,9 @@ Profile generated using the SinglePeaked probability model
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+
 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+
-| 1 | 4 | 4 | 5 | 3 | 5 | 2 |
-| 0 |   | 3 | 0 | 0 |   | 3 |
-| 4 |   | 0 |   | 4 |   |   |
+| 3 | 5 | 0 | 3 | 2 | 5 | 2 |
+| 5 |   | 4 | 5 | 3 |   |   |
+| 4 |   | 3 |   | 0 |   |   |
 |   |   |   |   |   |   |   |
 |   |   |   |   |   |   |   |
 |   |   |   |   |   |   |   |
@@ -633,12 +633,12 @@ Profile generated using the SinglePeaked probability model
 +---+---+---+---+---+---+---+
 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+
-| 4 | 0 | 0 | 2 | 1 | 2 | 0 |
-| 5 | 2 | 2 | 4 | 2 | 5 |   |
-| 1 |   |   | 0 | 3 | 3 |   |
-|   |   |   | 5 |   | 0 |   |
-|   |   |   | 3 |   | 4 |   |
-|   |   |   | 1 |   | 1 |   |
+| 5 | 4 | 0 | 0 | 0 | 1 | 0 |
+| 4 | 2 | 3 | 5 |   | 3 |   |
+| 3 | 3 | 5 |   |   | 5 |   |
+| 0 | 5 | 1 |   |   |   |   |
+| 2 |   | 4 |   |   |   |   |
+| 1 |   | 2 |   |   |   |   |
 +---+---+---+---+---+---+---+
 </pre></div>
 </div>
@@ -727,7 +727,7 @@ Profile generated using the SinglePeaked probability model
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

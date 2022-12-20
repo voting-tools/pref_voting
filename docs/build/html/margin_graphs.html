@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Generate Profiles" href="generate_profiles.html" /><link rel="prev" title="Profiles with Ties" href="profiles_with_ties.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>(Weighted) Majority Graphs - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -215,7 +215,7 @@
 <h2>MajorityGraph Class<a class="headerlink" href="#majoritygraph-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MajorityGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MajorityGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="Permalink to this definition">#</a></dt>
 <dd><p>An majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> means that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(d\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -338,13 +338,13 @@ The cycles in the majority graph are [[0, 1, 2]]
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.edges">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.edges" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.edges" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of the edges in the majority graph.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.from_profile">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.from_profile" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.from_profile" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a majority graph from a <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -390,7 +390,7 @@ The cycles in the majority graph are [[0, 1, 2]]
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.is_tournament">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_tournament</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.is_tournament" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_tournament</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.is_tournament" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if the majority graph is a <strong>tournament</strong> (there is an edge between any two nodes).</p>
 </dd></dl>
 
@@ -511,7 +511,7 @@ Edges: [(2, 0)]
 <h2>MarginGraph Class<a class="headerlink" href="#margingraph-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MarginGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MarginGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">pref_voting.weighted_majority_graphs.MajorityGraph</span></code></a></p>
 <p>A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span> means that the <strong>margin</strong> of  <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(w\)</span>.</p>
 <dl class="field-list simple">
@@ -533,6 +533,13 @@ Edges: [(2, 0)]
 <p class="admonition-title">Warning</p>
 <p>Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges with weights.</p>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.add" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a MarginGraph in which the new margin of candidate <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> is the sum of the
+existing margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> with with the margin <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> in <code class="docutils literal notranslate"><span class="pre">edata</span></code>.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.display">
 <span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.display" title="Permalink to this definition">#</a></dt>
@@ -576,13 +583,13 @@ Edges: [(2, 0)]
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.edges">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.edges" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.edges" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of the weighted edges in the margin graph.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.from_profile">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.from_profile" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.from_profile" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a majority graph from a <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -697,7 +704,7 @@ Edges: [(2, 0, 5)]
 <h2>SupportGraph Class<a class="headerlink" href="#supportgraph-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.SupportGraph">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">SupportGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#SupportGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">SupportGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#SupportGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">pref_voting.weighted_majority_graphs.MajorityGraph</span></code></a></p>
 <p>A support graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span> means that the <strong>support</strong> of  <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(w\)</span>.</p>
 <dl class="field-list simple">
@@ -743,13 +750,13 @@ Edges: [(2, 0, 5)]
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.SupportGraph.edges">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph.edges" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph.edges" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of the weighted edges in the margin graph.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.SupportGraph.from_profile">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#SupportGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph.from_profile" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#SupportGraph.from_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph.from_profile" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a support graph from a <code class="xref py py-class docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -930,7 +937,7 @@ Edges: [(0, 2, (10, 5))]
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

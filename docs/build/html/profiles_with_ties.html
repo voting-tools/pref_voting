@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="(Weighted) Majority Graphs" href="margin_graphs.html" /><link rel="prev" title="Profiles" href="profiles.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>Profiles with Ties - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -215,7 +215,7 @@
 <h2>Ranking Class<a class="headerlink" href="#ranking-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles_with_ties.</span></span><span class="sig-name descname"><span class="pre">Ranking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles_with_ties.</span></span><span class="sig-name descname"><span class="pre">Ranking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking" title="Permalink to this definition">#</a></dt>
 <dd><p>A ranking of a set of candidates.</p>
 <p>A ranking is a map from candidates to ranks (integers).  There is no assumption that all candidates in an election are ranked.   The ranks can be any numbers () or that the</p>
 <dl class="field-list simple">
@@ -257,7 +257,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.cands">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cands</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.cands" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cands</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.cands" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a sorted list of the candidates that are ranked.</p>
 </dd></dl>
 
@@ -360,7 +360,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.ranks">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ranks</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.ranks" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ranks</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.ranks" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a sorted list of the ranks.</p>
 </dd></dl>
 
@@ -403,7 +403,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <h2>ProfileWithTies Class<a class="headerlink" href="#profilewithties-class" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles_with_ties.</span></span><span class="sig-name descname"><span class="pre">ProfileWithTies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rankings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcounts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles_with_ties.</span></span><span class="sig-name descname"><span class="pre">ProfileWithTies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rankings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcounts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies" title="Permalink to this definition">#</a></dt>
 <dd><p>An anonymous profile of (truncated) strict weak orders of <span class="math notranslate nohighlight">\(n\)</span> candidates.  It is assumed that the candidates are named <span class="math notranslate nohighlight">\(0, 1, \ldots, n-1\)</span> and a ranking of the candidates is a list of candidate names.  For instance, the list <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2,</span> <span class="pre">1]</span></code> represents the ranking in which <span class="math notranslate nohighlight">\(0\)</span> is ranked above <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(2\)</span> is ranked above <span class="math notranslate nohighlight">\(1\)</span>, and <span class="math notranslate nohighlight">\(0\)</span> is ranked above <span class="math notranslate nohighlight">\(1\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -533,6 +533,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.is_tied">
+<span class="sig-name descname"><span class="pre">is_tied</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.is_tied"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.is_tied" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code> are tied (i.e., the margin of <code class="docutils literal notranslate"><span class="pre">c1</span></code> over <code class="docutils literal notranslate"><span class="pre">c2</span></code> is 0).</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.majority_graph">
 <span class="sig-name descname"><span class="pre">majority_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.majority_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.majority_graph" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the majority graph of the profile.  See <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarginGraph</span></code></a>.</p>
@@ -606,7 +612,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.rankings_counts">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rankings_counts</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings_counts" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rankings_counts</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the rankings and the counts of each ranking.</p>
 </dd></dl>
 
@@ -796,7 +802,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
