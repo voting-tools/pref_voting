@@ -9,7 +9,7 @@ sphinx-panels
 sphinx-tabs 
 sphinx-togglebutton 
 tabulate 
-matplotlib
+matplotlib>=1.4
 networkx>=1.9
 pref_voting
 scipy
