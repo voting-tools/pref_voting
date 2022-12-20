@@ -739,7 +739,7 @@ class ProfileWithTies(object):
             else: 
                 rs[str(r)] = c
                 
-        for r,c in rs: 
+        for r,c in rs.items(): 
             print(f"{r} {c}")
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
