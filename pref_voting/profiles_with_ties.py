@@ -152,7 +152,7 @@ class Ranking(object):
     def last(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the worst ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.value()) if cs is None else [self.rmap[c] for c in cs]
+        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs]
         _cands = list(self.rmap.keys()) if cs is None else cs
         max_rank = max(_ranks)
         return sorted([c for c in _cands if self.rmap[c] == max_rank])
@@ -172,8 +172,10 @@ class Ranking(object):
         return not self.is_linear()
     
     def remove_overvote(self):
-        # remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible 
-        
+        """
+        Remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible 
+        """
+
         new_rmap = dict()
 
         for r in self.ranks:
@@ -183,6 +185,22 @@ class Ranking(object):
 
         self.rmap = new_rmap
         self.normalize_ranks()
+
+    def truncate_overvote(self):
+        """
+        Truncate the ranking at an overvote.  
+        """ 
+        
+        new_rmap = dict()
+
+        for r in self.ranks:
+            cands_at_rank = self.cands_at_rank(r)
+            if len(cands_at_rank) == 1:
+                new_rmap[cands_at_rank[0]] = r
+            elif len(cands_at_rank) > 1: 
+                break
+
+        self.rmap = new_rmap
 
     def normalize_ranks(self):
         """Change the ranks so that they start with 1, and the next rank is the next integer after the previous rank.
@@ -523,21 +541,14 @@ class ProfileWithTies(object):
         return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first()]) 
                 for cand in self.candidates}
 
-    def remove_overvotes(self): 
-        """Return a new profile in which all overvotes are removed from the current profile. """
+    def plurality_scores_ignoring_overvotes(self): 
+        """
+        Return the Plurality scores ignoring empty rankings and overvotes.
+        """
+        rankings, rcounts = self.rankings_counts
         
-        new_profile = copy.deepcopy(self)
-        rankings, rcounts = new_profile.rankings_counts
-        
-        report = []
-        for r,c in zip(rankings, rcounts): 
-            old_ranking = copy.deepcopy(r)
-            if r.has_overvote(): 
-                r.remove_overvote()
-                report.append((old_ranking, r,c))
-    
-        return new_profile, report
-    
+        return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first()]) for cand in self.candidates}
+
     def remove_empty_rankings(self): 
         """
         Remove the empty rankings from the profile. 
@@ -553,7 +564,38 @@ class ProfileWithTies(object):
 
         self.rankings = new_rankings
         self.rcounts = new_rcounts
+    
+    def remove_overvotes(self): 
+        """Return a new profile in which all overvotes are removed from the current profile. """
         
+        new_profile = copy.deepcopy(self)
+        rankings, rcounts = new_profile.rankings_counts
+        
+        report = []
+        for r,c in zip(rankings, rcounts): 
+            old_ranking = copy.deepcopy(r)
+            if r.has_overvote(): 
+                r.remove_overvote()
+                report.append((old_ranking, r,c))
+    
+        return new_profile, report
+    
+        
+    def truncate_overvotes(self): 
+        """Return a new profile in which all rankings with overvotes are truncated. """
+        
+        new_profile = copy.deepcopy(self)
+        rankings, rcounts = new_profile.rankings_counts
+        
+        report = []
+        for r,c in zip(rankings, rcounts): 
+            old_ranking = copy.deepcopy(r)
+            if r.has_overvote(): 
+                r.truncate_overvote()
+                report.append((old_ranking, r, c))
+    
+        return new_profile, report
+
     def unique_rankings(self): 
         """Return to the list of unique rankings in the profile. 
         """
@@ -675,7 +717,7 @@ class ProfileWithTies(object):
                     num_trucated_linear_orders += c
             if r.has_skipped_rank(): 
                 num_with_skipped_ranks += c
-        print(f'''The number of ballots: {sum(rcounts)}
+        print(f'''There are {len(self.candidates)} candidates and {sum(rcounts)} rankings: 
         The number of empty rankings: {num_empty_rankings}
         The number of rankings with ties: {num_ties}
         The number of linear orders: {num_linear_orders}

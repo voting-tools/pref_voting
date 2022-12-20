@@ -296,6 +296,68 @@ class MajorityGraph(object):
         )
         plt.show()
 
+    def display_cycles(self, cmap=None):
+        """
+        Display the cycles in the margin graph.
+
+        Args:
+            cmap (dict, optional): The cmap used to map candidates to candidate names
+
+
+        """
+        
+        cycles = self.cycles()
+        
+        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}: \n")
+        for cycle in cycles: 
+            cmap = cmap if cmap is not None else self.cmap
+            cmap_inverse = {cname: c for c, cname in cmap.items()}
+            mg_with_cycle = nx.DiGraph()
+
+            mg_with_cycle.add_nodes_from([cmap[c] for c in self.candidates])
+            mg_with_cycle.add_edges_from([(cmap[e[0]], cmap[e[1]]) for e in self.edges])
+
+            cands = self.candidates
+            mg_edges = list(self.edges)
+
+            cycle_edges = [(cmap[c], cmap[cycle[cidx + 1]]) for cidx,c in enumerate(cycle[0:-1])] + [(cmap[cycle[-1]], cmap[cycle[0]])]
+
+            cands_in_cycle = [cmap[c1] for c1 in cands if c1 in cycle]
+
+            node_colors = ["blue" if n in cands_in_cycle else "lightgray" for n in mg_with_cycle.nodes ]
+
+            pos = nx.circular_layout(mg_with_cycle)
+            nx.draw(mg_with_cycle, pos, width=1.5, edge_color="white")
+            nx.draw_networkx_nodes(
+                mg_with_cycle, pos, node_color=node_colors, node_size=700
+            )
+            nx.draw_networkx_labels(mg_with_cycle, pos, font_size=20, font_color="white")
+            nx.draw_networkx_edges(
+                mg_with_cycle,
+                pos,
+                edgelist=cycle_edges,
+                width=10,
+                alpha=1.0,
+                edge_color="b",
+                arrowsize=25,
+                min_target_margin=15,
+                node_size=700,
+            )
+
+            nx.draw_networkx_edges(
+                mg_with_cycle,
+                pos,
+                edgelist=[(cmap[e[0]], cmap[e[1]]) for e in mg_edges if (cmap[e[0]], cmap[e[1]]) not in cycle_edges],
+                width=1.5,
+                 edge_color="lightgray",
+                arrowsize=15,
+                min_target_margin=15,
+            )
+            
+            ax = plt.gca()
+            ax.set_frame_on(False)
+            plt.show()
+            
     def to_latex(self, cmap=None, new_cand=None):
         """Outputs TikZ code for displaying the majority graph.
 
@@ -683,6 +745,73 @@ class MarginGraph(MajorityGraph):
         ax = plt.gca()
         ax.set_frame_on(False)
         plt.show()
+
+    def display_cycles(self, cmap=None):
+        """
+        Display the cycles in the margin graph.
+
+        Args:
+            cmap (dict, optional): The cmap used to map candidates to candidate names.
+            
+        """
+        
+        cycles = self.cycles()
+        
+        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}: \n")
+        for cycle in cycles: 
+            cmap = cmap if cmap is not None else self.cmap
+            cmap_inverse = {cname: c for c, cname in cmap.items()}
+            mg_with_cycle = nx.DiGraph()
+
+            mg_with_cycle.add_nodes_from([cmap[c] for c in self.candidates])
+            mg_with_cycle.add_edges_from([(cmap[e[0]], cmap[e[1]]) for e in self.edges])
+
+            cands = self.candidates
+            mg_edges = list(self.edges)
+
+            cycle_edges = [(cmap[c], cmap[cycle[cidx + 1]]) for cidx,c in enumerate(cycle[0:-1])] + [(cmap[cycle[-1]], cmap[cycle[0]])]
+
+            cands_in_cycle = [cmap[c1] for c1 in cands if c1 in cycle]
+
+            node_colors = ["blue" if n in cands_in_cycle else "lightgray" for n in mg_with_cycle.nodes ]
+
+            pos = nx.circular_layout(mg_with_cycle)
+            nx.draw(mg_with_cycle, pos, width=1.5, edge_color="white")
+            nx.draw_networkx_nodes(
+                mg_with_cycle, pos, node_color=node_colors, node_size=700
+            )
+            nx.draw_networkx_labels(mg_with_cycle, pos, font_size=20, font_color="white")
+            nx.draw_networkx_edges(
+                mg_with_cycle,
+                pos,
+                edgelist=cycle_edges,
+                width=10,
+                alpha=1.0,
+                edge_color="b",
+                arrowsize=25,
+                min_target_margin=15,
+                node_size=700,
+            )
+
+            nx.draw_networkx_edges(
+                mg_with_cycle,
+                pos,
+                edgelist=[(cmap[e[0]], cmap[e[1]]) for e in mg_edges if (cmap[e[0]], cmap[e[1]]) not in cycle_edges],
+                width=1.5,
+                 edge_color="lightgray",
+                arrowsize=15,
+                min_target_margin=15,
+            )
+            labels = {
+                (cmap[e[0]], cmap[e[1]]): self.margin(e[0], e[1]) for e in mg_edges
+            }
+
+            nx.draw_networkx_edge_labels(
+                mg_with_cycle, pos, edge_labels=labels, font_size=14, label_pos=0.3
+            )
+            ax = plt.gca()
+            ax.set_frame_on(False)
+            plt.show()
 
     @classmethod
     def from_profile(cls, profile, cmap=None):
