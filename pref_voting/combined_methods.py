@@ -127,7 +127,7 @@ def smith_irv(profile, curr_cands=None):
 
 
 def compose(vm1, vm2):
-    """After restricting to the Smith Set, return the Instant Runoff winner.
+    """After restricting the profile to the set of vm1 winners, run vm2
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
