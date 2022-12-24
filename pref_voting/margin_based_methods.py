@@ -466,12 +466,12 @@ def split_cycle_faster(edata, curr_cands = None, strength_function = None):
     weak_condorcet_winners = {c:True for c in candidates}
     s_matrix = [[-np.inf for _ in candidates] for _ in candidates]
     
-    # Weak Condorcet winners are Split Cycle winners
+    # initialize the s_matrix
     for c1_idx, c1 in enumerate(candidates):
         for c2_idx, c2 in enumerate(candidates):
             if (edata.majority_prefers(c1, c2) or c1 == c2):
                 s_matrix[c1_idx][c2_idx] = strength_function(c1, c2) 
-                weak_condorcet_winners[c2] = weak_condorcet_winners[c2] and (c1 == c2)
+                weak_condorcet_winners[c2] = weak_condorcet_winners[c2] and (c1 == c2) # Weak Condorcet winners are Split Cycle winners
     
     strength = list(map(lambda i : list(map(lambda j : j , i)) , s_matrix))
     for i_idx, i in enumerate(candidates): 
