@@ -315,7 +315,7 @@ def instant_runoff_with_explanation(profile, curr_cands = None):
 
 
 @vm(name="Instant Runoff")
-def instant_runoff_for_truncated_linear_orders(profile, threshold = None, hide_warnings = False): 
+def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = False): 
     """
     Intant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number 
     of first place votes, until there is a candidate with more than the treshold number of first-place votes. 
@@ -352,11 +352,15 @@ def instant_runoff_for_truncated_linear_orders(profile, threshold = None, hide_w
     
     """
     
-    assert all([not r.has_overvote() for r in prof.rankings]), "Instant Runoff is only defined when all the ballots are truncated linear orders."
+    assert all([not r.has_overvote() for r in profile.rankings]), "Instant Runoff is only defined when all the ballots are truncated linear orders."
     
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
     # we need to remove empty rankings during the algorithm, so make a copy of the profile
-    _prof = copy.deepcopy(prof) 
+    prof2 = copy.deepcopy(profile) 
     
+    _prof = prof2.remove_candidates([c for c in profile.candidates if c not in curr_cands])
+
     # remove the empty rankings
     _prof.remove_empty_rankings()
     
@@ -369,7 +373,7 @@ def instant_runoff_for_truncated_linear_orders(profile, threshold = None, hide_w
     
     while max_pl_score < threshold: 
 
-        reduced_prof = prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
+        reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
         
         # after removing the candidates, there might be some empty ballots.
         reduced_prof.remove_empty_rankings()
