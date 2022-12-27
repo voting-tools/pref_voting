@@ -129,11 +129,6 @@ class Ranking(object):
 
         return self.extended_strict_pref(c1, c2) or self.extended_indiff(c1, c2)
 
-    def is_linear(self):
-        """Returns True if there are no ties."""
-
-        return len(list(self.rmap.keys())) == len(list(set(list(self.rmap.values()))))
-
     def remove_cand(self, a):
         """Returns a Ranking with the candidate ``a`` removed."""
 
@@ -142,7 +137,7 @@ class Ranking(object):
         return Ranking(new_rmap, cmap=new_cmap)
 
     def first(self, cs=None):
-        """Returns the list of candidates from ``cs`` that have the best ranking.   If ``cs`` is None, then use all the ranked candidates."""
+        """Returns the list of candidates from ``cs`` that have the highest ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
         _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs]
         _cands = list(self.rmap.keys()) if cs is None else cs
@@ -157,34 +152,35 @@ class Ranking(object):
         max_rank = max(_ranks)
         return sorted([c for c in _cands if self.rmap[c] == max_rank])
 
+    def is_empty(self): 
+        """Return True when the ranking is empty."""
+        return len(self.rmap.keys()) == 0
+        
     def has_tie(self): 
         """Return True when the ranking has a tie."""
         return len(list(set(self.rmap.values()))) != len(list(self.rmap.values()))
 
+    def is_linear(self, num_cands):
+        """Return True when the ranking is a linear order of ``num_cands`` candidates. 
+        """
+
+        return not self.has_tie() and len(self.rmap.keys()) == num_cands
+
+    def is_truncated_linear(self, num_cands): 
+        """Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates. 
+        """
+        return  not self.has_tie() and len(self.rmap.keys()) < num_cands
+    
     def has_skipped_rank(self): 
         """Returns True when a rank is skipped."""
-        return len(self.ranks) == 0 or len(list(set(self.rmap.values()))) != max(list(self.rmap.values()))
+        return len(self.ranks) != 0 and len(list(set(self.rmap.values()))) != max(list(self.rmap.values()))
 
     def has_overvote(self): 
         """
-        Return True if a voter submitted an overvote (a ranking with a tie). 
+        Return True if the voter submitted an overvote (a ranking with a tie). 
         """
-        return not self.is_linear()
+        return self.has_tie()
     
-    def remove_overvote(self):
-        """
-        Remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible 
-        """
-
-        new_rmap = dict()
-
-        for r in self.ranks:
-            cands_at_rank = self.cands_at_rank(r)
-            if len(cands_at_rank) == 1:
-                new_rmap[cands_at_rank[0]] = r
-
-        self.rmap = new_rmap
-        self.normalize_ranks()
 
     def truncate_overvote(self):
         """
@@ -280,9 +276,9 @@ class Ranking(object):
         for r in self.ranks:
             cands_at_rank = self.cands_at_rank(r)
             if len(cands_at_rank) == 1:
-                r_str += str(self.cmap[cands_at_rank[0]])
+                r_str += str(self.cmap[cands_at_rank[0]]) + " "
             else:
-                r_str += "(" + " ".join(map(lambda c: str(self.cmap[c]), cands_at_rank)) + ")"
+                r_str += "( " + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank)) + ")"
         return r_str
 
 
@@ -327,9 +323,9 @@ class ProfileWithTies(object):
 
         self.ranks = list(range(1, self.num_cands + 1))
 
-        # mapping candidates to candidate names
         self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
-
+        """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
+        
         self.rankings = [
             Ranking(r, cmap=self.cmap)
             if type(r) == dict
@@ -344,6 +340,9 @@ class ProfileWithTies(object):
         self.num_voters = np.sum(self.rcounts)
         """The number of voters in the profile. """
 
+        self.using_extended_strict_preference = False
+        """A flag indicating whether the profile is using extended strict preferences when calculating supports, margins, etc."""
+        
         # memoize the supports
         self._supports = {
             c1: {
@@ -360,6 +359,7 @@ class ProfileWithTies(object):
     def use_extended_strict_preference(self):
         """Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates."""
 
+        self.using_extended_strict_preference = True
         self._supports = {
             c1: {
                 c2: sum(
@@ -375,6 +375,7 @@ class ProfileWithTies(object):
     def use_strict_preference(self):
         """Redefine the supports so that strict preferences are used. Using extended strict preference may change the margins between candidates."""
 
+        self.using_extended_strict_preference = False
         self._supports = {
             c1: {
                 c2: sum(
@@ -404,15 +405,15 @@ class ProfileWithTies(object):
 
         return self._supports[c1][c2]
 
-    def is_tied(self, c1, c2): 
-        """Returns True if ``c1`` and ``c2`` are tied (i.e., the margin of ``c1`` over ``c2`` is 0)."""
-
-        return self.margin(c1, c2) == 0
-        
     def margin(self, c1, c2):
         """Returns the margin of candidate ``c1`` over candidate ``c2``, where the maring is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``."""
 
         return self._supports[c1][c2] - self._supports[c2][c1]
+
+    def is_tied(self, c1, c2): 
+        """Returns True if ``c1`` and ``c2`` are tied (i.e., the margin of ``c1`` over ``c2`` is 0)."""
+
+        return self.margin(c1, c2) == 0
 
     def dominators(self, cand, curr_cands=None):
         """Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``."""
@@ -564,23 +565,16 @@ class ProfileWithTies(object):
 
         self.rankings = new_rankings
         self.rcounts = new_rcounts
-    
-    def remove_overvotes(self): 
-        """Return a new profile in which all overvotes are removed from the current profile. """
         
-        new_profile = copy.deepcopy(self)
-        rankings, rcounts = new_profile.rankings_counts
+        # update the number of voters
+        self.num_voters = np.sum(self.rcounts)
         
-        report = []
-        for r,c in zip(rankings, rcounts): 
-            old_ranking = copy.deepcopy(r)
-            if r.has_overvote(): 
-                r.remove_overvote()
-                report.append((old_ranking, r,c))
-    
-        return new_profile, report
-    
-        
+        if self.using_extended_strict_preference: 
+            self.use_extended_strict_preference()
+        else: 
+            self.use_strict_preference()
+
+
     def truncate_overvotes(self): 
         """Return a new profile in which all rankings with overvotes are truncated. """
         
@@ -589,11 +583,18 @@ class ProfileWithTies(object):
         
         report = []
         for r,c in zip(rankings, rcounts): 
+            print(r)
+            print(r.has_overvote())
             old_ranking = copy.deepcopy(r)
             if r.has_overvote(): 
                 r.truncate_overvote()
                 report.append((old_ranking, r, c))
     
+        if self.using_extended_strict_preference: 
+            new_profile.use_extended_strict_preference()
+        else: 
+            new_profile.use_strict_preference()
+            
         return new_profile, report
 
     def unique_rankings(self): 
@@ -683,12 +684,17 @@ class ProfileWithTies(object):
             for rank in self.rankings
         ]
         new_candidates = [c for c in self.candidates if c not in cands_to_ignore]
-        return ProfileWithTies(
+        restricted_prof = ProfileWithTies(
             updated_rankings,
             rcounts=self.rcounts,
             candidates=new_candidates,
             cmap=self.cmap,
         )
+        
+        if self.using_extended_strict_preference: 
+            restricted_prof.use_extended_strict_preference()
+            
+        return restricted_prof
 
     def report(self): 
         """
@@ -703,26 +709,29 @@ class ProfileWithTies(object):
         rankings, rcounts = self.rankings_counts
         
         for r, c in zip(rankings, rcounts): 
-            
+            print(r)
+            print(r.ranks)
+            print("is linear ", r.is_linear(len(self.candidates)))
+            print("is tr linear ", r.is_truncated_linear(len(self.candidates)))
             if r.has_tie():
                 num_ties += c
                 
-            if len(r.cands) == 0: 
+            if r.is_empty(): 
                 num_empty_rankings += c
+            elif r.is_linear(len(self.candidates)): 
+                num_linear_orders += c
+            elif r.is_truncated_linear(len(self.candidates)): 
+                num_trucated_linear_orders += c
             
-            if r.is_linear(): 
-                if len(r.ranks) > 0 and max(r.ranks) == len(self.candidates): 
-                    num_linear_orders += c
-                elif len(r.ranks) == 0 or max(r.ranks) != len(self.candidates): 
-                    num_trucated_linear_orders += c
             if r.has_skipped_rank(): 
                 num_with_skipped_ranks += c
-        print(f'''There are {len(self.candidates)} candidates and {sum(rcounts)} rankings: 
+        print(f'''There are {len(self.candidates)} candidates and {str(sum(rcounts))} {'ranking: ' if sum(rcounts) == 1 else 'rankings: '} 
         The number of empty rankings: {num_empty_rankings}
         The number of rankings with ties: {num_ties}
         The number of linear orders: {num_linear_orders}
         The number of truncated linear orders: {num_trucated_linear_orders}
-        The number of rankings with skipped ranks: {num_with_skipped_ranks}
+        
+The number of rankings with skipped ranks: {num_with_skipped_ranks}
         
         ''')
 
