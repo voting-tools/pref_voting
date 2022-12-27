@@ -391,6 +391,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.remove_overvote">
+<span class="sig-name descname"><span class="pre">remove_overvote</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.remove_overvote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.remove_overvote" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.strict_pref">
 <span class="sig-name descname"><span class="pre">strict_pref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.strict_pref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.strict_pref" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">c1</span></code> is strictly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
@@ -401,6 +407,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.strong_dom">
 <span class="sig-name descname"><span class="pre">strong_dom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_extended_preferences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.strong_dom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.strong_dom" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">AAdom(c1s,</span> <span class="pre">c2s)</span></code> and there is some candidate in <code class="docutils literal notranslate"><span class="pre">c1s</span></code> that is strictly preferred to every candidate in <code class="docutils literal notranslate"><span class="pre">c2s</span></code>. If <code class="docutils literal notranslate"><span class="pre">use_extended_preferences</span></code> is True, then use the extended  preferences.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.truncate_overvote">
+<span class="sig-name descname"><span class="pre">truncate_overvote</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.truncate_overvote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.truncate_overvote" title="Permalink to this definition">#</a></dt>
+<dd><p>Truncate the ranking at an overvote.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -636,6 +648,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dd><p>Return the Plurality Scores of the candidates given that each voter ranks a single candidate in first place.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores_ignoring_overvotes">
+<span class="sig-name descname"><span class="pre">plurality_scores_ignoring_overvotes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.plurality_scores_ignoring_overvotes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores_ignoring_overvotes" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the Plurality scores ignoring empty rankings and overvotes.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.rankings">
 <span class="sig-name descname"><span class="pre">rankings</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings" title="Permalink to this definition">#</a></dt>
@@ -753,6 +771,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.truncate_overvotes">
+<span class="sig-name descname"><span class="pre">truncate_overvotes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.truncate_overvotes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.truncate_overvotes" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a new profile in which all rankings with overvotes are truncated.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.unique_rankings">
 <span class="sig-name descname"><span class="pre">unique_rankings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.unique_rankings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.unique_rankings" title="Permalink to this definition">#</a></dt>
 <dd><p>Return to the list of unique rankings in the profile.</p>
@@ -815,7 +839,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+                Copyright &#169; 2022, Wes Holliday and Eric Pacuit
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -861,8 +885,10 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.normalize_ranks"><code class="docutils literal notranslate"><span class="pre">Ranking.normalize_ranks()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.ranks"><code class="docutils literal notranslate"><span class="pre">Ranking.ranks</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.remove_cand"><code class="docutils literal notranslate"><span class="pre">Ranking.remove_cand()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.remove_overvote"><code class="docutils literal notranslate"><span class="pre">Ranking.remove_overvote()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.strict_pref"><code class="docutils literal notranslate"><span class="pre">Ranking.strict_pref()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.strong_dom"><code class="docutils literal notranslate"><span class="pre">Ranking.strong_dom()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.truncate_overvote"><code class="docutils literal notranslate"><span class="pre">Ranking.truncate_overvote()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.weak_dom"><code class="docutils literal notranslate"><span class="pre">Ranking.weak_dom()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.weak_pref"><code class="docutils literal notranslate"><span class="pre">Ranking.weak_pref()</span></code></a></li>
 </ul>
@@ -890,6 +916,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.num_cands"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.num_cands</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.num_voters"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.num_voters</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.plurality_scores()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores_ignoring_overvotes"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.plurality_scores_ignoring_overvotes()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.rankings</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings_as_dicts_counts"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.rankings_as_dicts_counts</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.rankings_counts"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.rankings_counts</span></code></a></li>
@@ -901,6 +928,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.strict_maj_size"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.strict_maj_size()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.support"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.support()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.support_graph"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.support_graph()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.truncate_overvotes"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.truncate_overvotes()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.unique_rankings"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.unique_rankings()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.use_extended_strict_preference"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.use_extended_strict_preference()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.use_strict_preference"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.use_strict_preference()</span></code></a></li>

@@ -583,8 +583,6 @@ class ProfileWithTies(object):
         
         report = []
         for r,c in zip(rankings, rcounts): 
-            print(r)
-            print(r.has_overvote())
             old_ranking = copy.deepcopy(r)
             if r.has_overvote(): 
                 r.truncate_overvote()
@@ -709,13 +707,9 @@ class ProfileWithTies(object):
         rankings, rcounts = self.rankings_counts
         
         for r, c in zip(rankings, rcounts): 
-            print(r)
-            print(r.ranks)
-            print("is linear ", r.is_linear(len(self.candidates)))
-            print("is tr linear ", r.is_truncated_linear(len(self.candidates)))
+
             if r.has_tie():
-                num_ties += c
-                
+                num_ties += c    
             if r.is_empty(): 
                 num_empty_rankings += c
             elif r.is_linear(len(self.candidates)): 

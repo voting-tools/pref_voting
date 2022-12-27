@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
         <title>pref_voting.weighted_majority_graphs - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -150,7 +150,7 @@
   <span class="sidebar-brand-text">Preferential Voting Tools</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -508,6 +508,66 @@
         <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="MajorityGraph.display_cycles"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.display_cycles">[docs]</a>    <span class="k">def</span> <span class="nf">display_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the cycles in the margin graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmap (dict, optional): The cmap used to map candidates to candidate names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cycles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycles</span><span class="p">()</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span> 
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span>
+            <span class="n">cmap_inverse</span> <span class="o">=</span> <span class="p">{</span><span class="n">cname</span><span class="p">:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">cname</span> <span class="ow">in</span> <span class="n">cmap</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">mg_with_cycle</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+
+            <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">])</span>
+            <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">])</span>
+
+            <span class="n">cands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span>
+            <span class="n">mg_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+
+            <span class="n">cycle_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="n">cidx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">cidx</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">+</span> <span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">]])]</span>
+
+            <span class="n">cands_in_cycle</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cands</span> <span class="k">if</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cycle</span><span class="p">]</span>
+
+            <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">cands_in_cycle</span> <span class="k">else</span> <span class="s2">&quot;lightgray&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">nodes</span> <span class="p">]</span>
+
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">circular_layout</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">node_colors</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">700</span>
+            <span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span>
+                <span class="n">pos</span><span class="p">,</span>
+                <span class="n">edgelist</span><span class="o">=</span><span class="n">cycle_edges</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                <span class="n">arrowsize</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                <span class="n">min_target_margin</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">node_size</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span>
+                <span class="n">pos</span><span class="p">,</span>
+                <span class="n">edgelist</span><span class="o">=</span><span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">mg_edges</span> <span class="k">if</span> <span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cycle_edges</span><span class="p">],</span>
+                <span class="n">width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                 <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;lightgray&quot;</span><span class="p">,</span>
+                <span class="n">arrowsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">min_target_margin</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="p">)</span>
+            
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+            
 <div class="viewcode-block" id="MajorityGraph.to_latex"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.to_latex">[docs]</a>    <span class="k">def</span> <span class="nf">to_latex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_cand</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Outputs TikZ code for displaying the majority graph.</span>
 
@@ -895,6 +955,72 @@
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MarginGraph.display_cycles"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.display_cycles">[docs]</a>    <span class="k">def</span> <span class="nf">display_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the cycles in the margin graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmap (dict, optional): The cmap used to map candidates to candidate names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">cycles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycles</span><span class="p">()</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span> 
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span>
+            <span class="n">mg_with_cycle</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+
+            <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">])</span>
+            <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">])</span>
+
+            <span class="n">cands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span>
+            <span class="n">mg_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+
+            <span class="n">cycle_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="n">cidx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">cidx</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">+</span> <span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">]])]</span>
+
+            <span class="n">cands_in_cycle</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cands</span> <span class="k">if</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cycle</span><span class="p">]</span>
+
+            <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">cands_in_cycle</span> <span class="k">else</span> <span class="s2">&quot;lightgray&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mg_with_cycle</span><span class="o">.</span><span class="n">nodes</span> <span class="p">]</span>
+
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">circular_layout</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">node_colors</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">700</span>
+            <span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span>
+                <span class="n">pos</span><span class="p">,</span>
+                <span class="n">edgelist</span><span class="o">=</span><span class="n">cycle_edges</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                <span class="n">arrowsize</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                <span class="n">min_target_margin</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">node_size</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span>
+                <span class="n">pos</span><span class="p">,</span>
+                <span class="n">edgelist</span><span class="o">=</span><span class="p">[(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">mg_edges</span> <span class="k">if</span> <span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cycle_edges</span><span class="p">],</span>
+                <span class="n">width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                 <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;lightgray&quot;</span><span class="p">,</span>
+                <span class="n">arrowsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">min_target_margin</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">cmap</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]]):</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">mg_edges</span>
+            <span class="p">}</span>
+
+            <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edge_labels</span><span class="p">(</span>
+                <span class="n">mg_with_cycle</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">label_pos</span><span class="o">=</span><span class="mf">0.3</span>
+            <span class="p">)</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="MarginGraph.from_profile"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.from_profile">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1431,7 +1557,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+                Copyright &#169; 2022, Wes Holliday and Eric Pacuit
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -1439,9 +1565,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -1456,7 +1580,9 @@
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

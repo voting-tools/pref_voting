@@ -327,6 +327,17 @@ The cycles in the majority graph are [[0, 1, 2]]
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.display_cycles">
+<span class="sig-name descname"><span class="pre">display_cycles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.display_cycles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.display_cycles" title="Permalink to this definition">#</a></dt>
+<dd><p>Display the cycles in the margin graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cmap</strong> (<em>dict</em><em>, </em><em>optional</em>) – The cmap used to map candidates to candidate names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.dominates">
 <span class="sig-name descname"><span class="pre">dominates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.dominates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.dominates" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the list of candidates that <code class="docutils literal notranslate"><span class="pre">cand</span></code> is majority preferred to in the majority graph restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code>.</p>
@@ -571,6 +582,17 @@ existing margin of <span class="math notranslate nohighlight">\(a\)</span> over 
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="_images/margin_graph_ex1.png"><img alt="Alternative text" src="_images/margin_graph_ex1.png" style="width: 400px;" /></a>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.display_cycles">
+<span class="sig-name descname"><span class="pre">display_cycles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.display_cycles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.display_cycles" title="Permalink to this definition">#</a></dt>
+<dd><p>Display the cycles in the margin graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cmap</strong> (<em>dict</em><em>, </em><em>optional</em>) – The cmap used to map candidates to candidate names.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -901,7 +923,7 @@ Edges: [(0, 2, (10, 5))]
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Eric Pacuit and Wes Holliday
+                Copyright &#169; 2022, Wes Holliday and Eric Pacuit
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -936,6 +958,7 @@ Edges: [(0, 2, (10, 5))]
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.copeland_scores()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.cycles"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.cycles()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.display"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.display()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.display_cycles"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.display_cycles()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.dominates"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.dominates()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.dominators"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.dominators()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph.edges"><code class="docutils literal notranslate"><span class="pre">MajorityGraph.edges</span></code></a></li>
@@ -958,6 +981,7 @@ Edges: [(0, 2, (10, 5))]
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph"><code class="docutils literal notranslate"><span class="pre">MarginGraph</span></code></a><ul>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.add"><code class="docutils literal notranslate"><span class="pre">MarginGraph.add()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.display"><code class="docutils literal notranslate"><span class="pre">MarginGraph.display()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.display_cycles"><code class="docutils literal notranslate"><span class="pre">MarginGraph.display_cycles()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.display_with_defeat"><code class="docutils literal notranslate"><span class="pre">MarginGraph.display_with_defeat()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.edges"><code class="docutils literal notranslate"><span class="pre">MarginGraph.edges</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.weighted_majority_graphs.MarginGraph.from_profile"><code class="docutils literal notranslate"><span class="pre">MarginGraph.from_profile()</span></code></a></li>
