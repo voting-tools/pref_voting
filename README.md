@@ -51,7 +51,7 @@ split_cycle.display(prof)
 - v0.1.10 (2022-08-09): **Initial release** 
 - v0.1.13 (2022-11-05): Minor updates and bug fixes 
 - v0.1.14 (2022-12-19): Add plurality_scores to ProfileWithTies; add generate ceots function; bug fixes 
-- v0.1.20 (2022-12-27): Add instant_runoff_for_truncated_linear_orders and functions to truncate overvotes in a ProfileWithTies
+- v0.1.21 (2022-12-27): Add instant_runoff_for_truncated_linear_orders and functions to truncate overvotes in a ProfileWithTies
 
 
 ## Questions?
