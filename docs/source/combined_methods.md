@@ -25,6 +25,14 @@ Combined Methods
 
 ```
 
+## Smith IRV PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.smith_irv_put
+
+```
+
 ## Composing Voting Methods
 
 ```{eval-rst}

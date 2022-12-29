@@ -7,11 +7,12 @@
 """
 
 from pref_voting.generate_profiles import generate_profile
+from pref_voting.profiles import Profile
 from tqdm.notebook import tqdm
 from functools import partial
 from multiprocess import Pool, cpu_count
 import pandas as pd
-
+import copy
 
 def find_profiles_with_different_winners(
     vms,
@@ -95,6 +96,15 @@ def find_condorcet_efficiency(
     """
     Returns a Pandas DataFrame with the Condorcet efficiency of a list of voting methods.
 
+    Args:
+        vms (list(functions)): A list of voting methods,
+        numbers_of_candidates (list(int), default = [3, 4, 5]): The numbers of candidates to check.
+        numbers_of_voters (list(int), default = [5, 25, 50, 100]): The numbers of voters to check.
+        probmod (str, default="IC"): The probability model to be passed to the ``generate_profile`` method
+        num_trials (int, default=10000): The number of profiles to check for different winning sets.
+        use_parallel (bool, default=True): If True, then use parallel processing.
+        num_cpus (int, default=12): The number of (virtual) cpus to use if using parallel processing.
+
     """
 
     if use_parallel:
@@ -159,3 +169,59 @@ def find_condorcet_efficiency(
                     )
 
     return pd.DataFrame(data_for_df)
+
+###
+# 
+#  Monotonicity Violations
+##
+def simple_lift(ranking, c):
+    """
+    Return a ranking in which ``c`` is moved up one position in ``ranking``.
+    """
+    assert c != ranking[0], "can't lift a candidate already in first place"
+    
+    new_ranking = copy.deepcopy(ranking)
+    c_idx = new_ranking.index(c)
+    new_ranking[c_idx - 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx-1]
+    return new_ranking
+
+def has_monotonicity_violation(profile, vm, verbose = False): 
+    """
+    Returns true when there is a monotonicity violation for `vm` in `profile`: there is a candidate `a` and a voter `i` such that `a` is a 
+    winner according to `vm` in `profile`, but `a` is not a winner in 
+    the profile after `i` does a *simple lift* of `a` (i.e., `i` moves `a` up one position in `i`'s ranking).
+    
+    Args:
+        profile (Profile): The profile to check
+        vm (VotingMethod): The voting method to check.
+        verbose (bool, default = False): Output instances when found.
+    
+    """
+    _rankings, _rcounts = profile.rankings_counts
+
+    rankings = [list(r) for r in list(_rankings)]
+    rcounts = list(_rcounts)
+    old_rankings = copy.deepcopy(rankings)
+
+    ws = vm(profile)
+    for w in ws: 
+        for r_idx, r in enumerate(rankings): 
+            if r[0] != w:
+                old_ranking = copy.deepcopy(r)
+                new_ranking = simple_lift(r, w)
+                new_rankings = old_rankings + [new_ranking]
+                new_rcounts  = copy.deepcopy(rcounts + [1])
+                new_rcounts[r_idx] -= 1
+                new_prof = Profile(new_rankings, new_rcounts)
+                new_ws = vm(new_prof)
+                if w not in new_ws: 
+                    if verbose: 
+                        print(f"monotonicity violation for {vm.name}")
+                        profile.display()
+                        print(f"{vm.name} winners: ", ws)
+                        print("original ranking ", old_ranking)
+                        print(f"new ranking {new_ranking}")
+                        new_prof.display()
+                        print(f"{vm.name} winners in updated profile ", new_ws)
+                    return True
+    return False

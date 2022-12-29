@@ -54,7 +54,7 @@ We have included  the following probability models:
 
 ```
 
-## Generate a Truncated ProfileWithTies
+## Generate a Profile with Truncated Linear Orders
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.generate_truncated_profile

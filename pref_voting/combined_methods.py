@@ -8,7 +8,7 @@
 
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality, borda
-from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff
+from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put
 from pref_voting.c1_methods import smith_set, copeland
 
 
@@ -124,6 +124,39 @@ def smith_irv(profile, curr_cands=None):
     smith = smith_set(profile, curr_cands=curr_cands)
 
     return instant_runoff(profile, curr_cands=smith)
+
+@vm(name="Smith IRV PUT")
+def smith_irv_put(profile, curr_cands=None):
+    """After restricting to the Smith Set, return the Instant Runoff winner.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    :Example:
+
+    .. exec_code::
+
+        from pref_voting.profiles import Profile
+        from pref_voting.combined_methods import smith_irv
+        from pref_voting.iterative_methods import instant_runoff, instant_runoff_put
+
+        prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])
+
+        prof.display()
+
+        instant_runoff.display(prof)
+        instant_runoff_put.display(prof)
+        smith_irv_put.display(prof)
+
+    """
+
+    smith = smith_set(profile, curr_cands=curr_cands)
+
+    return instant_runoff_put(profile, curr_cands=smith)
 
 
 def compose(vm1, vm2):
