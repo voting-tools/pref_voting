@@ -341,7 +341,7 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
         from pref_voting.profiles_with_ties import ProfileWithTies
         from pref_voting.iterative_methods import instant_runoff_for_truncated_linear_orders
 
-        ProfileWithTies([{0:1, 1:1},{0:1, 1:2, 2:3, 3:4}, {0:1, 1:3, 2:3}, {3:2}, {0:1}, {0:1}, {}, {}])
+        prof = ProfileWithTies([{0:1, 1:1},{0:1, 1:2, 2:3, 3:4}, {0:1, 1:3, 2:3}, {3:2}, {0:1}, {0:1}, {}, {}])
         prof.display()
 
         tprof, report = prof.truncate_overvotes()
