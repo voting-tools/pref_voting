@@ -341,11 +341,6 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extended_strict_pref</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">extended_indiff</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ranking.is_linear"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.is_linear">[docs]</a>    <span class="k">def</span> <span class="nf">is_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if there are no ties.&quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">()))))</span></div>
-
 <div class="viewcode-block" id="Ranking.remove_cand"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.remove_cand">[docs]</a>    <span class="k">def</span> <span class="nf">remove_cand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a Ranking with the candidate ``a`` removed.&quot;&quot;&quot;</span>
 
@@ -354,7 +349,7 @@
         <span class="k">return</span> <span class="n">Ranking</span><span class="p">(</span><span class="n">new_rmap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">new_cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Ranking.first"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.first">[docs]</a>    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the list of candidates from ``cs`` that have the best ranking.   If ``cs`` is None, then use all the ranked candidates.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the list of candidates from ``cs`` that have the highest ranking.   If ``cs`` is None, then use all the ranked candidates.&quot;&quot;&quot;</span>
 
         <span class="n">_ranks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="k">if</span> <span class="n">cs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="p">]</span>
         <span class="n">_cands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">cs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cs</span>
@@ -369,34 +364,35 @@
         <span class="n">max_rank</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_ranks</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">_cands</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_rank</span><span class="p">])</span></div>
 
+<div class="viewcode-block" id="Ranking.is_empty"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Return True when the ranking is empty.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span></div>
+        
 <div class="viewcode-block" id="Ranking.has_tie"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_tie">[docs]</a>    <span class="k">def</span> <span class="nf">has_tie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Return True when the ranking has a tie.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
+<div class="viewcode-block" id="Ranking.is_linear"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.is_linear">[docs]</a>    <span class="k">def</span> <span class="nf">is_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True when the ranking is a linear order of ``num_cands`` candidates. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_tie</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="n">num_cands</span></div>
+
+<div class="viewcode-block" id="Ranking.is_truncated_linear"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.is_truncated_linear">[docs]</a>    <span class="k">def</span> <span class="nf">is_truncated_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>  <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_tie</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">num_cands</span></div>
+    
 <div class="viewcode-block" id="Ranking.has_skipped_rank"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_skipped_rank">[docs]</a>    <span class="k">def</span> <span class="nf">has_skipped_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Returns True when a rank is skipped.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmap</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="Ranking.has_overvote"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_overvote">[docs]</a>    <span class="k">def</span> <span class="nf">has_overvote</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return True if a voter submitted an overvote (a ranking with a tie). </span>
+<span class="sd">        Return True if the voter submitted an overvote (a ranking with a tie). </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_linear</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_tie</span><span class="p">()</span></div>
     
-<div class="viewcode-block" id="Ranking.remove_overvote"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.remove_overvote">[docs]</a>    <span class="k">def</span> <span class="nf">remove_overvote</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">new_rmap</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranks</span><span class="p">:</span>
-            <span class="n">cands_at_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cands_at_rank</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cands_at_rank</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">new_rmap</span><span class="p">[</span><span class="n">cands_at_rank</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">r</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">rmap</span> <span class="o">=</span> <span class="n">new_rmap</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_ranks</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Ranking.truncate_overvote"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.truncate_overvote">[docs]</a>    <span class="k">def</span> <span class="nf">truncate_overvote</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -492,9 +488,9 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranks</span><span class="p">:</span>
             <span class="n">cands_at_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cands_at_rank</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cands_at_rank</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">r_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">[</span><span class="n">cands_at_rank</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+                <span class="n">r_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">[</span><span class="n">cands_at_rank</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">r_str</span> <span class="o">+=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]),</span> <span class="n">cands_at_rank</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                <span class="n">r_str</span> <span class="o">+=</span> <span class="s2">&quot;( &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">cands_at_rank</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
         <span class="k">return</span> <span class="n">r_str</span></div>
 
 
@@ -539,9 +535,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ranks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cands</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
-        <span class="c1"># mapping candidates to candidate names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span>
-
+        <span class="sd">&quot;&quot;&quot;The candidate map is a dictionary associating a candidate with the name used when displaying a candidate.&quot;&quot;&quot;</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">rankings</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">Ranking</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span>
@@ -556,6 +552,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcounts</span><span class="p">)</span>
         <span class="sd">&quot;&quot;&quot;The number of voters in the profile. &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="sd">&quot;&quot;&quot;A flag indicating whether the profile is using extended strict preferences when calculating supports, margins, etc.&quot;&quot;&quot;</span>
+        
         <span class="c1"># memoize the supports</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">c1</span><span class="p">:</span> <span class="p">{</span>
@@ -572,6 +571,7 @@
 <div class="viewcode-block" id="ProfileWithTies.use_extended_strict_preference"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.use_extended_strict_preference">[docs]</a>    <span class="k">def</span> <span class="nf">use_extended_strict_preference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates.&quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">c1</span><span class="p">:</span> <span class="p">{</span>
                 <span class="n">c2</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span>
@@ -587,6 +587,7 @@
 <div class="viewcode-block" id="ProfileWithTies.use_strict_preference"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.use_strict_preference">[docs]</a>    <span class="k">def</span> <span class="nf">use_strict_preference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Redefine the supports so that strict preferences are used. Using extended strict preference may change the margins between candidates.&quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">c1</span><span class="p">:</span> <span class="p">{</span>
                 <span class="n">c2</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span>
@@ -616,15 +617,15 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span><span class="p">[</span><span class="n">c1</span><span class="p">][</span><span class="n">c2</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="ProfileWithTies.is_tied"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns True if ``c1`` and ``c2`` are tied (i.e., the margin of ``c1`` over ``c2`` is 0).&quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
-        
 <div class="viewcode-block" id="ProfileWithTies.margin"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.margin">[docs]</a>    <span class="k">def</span> <span class="nf">margin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the margin of candidate ``c1`` over candidate ``c2``, where the maring is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span><span class="p">[</span><span class="n">c1</span><span class="p">][</span><span class="n">c2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supports</span><span class="p">[</span><span class="n">c2</span><span class="p">][</span><span class="n">c1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfileWithTies.is_tied"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Returns True if ``c1`` and ``c2`` are tied (i.e., the margin of ``c1`` over ``c2`` is 0).&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="ProfileWithTies.dominators"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.dominators">[docs]</a>    <span class="k">def</span> <span class="nf">dominators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``.&quot;&quot;&quot;</span>
@@ -775,24 +776,17 @@
                 <span class="n">new_rcounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rankings</span> <span class="o">=</span> <span class="n">new_rankings</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rcounts</span> <span class="o">=</span> <span class="n">new_rcounts</span></div>
-    
-<div class="viewcode-block" id="ProfileWithTies.remove_overvotes"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.remove_overvotes">[docs]</a>    <span class="k">def</span> <span class="nf">remove_overvotes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Return a new profile in which all overvotes are removed from the current profile. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcounts</span> <span class="o">=</span> <span class="n">new_rcounts</span>
         
-        <span class="n">new_profile</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span> <span class="o">=</span> <span class="n">new_profile</span><span class="o">.</span><span class="n">rankings_counts</span>
+        <span class="c1"># update the number of voters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcounts</span><span class="p">)</span>
         
-        <span class="n">report</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">):</span> 
-            <span class="n">old_ranking</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">has_overvote</span><span class="p">():</span> 
-                <span class="n">r</span><span class="o">.</span><span class="n">remove_overvote</span><span class="p">()</span>
-                <span class="n">report</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">old_ranking</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span><span class="p">))</span>
-    
-        <span class="k">return</span> <span class="n">new_profile</span><span class="p">,</span> <span class="n">report</span></div>
-    
-        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_extended_strict_preference</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_strict_preference</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="ProfileWithTies.truncate_overvotes"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.truncate_overvotes">[docs]</a>    <span class="k">def</span> <span class="nf">truncate_overvotes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Return a new profile in which all rankings with overvotes are truncated. &quot;&quot;&quot;</span>
         
@@ -806,6 +800,11 @@
                 <span class="n">r</span><span class="o">.</span><span class="n">truncate_overvote</span><span class="p">()</span>
                 <span class="n">report</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">old_ranking</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
     
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span><span class="p">:</span> 
+            <span class="n">new_profile</span><span class="o">.</span><span class="n">use_extended_strict_preference</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">new_profile</span><span class="o">.</span><span class="n">use_strict_preference</span><span class="p">()</span>
+            
         <span class="k">return</span> <span class="n">new_profile</span><span class="p">,</span> <span class="n">report</span></div>
 
 <div class="viewcode-block" id="ProfileWithTies.unique_rankings"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.unique_rankings">[docs]</a>    <span class="k">def</span> <span class="nf">unique_rankings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
@@ -895,12 +894,17 @@
             <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankings</span>
         <span class="p">]</span>
         <span class="n">new_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cands_to_ignore</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ProfileWithTies</span><span class="p">(</span>
+        <span class="n">restricted_prof</span> <span class="o">=</span> <span class="n">ProfileWithTies</span><span class="p">(</span>
             <span class="n">updated_rankings</span><span class="p">,</span>
             <span class="n">rcounts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rcounts</span><span class="p">,</span>
             <span class="n">candidates</span><span class="o">=</span><span class="n">new_candidates</span><span class="p">,</span>
             <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">using_extended_strict_preference</span><span class="p">:</span> 
+            <span class="n">restricted_prof</span><span class="o">.</span><span class="n">use_extended_strict_preference</span><span class="p">()</span>
+            
+        <span class="k">return</span> <span class="n">restricted_prof</span></div>
 
 <div class="viewcode-block" id="ProfileWithTies.report"><a class="viewcode-back" href="../../profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.report">[docs]</a>    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -915,26 +919,25 @@
         <span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankings_counts</span>
         
         <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">):</span> 
-            
+
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">has_tie</span><span class="p">():</span>
-                <span class="n">num_ties</span> <span class="o">+=</span> <span class="n">c</span>
-                
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">cands</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+                <span class="n">num_ties</span> <span class="o">+=</span> <span class="n">c</span>    
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span> 
                 <span class="n">num_empty_rankings</span> <span class="o">+=</span> <span class="n">c</span>
+            <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">is_linear</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">)):</span> 
+                <span class="n">num_linear_orders</span> <span class="o">+=</span> <span class="n">c</span>
+            <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">is_truncated_linear</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">)):</span> 
+                <span class="n">num_trucated_linear_orders</span> <span class="o">+=</span> <span class="n">c</span>
             
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">is_linear</span><span class="p">():</span> 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">):</span> 
-                    <span class="n">num_linear_orders</span> <span class="o">+=</span> <span class="n">c</span>
-                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ranks</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">):</span> 
-                    <span class="n">num_trucated_linear_orders</span> <span class="o">+=</span> <span class="n">c</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">has_skipped_rank</span><span class="p">():</span> 
                 <span class="n">num_with_skipped_ranks</span> <span class="o">+=</span> <span class="n">c</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">)</span><span class="si">}</span><span class="s1"> candidates and </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">rcounts</span><span class="p">)</span><span class="si">}</span><span class="s1"> rankings: </span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">)</span><span class="si">}</span><span class="s1"> candidates and </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">rcounts</span><span class="p">))</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s1">&#39;ranking: &#39;</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">rcounts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;rankings: &#39;</span><span class="si">}</span><span class="s1"> </span>
 <span class="s1">        The number of empty rankings: </span><span class="si">{</span><span class="n">num_empty_rankings</span><span class="si">}</span><span class="s1"></span>
 <span class="s1">        The number of rankings with ties: </span><span class="si">{</span><span class="n">num_ties</span><span class="si">}</span><span class="s1"></span>
 <span class="s1">        The number of linear orders: </span><span class="si">{</span><span class="n">num_linear_orders</span><span class="si">}</span><span class="s1"></span>
 <span class="s1">        The number of truncated linear orders: </span><span class="si">{</span><span class="n">num_trucated_linear_orders</span><span class="si">}</span><span class="s1"></span>
-<span class="s1">        The number of rankings with skipped ranks: </span><span class="si">{</span><span class="n">num_with_skipped_ranks</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">        </span>
+<span class="s1">The number of rankings with skipped ranks: </span><span class="si">{</span><span class="n">num_with_skipped_ranks</span><span class="si">}</span><span class="s1"></span>
 <span class="s1">        </span>
 <span class="s1">        &#39;&#39;&#39;</span><span class="p">)</span></div>
 

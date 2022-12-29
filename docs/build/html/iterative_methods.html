@@ -531,6 +531,74 @@ order of elimination: [[1], [0]]
 </dd></dl>
 
 </section>
+<section id="instant-runoff-for-truncated-linear-orders">
+<h3>Instant Runoff for Truncated Linear Orders<a class="headerlink" href="#instant-runoff-for-truncated-linear-orders" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_for_truncated_linear_orders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_for_truncated_linear_orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders" title="Permalink to this definition">#</a></dt>
+<dd><p>Intant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number
+of first place votes, until there is a candidate with more than the treshold number of first-place votes.
+If a threshold is not set, then it is stirclty more than half of the non-empty ballots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a>) – An anonymous profile with no ties in the ballots (note that ProfileWithTies allows for truncated linear orders).</p></li>
+<li><p><strong>threshold</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – The threshold needed to win the election.  If it is not set, then it is striclty more than half of the remaining ballots.</p></li>
+<li><p><strong>hide_warnings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show or hide the warnings when more than one candidate is eleminated in a round.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the simultaneous version of instant runoff, not the parallel-universe tiebreaking version.</p>
+</div>
+<p>It is intended to be run on profiles with large number of voters in which there is a very low probability
+of a tie in the fewest number of first place votes.   A warning is displayed when more than one candidate is
+eliminated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles_with_ties</span> <span class="kn">import</span> <span class="n">ProfileWithTies</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff_for_truncated_linear_orders</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">ProfileWithTies</span><span class="p">([{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">},{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span> <span class="p">{</span><span class="mi">3</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="p">{},</span> <span class="p">{}])</span>
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">tprof</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">truncate_overvotes</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">new_r</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">report</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> --&gt; </span><span class="si">{</span><span class="n">new_r</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">tprof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">instant_runoff_for_truncated_linear_orders</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">tprof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+-----+---+-----+---+---+---+---+---+
+|  1  | 1 |  1  | 1 | 1 | 1 | 1 | 1 |
++-----+---+-----+---+---+---+---+---+
+| 0 1 | 0 |  0  | 3 | 0 | 0 |   |   |
+|     | 1 | 1 2 |   |   |   |   |   |
+|     | 2 |     |   |   |   |   |   |
+|     | 3 |     |   |   |   |   |   |
++-----+---+-----+---+---+---+---+---+
+( 0  1 ) --&gt; : 1
+0 ( 1  2 ) --&gt; 0 : 1
++---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+---+
+|   | 0 | 0 | 3 | 0 | 0 |   |   |
+|   | 1 |   |   |   |   |   |   |
+|   | 2 |   |   |   |   |   |   |
+|   | 3 |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+Instant Runoff winner is {0}
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 </section>
 <section id="plurality-with-runoff">
 <h2>Plurality With Runoff<a class="headerlink" href="#plurality-with-runoff" title="Permalink to this heading">#</a></h2>
@@ -1494,6 +1562,10 @@ Iterated Split Cycle winner is {1}
 </li>
 <li><a class="reference internal" href="#instant-runoff-with-explanation">Instant Runoff with Explanation</a><ul>
 <li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_with_explanation"><code class="docutils literal notranslate"><span class="pre">instant_runoff_with_explanation()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instant-runoff-for-truncated-linear-orders">Instant Runoff for Truncated Linear Orders</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders"><code class="docutils literal notranslate"><span class="pre">instant_runoff_for_truncated_linear_orders()</span></code></a></li>
 </ul>
 </li>
 </ul>

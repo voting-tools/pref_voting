@@ -75,6 +75,14 @@ To illustrate the difference with respect to the first question, consider Instan
 
 ```
 
+### Instant Runoff for Truncated Linear Orders
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders
+
+```
+
 ## Plurality With Runoff
 
 ```{eval-rst}

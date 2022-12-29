@@ -290,13 +290,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.first">
 <span class="sig-name descname"><span class="pre">first</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.first"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.first" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the list of candidates from <code class="docutils literal notranslate"><span class="pre">cs</span></code> that have the best ranking.   If <code class="docutils literal notranslate"><span class="pre">cs</span></code> is None, then use all the ranked candidates.</p>
+<dd><p>Returns the list of candidates from <code class="docutils literal notranslate"><span class="pre">cs</span></code> that have the highest ranking.   If <code class="docutils literal notranslate"><span class="pre">cs</span></code> is None, then use all the ranked candidates.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.has_overvote">
 <span class="sig-name descname"><span class="pre">has_overvote</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.has_overvote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.has_overvote" title="Permalink to this definition">#</a></dt>
-<dd><p>Return True if a voter submitted an overvote (a ranking with a tie).</p>
+<dd><p>Return True if the voter submitted an overvote (a ranking with a tie).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -319,15 +319,27 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.is_empty" title="Permalink to this definition">#</a></dt>
+<dd><p>Return True when the ranking is empty.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.is_linear">
-<span class="sig-name descname"><span class="pre">is_linear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.is_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.is_linear" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True if there are no ties.</p>
+<span class="sig-name descname"><span class="pre">is_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_cands</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.is_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.is_linear" title="Permalink to this definition">#</a></dt>
+<dd><p>Return True when the ranking is a linear order of <code class="docutils literal notranslate"><span class="pre">num_cands</span></code> candidates.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.is_ranked">
 <span class="sig-name descname"><span class="pre">is_ranked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.is_ranked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.is_ranked" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if the candidate <code class="docutils literal notranslate"><span class="pre">c</span></code> is ranked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.is_truncated_linear">
+<span class="sig-name descname"><span class="pre">is_truncated_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_cands</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.is_truncated_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.is_truncated_linear" title="Permalink to this definition">#</a></dt>
+<dd><p>Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than <code class="docutils literal notranslate"><span class="pre">num_cands</span></code> candidates.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -388,12 +400,6 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.remove_cand">
 <span class="sig-name descname"><span class="pre">remove_cand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.remove_cand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.remove_cand" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a Ranking with the candidate <code class="docutils literal notranslate"><span class="pre">a</span></code> removed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.remove_overvote">
-<span class="sig-name descname"><span class="pre">remove_overvote</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.remove_overvote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.remove_overvote" title="Permalink to this definition">#</a></dt>
-<dd><p>Remove all ties (also called overvotes) in the ranking; otherwise keep as much of the ranking as possible</p>
 </dd></dl>
 
 <dl class="py method">
@@ -458,6 +464,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.candidates">
 <span class="sig-name descname"><span class="pre">candidates</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.candidates" title="Permalink to this definition">#</a></dt>
 <dd><p>The candidates in the profile.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.cmap">
+<span class="sig-name descname"><span class="pre">cmap</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.cmap" title="Permalink to this definition">#</a></dt>
+<dd><p>The candidate map is a dictionary associating a candidate with the name used when displaying a candidate.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -725,12 +737,6 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.remove_overvotes">
-<span class="sig-name descname"><span class="pre">remove_overvotes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.remove_overvotes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.remove_overvotes" title="Permalink to this definition">#</a></dt>
-<dd><p>Return a new profile in which all overvotes are removed from the current profile.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.report">
 <span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.report" title="Permalink to this definition">#</a></dt>
 <dd><p>Display a report of the types of rankings in the profile.</p>
@@ -792,6 +798,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.use_strict_preference">
 <span class="sig-name descname"><span class="pre">use_strict_preference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.use_strict_preference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.use_strict_preference" title="Permalink to this definition">#</a></dt>
 <dd><p>Redefine the supports so that strict preferences are used. Using extended strict preference may change the margins between candidates.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.using_extended_strict_preference">
+<span class="sig-name descname"><span class="pre">using_extended_strict_preference</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.using_extended_strict_preference" title="Permalink to this definition">#</a></dt>
+<dd><p>A flag indicating whether the profile is using extended strict preferences when calculating supports, margins, etc.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -879,13 +891,14 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.has_skipped_rank"><code class="docutils literal notranslate"><span class="pre">Ranking.has_skipped_rank()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.has_tie"><code class="docutils literal notranslate"><span class="pre">Ranking.has_tie()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.indiff"><code class="docutils literal notranslate"><span class="pre">Ranking.indiff()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.is_empty"><code class="docutils literal notranslate"><span class="pre">Ranking.is_empty()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.is_linear"><code class="docutils literal notranslate"><span class="pre">Ranking.is_linear()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.is_ranked"><code class="docutils literal notranslate"><span class="pre">Ranking.is_ranked()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.is_truncated_linear"><code class="docutils literal notranslate"><span class="pre">Ranking.is_truncated_linear()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.last"><code class="docutils literal notranslate"><span class="pre">Ranking.last()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.normalize_ranks"><code class="docutils literal notranslate"><span class="pre">Ranking.normalize_ranks()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.ranks"><code class="docutils literal notranslate"><span class="pre">Ranking.ranks</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.remove_cand"><code class="docutils literal notranslate"><span class="pre">Ranking.remove_cand()</span></code></a></li>
-<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.remove_overvote"><code class="docutils literal notranslate"><span class="pre">Ranking.remove_overvote()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.strict_pref"><code class="docutils literal notranslate"><span class="pre">Ranking.strict_pref()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.strong_dom"><code class="docutils literal notranslate"><span class="pre">Ranking.strong_dom()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.truncate_overvote"><code class="docutils literal notranslate"><span class="pre">Ranking.truncate_overvote()</span></code></a></li>
@@ -898,6 +911,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#profilewithties-class">ProfileWithTies Class</a><ul>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies</span></code></a><ul>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.candidates"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.candidates</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.cmap"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.cmap</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.condorcet_loser"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.condorcet_loser()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.condorcet_winner"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.condorcet_winner()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.copeland_scores"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.copeland_scores()</span></code></a></li>
@@ -923,7 +937,6 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.ratio"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.ratio()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.remove_candidates"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.remove_candidates()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.remove_empty_rankings"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.remove_empty_rankings()</span></code></a></li>
-<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.remove_overvotes"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.remove_overvotes()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.report"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.report()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.strict_maj_size"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.strict_maj_size()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.support"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.support()</span></code></a></li>
@@ -932,6 +945,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.unique_rankings"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.unique_rankings()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.use_extended_strict_preference"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.use_extended_strict_preference()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.use_strict_preference"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.use_strict_preference()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.using_extended_strict_preference"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.using_extended_strict_preference</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.weak_condorcet_winner"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.weak_condorcet_winner()</span></code></a></li>
 </ul>
 </li>
