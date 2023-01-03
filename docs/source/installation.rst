@@ -5,7 +5,7 @@ Installation
 Dependencies
 ----------------------
 
-The ``pref_voting`` package works in Python 3.5 and above. The  library is built around a full SciPy stack: MatPlotLib (https://matplotlib.org/), and Numpy (https://numpy.org/).  In addition, you need to have the following packages installed: 
+The ``pref_voting`` package works in Python 3.5 and above. The  library is built around a full SciPy stack: MatPlotLib (https://matplotlib.org/) and Numpy (https://numpy.org/).  In addition, you need to have the following packages installed: 
 
 - numba (http://numba.pydata.org/) 
 - networkx (https://networkx.org/)
