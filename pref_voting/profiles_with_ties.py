@@ -22,7 +22,7 @@ from pref_voting.weighted_majority_graphs import (
 class Ranking(object):
     """A ranking of a set of candidates.
 
-    A ranking is a map from candidates to ranks (integers).  There is no assumption that all candidates in an election are ranked.   The ranks can be any numbers () or that the
+    A ranking is a map from candidates to ranks (integers).  There is no assumption that all candidates in an election are ranked.
 
     :param rmap: Dictionary in which the keys are the candidates and the values are the ranks.
     :type rmap: dict[int or str: int]
@@ -99,9 +99,9 @@ class Ranking(object):
         )
 
     def indiff(self, c1, c2):
-        """Returns True if ``c1`` is indifferent with ``c2``.
+        """Returns True if ``c1`` and ``c2`` are tied.
 
-        The return value is True when  both ``c1`` and  ``c2`` are  ranked and the rank of ``c1`` is equals the rank of ``c2``.
+        The return value is True when  both ``c1`` and  ``c2`` are  ranked and the rank of ``c1`` equals the rank of ``c2``.
 
         """
 
@@ -110,7 +110,7 @@ class Ranking(object):
         )
 
     def extended_indiff(self, c1, c2):
-        """Returns True  when either both ``c1`` and  ``c2`` are not ranked or the rank of ``c1`` is equals the rank of ``c2``."""
+        """Returns True  when either both ``c1`` and  ``c2`` are not ranked or the rank of ``c1`` equals the rank of ``c2``."""
 
         return (not self.is_ranked(c1) and not self.is_ranked(c2)) or (
             self.is_ranked(c1) and self.is_ranked(c2) and self.rmap[c1] == self.rmap[c2]
@@ -119,13 +119,13 @@ class Ranking(object):
     def weak_pref(self, c1, c2):
         """Returns True if ``c1`` is weakly preferred to ``c2``.
 
-        The return value is True either ``c1`` is indifferent with ``c2`` or ``c1`` is strictly preferred to ``c2``.
+        The return value is True if either ``c1`` is tied with ``c2`` or ``c1`` is strictly preferred to ``c2``.
         """
 
         return self.strict_pref(c1, c2) or self.indiff(c1, c2)
 
     def extended_weak_pref(self, c1, c2):
-        """Returns True when either ``c1`` and ``c2`` are extended indifferent or ``c1`` is extended strictly preferred to ``c2``."""
+        """Returns True when either ``c1`` and ``c2`` are in the relation of extended indifference or ``c1`` is extended strictly preferred to ``c2``."""
 
         return self.extended_strict_pref(c1, c2) or self.extended_indiff(c1, c2)
 
