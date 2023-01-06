@@ -141,7 +141,7 @@ def smith_irv_put(profile, curr_cands=None):
     .. exec_code::
 
         from pref_voting.profiles import Profile
-        from pref_voting.combined_methods import smith_irv
+        from pref_voting.combined_methods import smith_irv_put
         from pref_voting.iterative_methods import instant_runoff, instant_runoff_put
 
         prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])
