@@ -2,12 +2,12 @@ Profiles
 =======================================
 
 
-Suppose that $X$ is a set of $n$ candidates.  A **strict linear order** of $X$, also called a **ranking** of $X$, is a relation $R\subseteq X\times X$ that is 
-1. *asymmteric*: for all $x, y\in X$, if $x\mathrel{R} y$ then not-$y\mathrel{R}x$, 
-2. *transitive*: for all $x, y,z\in X$, if $x\mathrel{R} y$  and $y\mathrel{R} z$ then $x\mathrel{R}z$; and 
-3. *complete*: for all $x,y\in X$, either $x\mathrel{R} y$ or $y\mathrel{R}x$. 
+Suppose that $X$ is a set of $n$ candidates.  A **strict linear order** of $X$, also called a **ranking** of $X$, is a relation $P\subseteq X\times X$ that is 
+1. *asymmteric*: for all $x, y\in X$, if $x\mathrel{P} y$ then not $y\mathrel{P}x$, 
+2. *transitive*: for all $x, y,z\in X$, if $x\mathrel{P} y$  and $y\mathrel{P} z$ then $x\mathrel{P}z$; and 
+3. *connected*: for all $x,y\in X$ with $x\neq y$, either $x\mathrel{P} y$ or $y\mathrel{P}x$. 
 
-When $x\mathrel{R}y$, we say "$x$ is ranked above $y$" or "$x$ is preferred to $y$".   Let $\mathcal{L}(X)$ be the set of all strict linear orders over $X$.  
+When $x\mathrel{P}y$, we say "$x$ is ranked above $y$" or "$x$ is strictly preferred to $y$".   Let $\mathcal{L}(X)$ be the set of all strict linear orders over $X$.  
 
 
 An **anonymous profile** is function $\mathbf{P}:\mathcal{L}(X)\rightarrow \mathbb{N}$ assigning a non-negative number to each ranking. 
@@ -18,7 +18,7 @@ The ``Profile`` class represents an anonymous profile.  There are two important 
 2. A strict linear order of $X$ is represented by a list of elements from $X$ of length $n$ in which each element of $X$ appears in the list. For instance, ``[1, 0, 2]`` represents the rankings $L$ where:
 $1\mathrel{L} 2, 0\mathrel{L}2, \mbox{ and } 1\mathrel{L} 2.$
  
-A ``Profile`` is defined by specifying a list of rankings.  It is assumed that any ranking not in this list was not submitted by any ranking. 
+A ``Profile`` is defined by specifying a list of rankings.  It is assumed that any ranking not in this list was not submitted by any voter. 
 
 ```{eval-rst}
 
@@ -34,9 +34,9 @@ A ``Profile`` is defined by specifying a list of rankings.  It is assumed that a
 
 There are two optional keyword parameters for a ``Profile``: 
 
-1. ``rcounts`` is a list of integers specifying the number of voters with a given ranking.  If ``rankings`` is the list of rankings, then it is assumed that the number of voters that submitted ranking ``rankings[i]`` is ``rcounts[i]``.  If ``rcounts`` is not provided, the default value is 1 for each ranking.
+1. ``rcounts`` is a list of integers specifying the number of voters with a given ranking.  If ``rankings`` is the list of rankings, then it is assumed that the number of voters who submitted ranking ``rankings[i]`` is ``rcounts[i]``.  If ``rcounts`` is not provided, the default value is 1 for each ranking.
 
-2. ``cmap`` is a dictionary mapping the candidates to their name.   This is used when displaying a profile. 
+2. ``cmap`` is a dictionary mapping the candidates to their names. This is used when displaying a profile. 
 
 ```{eval-rst}
 
@@ -56,7 +56,7 @@ There are two optional keyword parameters for a ``Profile``:
 
 There are two things to keep in mind when defining a ``Profile``.  
 
-1. The length of ``rcounts`` must be the equal to the number of rankings used to define the profile. 
+1. The length of ``rcounts`` must be equal to the number of rankings used to define the profile. 
 
 2. You cannot skip a number when defining the rankings. That is, the following will produce an error: 
 
@@ -177,11 +177,11 @@ There are a number of other methods that related to the margins of a profile.
 
 2. Scoring candidates: 
 
-    - The **Plurality score** of a candidate $c$ in a profile $\mathbf{P}$ is the number of voters that rank $c$ is first place. 
+    - The **Plurality score** of a candidate $c$ in a profile $\mathbf{P}$ is the number of voters who rank $c$ is first place. 
 
-    - The **Borda score** for candidate $c$ is calculate as follows: the score assigned to $c$ by a ranking is the number of candidates ranked below $c$.  The Borda score is the sum of the score assigned to $c$ by each ranking in the ballot.
+    - The **Borda score** of candidate $c$ is calculated as follows: the score assigned to $c$ by a ranking is the number of candidates ranked below $c$, and the Borda score of $c$ is the sum of the scores assigned to $c$ by each ranking in the profile.
 
-    - The **Copeland score** for candidate $c$ is calculate as follows:  $c$ receives 1 point for every candidate that  $c$ is majority preferred to, 0 points for every candidate that is tied with $c$, and -1  points for every candidate that is majority preferred to $c$. 
+    - The **Copeland score** of candidate $c$ is calculate as follows:  $c$ receives 1 point for every candidate that  $c$ is majority preferred to, 0 points for every candidate that is tied with $c$, and -1  points for every candidate that is majority preferred to $c$. 
 
 ```{eval-rst}
 

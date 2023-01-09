@@ -15,7 +15,7 @@ import string
 from itertools import combinations
 
 class MajorityGraph(object):
-    """An majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.
+    """A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.
 
     :param candidates: List of the candidates.  To be used as nodes in the majority graph.
     :type candidates: list[int] or  list[str]
@@ -32,7 +32,7 @@ class MajorityGraph(object):
 
             mg = MajorityGraph([0, 1, 2], [(0,1), (1,2), (2,0)])
 
-    .. warning:: Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges.
+    .. warning:: Currently, there is no check that the edge relation is asymmetric.  It is assumed that the user provides an appropriate set of edges.
     """
 
     def __init__(self, candidates, edges, cmap=None):
@@ -52,7 +52,7 @@ class MajorityGraph(object):
         self.cindices = range(len(candidates))
 
         self.maj_matrix = [[False for c2 in self.cindices] for c1 in self.cindices]
-        """A networkx DiGraph object representing the majority graph."""
+        """A matrix of Boolean values representing the majority graph."""
 
         for c1 in self.cindices:
             for c2 in self.cindices:
@@ -80,7 +80,7 @@ class MajorityGraph(object):
 
     @property
     def is_tournament(self):
-        """Returns True if the majority graph is a **tournament** (there is an edge between any two nodes)."""
+        """Returns True if the majority graph is a **tournament** (there is an edge between any two distinct nodes)."""
 
         return [
             self.mg.has_edge(c1, c2) or self.mg.has_edge(c2, c1)
@@ -103,7 +103,7 @@ class MajorityGraph(object):
 
         :param curr_cands: restrict attention to candidates in this list. Defaults to all candidates in the profile if not provided.
         :type curr_cands: list[int], optional
-        :param scores: the scores used to calculate the Copeland score of a candidate :math:`c`: ``scores[0]`` is for the candidates that :math:`c` is majority preferred to; ``scores[1]`` is the number of candidates tied with :math:`c`; and ``scores[2]`` is the number of candidate majority preferred to :math:`c`.  The default value is ``scores = (1, 0, -1)``
+        :param scores: the scores used to calculate the Copeland score of a candidate :math:`c`: ``scores[0]`` is for the candidates that :math:`c` is majority preferred to; ``scores[1]`` is for the candidates tied with :math:`c`; and ``scores[2]`` is for the candidates majority preferred to :math:`c`.  The default value is ``scores = (1, 0, -1)``
         :type scores: tuple[int], optional
         :returns: a dictionary associating each candidate in ``curr_cands`` with its Copeland score.
 
@@ -135,7 +135,7 @@ class MajorityGraph(object):
         return [c for c in candidates if self.majority_prefers(cand, c)]
 
     def condorcet_winner(self, curr_cands=None):
-        """Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise return None.
+        """Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.
 
         The **Condorcet winner** is the candidate that is majority preferred to every other candidate.
         """
@@ -168,7 +168,7 @@ class MajorityGraph(object):
         return sorted(weak_cw) if len(weak_cw) > 0 else None
 
     def condorcet_loser(self, curr_cands=None):
-        """Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise return None.
+        """Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.
 
         A candidate :math:`c` is a  **Condorcet loser** if every other candidate  is majority preferred to :math:`c`.
         """
@@ -204,7 +204,7 @@ class MajorityGraph(object):
         return list(nx.simple_cycles(self.mg))
 
     def has_cycle(self):
-        """Return True if there is a cycle in the majority graph."""
+        """Returns True if there is a cycle in the majority graph."""
         try:
             cycle = nx.find_cycle(self.mg)
         except:
@@ -426,11 +426,11 @@ class MajorityGraph(object):
 
 
 class MarginGraph(MajorityGraph):
-    """A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that the **margin** of  :math:`c` over :math:`d` is :math:`w`.
+    """A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that :math:`c` is majority preferred to :math:`d` by a **margin** of :math:`w`.
 
     :param candidates: List of the candidates.  To be used as nodes in the majority graph.
     :type candidates: list[int] or  list[str]
-    :param w_edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d)` is in the list of edges, then there is an edge from :math:`c` to :math:`d`.
+    :param w_edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d,w)` is in the list of edges, then there is an edge from :math:`c` to :math:`d` with weight :math:`w`.
     :type w_edges: list
     :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
@@ -443,7 +443,7 @@ class MarginGraph(MajorityGraph):
 
         mg = MarginGraph([0, 1, 2], [(0,1,1), (1,2,3), (2,0,5)])
 
-    .. warning:: Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges with weights.
+    .. warning:: Currently, there is no check that the edge relation is asymmetric or that weights of edges are positive.  It is assumed that the user provides an appropriate set of edges with weights.
     """
 
     def __init__(self, candidates, w_edges, cmap=None):
@@ -452,7 +452,7 @@ class MarginGraph(MajorityGraph):
         super().__init__(candidates, [(e[0], e[1]) for e in w_edges], cmap=cmap)
 
         self.m_matrix = [[0 for c2 in self.cindices] for c1 in self.cindices]
-        """The margin matrix, where the :math:`(i, j)`-entry is the number of voters that rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  that rank candidate with index :math:`j` above the candidate with index :math:`i`. """
+        """The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. """
 
         for c1, c2, margin in w_edges:
             self.m_matrix[self.cindx[c1]][self.cindx[c2]] = margin
@@ -497,7 +497,7 @@ class MarginGraph(MajorityGraph):
         return MarginGraph(new_cands, new_edges, cmap=new_cmap)
 
     def majority_prefers(self, c1, c2):
-        """Returns True if the margin ``c1`` over ``c2`` is positive."""
+        """Returns True if the margin of ``c1`` over ``c2`` is positive."""
         return self.m_matrix[self.cindx[c1]][self.cindx[c2]] > 0
 
     def is_tied(self, c1, c2):
@@ -505,7 +505,7 @@ class MarginGraph(MajorityGraph):
         return self.m_matrix[self.cindx[c1]][self.cindx[c2]] == 0
 
     def is_uniquely_weighted(self):
-        """Returns True if all the margins are unique and there is no 0 margin."""
+        """Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates."""
         has_zero_margins = any(
             [
                 self.margin(c1, c2) == 0
@@ -644,7 +644,7 @@ class MarginGraph(MajorityGraph):
 
         Args:
             defeat (networkx.DiGraph): The defeat relation represented as a networkx object.
-            curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+            curr_cands (List[int], optional): If set, then use the defeat relation for the profile restricted to the candidates in ``curr_cands``
             show_undfeated (bool, optional): If true, color the undefeated candidates blue and the other candidates red.
             cmap (dict, optional): The cmap used to map candidates to candidate names
 
@@ -856,7 +856,7 @@ class SupportGraph(MajorityGraph):
 
     :param candidates: List of the candidates.  To be used as nodes in the majority graph.
     :type candidates: list[int] or  list[str]
-    :param w_edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d)` is in the list of edges, then there is an edge from :math:`c` to :math:`d`.
+    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the suppoer for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. 
     :type w_edges: list
     :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
@@ -865,15 +865,15 @@ class SupportGraph(MajorityGraph):
 
     The following code creates a support graph in which:
 
-    - 0 is majority preferred to 1 and the number of voters that rank 0 over 1 is 4 and the number of voters that rank 1 over 0 is 3;
-    - 1 is majority preferred to 2 and the number of voters that rank 1 over 2 is 5 and the number of voters that rank 2 over 1 is 2; and
-    -  2 is majority preferred to 0 and the number of voters that rank 2 over 0 is 6 and the number of voters that rank 0 over 2 is 1:
+    - 0 is majority preferred to 1, the number of voters who rank 0 over 1 is 4, and the number of voters who rank 1 over 0 is 3;
+    - 1 is majority preferred to 2, the number of voters who rank 1 over 2 is 5, and the number of voters who rank 2 over 1 is 2; and
+    - 2 is majority preferred to 0, the number of voters who rank 2 over 0 is 6, and the number of voters who rank 0 over 2 is 1.
 
     .. code-block:: python
 
         sg = SupportGraph([0, 1, 2], [(0, 1, (4, 3)), (1, 2, (5, 2)), (2, 0, (6, 1))])
 
-    .. warning:: Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges with weights.
+    .. warning:: Currently, there is no check to that the edge relation is asymmetric.  It is assumed that the user provides an appropriate set of edges with weights.
     """
 
     def __init__(self, candidates, w_edges, cmap=None):
@@ -890,7 +890,7 @@ class SupportGraph(MajorityGraph):
         )
 
         self.s_matrix = [[0 for c2 in self.cindices] for c1 in self.cindices]
-        """The support matrix, where the   :math:`(i, j)`-entry is the number of voters that rank candidate with index :math:`i` above the candidate with index :math:`j`. """
+        """The support matrix, where the   :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j`. """
 
         for c1, c2, support in w_edges:
             self.s_matrix[self.cindx[c1]][self.cindx[c2]] = support[0]

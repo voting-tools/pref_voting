@@ -24,8 +24,8 @@ A Profile is defined from a list of rankings, where each ranking is a tuple or l
 
 There are two optional parameters when defining a Profile:
 
-1. rcounts: an array specifying the number of voters that submit each ranking in the profile.
-2. cmap: a dictionary mapping candidates to candidate names
+1. rcounts: an array specifying the number of voters who submit each ranking in the profile.
+2. cmap: a dictionary mapping candidates to candidate names.
 
 .. exec_code::
 
@@ -35,8 +35,8 @@ There are two optional parameters when defining a Profile:
     rcounts = [1, 2, 3] 
 
     #1 voter with the ranking (0,1,2),
-    #2 voters with the ranking (2,1,0) and 
-    #3 voters with the ranking (1,2,0)num_cands = 3
+    #2 voters with the ranking (2,1,0), and 
+    #3 voters with the ranking (1,2,0).
 
     prof2 = Profile(rankings, rcounts=rcounts)
     print(f"There are {prof2.num_voters} voters in the profile.")
@@ -54,11 +54,11 @@ There are two optional parameters when defining a Profile:
 
 ```
 
-There are a number of useful methods associated with a Profile.  Suppose that $\mathbf{P}$ is a profile and $a,b\in X(\mathbf{P})$.
+There are a number of useful methods associated with a Profile.  Suppose that $\mathbf{P}$ is a profile, $X(\mathbf{P})$ is the set of candidates in $\mathbf{P}$, and $V(\mathbf{P})$ is the set of voters in $\mathbf{P}$. Let $a,b\in X(\mathbf{P})$.
 
 * The support for $a$ over $b$ is $|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}|$. 
-* The **margin of $a$ over $b$ in $\mathbf{P}$** is $Margin_\mathbf{P}(a,b)=|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}| -|\{i\in V(\mathbf{P})\mid b\mathrel{\mathbf{P}_i} a\}|.$
-* Candidate $a$ is **majority preferred** to $b$ when $Margin_\mathbf{P}(a,b)> 0$.
+* The **margin of $a$ over $b$ in $\mathbf{P}$** is $Margin_\mathbf{P}(a,b)=|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}| -|\{i\in V(\mathbf{P})\mid b\mathrel{\mathbf{P}_i} a\}|$.
+* Candidate $a$ is **majority preferred** to $b$ (and $b$ is **majority dispreferred** to $a$) when $Margin_\mathbf{P}(a,b)> 0$.
 
 ```{eval-rst}
 
@@ -91,12 +91,12 @@ There are a number of useful methods associated with a Profile.  Suppose that $\
 
 In addition, there are methods for each of the following: 
 
-* Condorcet winner: a candidate that is majority preferred to every other candidate (returns None if the Condorcet winner does not exist)
-* weak Condorcet winner: a list of candidates that are not majority preferred by any other candidate (returns None if no such candidate exists) 
-* Condorcet loser: a candidate that is majority dispreferred by every other candidate (returns None if the Condorcet loser does not exist)
-* Plurality scores: a dictionary associating with each candidate its Plurality score
-* Borda scores: a dictionary associating with each candidate its Borda score
-* Copeland scores: a dictionary associating with each candidate its Copeland score
+* Condorcet winner: a candidate who is majority preferred to every other candidate (returns None if the Condorcet winner does not exist);
+* weak Condorcet winner: a list of candidates who are not majority dispreferred to any other candidate (returns None if no such candidate exists); 
+* Condorcet loser: a candidate who is majority dispreferred to every other candidate (returns None if the Condorcet loser does not exist);
+* Plurality scores: a dictionary associating with each candidate its Plurality score;
+* Borda scores: a dictionary associating with each candidate its Borda score;
+* Copeland scores: a dictionary associating with each candidate its Copeland score.
 
 ```{eval-rst}
 
@@ -126,7 +126,7 @@ In addition, there are methods for each of the following:
 
 ## Profile with Ties
 
-Use the `ProfileWithTies` class to create a profile in which voters may submit strict weak orderings over the candidates, and/or voters do not rank all of the candidates.  To create a profile, specify a list of rankings, the number of candidates, the list of counts for each ranking, and possibly a candidate map (mapping candidates to their names). 
+Use the `ProfileWithTies` class to create a profile in which voters may submit strict weak orderings of the candidates, allowing ties, and/or in which voters do not rank all of the candidates.  To create a profile, specify a list of rankings, the number of candidates, the list of counts for each ranking, and possibly a candidate map (mapping candidates to their names). 
 
 ```{eval-rst}
 
@@ -167,8 +167,8 @@ Use the `ProfileWithTies` class to create a profile in which voters may submit s
     print(f"support(b, c) = {prof.support(b, c)}")
     print(f"support(c, b) = {prof.support(c, b)}")
 
-    # the margin of a over b is the number of voters that rank a strictly above b minus
-    # the number of voters that rank b stirctly above a
+    # the margin of a over b is the number of voters who rank a strictly above b minus
+    # the number of voters who rank b strictly above a
     print("\n")
     print(f"margin(a, b) = {prof.margin(a, b)}")
     print(f"margin(a, a) = {prof.margin(a, a)}")
@@ -192,7 +192,7 @@ Use the `ProfileWithTies` class to create a profile in which voters may submit s
 
 ## (Weighted) Majority Graphs
 
-A **majority graph** is a directed assymetric graph in which the nodes are the candidates and an edge from $a$ to $b$ means that $a$ is majority preferred to $b$. 
+A **majority graph** is a directed asymmetric graph in which the nodes are the candidates and an edge from $a$ to $b$ means that $a$ is majority preferred to $b$. 
 
 ```{eval-rst}
 
@@ -240,7 +240,7 @@ A :class:`~pref_voting.weighted_majority_graphs.MajorityGraph` has a number of m
 
 ```
 
-A **margin graph** is a weighted directed assymetric graph in which the nodes are the candidates and an edge from $a$ to $b$ means that $a$ is majority preferred to $b$, and the weight of the edge is the margin of $a$ over $b$. 
+A **margin graph** is a weighted directed asymmetric graph in which the nodes are the candidates, an edge from $a$ to $b$ means that $a$ is majority preferred to $b$, and the weight of the edge is the margin of $a$ over $b$. 
 
 ```{eval-rst}
 
@@ -248,7 +248,7 @@ A :class:`~pref_voting.weighted_majority_graphs.MarginGraph` has a number of met
 
 .. important:: 
 
-    The weights of a MarginGraph can be any numbers.  However, if the weights are generated by a profile of linear orders, then the weights will have the same parity. 
+    The weights of a MarginGraph can be any numbers.  However, if the weights are generated by a profile of linear orders, then the weights will have the same parity (which is even if there is any zero margin between distinct candidates). 
 
 .. exec_code::
 
