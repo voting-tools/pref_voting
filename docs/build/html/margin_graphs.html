@@ -218,7 +218,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MajorityGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="Permalink to this definition">#</a></dt>
-<dd><p>An majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> means that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(d\)</span>.</p>
+<dd><p>A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> means that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(d\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -236,7 +236,7 @@
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges.</p>
+<p>Currently, there is no check that the edge relation is asymmetric.  It is assumed that the user provides an appropriate set of edges.</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.candidates">
@@ -247,14 +247,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser">
 <span class="sig-name descname"><span class="pre">condorcet_loser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.condorcet_loser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the Condorcet loser in the profile restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if one exists, otherwise return None.</p>
+<dd><p>Returns the Condorcet loser in the profile restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if one exists, otherwise returns None.</p>
 <p>A candidate <span class="math notranslate nohighlight">\(c\)</span> is a  <strong>Condorcet loser</strong> if every other candidate  is majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_winner">
 <span class="sig-name descname"><span class="pre">condorcet_winner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.condorcet_winner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_winner" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the Condorcet winner in the profile restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if one exists, otherwise return None.</p>
+<dd><p>Returns the Condorcet winner in the profile restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code> if one exists, otherwise returns None.</p>
 <p>The <strong>Condorcet winner</strong> is the candidate that is majority preferred to every other candidate.</p>
 </dd></dl>
 
@@ -267,7 +267,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>curr_cands</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – restrict attention to candidates in this list. Defaults to all candidates in the profile if not provided.</p></li>
-<li><p><strong>scores</strong> (<em>tuple</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – the scores used to calculate the Copeland score of a candidate <span class="math notranslate nohighlight">\(c\)</span>: <code class="docutils literal notranslate"><span class="pre">scores[0]</span></code> is for the candidates that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to; <code class="docutils literal notranslate"><span class="pre">scores[1]</span></code> is the number of candidates tied with <span class="math notranslate nohighlight">\(c\)</span>; and <code class="docutils literal notranslate"><span class="pre">scores[2]</span></code> is the number of candidate majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.  The default value is <code class="docutils literal notranslate"><span class="pre">scores</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">0,</span> <span class="pre">-1)</span></code></p></li>
+<li><p><strong>scores</strong> (<em>tuple</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – the scores used to calculate the Copeland score of a candidate <span class="math notranslate nohighlight">\(c\)</span>: <code class="docutils literal notranslate"><span class="pre">scores[0]</span></code> is for the candidates that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to; <code class="docutils literal notranslate"><span class="pre">scores[1]</span></code> is for the candidates tied with <span class="math notranslate nohighlight">\(c\)</span>; and <code class="docutils literal notranslate"><span class="pre">scores[2]</span></code> is for the candidates majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.  The default value is <code class="docutils literal notranslate"><span class="pre">scores</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">0,</span> <span class="pre">-1)</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -392,7 +392,7 @@ The cycles in the majority graph are [[0, 1, 2]]
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.has_cycle">
 <span class="sig-name descname"><span class="pre">has_cycle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MajorityGraph.has_cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.has_cycle" title="Permalink to this definition">#</a></dt>
-<dd><p>Return True if there is a cycle in the majority graph.</p>
+<dd><p>Returns True if there is a cycle in the majority graph.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -404,13 +404,13 @@ The cycles in the majority graph are [[0, 1, 2]]
 <dl class="py property">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.is_tournament">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_tournament</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.is_tournament" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True if the majority graph is a <strong>tournament</strong> (there is an edge between any two nodes).</p>
+<dd><p>Returns True if the majority graph is a <strong>tournament</strong> (there is an edge between any two distinct nodes).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MajorityGraph.maj_matrix">
 <span class="sig-name descname"><span class="pre">maj_matrix</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MajorityGraph.maj_matrix" title="Permalink to this definition">#</a></dt>
-<dd><p>A networkx DiGraph object representing the majority graph.</p>
+<dd><p>A matrix of Boolean values representing the majority graph.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -532,12 +532,12 @@ Edges: [(2, 0)]
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.weighted_majority_graphs.</span></span><span class="sig-name descname"><span class="pre">MarginGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">MajorityGraph</span></code></a></p>
-<p>A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span> means that the <strong>margin</strong> of  <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(w\)</span>.</p>
+<p>A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span> means that <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to <span class="math notranslate nohighlight">\(d\)</span> by a <strong>margin</strong> of <span class="math notranslate nohighlight">\(w\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>int</em><em>] or  </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of the candidates.  To be used as nodes in the majority graph.</p></li>
-<li><p><strong>w_edges</strong> (<em>list</em>) – List of the pairs of candidates describing the edges in the majority graph.   If <span class="math notranslate nohighlight">\((c,d)\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
+<li><p><strong>w_edges</strong> (<em>list</em>) – List of the pairs of candidates describing the edges in the majority graph.   If <span class="math notranslate nohighlight">\((c,d,w)\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span>.</p></li>
 <li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
@@ -550,7 +550,7 @@ Edges: [(2, 0)]
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges with weights.</p>
+<p>Currently, there is no check that the edge relation is asymmetric or that weights of edges are positive.  It is assumed that the user provides an appropriate set of edges with weights.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.add">
@@ -603,7 +603,7 @@ existing margin of <span class="math notranslate nohighlight">\(a\)</span> over 
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>defeat</strong> (<em>networkx.DiGraph</em>) – The defeat relation represented as a networkx object.</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then use the defeat relation for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 <li><p><strong>show_undfeated</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, color the undefeated candidates blue and the other candidates red.</p></li>
 <li><p><strong>cmap</strong> (<em>dict</em><em>, </em><em>optional</em>) – The cmap used to map candidates to candidate names</p></li>
 </ul>
@@ -664,19 +664,19 @@ existing margin of <span class="math notranslate nohighlight">\(a\)</span> over 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.is_uniquely_weighted">
 <span class="sig-name descname"><span class="pre">is_uniquely_weighted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.is_uniquely_weighted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.is_uniquely_weighted" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True if all the margins are unique and there is no 0 margin.</p>
+<dd><p>Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.m_matrix">
 <span class="sig-name descname"><span class="pre">m_matrix</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.m_matrix" title="Permalink to this definition">#</a></dt>
-<dd><p>The margin matrix, where the <span class="math notranslate nohighlight">\((i, j)\)</span>-entry is the number of voters that rank candidate with index <span class="math notranslate nohighlight">\(i\)</span> above the candidate with index <span class="math notranslate nohighlight">\(j\)</span> minus the number of voters  that rank candidate with index <span class="math notranslate nohighlight">\(j\)</span> above the candidate with index <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<dd><p>The margin matrix, where the <span class="math notranslate nohighlight">\((i, j)\)</span>-entry is the number of voters who rank candidate with index <span class="math notranslate nohighlight">\(i\)</span> above the candidate with index <span class="math notranslate nohighlight">\(j\)</span> minus the number of voters  who rank candidate with index <span class="math notranslate nohighlight">\(j\)</span> above the candidate with index <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.MarginGraph.majority_prefers">
 <span class="sig-name descname"><span class="pre">majority_prefers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/weighted_majority_graphs.html#MarginGraph.majority_prefers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.weighted_majority_graphs.MarginGraph.majority_prefers" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True if the margin <code class="docutils literal notranslate"><span class="pre">c1</span></code> over <code class="docutils literal notranslate"><span class="pre">c2</span></code> is positive.</p>
+<dd><p>Returns True if the margin of <code class="docutils literal notranslate"><span class="pre">c1</span></code> over <code class="docutils literal notranslate"><span class="pre">c2</span></code> is positive.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -747,7 +747,7 @@ Edges: [(2, 0, 5)]
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>int</em><em>] or  </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of the candidates.  To be used as nodes in the majority graph.</p></li>
-<li><p><strong>w_edges</strong> (<em>list</em>) – List of the pairs of candidates describing the edges in the majority graph.   If <span class="math notranslate nohighlight">\((c,d)\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
+<li><p><strong>w_edges</strong> (<em>list</em>) – List representing the edges in the majority graph with supports. If <span class="math notranslate nohighlight">\((c,d,(n,m))\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>, the suppoer for <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(n\)</span>, and the support for <span class="math notranslate nohighlight">\(d\)</span> over <span class="math notranslate nohighlight">\(c\)</span> is <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
 <li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
@@ -756,16 +756,16 @@ Edges: [(2, 0, 5)]
 </dl>
 <p>The following code creates a support graph in which:</p>
 <ul class="simple">
-<li><p>0 is majority preferred to 1 and the number of voters that rank 0 over 1 is 4 and the number of voters that rank 1 over 0 is 3;</p></li>
-<li><p>1 is majority preferred to 2 and the number of voters that rank 1 over 2 is 5 and the number of voters that rank 2 over 1 is 2; and</p></li>
-<li><p>2 is majority preferred to 0 and the number of voters that rank 2 over 0 is 6 and the number of voters that rank 0 over 2 is 1:</p></li>
+<li><p>0 is majority preferred to 1, the number of voters who rank 0 over 1 is 4, and the number of voters who rank 1 over 0 is 3;</p></li>
+<li><p>1 is majority preferred to 2, the number of voters who rank 1 over 2 is 5, and the number of voters who rank 2 over 1 is 2; and</p></li>
+<li><p>2 is majority preferred to 0, the number of voters who rank 2 over 0 is 6, and the number of voters who rank 0 over 2 is 1.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sg</span> <span class="o">=</span> <span class="n">SupportGraph</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">))])</span>
 </pre></div>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Currently, there is no check to that the edges are asymteric.  It is assumed that the user provides an appropriate set of edges with weights.</p>
+<p>Currently, there is no check to that the edge relation is asymmetric.  It is assumed that the user provides an appropriate set of edges with weights.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.SupportGraph.display">
@@ -880,7 +880,7 @@ Edges: [(0, 2, (10, 5))]
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.weighted_majority_graphs.SupportGraph.s_matrix">
 <span class="sig-name descname"><span class="pre">s_matrix</span></span><a class="headerlink" href="#pref_voting.weighted_majority_graphs.SupportGraph.s_matrix" title="Permalink to this definition">#</a></dt>
-<dd><p>The support matrix, where the   <span class="math notranslate nohighlight">\((i, j)\)</span>-entry is the number of voters that rank candidate with index <span class="math notranslate nohighlight">\(i\)</span> above the candidate with index <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<dd><p>The support matrix, where the   <span class="math notranslate nohighlight">\((i, j)\)</span>-entry is the number of voters who rank candidate with index <span class="math notranslate nohighlight">\(i\)</span> above the candidate with index <span class="math notranslate nohighlight">\(j\)</span>.</p>
 </dd></dl>
 
 <dl class="py method">

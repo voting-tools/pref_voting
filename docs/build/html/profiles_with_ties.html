@@ -213,13 +213,14 @@
         <article role="main">
           <section class="tex2jax_ignore mathjax_ignore" id="profiles-with-ties">
 <h1>Profiles with Ties<a class="headerlink" href="#profiles-with-ties" title="Permalink to this heading">#</a></h1>
+<p>Profiles for ballots that may not be linear orders.  The ballots may be a  strict weak orders, truncated linear orders, or  truncated strict weak orders.</p>
 <section id="ranking-class">
 <h2>Ranking Class<a class="headerlink" href="#ranking-class" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pref_voting.profiles_with_ties.</span></span><span class="sig-name descname"><span class="pre">Ranking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking" title="Permalink to this definition">#</a></dt>
 <dd><p>A ranking of a set of candidates.</p>
-<p>A ranking is a map from candidates to ranks (integers).  There is no assumption that all candidates in an election are ranked.   The ranks can be any numbers () or that the</p>
+<p>A ranking is a map from candidates to ranks (integers).  There is no assumption that all candidates in an election are ranked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -270,9 +271,55 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.display" title="Permalink to this definition">#</a></dt>
+<dd><p>Display the ranking vertically as a column of a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles_with_ties</span> <span class="kn">import</span> <span class="n">Ranking</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">Ranking</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">Ranking</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">Ranking</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1 0 2 
++---+
+| 1 |
+| 0 |
+| 2 |
++---+
+
+( 0  1 ) 2 
++-----+
+| 0 1 |
+|  2  |
++-----+
+
+0 2 
++---+
+| 0 |
+| 2 |
++---+
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.extended_indiff">
 <span class="sig-name descname"><span class="pre">extended_indiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.extended_indiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.extended_indiff" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True  when either both <code class="docutils literal notranslate"><span class="pre">c1</span></code> and  <code class="docutils literal notranslate"><span class="pre">c2</span></code> are not ranked or the rank of <code class="docutils literal notranslate"><span class="pre">c1</span></code> is equals the rank of <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
+<dd><p>Returns True  when either both <code class="docutils literal notranslate"><span class="pre">c1</span></code> and  <code class="docutils literal notranslate"><span class="pre">c2</span></code> are not ranked or the rank of <code class="docutils literal notranslate"><span class="pre">c1</span></code> equals the rank of <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -284,7 +331,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.extended_weak_pref">
 <span class="sig-name descname"><span class="pre">extended_weak_pref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.extended_weak_pref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.extended_weak_pref" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True when either <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code> are extended indifferent or <code class="docutils literal notranslate"><span class="pre">c1</span></code> is extended strictly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
+<dd><p>Returns True when either <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code> are in the relation of extended indifference or <code class="docutils literal notranslate"><span class="pre">c1</span></code> is extended strictly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -314,8 +361,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.indiff">
 <span class="sig-name descname"><span class="pre">indiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.indiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.indiff" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">c1</span></code> is indifferent with <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
-<p>The return value is True when  both <code class="docutils literal notranslate"><span class="pre">c1</span></code> and  <code class="docutils literal notranslate"><span class="pre">c2</span></code> are  ranked and the rank of <code class="docutils literal notranslate"><span class="pre">c1</span></code> is equals the rank of <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
+<dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code> are tied.</p>
+<p>The return value is True when  both <code class="docutils literal notranslate"><span class="pre">c1</span></code> and  <code class="docutils literal notranslate"><span class="pre">c2</span></code> are  ranked and the rank of <code class="docutils literal notranslate"><span class="pre">c1</span></code> equals the rank of <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -431,7 +478,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.Ranking.weak_pref">
 <span class="sig-name descname"><span class="pre">weak_pref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#Ranking.weak_pref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.Ranking.weak_pref" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if <code class="docutils literal notranslate"><span class="pre">c1</span></code> is weakly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
-<p>The return value is True either <code class="docutils literal notranslate"><span class="pre">c1</span></code> is indifferent with <code class="docutils literal notranslate"><span class="pre">c2</span></code> or <code class="docutils literal notranslate"><span class="pre">c1</span></code> is strictly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
+<p>The return value is True if either <code class="docutils literal notranslate"><span class="pre">c1</span></code> is tied with <code class="docutils literal notranslate"><span class="pre">c2</span></code> or <code class="docutils literal notranslate"><span class="pre">c1</span></code> is strictly preferred to <code class="docutils literal notranslate"><span class="pre">c2</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -883,6 +930,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.AAdom"><code class="docutils literal notranslate"><span class="pre">Ranking.AAdom()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.cands"><code class="docutils literal notranslate"><span class="pre">Ranking.cands</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.cands_at_rank"><code class="docutils literal notranslate"><span class="pre">Ranking.cands_at_rank()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.display"><code class="docutils literal notranslate"><span class="pre">Ranking.display()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.extended_indiff"><code class="docutils literal notranslate"><span class="pre">Ranking.extended_indiff()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.extended_strict_pref"><code class="docutils literal notranslate"><span class="pre">Ranking.extended_strict_pref()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.Ranking.extended_weak_pref"><code class="docutils literal notranslate"><span class="pre">Ranking.extended_weak_pref()</span></code></a></li>

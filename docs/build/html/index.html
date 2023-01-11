@@ -213,9 +213,9 @@
         <article role="main">
           <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h1>
-<p>Preferential Voting Tools (<code class="docutils literal notranslate"><span class="pre">pref_voting</span></code>) is a Python library that can be used to study different preferential voting methods.   In a preferential voting election, each voter submits a <em>ranking</em> of the candidates, and the winners are determined based on the submitted rankings.   The rankings may include ties between candidates, or some candidates may be left off the ranking.</p>
+<p>Preferential Voting Tools (<code class="docutils literal notranslate"><span class="pre">pref_voting</span></code>) is a Python library that can be used to study different preferential voting methods.   In a preferential voting election, each voter submits a <em>ranking</em> of the candidates, and the winners are determined based on the submitted rankings.   The rankings may include ties between candidates, and some candidates may be left off the ranking.</p>
 <p>The main objective is to create a set of tools that can be used by teachers and researchers to study voting methods. Use the following website to run an election using the preferential voting method Stable Voting:  <a class="reference external" href="https://stablevoting.org/">https://stablevoting.org/</a></p>
-<p>The library is developed by Wes Holliday (<a class="reference external" href="https://sites.google.com/site/wesholliday/">https://sites.google.com/site/wesholliday/</a>) and Eric Pacuit (<a class="reference external" href="https://pacuit.org">https://pacuit.org</a>).</p>
+<p>The library is developed by Wes Holliday (<a class="reference external" href="http://wesholliday.net">http://wesholliday.net</a>) and Eric Pacuit (<a class="reference external" href="https://pacuit.org">https://pacuit.org</a>).</p>
 <p><strong>Survey articles about voting methods</strong></p>
 <ul class="simple">
 <li><ol class="upperalpha simple" start="5">
@@ -227,13 +227,13 @@
 </ol>
 </li>
 </ul>
-<section id="related-python-packages">
-<h2>Related Python packages<a class="headerlink" href="#related-python-packages" title="Permalink to this heading">#</a></h2>
+<section id="related-resources">
+<h2>Related resources<a class="headerlink" href="#related-resources" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>abcvoting (<a class="reference external" href="https://abcvoting.readthedocs.io/">https://abcvoting.readthedocs.io/</a>) - Python library of approval based committee voting rules.</p></li>
 <li><p>PrefLib (<a class="reference external" href="https://www.preflib.org/">https://www.preflib.org/</a>) - A database of election data.</p></li>
 <li><p>Mapel (<a class="reference external" href="https://github.com/szufix/mapel">https://github.com/szufix/mapel</a>) - Mapel (Map of Elections) is a Python package that can be used to simulate elections.</p></li>
-<li><p><a class="reference external" href="https://voting.ml/">https://voting.ml/</a> - An online tools to study <em>maximal lotteries</em> (a Condorcet consistent probabilistic voting method).</p></li>
+<li><p><a class="reference external" href="https://voting.ml/">https://voting.ml/</a> - An online tool to study <em>maximal lotteries</em> (a Condorcet consistent probabilistic voting method).</p></li>
 <li><p>Votelib (<a class="reference external" href="https://github.com/simberaj/votelib">https://github.com/simberaj/votelib</a>) - Another Python package that implements a number of voting methods (includes multiwinner methods and some grading systems such as Approval Voting and Majority Judgement).</p></li>
 </ul>
 </section>
@@ -276,7 +276,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="generate_profiles.html">Generate Profiles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="generate_profiles.html#generate-a-profile">Generate a Profile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generate_profiles.html#generate-a-truncated-profilewithties">Generate a Truncated ProfileWithTies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generate_profiles.html#generate-a-profile-with-truncated-linear-orders">Generate a Profile with Truncated Linear Orders</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="generate_weighted_majority_graphs.html">Generate Weighted Majority Graphs</a><ul>
@@ -333,7 +333,10 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="combined_methods.html#daunou">Daunou</a></li>
 <li class="toctree-l2"><a class="reference internal" href="combined_methods.html#blacks">Blacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="combined_methods.html#condorcet-irv">Condorcet IRV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="combined_methods.html#condorcet-irv-put">Condorcet IRV PUT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="combined_methods.html#smith-irv">Smith IRV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="combined_methods.html#smith-irv-put">Smith IRV PUT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="combined_methods.html#composing-voting-methods">Composing Voting Methods</a></li>
 </ul>
 </li>
@@ -402,7 +405,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Introduction</a><ul>
-<li><a class="reference internal" href="#related-python-packages">Related Python packages</a></li>
+<li><a class="reference internal" href="#related-resources">Related resources</a></li>
 <li><a class="reference internal" href="#contents">Contents</a><ul>
 </ul>
 </li>

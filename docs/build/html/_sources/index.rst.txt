@@ -6,12 +6,11 @@
 Introduction
 =======================================
 
-Preferential Voting Tools (``pref_voting``) is a Python library that can be used to study different preferential voting methods.   In a preferential voting election, each voter submits a *ranking* of the candidates, and the winners are determined based on the submitted rankings.   The rankings may include ties between candidates, or some candidates may be left off the ranking. 
-
+Preferential Voting Tools (``pref_voting``) is a Python library that can be used to study different preferential voting methods.   In a preferential voting election, each voter submits a *ranking* of the candidates, and the winners are determined based on the submitted rankings.   The rankings may include ties between candidates, and some candidates may be left off the ranking. 
 
 The main objective is to create a set of tools that can be used by teachers and researchers to study voting methods. Use the following website to run an election using the preferential voting method Stable Voting:  https://stablevoting.org/ 
 
-The library is developed by Wes Holliday (https://sites.google.com/site/wesholliday/) and Eric Pacuit (https://pacuit.org). 
+The library is developed by Wes Holliday (http://wesholliday.net) and Eric Pacuit (https://pacuit.org). 
 
 **Survey articles about voting methods** 
 
@@ -19,7 +18,7 @@ The library is developed by Wes Holliday (https://sites.google.com/site/wesholli
 
 - W. Zwicker (2016). `Introduction to the theory of voting <https://www.cambridge.org/core/books/abs/handbook-of-computational-social-choice/introduction-to-the-theory-of-voting/7C7A70249A972A4AC56E8938AD27464E>`_, Handbook of Computational Social Choice.
 
-Related Python packages
+Related resources
 ------------------------
 
 - abcvoting (https://abcvoting.readthedocs.io/) - Python library of approval based committee voting rules.
@@ -28,7 +27,7 @@ Related Python packages
 
 - Mapel (https://github.com/szufix/mapel) - Mapel (Map of Elections) is a Python package that can be used to simulate elections.  
 
-- https://voting.ml/ - An online tools to study *maximal lotteries* (a Condorcet consistent probabilistic voting method).
+- https://voting.ml/ - An online tool to study *maximal lotteries* (a Condorcet consistent probabilistic voting method).
 
 - Votelib (https://github.com/simberaj/votelib) - Another Python package that implements a number of voting methods (includes multiwinner methods and some grading systems such as Approval Voting and Majority Judgement).
 

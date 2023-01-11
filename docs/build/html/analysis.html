@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="edata_overview.html" /><link rel="prev" title="Introduction" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
-        <title>Installation - Preferential Voting Tools</title>
+        <title>Analysis of Voting Methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -156,9 +156,9 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-tree">
-  <ul class="current">
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Elections</span></p>
 <ul>
@@ -211,28 +211,56 @@
           </label>
         </div>
         <article role="main">
-          <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code> package works in Python 3.5 and above. The  library is built around a full SciPy stack: MatPlotLib (<a class="reference external" href="https://matplotlib.org/">https://matplotlib.org/</a>) and Numpy (<a class="reference external" href="https://numpy.org/">https://numpy.org/</a>).  In addition, you need to have the following packages installed:</p>
-<ul class="simple">
-<li><p>numba (<a class="reference external" href="http://numba.pydata.org/">http://numba.pydata.org/</a>)</p></li>
-<li><p>networkx (<a class="reference external" href="https://networkx.org/">https://networkx.org/</a>)</p></li>
-<li><p>tabulate (<a class="reference external" href="https://github.com/astanin/python-tabulate">https://github.com/astanin/python-tabulate</a>)</p></li>
-<li><p>random (<a class="reference external" href="https://docs.python.org/3/library/random.html">https://docs.python.org/3/library/random.html</a>)</p></li>
+          <section class="tex2jax_ignore mathjax_ignore" id="analysis-of-voting-methods">
+<h1>Analysis of Voting Methods<a class="headerlink" href="#analysis-of-voting-methods" title="Permalink to this heading">#</a></h1>
+<p>Functions to analyze voting methods.</p>
+<section id="find-profiles-with-different-winners">
+<h2>Find Profiles with Different Winners<a class="headerlink" href="#find-profiles-with-different-winners" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.analysis.find_profiles_with_different_winners">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.analysis.</span></span><span class="sig-name descname"><span class="pre">find_profiles_with_different_winners</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbers_of_candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[3,</span> <span class="pre">4,</span> <span class="pre">5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbers_of_voters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">25,</span> <span class="pre">50,</span> <span class="pre">100]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_unique_winners</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_profiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_margin_graphs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_winning_sets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_rankings_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_multiple_profiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probmod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/analysis.html#find_profiles_with_different_winners"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.analysis.find_profiles_with_different_winners" title="Permalink to this definition">#</a></dt>
+<dd><p>Given a list of voting methods, search for profiles with different winning sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vms</strong> (<em>list</em><em>(</em><em>functions</em><em>)</em>) – A list of voting methods,</p></li>
+<li><p><strong>numbers_of_candidates</strong> (<em>list</em><em>(</em><em>int</em><em>)</em><em>, </em><em>default =</em><em> [</em><em>3</em><em>, </em><em>4</em><em>, </em><em>5</em><em>]</em>) – The numbers of candidates to check.</p></li>
+<li><p><strong>numbers_of_voters</strong> (<em>list</em><em>(</em><em>int</em><em>)</em><em>, </em><em>default =</em><em> [</em><em>5</em><em>, </em><em>25</em><em>, </em><em>50</em><em>, </em><em>100</em><em>]</em>) – The numbers of voters to check.</p></li>
+<li><p><strong>all_unique_winners</strong> (<em>bool</em><em>, </em><em>default = False</em>) – If True, only return profiles in which each voting method has a unique winner.</p></li>
+<li><p><strong>show_profiles</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, show profiles with different winning sets for the voting methods when discovered.</p></li>
+<li><p><strong>show_margin_graphs</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, show margin graphs of the profiles with different winning sets for the voting methods when discovered.</p></li>
+<li><p><strong>show_winning_sets</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, show the different winning sets for the voting methods when discovered.</p></li>
+<li><p><strong>show_rankings_counts</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, show the rankins and counts of the profiles with different winning sets for the voting methods.</p></li>
+<li><p><strong>return_multiple_profiles</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, return all profiles that are found.</p></li>
+<li><p><strong>probmod</strong> (<em>str</em><em>, </em><em>default=&quot;IC&quot;</em>) – The probability model to be passed to the <code class="docutils literal notranslate"><span class="pre">generate_profile</span></code> method</p></li>
+<li><p><strong>num_trials</strong> (<em>int</em><em>, </em><em>default=10000</em>) – The number of profiles to check for different winning sets.</p></li>
 </ul>
-<p>The dependencies can be installed using pip:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install matplotlib numpy numba networkx tabulate random
-</pre></div>
-</div>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="install-pref-voting">
-<h2>Install <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code><a class="headerlink" href="#install-pref-voting" title="Permalink to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pref_voting</span></code> is available on pypi and can be installed using pip.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install pref_voting
-</pre></div>
-</div>
+<section id="condorcet-efficiency">
+<h2>Condorcet Efficiency<a class="headerlink" href="#condorcet-efficiency" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.analysis.find_condorcet_efficiency">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.analysis.</span></span><span class="sig-name descname"><span class="pre">find_condorcet_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbers_of_candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[3,</span> <span class="pre">4,</span> <span class="pre">5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbers_of_voters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[4,</span> <span class="pre">10,</span> <span class="pre">20,</span> <span class="pre">50,</span> <span class="pre">100,</span> <span class="pre">500,</span> <span class="pre">1000]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probmods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['IC']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/analysis.html#find_condorcet_efficiency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.analysis.find_condorcet_efficiency" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a Pandas DataFrame with the Condorcet efficiency of a list of voting methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vms</strong> (<em>list</em><em>(</em><em>functions</em><em>)</em>) – A list of voting methods,</p></li>
+<li><p><strong>numbers_of_candidates</strong> (<em>list</em><em>(</em><em>int</em><em>)</em><em>, </em><em>default =</em><em> [</em><em>3</em><em>, </em><em>4</em><em>, </em><em>5</em><em>]</em>) – The numbers of candidates to check.</p></li>
+<li><p><strong>numbers_of_voters</strong> (<em>list</em><em>(</em><em>int</em><em>)</em><em>, </em><em>default =</em><em> [</em><em>5</em><em>, </em><em>25</em><em>, </em><em>50</em><em>, </em><em>100</em><em>]</em>) – The numbers of voters to check.</p></li>
+<li><p><strong>probmod</strong> (<em>str</em><em>, </em><em>default=&quot;IC&quot;</em>) – The probability model to be passed to the <code class="docutils literal notranslate"><span class="pre">generate_profile</span></code> method</p></li>
+<li><p><strong>num_trials</strong> (<em>int</em><em>, </em><em>default=10000</em>) – The number of profiles to check for different winning sets.</p></li>
+<li><p><strong>use_parallel</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, then use parallel processing.</p></li>
+<li><p><strong>num_cpus</strong> (<em>int</em><em>, </em><em>default=12</em>) – The number of (virtual) cpus to use if using parallel processing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -241,26 +269,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="edata_overview.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Overview</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="index.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Home</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -291,9 +301,15 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Installation</a><ul>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li><a class="reference internal" href="#install-pref-voting">Install <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code></a></li>
+<li><a class="reference internal" href="#">Analysis of Voting Methods</a><ul>
+<li><a class="reference internal" href="#find-profiles-with-different-winners">Find Profiles with Different Winners</a><ul>
+<li><a class="reference internal" href="#pref_voting.analysis.find_profiles_with_different_winners"><code class="docutils literal notranslate"><span class="pre">find_profiles_with_different_winners()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#condorcet-efficiency">Condorcet Efficiency</a><ul>
+<li><a class="reference internal" href="#pref_voting.analysis.find_condorcet_efficiency"><code class="docutils literal notranslate"><span class="pre">find_condorcet_efficiency()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

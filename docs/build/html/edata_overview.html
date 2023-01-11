@@ -243,8 +243,8 @@ There are 3 candidates in the profile.
 </div>
 <p>There are two optional parameters when defining a Profile:</p>
 <ol class="arabic simple">
-<li><p>rcounts: an array specifying the number of voters that submit each ranking in the profile.</p></li>
-<li><p>cmap: a dictionary mapping candidates to candidate names</p></li>
+<li><p>rcounts: an array specifying the number of voters who submit each ranking in the profile.</p></li>
+<li><p>cmap: a dictionary mapping candidates to candidate names.</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
 
@@ -252,8 +252,8 @@ There are 3 candidates in the profile.
 <span class="n">rcounts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 
 <span class="c1">#1 voter with the ranking (0,1,2),</span>
-<span class="c1">#2 voters with the ranking (2,1,0) and</span>
-<span class="c1">#3 voters with the ranking (1,2,0)num_cands = 3</span>
+<span class="c1">#2 voters with the ranking (2,1,0), and</span>
+<span class="c1">#3 voters with the ranking (1,2,0).</span>
 
 <span class="n">prof2</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="o">=</span><span class="n">rcounts</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="n">prof2</span><span class="o">.</span><span class="n">num_voters</span><span class="si">}</span><span class="s2"> voters in the profile.&quot;</span><span class="p">)</span>
@@ -288,11 +288,11 @@ There are 3 candidates in the profile.
 +---+---+---+
 </pre></div>
 </div>
-<p>There are a number of useful methods associated with a Profile.  Suppose that <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is a profile and <span class="math notranslate nohighlight">\(a,b\in X(\mathbf{P})\)</span>.</p>
+<p>There are a number of useful methods associated with a Profile.  Suppose that <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is a profile, <span class="math notranslate nohighlight">\(X(\mathbf{P})\)</span> is the set of candidates in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>, and <span class="math notranslate nohighlight">\(V(\mathbf{P})\)</span> is the set of voters in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>. Let <span class="math notranslate nohighlight">\(a,b\in X(\mathbf{P})\)</span>.</p>
 <ul class="simple">
 <li><p>The support for <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> is <span class="math notranslate nohighlight">\(|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}|\)</span>.</p></li>
-<li><p>The <strong>margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span></strong> is <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(a,b)=|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}| -|\{i\in V(\mathbf{P})\mid b\mathrel{\mathbf{P}_i} a\}|.\)</span></p></li>
-<li><p>Candidate <span class="math notranslate nohighlight">\(a\)</span> is <strong>majority preferred</strong> to <span class="math notranslate nohighlight">\(b\)</span> when <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(a,b)&gt; 0\)</span>.</p></li>
+<li><p>The <strong>margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span> in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span></strong> is <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(a,b)=|\{i\in V(\mathbf{P})\mid a\mathrel{\mathbf{P}_i}b\}| -|\{i\in V(\mathbf{P})\mid b\mathrel{\mathbf{P}_i} a\}|\)</span>.</p></li>
+<li><p>Candidate <span class="math notranslate nohighlight">\(a\)</span> is <strong>majority preferred</strong> to <span class="math notranslate nohighlight">\(b\)</span> (and <span class="math notranslate nohighlight">\(b\)</span> is <strong>majority dispreferred</strong> to <span class="math notranslate nohighlight">\(a\)</span>) when <span class="math notranslate nohighlight">\(Margin_\mathbf{P}(a,b)&gt; 0\)</span>.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
 
@@ -341,12 +341,12 @@ The size of a strict majority of voters is  3
 </div>
 <p>In addition, there are methods for each of the following:</p>
 <ul class="simple">
-<li><p>Condorcet winner: a candidate that is majority preferred to every other candidate (returns None if the Condorcet winner does not exist)</p></li>
-<li><p>weak Condorcet winner: a list of candidates that are not majority preferred by any other candidate (returns None if no such candidate exists)</p></li>
-<li><p>Condorcet loser: a candidate that is majority dispreferred by every other candidate (returns None if the Condorcet loser does not exist)</p></li>
-<li><p>Plurality scores: a dictionary associating with each candidate its Plurality score</p></li>
-<li><p>Borda scores: a dictionary associating with each candidate its Borda score</p></li>
-<li><p>Copeland scores: a dictionary associating with each candidate its Copeland score</p></li>
+<li><p>Condorcet winner: a candidate who is majority preferred to every other candidate (returns None if the Condorcet winner does not exist);</p></li>
+<li><p>weak Condorcet winner: a list of candidates who are not majority dispreferred to any other candidate (returns None if no such candidate exists);</p></li>
+<li><p>Condorcet loser: a candidate who is majority dispreferred to every other candidate (returns None if the Condorcet loser does not exist);</p></li>
+<li><p>Plurality scores: a dictionary associating with each candidate its Plurality score;</p></li>
+<li><p>Borda scores: a dictionary associating with each candidate its Borda score;</p></li>
+<li><p>Copeland scores: a dictionary associating with each candidate its Copeland score.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
 
@@ -389,7 +389,7 @@ The Condorcet loser is  0
 </section>
 <section id="profile-with-ties">
 <h2>Profile with Ties<a class="headerlink" href="#profile-with-ties" title="Permalink to this heading">#</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">ProfileWithTies</span></code> class to create a profile in which voters may submit strict weak orderings over the candidates, and/or voters do not rank all of the candidates.  To create a profile, specify a list of rankings, the number of candidates, the list of counts for each ranking, and possibly a candidate map (mapping candidates to their names).</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">ProfileWithTies</span></code> class to create a profile in which voters may submit strict weak orderings of the candidates, allowing ties, and/or in which voters do not rank all of the candidates.  To create a profile, specify a list of rankings, the number of candidates, the list of counts for each ranking, and possibly a candidate map (mapping candidates to their names).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles_with_ties</span> <span class="kn">import</span> <span class="n">ProfileWithTies</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
@@ -425,8 +425,8 @@ The Condorcet loser is  0
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;support(b, c) = </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">support</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;support(c, b) = </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">support</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="c1"># the margin of a over b is the number of voters that rank a strictly above b minus</span>
-<span class="c1"># the number of voters that rank b stirctly above a</span>
+<span class="c1"># the margin of a over b is the number of voters who rank a strictly above b minus</span>
+<span class="c1"># the number of voters who rank b strictly above a</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;margin(a, b) = </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;margin(a, a) = </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -455,14 +455,14 @@ The Condorcet loser is  0
 |       |     | c |     |       |     |     |     |
 +-------+-----+---+-----+-------+-----+-----+-----+
 
-1 voters have the ranking ( a  b  c )
-2 voters have the ranking a ( b  c )
+1 voters have the ranking ( a  b  c ) 
+2 voters have the ranking a ( b  c ) 
 1 voters have the ranking a b c 
-4 voters have the ranking ( a  b )c 
-1 voters have the ranking ( a  b  c )
-2 voters have the ranking ( a  b )c 
-1 voters have the ranking ( a  c )b 
-1 voters have the ranking ( c  b )a 
+4 voters have the ranking ( a  b ) c 
+1 voters have the ranking ( a  b  c ) 
+2 voters have the ranking ( a  b ) c 
+1 voters have the ranking ( a  c ) b 
+1 voters have the ranking ( c  b ) a 
 
 
 support(a, b) = 4
@@ -495,7 +495,7 @@ ratio(c, b) = 0.14285714285714285
 </section>
 <section id="weighted-majority-graphs">
 <h2>(Weighted) Majority Graphs<a class="headerlink" href="#weighted-majority-graphs" title="Permalink to this heading">#</a></h2>
-<p>A <strong>majority graph</strong> is a directed assymetric graph in which the nodes are the candidates and an edge from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> means that <span class="math notranslate nohighlight">\(a\)</span> is majority preferred to <span class="math notranslate nohighlight">\(b\)</span>.</p>
+<p>A <strong>majority graph</strong> is a directed asymmetric graph in which the nodes are the candidates and an edge from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> means that <span class="math notranslate nohighlight">\(a\)</span> is majority preferred to <span class="math notranslate nohighlight">\(b\)</span>.</p>
 <p>A <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph" title="pref_voting.weighted_majority_graphs.MajorityGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">MajorityGraph</span></code></a> has a number of methods used by voting methods.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MajorityGraph</span>
 
@@ -597,11 +597,11 @@ Weak Condorcet winners: [0]
 Condorcet loser: None
 </pre></div>
 </div>
-<p>A <strong>margin graph</strong> is a weighted directed assymetric graph in which the nodes are the candidates and an edge from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> means that <span class="math notranslate nohighlight">\(a\)</span> is majority preferred to <span class="math notranslate nohighlight">\(b\)</span>, and the weight of the edge is the margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span>.</p>
+<p>A <strong>margin graph</strong> is a weighted directed asymmetric graph in which the nodes are the candidates, an edge from <span class="math notranslate nohighlight">\(a\)</span> to <span class="math notranslate nohighlight">\(b\)</span> means that <span class="math notranslate nohighlight">\(a\)</span> is majority preferred to <span class="math notranslate nohighlight">\(b\)</span>, and the weight of the edge is the margin of <span class="math notranslate nohighlight">\(a\)</span> over <span class="math notranslate nohighlight">\(b\)</span>.</p>
 <p>A <a class="reference internal" href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph" title="pref_voting.weighted_majority_graphs.MarginGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarginGraph</span></code></a> has a number of methods used by voting methods.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The weights of a MarginGraph can be any numbers.  However, if the weights are generated by a profile of linear orders, then the weights will have the same parity.</p>
+<p>The weights of a MarginGraph can be any numbers.  However, if the weights are generated by a profile of linear orders, then the weights will have the same parity (which is even if there is any zero margin between distinct candidates).</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.weighted_majority_graphs</span> <span class="kn">import</span> <span class="n">MarginGraph</span>
 

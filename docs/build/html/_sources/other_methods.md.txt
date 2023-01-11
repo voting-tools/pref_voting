@@ -69,6 +69,7 @@ Other Methods
 ```
 
 ### Bucklin with Explanation
+
 ```{eval-rst}
 
 .. autofunction:: pref_voting.other_methods.bucklin_with_explanation
@@ -83,7 +84,7 @@ Other Methods
 
 ```
 
-### Bucklin with Explanation
+### Simplified Bucklin with Explanation
 
 ```{eval-rst}
 
