@@ -267,6 +267,41 @@ class Ranking(object):
             c1s, c2s, use_extended_preferences=use_extended_preferences
         ) and any([any([strict_pref(c1, c2) for c2 in c2s]) for c1 in c1s])
 
+    def display(self, cmap = None): 
+        """
+        Display the ranking vertically as a column of a table. 
+        
+        :Example:
+
+        .. exec_code:: python
+
+            from pref_voting.profiles_with_ties import Ranking
+            r = Ranking({0:2, 1:1, 2:3})
+            print(r)
+            r.display()
+            print()
+
+            r = Ranking({0:1, 1:1, 2:3})
+            print(r)
+            r.display()
+
+            print()
+            r = Ranking({0:1,  2:3})
+            print(r)
+            r.display()
+
+        """
+        cmap = cmap if cmap is not None else self.cmap
+        _r = copy.deepcopy(self)
+        _r.normalize_ranks()
+        print(
+            tabulate([[" ".join([
+                str(self.cmap[c])
+                for c in _r.cands_at_rank(rank)])] 
+                      for rank in _r.ranks],
+                     tablefmt="pretty")
+        )
+     
     def __str__(self):
         """
         Display the ranking as a string.
@@ -278,9 +313,39 @@ class Ranking(object):
             if len(cands_at_rank) == 1:
                 r_str += str(self.cmap[cands_at_rank[0]]) + " "
             else:
-                r_str += "( " + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank)) + ")"
+                r_str += "( " + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank)) + ") "
         return r_str
 
+    def __eq__(self, other): 
+        
+        """
+        Returns True if the rankings are the same.  
+        
+        :Example:
+
+        .. exec_code:: python
+
+            from pref_voting.profiles_with_ties import Ranking
+
+            r = Ranking({1:2, 2:3})            
+            r2 = Ranking({1:1, 2:2})
+            r3 = Ranking({1:1})
+
+            print(r == r2) # True
+            print(r == r3) # False
+        
+        """
+        
+        self_ranks = self.ranks
+        other_ranks = other.ranks
+        
+        if len(self_ranks) != len(other_ranks): 
+            return False
+
+        for self_rank, other_rank in zip(self_ranks, other_ranks): 
+            if set(self.cands_at_rank(self_rank)) != set(other.cands_at_rank(other_rank)): 
+                return False
+        return True
 
 class ProfileWithTies(object):
     """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates. 

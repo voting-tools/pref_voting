@@ -8,9 +8,10 @@
 
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality, borda
-from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put
+from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put, instant_runoff_for_truncated_linear_orders
 from pref_voting.c1_methods import smith_set, copeland
-
+from pref_voting.profiles import Profile
+from pref_voting.profiles_with_ties import ProfileWithTies
 
 @vm(name="Daunou")
 def daunou(profile, curr_cands=None):
@@ -91,6 +92,44 @@ def blacks(profile, curr_cands=None):
 
     return winners
 
+vm(name="Condorcet IRV")
+def condorcet_irv(prof, curr_cands = None): 
+    """If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates, or a profile of truncated linear orders.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+
+    """
+    cw = prof.condorcet_winner(curr_cands = curr_cands)
+    if cw is not None: 
+        return [cw]
+    
+    if type(prof) == Profile: 
+        return instant_runoff(prof, curr_cands = curr_cands)
+    elif type(prof) == ProfileWithTies: 
+        return instant_runoff_for_truncated_linear_orders(prof, curr_cands = curr_cands)
+
+vm(name="Condorcet IRV PUT")
+def condorcet_irv_put(prof, curr_cands = None): 
+    """If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff PUT winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+
+    """
+    cw = prof.condorcet_winner(curr_cands = curr_cands)
+    if cw is not None: 
+        return [cw]
+    
+    return instant_runoff_put(prof, curr_cands = curr_cands)
 
 @vm(name="Smith IRV")
 def smith_irv(profile, curr_cands=None):
@@ -198,7 +237,14 @@ def compose(vm1, vm2):
 
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name}")
 
-
 copeland_borda = compose(copeland, borda)
 
-combined_vms = [daunou, blacks, smith_irv, copeland_borda]
+combined_vms = [
+    daunou, 
+    blacks, 
+    condorcet_irv, 
+    condorcet_irv_put, 
+    smith_irv, 
+    smith_irv_put, 
+    copeland_borda
+    ]

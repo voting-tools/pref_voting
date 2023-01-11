@@ -262,7 +262,7 @@ def enumerate_canonical_edge_ordered_tournaments(num_cands, parity = "even"):
     for ceot in _enumerate_ceots_as_edgelist(num_cands): 
         yield MarginGraph(list(range(num_cands)), 
                           [(e[0], e[1], 2 * (eidx + 1) if parity == "even" else 2 * eidx + 1) 
-                           for eidx, e in enumerate(ceot)])
+                           for eidx, e in enumerate(reversed(ceot))])
 
 def sublists(lst, length, x = None, partial_sublist = None): 
     
@@ -305,5 +305,5 @@ def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):
         
         for weight_list in sublists(weight_domain, num_edges): 
             yield MarginGraph(list(range(num_cands)), 
-                              [(e[0], e[1], weight_list[eidx]) for eidx, e in enumerate(ceot)])
+                              [(e[0], e[1], weight_list[eidx]) for eidx, e in enumerate(reversed(ceot))])
 

@@ -17,6 +17,22 @@ Combined Methods
 
 ```
 
+## Condorcet IRV
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.condorcet_irv
+
+```
+
+## Condorcet IRV PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.condorcet_irv_put
+
+```
+
 ## Smith IRV
 
 ```{eval-rst}

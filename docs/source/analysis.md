@@ -17,10 +17,4 @@ Functions to analyze voting methods.
 
 ```
 
-##   Monotonicity Violations
-
-```{eval-rst}
-.. autofunction:: pref_voting.analysis.has_monotonicity_violation
-
-```
 

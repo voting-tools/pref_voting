@@ -15,7 +15,6 @@ from itertools import product, permutations
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
 @vm(name = "Condorcet")
 def condorcet(edata, curr_cands = None):
     """

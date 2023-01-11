@@ -50,6 +50,7 @@ def majority(profile, curr_cands = None):
 
     return sorted(maj_winner)
 
+    
 ## Banks
 #
 

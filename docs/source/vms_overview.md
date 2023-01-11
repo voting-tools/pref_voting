@@ -135,6 +135,20 @@ The main voting methods that are implemented with a checkmark in a column if the
       - :math:`\checkmark` 
       - :math:`\checkmark` 
       - :math:`\checkmark`
+    * - Condorcet IRV
+
+        :meth:`~pref_voting.combined_methods.condorcet_irv`
+      - :math:`\checkmark`
+      - :math:`\checkmark` 
+      -  
+      -  
+    * - Condorcet IRV PUT
+
+        :meth:`~pref_voting.combined_methods.condorcet_irv_put`
+      - :math:`\checkmark`
+      -   
+      -  
+      -  
     * - Coombs
 
         :meth:`~pref_voting.iterative_methods.coombs`
@@ -175,6 +189,13 @@ The main voting methods that are implemented with a checkmark in a column if the
         :meth:`~pref_voting.iterative_methods.instant_runoff`
       - :math:`\checkmark`
       -  
+      -  
+      -
+    * - Instant Runoff For Truncated Linear Orders
+
+        :meth:`~pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders`
+      - 
+      - :math:`\checkmark`
       -  
       -
     * - Instant Runoff PUT
