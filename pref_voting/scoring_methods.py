@@ -191,6 +191,76 @@ def scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank : 1 
 
     return sorted([c for c in candidates if cand_scores[c] == max_score])
 
+
+## Borda for ProfilesWithTies
+
+def symmetric_borda_scores(profile): 
+    """
+    The symmetric Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r
+    minus the numbrer of candidates ranked strictly below c according to r. 
+    
+    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
+    """
+    
+    return  {cand: sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(cand, _cand)]) * c 
+                    for r,c in zip(*profile.rankings_counts)]) - sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(_cand, cand)]) * c 
+                    for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
+
+
+def domination_borda_scores(profile): 
+    """
+    The domination Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r. 
+    
+    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
+
+    """
+    
+    return  {cand: sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(cand, _cand)]) * c 
+                    for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
+
+
+def weak_domination_borda_scores(profile): 
+    """
+    The weak domination Borda score of a candidate c for a ranking r is the number of candidates ranked weakly above c according to r. 
+    
+    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
+
+    """
+    
+    return  {cand: sum([len([_cand for _cand in profile.candidates if r.extended_weak_pref(cand, _cand)]) * c 
+                    for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
+
+
+
+def non_domination_borda_scores(profile): 
+    """
+    The non-domination Borda score of a candidate c for a ranking r is -1 times  number of candidates ranked strictly above c according to r. 
+    
+    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
+
+    """
+    
+    return  {cand: -sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(_cand, cand)]) * c 
+                    for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
+
+
+@vm(name="Borda")
+def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symmetric_borda_scores): 
+    """
+    Borda score for truncated linear orders using different ways of defining the Borda score for truncated linear
+    orders.  
+    """
+    curr_cands = curr_cands if curr_cands is not None else profile.candidates 
+    
+    restricted_prof = profile.remove_candidates([c for c in profile.candidates if c not in curr_cands])
+    
+    b_scores = borda_scores(restricted_prof)
+    
+    max_borda_score = max(b_scores.values())
+    
+    return sorted([c for c in restricted_prof.candidates if b_scores[c] == max_borda_score])
+
+
 scoring_vms = [
     plurality, 
     borda, 

@@ -139,18 +139,18 @@ class Ranking(object):
     def first(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the highest ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs]
+        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs if c in self.rmap.keys()]
         _cands = list(self.rmap.keys()) if cs is None else cs
-        min_rank = min(_ranks)
-        return sorted([c for c in _cands if self.rmap[c] == min_rank])
+        min_rank = min(_ranks) if len(_ranks) > 0 else None
+        return sorted([c for c in _cands if c in self.rmap.keys() and self.rmap[c] == min_rank])
 
     def last(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the worst ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs]
+        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs if c in self.rmap.keys()]
         _cands = list(self.rmap.keys()) if cs is None else cs
         max_rank = max(_ranks)
-        return sorted([c for c in _cands if self.rmap[c] == max_rank])
+        return sorted([c for c in _cands if c in self.rmap.keys() and self.rmap[c] == max_rank])
 
     def is_empty(self): 
         """Return True when the ranking is empty."""
@@ -594,18 +594,21 @@ class ProfileWithTies(object):
             else int(ceil(float(self.num_voters) / 2))
         )
 
-    def plurality_scores(self): 
+    def plurality_scores(self, curr_cands = None): 
         """
         Return the Plurality Scores of the candidates given that each voter ranks a single candidate in first place.  
         """
-        if any([len(r.first()) != 1 for r in self.rankings]): 
+        
+        curr_cands = curr_cands if curr_cands is not None else self.candidates
+        
+        if any([len(r.first(cs=curr_cands)) > 1 for r in self.rankings]): 
             print("Error: Cannot find the plurality scores unless all voters rank a unique candidate in first place.")
             return {}
         
         rankings, rcounts = self.rankings_counts
         
-        return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first()]) 
-                for cand in self.candidates}
+        return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first(cs=curr_cands)]) 
+                for cand in curr_cands}
 
     def plurality_scores_ignoring_overvotes(self): 
         """
