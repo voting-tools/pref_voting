@@ -642,7 +642,6 @@ class ProfileWithTies(object):
         else: 
             self.use_strict_preference()
 
-
     def truncate_overvotes(self): 
         """Return a new profile in which all rankings with overvotes are truncated. """
         
@@ -662,6 +661,33 @@ class ProfileWithTies(object):
             new_profile.use_strict_preference()
             
         return new_profile, report
+
+    def add_unranked_candidates(self): 
+        """
+        Return a profile in which for each voter, any  unranked candidate is added to the bottom of their ranking. 
+        """
+        cands = self.candidates
+        ranks = list()
+        rcounts = list()
+
+        for r in self.rankings: 
+            min_rank = max(r.ranks)    
+            new_r ={c:r for c, r in  r.rmap.items()}
+            for c in cands: 
+                if c not in new_r.keys(): 
+                    new_r[c] = min_rank+1
+            new_ranking = Ranking(new_r)
+
+            found_it = False
+            for _ridx, _r in enumerate(ranks):
+                if new_ranking == _r: 
+                    rcounts[_ridx] += 1
+                    found_it = True
+            if not found_it: 
+                ranks.append(new_ranking)
+                rcounts.append(1)
+
+        return ProfileWithTies([r.rmap for r in ranks], rcounts=rcounts, cmap=self.cmap)
 
     def unique_rankings(self): 
         """Return to the list of unique rankings in the profile. 

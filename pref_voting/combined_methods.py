@@ -92,45 +92,6 @@ def blacks(profile, curr_cands=None):
 
     return winners
 
-vm(name="Condorcet IRV")
-def condorcet_irv(prof, curr_cands = None): 
-    """If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff winners.
-
-    Args:
-        profile (Profile): An anonymous profile of linear orders on a set of candidates, or a profile of truncated linear orders.
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-
-    Returns:
-        A sorted list of candidates.
-
-    """
-    cw = prof.condorcet_winner(curr_cands = curr_cands)
-    if cw is not None: 
-        return [cw]
-    
-    if type(prof) == Profile: 
-        return instant_runoff(prof, curr_cands = curr_cands)
-    elif type(prof) == ProfileWithTies: 
-        return instant_runoff_for_truncated_linear_orders(prof, curr_cands = curr_cands)
-
-vm(name="Condorcet IRV PUT")
-def condorcet_irv_put(prof, curr_cands = None): 
-    """If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff PUT winners.
-
-    Args:
-        profile (Profile): An anonymous profile of linear orders.
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-
-    Returns:
-        A sorted list of candidates.
-
-    """
-    cw = prof.condorcet_winner(curr_cands = curr_cands)
-    if cw is not None: 
-        return [cw]
-    
-    return instant_runoff_put(prof, curr_cands = curr_cands)
-
 @vm(name="Smith IRV")
 def smith_irv(profile, curr_cands=None):
     """After restricting to the Smith Set, return the Instant Runoff winner.
@@ -197,6 +158,76 @@ def smith_irv_put(profile, curr_cands=None):
 
     return instant_runoff_put(profile, curr_cands=smith)
 
+
+@vm(name="Condorcet IRV")
+def condorcet_irv(profile, curr_cands=None):
+    """If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    :Example:
+
+    .. exec_code::
+
+        from pref_voting.profiles import Profile
+        from pref_voting.combined_methods import condorcet_irv
+        from pref_voting.iterative_methods import instant_runoff, instant_runoff_put
+
+        prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])
+
+        prof.display()
+
+        instant_runoff.display(prof)
+        instant_runoff_put.display(prof)
+        condorcet_irv.display(prof)
+
+    """
+
+    cw = profile.condorcet_winner(curr_cands=curr_cands)
+    if cw is not None: 
+        return [cw]
+    else:
+        return instant_runoff(profile, curr_cands=curr_cands)
+
+@vm(name="Condorcet IRV PUT")
+def condorcet_irv_put(profile, curr_cands=None):
+    """If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff put winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    :Example:
+
+    .. exec_code::
+
+        from pref_voting.profiles import Profile
+        from pref_voting.combined_methods import condorcet_irv_put
+        from pref_voting.iterative_methods import instant_runoff, instant_runoff_put
+
+        prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])
+
+        prof.display()
+
+        instant_runoff.display(prof)
+        instant_runoff_put.display(prof)
+        condorcet_irv_put.display(prof)
+
+    """
+
+    cw = profile.condorcet_winner(curr_cands=curr_cands)
+    if cw is not None: 
+        return [cw]
+    else:
+        return instant_runoff_put(profile, curr_cands=curr_cands)
 
 def compose(vm1, vm2):
     """After restricting the profile to the set of vm1 winners, run vm2

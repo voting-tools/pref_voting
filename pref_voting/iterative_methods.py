@@ -1455,6 +1455,140 @@ def iterated_split_cycle(edata, curr_cands = None, strength_function = None):
         
     return sorted(sc_winners)
 
+@vm(name = "Benham")
+def benham(profile, curr_cands = None):
+    """
+    As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score. Then elect the Condorcet winner of the restricted profile. 
+    
+    .. important::
+        If there is  more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. 
+    
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. seealso::
+
+        Related functions:  :func:`pref_voting.iterative_methods.benahm_put`
+
+    """
+
+    # need the total number of all candidates in a profile to check when all candidates have been removed   
+    num_cands = profile.num_cands 
+    
+    candidates = profile.candidates if curr_cands is None else curr_cands
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+
+    cw = profile.condorcet_winner(curr_cands = [c for c in profile.candidates if not isin(cands_to_ignore, c)])
+    
+    winners = [cw] if cw is not None else list()
+    
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+    
+    while len(winners) == 0:
+        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates 
+                            if  not isin(cands_to_ignore,c)}  
+        min_plurality_score = min(plurality_scores.values())
+        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                             if  plurality_scores[c] == min_plurality_score])
+
+        # remove cands with lowest plurality score
+        cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
+        if len(cands_to_ignore) == num_cands: # removed all of the candidates 
+            winners = sorted(lowest_first_place_votes)
+        else:
+            cw = profile.condorcet_winner([c for c in profile.candidates if not isin(cands_to_ignore, c)])
+            if cw is not None: 
+                winners = [cw]
+
+    return sorted(winners)
+
+
+@vm(name = "Benham TB")
+def benham_tb(profile, curr_cands = None, tie_breaker = None):
+    """Benham (``benham``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        tie_breaker (List[int]): A list of the candidates in the profile to be used as a tiebreaker.
+
+    Returns: 
+        A sorted list of candidates
+   
+    """
+
+    # the tie_breaker is any linear order (i.e., list) of the candidates
+    tb = tie_breaker if tie_breaker is not None else list(range(profile.num_cands))
+    
+    # need the total number of all candidates in a profile to check when all candidates have been removed   
+    num_cands = profile.num_cands 
+    
+    candidates = profile.candidates if curr_cands is None else curr_cands
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+    
+    cw = profile.condorcet_winner(curr_cands = [c for c in profile.candidates if not isin(cands_to_ignore, c)])
+
+    winners = [cw] if cw is not None else list()
+    
+    while len(winners) == 0:
+        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates if not isin(cands_to_ignore,c)}  
+        min_plurality_score = min(plurality_scores.values())
+        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                             if plurality_scores[c] == min_plurality_score])
+        
+        cand_to_remove = lowest_first_place_votes[0]
+        for c in lowest_first_place_votes[1:]: 
+            if tb.index(c) < tb.index(cand_to_remove):
+                cand_to_remove = c
+
+        # remove cands with lowest plurality winners
+        cands_to_ignore = np.concatenate((cands_to_ignore, cand_to_remove), axis=None)
+        if len(cands_to_ignore) == num_cands: #all the candidates where removed
+            winners = sorted(lowest_first_place_votes)
+        else:
+            cw = profile.condorcet_winner(curr_cands = [c for c in profile.candidates if not isin(cands_to_ignore, c)])
+            if cw is not None: 
+                winners = [cw]
+    return sorted(winners)
+
+
+@vm(name = "Benham PUT")
+def benham_put(profile, curr_cands = None):
+    """Benham (:fun:`benham`) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates. 
+    
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. warning:: 
+        This will take a long time on profiles with many candidates. 
+
+
+    """
+    
+    candidates = profile.candidates if curr_cands is None else curr_cands
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    
+    cw = profile.condorcet_winner(curr_cands = [c for c in profile.candidates if not isin(cands_to_ignore, c)])
+    
+    winners = [cw] if cw is not None else list()
+        
+    if len(winners) == 0:
+        # run Instant Runoff with tie-breaker for each permulation of candidates
+        for tb in permutations(candidates):
+            winners += instant_runoff_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
+    return sorted(list(set(winners)))
+    
 iterated_vms = [
     instant_runoff,
     instant_runoff_tb,
@@ -1471,7 +1605,10 @@ iterated_vms = [
     baldwin_tb,
     baldwin_put,
     iterated_removal_cl,
-    iterated_split_cycle
+    iterated_split_cycle,
+    benham,
+    benham_put,
+    benham_tb
 ]
 
 iterated_vms_with_explanation = [

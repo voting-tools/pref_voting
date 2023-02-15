@@ -2,13 +2,14 @@
     File: voting_methods.py
     Author: Eric Pacuit (epacuit@umd.edu)
     Date: November 6, 2021
+    Update: January 15, 2023
     
     The VotingMethod class and helper functions for voting methdods
 '''
 
 import functools
 import numpy as np
-from numba import jit
+# from numba import jit # Remove until numba supports python3.11
 import random
 
 class VotingMethod(object): 
@@ -37,6 +38,14 @@ class VotingMethod(object):
 
         ws = self.__call__(edata, curr_cands = curr_cands)
         return random.choice(ws)
+    
+    def prob(self, edata, curr_cands = None): 
+        """
+        Return a dictionary representing the even-chance tiebreaking for the voting method.
+        """
+        
+        ws = self.__call__(edata, curr_cands = curr_cands)
+        return {c: 1.0 / len(ws) if c in ws else 0.0 for c in edata.candidates}
     
     def display(self, edata, curr_cands = None, cmap = None, **kwargs): 
         """
@@ -69,7 +78,7 @@ def vm(name = None):
         return VotingMethod(f, name=name)
     return wrapper
 
-@jit(fastmath=True)
+#@jit(fastmath=True)
 def isin(arr, val):
     """compiled function testing if the value val is in the array arr
     """
@@ -79,7 +88,7 @@ def isin(arr, val):
             return True
     return False
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def _num_rank_first(rankings, rcounts, cands_to_ignore, cand):
     """The number of voters that rank candidate cand first after ignoring the candidates in 
     cands_to_ignore
@@ -115,7 +124,7 @@ def _num_rank_first(rankings, rcounts, cands_to_ignore, cand):
     return np.sum(is_cand * rcounts) 
 
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def _num_rank_last(rankings, rcounts, cands_to_ignore, cand):
     """The number of voters that rank candidate cand last after ignoring the candidates in 
     cands_to_ignore
