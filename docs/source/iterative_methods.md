@@ -88,7 +88,7 @@ To illustrate the difference with respect to the first question, consider Instan
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.iterative_methods.behnam
+.. autofunction:: pref_voting.iterative_methods.benham
 
 ```
 
