@@ -83,6 +83,31 @@ To illustrate the difference with respect to the first question, consider Instan
 
 ```
 
+
+## Benham
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.behnam
+
+```
+
+### Benham TB
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.benham_tb
+
+```
+
+### Benham PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.benham_put
+
+```
+
 ## Plurality With Runoff
 
 ```{eval-rst}
