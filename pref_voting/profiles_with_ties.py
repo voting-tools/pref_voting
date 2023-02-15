@@ -671,7 +671,7 @@ class ProfileWithTies(object):
         rcounts = list()
 
         for r in self.rankings: 
-            min_rank = max(r.ranks)    
+            min_rank = max(r.ranks) if len(r.ranks) > 0 else 1   
             new_r ={c:r for c, r in  r.rmap.items()}
             for c in cands: 
                 if c not in new_r.keys(): 
