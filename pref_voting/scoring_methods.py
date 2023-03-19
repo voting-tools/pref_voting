@@ -197,7 +197,7 @@ def scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank : 1 
 def symmetric_borda_scores(profile): 
     """
     The symmetric Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r
-    minus the numbrer of candidates ranked strictly below c according to r. 
+    minus the number of candidates ranked strictly below c according to r. 
     
     See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
     """
@@ -264,6 +264,7 @@ def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symme
 scoring_vms = [
     plurality, 
     borda, 
+    borda_for_profile_with_ties,
     anti_plurality,
     scoring_rule
 ]
