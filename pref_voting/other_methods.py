@@ -631,7 +631,7 @@ def simplified_bucklin_with_explanation(profile, curr_cands = None):
 
 @vm(name = "Weighted Bucklin")
 def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank: (num_cands - rank)/ (num_cands - 1) if num_cands > 1 else 1): 
-    """The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate's k-th Weighted Bucklin score is at least the strict majority size (note that Kilgour et al. replace the strict majority size by num_voters / 2). Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where score = lambda num_cands, rank: 1.
+    """The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate's k-th Weighted Bucklin score is at least half the number of voters. Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where score = lambda num_cands, rank: 1.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -654,8 +654,6 @@ def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank:
         weighted_bucklin.display(prof)
 
     """
-    strict_maj_size = profile.strict_maj_size()
-
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     num_cands = candidates
@@ -673,7 +671,7 @@ def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank:
                                       for c in candidates}
         cand_scores = {c:sum([score(len(candidates), _r) * cand_to_num_voters_rank[_r][c] for _r in cand_to_num_voters_rank.keys()]) 
                        for c in candidates}
-        if any([s >= strict_maj_size for s in cand_scores.values()]):
+        if any([s >= profile.num_voters / 2 for s in cand_scores.values()]):
             break
     max_score = max(cand_scores.values())
     return sorted([c for c in candidates if cand_scores[c] >= max_score])
