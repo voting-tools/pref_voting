@@ -630,12 +630,13 @@ def simplified_bucklin_with_explanation(profile, curr_cands = None):
 
 
 @vm(name = "Weighted Bucklin")
-def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank: (num_cands - rank)/ (num_cands - 1) if num_cands > 1 else 1): 
-    """The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate's k-th Weighted Bucklin score is at least half the number of voters. Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where score = lambda num_cands, rank: 1.
+def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score = lambda num_cands, rank: (num_cands - rank)/ (num_cands - 1) if num_cands > 1 else 1): 
+    """The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate's k-th Weighted Bucklin score is at least half the number of voters (or the strict majority size if strict_threshold = True). Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where strict_threshold = True and score = lambda num_cands, rank: 1.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        strict_threshold: If True, makes the threshold for the Bucklin procedure the strict majority size; otherwise threshold is half the number of voters.
         score (function): A function that accepts two parameters ``num_cands`` (the number of candidates) and ``rank`` (a rank of a candidate) used to calculate the score of a candidate. The default ``score`` function is the normalized version of the classic Borda score vector.
 
     Returns: 
@@ -654,6 +655,11 @@ def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank:
         weighted_bucklin.display(prof)
 
     """
+    if strict_threshold == True:
+        threshold = profile.strict_maj_size()
+    else:
+        threshold = profile.num_voters / 2
+
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     num_cands = candidates
@@ -671,9 +677,10 @@ def weighted_bucklin(profile, curr_cands = None, score = lambda num_cands, rank:
                                       for c in candidates}
         cand_scores = {c:sum([score(len(candidates), _r) * cand_to_num_voters_rank[_r][c] for _r in cand_to_num_voters_rank.keys()]) 
                        for c in candidates}
-        if any([s >= profile.num_voters / 2 for s in cand_scores.values()]):
+        if any([s >= threshold for s in cand_scores.values()]):
             break
     max_score = max(cand_scores.values())
+
     return sorted([c for c in candidates if cand_scores[c] >= max_score])
 
 
