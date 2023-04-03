@@ -469,7 +469,6 @@ def plurality_with_runoff(profile, curr_cands = None):
     
     return sorted(list(set(winners)))
 
-
 def plurality_with_runoff_with_explanation(profile, curr_cands = None):
     """Plurality with Runoff with an explanation. In addition to the winner(s), return list of the pairs of candidate that move on to runoff round.    
   
@@ -498,7 +497,7 @@ def plurality_with_runoff_with_explanation(profile, curr_cands = None):
         second = [c for c in curr_cands if plurality_scores[c] == second_plurality_score]
 
     if len(second) > 0:
-        all_runoff_pairs = product(first, second)
+        all_runoff_pairs = list(product(first, second))
     else: 
         all_runoff_pairs = [(c1,c2) for c1,c2 in product(first, first) if c1 != c2]
 

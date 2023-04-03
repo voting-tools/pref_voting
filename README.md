@@ -56,7 +56,7 @@ split_cycle.display(prof)
 - v0.1.27 (2023-2-07): Add Borda for ProfileWithTies
 - v0.2 (2023-2-15): Add Benham, add anonymize to Profile method, comment out numba to make compatible with Python 3.11, add add_unranked_candidates to ProfileWithTies
 - v0.2.1 (2023-2-15): Bug fixes
-- v0.2.2 (2023-04-01): Add plurality_with_runoff_with_explanation
+- v0.2.3 (2023-4-2): Add plurality_with_runoff_with_explanation
 
 ## Questions?
 
