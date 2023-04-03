@@ -10,7 +10,6 @@
 def has_condorcet_loser_violation(edata, vm, verbose=False):
     """
     Returns True if there is a Condorcet loser in edata that is a winner according to vm.  
-
     """
 
     cl = edata.condorcet_loser()

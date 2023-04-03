@@ -470,6 +470,51 @@ def plurality_with_runoff(profile, curr_cands = None):
     return sorted(list(set(winners)))
 
 
+def plurality_with_runoff_with_explanation(profile, curr_cands = None):
+    """Plurality with Runoff with an explanation. In addition to the winner(s), return list of the pairs of candidate that move on to runoff round.    
+  
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+        
+    """    
+
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+    
+    if len(curr_cands) == 1: 
+        return list(curr_cands)
+    
+    plurality_scores = profile.plurality_scores(curr_cands = curr_cands)  
+
+    max_plurality_score = max(plurality_scores.values())
+    
+    first = [c for c in curr_cands if plurality_scores[c] == max_plurality_score]
+    second = list()
+    if len(first) == 1:
+        second_plurality_score = list(reversed(sorted(plurality_scores.values())))[1]
+        second = [c for c in curr_cands if plurality_scores[c] == second_plurality_score]
+
+    if len(second) > 0:
+        all_runoff_pairs = product(first, second)
+    else: 
+        all_runoff_pairs = [(c1,c2) for c1,c2 in product(first, first) if c1 != c2]
+
+    winners = list()
+    for c1, c2 in all_runoff_pairs: 
+        
+        if profile.margin(c1,c2) > 0:
+            winners.append(c1)
+        elif profile.margin(c1,c2) < 0:
+            winners.append(c2)
+        elif profile.margin(c1,c2) == 0:
+            winners.append(c1)
+            winners.append(c2)
+    
+    return sorted(list(set(winners))), list(all_runoff_pairs)
+
 @vm(name = "Coombs")
 def coombs(profile, curr_cands = None):
     """If there is a majority winner then that candidate is the Coombs winner.     If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  
@@ -1614,6 +1659,7 @@ iterated_vms = [
 iterated_vms_with_explanation = [
     instant_runoff_with_explanation,
     coombs_with_explanation,
+    plurality_with_runoff_with_explanation,
     baldwin_with_explanation,
     strict_nanson_with_explanation,
     weak_nanson_with_explanation,

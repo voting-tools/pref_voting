@@ -18,7 +18,6 @@ from pref_voting.weighted_majority_graphs import (
     SupportGraph,
 )
 
-
 class Ranking(object):
     """A ranking of a set of candidates.
 
