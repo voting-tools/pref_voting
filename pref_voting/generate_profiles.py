@@ -505,7 +505,7 @@ def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="
 
     :Possible Values of probmod:
     
-    - "IC" (Impartial Culture); each randomly generated linear order of all candidates is truncated at a level from 1 to max_num_ranked, where the probability of truncating at level t is the number of truncated linear orders of length t divided by the number of truncated linear orders of length from 1 to max_num_ranked. Then a voter is equally likely to get any of the truncated linear orders of length from 1 to max_num_ranked.
+    - "IC" (Impartial Culture): each randomly generated linear order of all candidates is truncated at a level from 1 to max_num_ranked, where the probability of truncating at level t is the number of truncated linear orders of length t divided by the number of truncated linear orders of length from 1 to max_num_ranked. Then a voter is equally likely to get any of the truncated linear orders of length from 1 to max_num_ranked.
     - "RT" (Random Truncation): each randomly generated linear order of all candidates is truncated at a level that is randomly chosen from 1 to max_num_ranked.
         
     """
