@@ -478,14 +478,15 @@ def strict_weak_orders(A):
                 yield [B] + order
 
 
-def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3):
+def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="IC"):
     """Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  
     `The ballots will be truncated linear orders of the candidates.
 
     Args:
         num_cands (int): The number of candidates to include in the profile. 
         num_voters (int): The number of voters to include in the profile.
-        max_num_ranked (int, default=3): The maximum level to truncate the linear ranking. Each generated ranking will be truncated at a level that is randomly chosen between 1 and max_num_ranked 
+        max_num_ranked (int, default=3): The maximum level to truncate the linear ranking. 
+        probmod (str): optional (default "IC")
 
     Returns: 
         ProfileWithTies 
@@ -501,16 +502,39 @@ def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3):
 
             prof = generate_truncated_profile(6, 7, max_num_ranked=6)
             prof.display()
+
+    :Possible Values of probmod:
+    
+    - "IC" (Impartial Culture): each randomly generated linear order of all candidates is truncated at a level from 1 to max_num_ranked, where the probability of truncating at level t is the number of truncated linear orders of length t divided by the number of truncated linear orders of length from 1 to max_num_ranked. Then a voter is equally likely to get any of the truncated linear orders of length from 1 to max_num_ranked.
+    - "RT" (Random Truncation): each randomly generated linear order of all candidates is truncated at a level that is randomly chosen from 1 to max_num_ranked.
         
     """
     
     if max_num_ranked > num_cands:
         max_num_ranked = num_cands
+
+    if probmod == "IC":
+        num_rankings_of_length = dict()
+
+        for n in range(1, max_num_ranked + 1):
+            num_rankings_of_length[n] = 1
+            for i in range(num_cands,num_cands-n, -1):
+                num_rankings_of_length[n] *= i
+
+        num_all_rankings = sum([num_rankings_of_length[n] for n in range(1, max_num_ranked + 1)])
+        probabilities = [num_rankings_of_length[n] / num_all_rankings for n in range(1, max_num_ranked + 1)]
+
     lprof = generate_profile(num_cands, num_voters)
     
     rmaps = list()
     for r in lprof.rankings:
-        truncate_at = random.choice(range(1, max_num_ranked + 1))
+
+        if probmod == "RT":
+            truncate_at = random.choice(range(1, max_num_ranked + 1))
+
+        if probmod == "IC":
+            truncate_at = random.choices(range(1, max_num_ranked + 1), weights=probabilities, k=1)[0]
+
         truncated_r = r[0:truncate_at]
 
         rmap = {c: _r + 1 for _r, c in enumerate(truncated_r)}
