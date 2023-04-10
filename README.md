@@ -57,7 +57,7 @@ split_cycle.display(prof)
 - v0.2 (2023-2-15): Add Benham, add anonymize to Profile method, comment out numba to make compatible with Python 3.11, add add_unranked_candidates to ProfileWithTies
 - v0.2.1 (2023-2-15): Bug fixes
 - v0.2.3 (2023-4-2): Add plurality_with_runoff_with_explanation
-- v0.2.4 (2023-4-9): Update generate_truncated_profile so that it implements and IC probability model.
+- v0.2.4 (2023-4-9): Update generate_truncated_profile so that it implements the IC probability model.
 
 ## Questions?
 
