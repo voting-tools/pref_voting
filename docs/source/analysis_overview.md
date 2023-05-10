@@ -1,7 +1,6 @@
 Overview
 ==========
 
-Functions to analyze voting methods.  
 
 ## Find Profiles with Different Winners
 
