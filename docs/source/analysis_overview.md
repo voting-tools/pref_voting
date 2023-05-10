@@ -1,29 +1,36 @@
 Overview
 ==========
 
+Functions that can be used to compare and contrast voting methods. 
 
-## Find Profiles with Different Winners
+## Profiles with Different Winners
 
 ```{eval-rst}
+
 
 .. autofunction:: pref_voting.analysis.find_profiles_with_different_winners
 
+
 ```
 
-##   Condorcet Efficiency  
+## Condorcet Efficiency  
 
 ```{eval-rst}
+
 
 .. autofunction:: pref_voting.analysis.condorcet_efficiency_data
 
+
 ```
 
 
-##   Axiom Violations  
+## Axiom Violations  
 
 ```{eval-rst}
 
+
 .. autofunction:: pref_voting.analysis.axiom_violations_data
+
 
 ```
 
