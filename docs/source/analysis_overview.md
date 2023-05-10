@@ -4,16 +4,6 @@ Overview
 Functions that can be used to compare and contrast voting methods. 
 
 
-```{eval-rst} 
-
-.. autoclass:: pref_voting.axiom.Axiom
-    :members: 
-
-```
-
-
-
-
 ## Profiles with Different Winners
 
 

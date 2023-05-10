@@ -14,3 +14,4 @@ networkx>=2.8
 pref_voting
 scipy
 multiprocess
+tqdm
