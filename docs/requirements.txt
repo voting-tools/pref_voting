@@ -15,3 +15,4 @@ pref_voting
 scipy
 multiprocess
 tqdm
+pandas
