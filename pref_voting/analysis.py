@@ -8,12 +8,10 @@
 """
 
 from pref_voting.generate_profiles import generate_profile
-from pref_voting.profiles import Profile
 from tqdm.notebook import tqdm
 from functools import partial
 from multiprocess import Pool, cpu_count
 import pandas as pd
-import copy
 
 def find_profiles_with_different_winners(
     vms,

@@ -6,6 +6,7 @@ Functions to analyze voting methods.
 ## Find Profiles with Different Winners
 
 ```{eval-rst}
+
 .. autofunction:: pref_voting.analysis.find_profiles_with_different_winners
 
 ```
@@ -13,6 +14,7 @@ Functions to analyze voting methods.
 ##   Condorcet Efficiency  
 
 ```{eval-rst}
+
 .. autofunction:: pref_voting.analysis.condorcet_efficiency_data
 
 ```
@@ -21,6 +23,7 @@ Functions to analyze voting methods.
 ##   Axiom Violations  
 
 ```{eval-rst}
+
 .. autofunction:: pref_voting.analysis.axiom_violations_data
 
 ```

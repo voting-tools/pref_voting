@@ -7,6 +7,17 @@
 """
 
 class Axiom(object): 
+    """
+    A class to represent voting method axioms. 
+
+    Args:
+        name (string): The human-readable name of the axiom.
+        has_violation (function): function that returns a Boolean which is True when there is a violation of the axiom.
+        find_all_violations (function): function that returns all instances of violations of the axiom.
+        satisfying_vms (list): list of voting methods satisfying the axiom.
+        violating_vms (list): list of voting methods violating the axiom.
+
+    """
     def __init__(self, name, has_violation, find_all_violations):
         self.name = name
         self.has_violation = has_violation
