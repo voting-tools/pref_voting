@@ -19,7 +19,7 @@ def majority(profile, curr_cands = None):
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         A sorted list of candidates
@@ -200,7 +200,7 @@ def banks_with_explanation(edata, curr_cands = None):
 
 def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
     """
-    Calclulate the distance of ``rel`` (a relation) to the majority graph of ``edata``. 
+    Calculate the distance of ``rel`` (a relation) to the majority graph of ``edata``. 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands
     
@@ -231,7 +231,7 @@ def lin_order_to_rel(lin_order):
 
 def slater_rankings(edata, curr_cands = None): 
     """
-    A Slater ranking is a linear order :math:`R` of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain :math:`R`. 
+    A Slater ranking is a linear order :math:`R` of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain :math:`R`. 
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -274,7 +274,7 @@ def slater_rankings(edata, curr_cands = None):
         
 @vm(name = "Slater")
 def slater(edata, curr_cands = None): 
-    """A Slater ranking is a linear order :math:`R` of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain :math:`R`.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.
+    """A Slater ranking is a linear order :math:`R` of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain :math:`R`.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -344,7 +344,7 @@ def kemmeny_young_rankings(profile, curr_cands = None):
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         rankings: A list of Slater rankings.
@@ -385,7 +385,7 @@ def kemmeny_young(profile, curr_cands = None):
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         A sorted list of candidates
@@ -430,7 +430,7 @@ def bucklin(profile, curr_cands = None):
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         A sorted list of candidates
@@ -478,7 +478,7 @@ def bucklin_with_explanation(profile, curr_cands = None):
  
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
 
@@ -534,7 +534,7 @@ def simplified_bucklin(profile, curr_cands = None):
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         A sorted list of candidates
@@ -581,7 +581,7 @@ def simplified_bucklin_with_explanation(profile, curr_cands = None):
  
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
 
@@ -636,7 +636,7 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         strict_threshold: If True, makes the threshold for the Bucklin procedure the strict majority size; otherwise threshold is half the number of voters, following Kilgour et al.
         score (function): A function that accepts two parameters ``num_cands`` (the number of candidates) and ``rank`` (a rank of a candidate) used to calculate the score of a candidate. The default ``score`` function is the normalized version of the classic Borda score vector.
 

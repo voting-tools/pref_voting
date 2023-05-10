@@ -1,9 +1,9 @@
 Generate Profiles
 =======================================
 
-We have included  the following probability models for sampling profiles: 
+We have included the following probability models for sampling profiles: 
 
-1. IC:  Impartial Culture Model - generate a profile by sampling  from a uniform distribution over profiles with $n$ candidates and $m$ voters.   This is the default probability model used to generate a profile. 
+1. IC: Impartial Culture Model - generate a profile by sampling from a uniform distribution over profiles with $n$ candidates and $m$ voters.  This is the default probability model used to generate a profile. 
 
 
 2. URN: Urn model -  In the Polya-Eggenberger urn model, to generate a profile given a parameter $\alpha\in [0,\infty)$, each voter in turn randomly draws a linear order from an urn. Initially the urn is the set of all linear orders on the $n$ candidates. If a voter randomly chooses $L$ from the urn, we return $L$ to the urn plus $\alpha n!$ copies of $L$. IC is the special case where $\alpha=0$. The Impartial Anonymous Culture (IAC) is the special case where $\alpha=1/n!$. 

@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.iterative_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -230,7 +239,7 @@
 
 <div class="viewcode-block" id="instant_runoff"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.instant_runoff">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Instant Runoff&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">instant_runoff</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If there is a majority winner then that candidate is the  winner.  If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters.  Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  </span>
 <span class="sd">    </span>
 <span class="sd">    .. important::</span>
@@ -255,14 +264,14 @@
 <span class="sd">    .. exec_code:: </span>
 
 <span class="sd">        from pref_voting.profiles import Profile</span>
-<span class="sd">        from pref_voting.iterative_methods import instant_runoff, ranked_choice, alterantive_vote, hare</span>
+<span class="sd">        from pref_voting.iterative_methods import instant_runoff, ranked_choice, alternative_vote, hare</span>
 <span class="sd">        </span>
 <span class="sd">        prof = Profile([[2, 1, 0], [0, 2, 1], [1, 2, 0]], [1, 2, 2])</span>
 
 <span class="sd">        prof.display()</span>
 <span class="sd">        instant_runoff.display(prof)</span>
 <span class="sd">        ranked_choice.display(prof)</span>
-<span class="sd">        alterantive_vote.display(prof)</span>
+<span class="sd">        alternative_vote.display(prof)</span>
 <span class="sd">        hare.display(prof)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -304,14 +313,14 @@
 <span class="n">instant_runoff</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;Ranked Choice&quot;</span><span class="p">)</span>
 <span class="n">ranked_choice</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">instant_runoff</span><span class="p">)</span>
 <span class="n">instant_runoff</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;Alternative Vote&quot;</span><span class="p">)</span>
-<span class="n">alterantive_vote</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">instant_runoff</span><span class="p">)</span>
+<span class="n">alternative_vote</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">instant_runoff</span><span class="p">)</span>
 
 <span class="c1"># reset the name Instant Runoff</span>
 <span class="n">instant_runoff</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;Instant Runoff&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="instant_runoff_tb"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.instant_runoff_tb">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Instant Runoff TB&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">instant_runoff_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Instant Runoff (``instant_runoff``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instant Runoff (``instant_runoff``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -380,7 +389,7 @@
 
 <div class="viewcode-block" id="instant_runoff_put"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.instant_runoff_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Instant Runoff PUT&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">instant_runoff_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Instant Runoff (:fun:`instant_runoff`) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -449,7 +458,7 @@
 
 
 <div class="viewcode-block" id="instant_runoff_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.instant_runoff_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">instant_runoff_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instant Runoff with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of lists.    </span>
 
 <span class="sd">    Args:</span>
@@ -528,15 +537,14 @@
 
 <div class="viewcode-block" id="instant_runoff_for_truncated_linear_orders"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Instant Runoff&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">instant_runoff_for_truncated_linear_orders</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hide_warnings</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Intant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number </span>
-<span class="sd">    of first place votes, until there is a candidate with more than the treshold number of first-place votes. </span>
-<span class="sd">    If a threshold is not set, then it is stirclty more than half of the non-empty ballots. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes. </span>
+<span class="sd">    If a threshold is not set, then it is strictly more than half of the non-empty ballots. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (ProfileWithTies): An anonymous profile with no ties in the ballots (note that ProfileWithTies allows for truncated linear orders).</span>
-<span class="sd">        threshold (int, float, optional): The threshold needed to win the election.  If it is not set, then it is striclty more than half of the remaining ballots.</span>
-<span class="sd">        hide_warnings (bool, optional): Show or hide the warnings when more than one candidate is eleminated in a round.</span>
+<span class="sd">        threshold (int, float, optional): The threshold needed to win the election.  If it is not set, then it is strictly more than half of the remaining ballots.</span>
+<span class="sd">        hide_warnings (bool, optional): Show or hide the warnings when more than one candidate is eliminated in a round.</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A sorted list of candidates</span>
@@ -622,7 +630,7 @@
     
 <div class="viewcode-block" id="plurality_with_runoff"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.plurality_with_runoff">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;PluralityWRunoff&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">plurality_with_runoff</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;If there is a majority winner then that candidate is the plurality with runoff winner. If there is no majority winner, then hold a runoff with  the top two candidates: either two (or more candidates) with the most first place votes or the candidate with the most first place votes and the candidate with the 2nd highest first place votes are ranked first by the fewest number of voters.   A candidate is a Plurality with Runoff winner in the profile restricted to ``curr_cands`` if it is a winner in a runoff between two pairs of first- or second- ranked candidates. If the candidates are all tied for the most first place votes, then all candidates are winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If there is a majority winner then that candidate is the plurality with runoff winner. If there is no majority winner, then hold a runoff with  the top two candidates: either two (or more candidates) with the most first place votes or the candidate with the most first place votes and the candidate with the 2nd highest first place votes are ranked first by the fewest number of voters.   A candidate is a Plurality with Runoff winner in the profile restricted to ``curr_cands`` if it is a winner in a runoff between two pairs of first- or second- ranked candidates. If the candidates are all tied for the most first place votes, then all candidates are winners.</span>
 <span class="sd">        </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -681,10 +689,54 @@
     
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">winners</span><span class="p">)))</span></div>
 
+<span class="k">def</span> <span class="nf">plurality_with_runoff_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plurality with Runoff with an explanation. In addition to the winner(s), return list of the pairs of candidate that move on to runoff round.    </span>
+<span class="sd">  </span>
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        A sorted list of candidates</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+
+    <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">curr_cands</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">curr_cands</span><span class="p">)</span>
+    
+    <span class="n">plurality_scores</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">plurality_scores</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>  
+
+    <span class="n">max_plurality_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">plurality_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    
+    <span class="n">first</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curr_cands</span> <span class="k">if</span> <span class="n">plurality_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_plurality_score</span><span class="p">]</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">second_plurality_score</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">plurality_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())))[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">second</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curr_cands</span> <span class="k">if</span> <span class="n">plurality_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">second_plurality_score</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">all_runoff_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">all_runoff_pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c1</span><span class="p">,</span><span class="n">c2</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">first</span><span class="p">)</span> <span class="k">if</span> <span class="n">c1</span> <span class="o">!=</span> <span class="n">c2</span><span class="p">]</span>
+
+    <span class="n">winners</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="ow">in</span> <span class="n">all_runoff_pairs</span><span class="p">:</span> 
+        
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">profile</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">profile</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span>
+            <span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">winners</span><span class="p">))),</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_runoff_pairs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="coombs"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.coombs">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Coombs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">coombs</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;If there is a majority winner then that candidate is the Coombs winner.     If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If there is a majority winner then that candidate is the Coombs winner.   If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  </span>
 <span class="sd">    </span>
 <span class="sd">    .. important::</span>
 <span class="sd">        If there is  more than one candidate with the largest number of last-place votes, then *all* such candidates are removed from the profile. </span>
@@ -750,7 +802,7 @@
 
 <div class="viewcode-block" id="coombs_tb"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.coombs_tb">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Coombs TB&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">coombs_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coombs with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,....,num_cands-1.</span>
 
 <span class="sd">    Args:</span>
@@ -820,7 +872,7 @@
 
 <div class="viewcode-block" id="coombs_put"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.coombs_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Coombs PUT&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">coombs_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Coombs with parallel universe tie-breaking (PUT).  Apply the Coombs method with a tie-breaker for each possible linear order over the candidates. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coombs with parallel universe tie-breaking (PUT).  Apply the Coombs method with a tie-breaker for each possible linear order over the candidates. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -870,14 +922,14 @@
                <span class="k">if</span> <span class="n">_num_rank_first</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">strict_maj_size</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># run Coombs with tie-breaker for each permulation of candidates</span>
+        <span class="c1"># run Coombs with tie-breaker for each permutation of candidates</span>
         <span class="k">for</span> <span class="n">tb</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">candidates</span><span class="p">):</span>
             <span class="n">winners</span> <span class="o">+=</span> <span class="n">coombs_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="n">tb</span><span class="p">)</span> 
 
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">winners</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="coombs_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.coombs_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">coombs_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coombs with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of lists.    </span>
 
 <span class="sd">    Args:</span>
@@ -946,7 +998,7 @@
 
 <div class="viewcode-block" id="baldwin"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.baldwin">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Baldwin&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">baldwin</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.</span>
 
 <span class="sd">    .. note:: </span>
 <span class="sd">        Baldwin is a Condorcet consistent voting method means that if a Condorcet winner exists, then Baldwin will elect the Condorcet winner. </span>
@@ -1016,7 +1068,7 @@
 
 <div class="viewcode-block" id="baldwin_tb"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.baldwin_tb">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Baldwin TB&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">baldwin_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Baldwin with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,....,num_cands-1.</span>
 
 <span class="sd">    Args:</span>
@@ -1102,7 +1154,7 @@
 
 <div class="viewcode-block" id="baldwin_put"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.baldwin_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Baldwin PUT&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">baldwin_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Baldwin with parallel universe tie-breaking (PUT).  Apply the Baldwin method with a tie-breaker for each possible linear order over the candidates. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Baldwin with parallel universe tie-breaking (PUT).  Apply the Baldwin method with a tie-breaker for each possible linear order over the candidates. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -1156,7 +1208,7 @@
 
 
 <div class="viewcode-block" id="baldwin_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.baldwin_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">baldwin_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated.    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated.    </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -1235,7 +1287,7 @@
 
 <div class="viewcode-block" id="strict_nanson"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.strict_nanson">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Strict Nanson&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">strict_nanson</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with the  Borda score strictly below the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with the  Borda score strictly below the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</span>
 
 <span class="sd">    .. note:: </span>
 <span class="sd">        </span>
@@ -1305,7 +1357,7 @@
 
 
 <div class="viewcode-block" id="strict_nanson_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.strict_nanson_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">strict_nanson_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.    </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -1379,7 +1431,7 @@
 
 <div class="viewcode-block" id="weak_nanson"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.weak_nanson">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weak Nanson&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">weak_nanson</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with Borda score less than or equal the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iteratively remove all candidates with Borda score less than or equal the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.</span>
 
 <span class="sd">    .. note:: </span>
 
@@ -1459,8 +1511,8 @@
 
 
 <div class="viewcode-block" id="weak_nanson_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.weak_nanson_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">weak_nanson_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.    </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -1544,7 +1596,7 @@
 
 <div class="viewcode-block" id="iterated_removal_cl"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.iterated_removal_cl">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Iterated Removal Condorcet Loser&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">iterated_removal_cl</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iteratively remove candidates that are Condorcet losers until there are no Condorcet losers.   A candidate :math:`c` is a **Condorcet loser** when every other candidate is majority preferred to :math:`c`. </span>
 
 <span class="sd">    Args:</span>
@@ -1592,7 +1644,7 @@
 
 
 <div class="viewcode-block" id="iterated_removal_cl_with_explanation"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.iterated_removal_cl_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">iterated_removal_cl_with_explanation</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iterated Removal Condorcet Loser with an explanation. In addition to the winner(s), return the order of elimination, where each candidate in the list is a Condorcet loser in the profile (restricted to the remaining candidates). </span>
 
 <span class="sd">    Args:</span>
@@ -1631,7 +1683,7 @@
 
 <div class="viewcode-block" id="iterated_split_cycle"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.iterated_split_cycle">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Iterated Split Cycle&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">iterated_split_cycle</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iteratively remove candidates that are not Split Cycle winners until there is a unique winner or all remaining candidates are Split Cycle winners. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iteratively remove candidates that are not Split Cycle winners until there is a unique winner or all remaining candidates are Split Cycle winners. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data with a margin method. </span>
@@ -1667,6 +1719,140 @@
         
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sc_winners</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="benham"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.benham">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Benham&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">benham</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score. Then elect the Condorcet winner of the restricted profile. </span>
+<span class="sd">    </span>
+<span class="sd">    .. important::</span>
+<span class="sd">        If there is  more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. </span>
+<span class="sd">    </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        A sorted list of candidates</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Related functions:  :func:`pref_voting.iterative_methods.benham_put`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># need the total number of all candidates in a profile to check when all candidates have been removed   </span>
+    <span class="n">num_cands</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">num_cands</span> 
+    
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
+    <span class="n">cands_to_ignore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">])</span>
+
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+    
+    <span class="n">winners</span> <span class="o">=</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span> <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
+    
+    <span class="n">rs</span><span class="p">,</span> <span class="n">rcounts</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span> <span class="c1"># get all the ranking data</span>
+    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">plurality_scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_num_rank_first</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> 
+                            <span class="k">if</span>  <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span><span class="n">c</span><span class="p">)}</span>  
+        <span class="n">min_plurality_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">plurality_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">lowest_first_place_votes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">plurality_scores</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> 
+                                             <span class="k">if</span>  <span class="n">plurality_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">min_plurality_score</span><span class="p">])</span>
+
+        <span class="c1"># remove cands with lowest plurality score</span>
+        <span class="n">cands_to_ignore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">lowest_first_place_votes</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_cands</span><span class="p">:</span> <span class="c1"># removed all of the candidates </span>
+            <span class="n">winners</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lowest_first_place_votes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="n">winners</span> <span class="o">=</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="benham_tb"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.benham_tb">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Benham TB&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">benham_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benham (``benham``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+<span class="sd">        tie_breaker (List[int]): A list of the candidates in the profile to be used as a tiebreaker.</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        A sorted list of candidates</span>
+<span class="sd">   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># the tie_breaker is any linear order (i.e., list) of the candidates</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tie_breaker</span> <span class="k">if</span> <span class="n">tie_breaker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">num_cands</span><span class="p">))</span>
+    
+    <span class="c1"># need the total number of all candidates in a profile to check when all candidates have been removed   </span>
+    <span class="n">num_cands</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">num_cands</span> 
+    
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
+    <span class="n">cands_to_ignore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">])</span>
+
+    <span class="n">rs</span><span class="p">,</span> <span class="n">rcounts</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span> <span class="c1"># get all the ranking data</span>
+    
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+
+    <span class="n">winners</span> <span class="o">=</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span> <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
+    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">plurality_scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_num_rank_first</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span><span class="n">c</span><span class="p">)}</span>  
+        <span class="n">min_plurality_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">plurality_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">lowest_first_place_votes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">plurality_scores</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> 
+                                             <span class="k">if</span> <span class="n">plurality_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">min_plurality_score</span><span class="p">])</span>
+        
+        <span class="n">cand_to_remove</span> <span class="o">=</span> <span class="n">lowest_first_place_votes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lowest_first_place_votes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span> 
+            <span class="k">if</span> <span class="n">tb</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tb</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cand_to_remove</span><span class="p">):</span>
+                <span class="n">cand_to_remove</span> <span class="o">=</span> <span class="n">c</span>
+
+        <span class="c1"># remove cands with lowest plurality winners</span>
+        <span class="n">cands_to_ignore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">cand_to_remove</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_cands</span><span class="p">:</span> <span class="c1">#all the candidates where removed</span>
+            <span class="n">winners</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lowest_first_place_votes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="n">winners</span> <span class="o">=</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="benham_put"><a class="viewcode-back" href="../../iterative_methods.html#pref_voting.iterative_methods.benham_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Benham PUT&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">benham_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benham (:func:`benham`) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        A sorted list of candidates</span>
+
+<span class="sd">    .. warning:: </span>
+<span class="sd">        This will take a long time on profiles with many candidates. </span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
+    <span class="n">cands_to_ignore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">])</span>
+    
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">isin</span><span class="p">(</span><span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+    
+    <span class="n">winners</span> <span class="o">=</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span> <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
+        
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">winners</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># run Instant Runoff with tie-breaker for each permulation of candidates</span>
+        <span class="k">for</span> <span class="n">tb</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">candidates</span><span class="p">):</span>
+            <span class="n">winners</span> <span class="o">+=</span> <span class="n">instant_runoff_tb</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="n">tb</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">winners</span><span class="p">)))</span></div>
+    
 <span class="n">iterated_vms</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">instant_runoff</span><span class="p">,</span>
     <span class="n">instant_runoff_tb</span><span class="p">,</span>
@@ -1683,12 +1869,16 @@
     <span class="n">baldwin_tb</span><span class="p">,</span>
     <span class="n">baldwin_put</span><span class="p">,</span>
     <span class="n">iterated_removal_cl</span><span class="p">,</span>
-    <span class="n">iterated_split_cycle</span>
+    <span class="n">iterated_split_cycle</span><span class="p">,</span>
+    <span class="n">benham</span><span class="p">,</span>
+    <span class="n">benham_put</span><span class="p">,</span>
+    <span class="n">benham_tb</span>
 <span class="p">]</span>
 
 <span class="n">iterated_vms_with_explanation</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">instant_runoff_with_explanation</span><span class="p">,</span>
     <span class="n">coombs_with_explanation</span><span class="p">,</span>
+    <span class="n">plurality_with_runoff_with_explanation</span><span class="p">,</span>
     <span class="n">baldwin_with_explanation</span><span class="p">,</span>
     <span class="n">strict_nanson_with_explanation</span><span class="p">,</span>
     <span class="n">weak_nanson_with_explanation</span><span class="p">,</span>
@@ -1728,9 +1918,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

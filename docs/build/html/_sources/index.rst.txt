@@ -63,6 +63,20 @@ Contents
    combined_methods
    other_methods
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Axioms
+
+   axioms_overview
+   dominance_axioms
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Analysis
+
+   analysis_overview
+   
+
 Index
 ----------------------
 

@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.other_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -227,11 +236,11 @@
 
 <div class="viewcode-block" id="majority"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.majority">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Majority&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">majority</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Returns the majority winner in the ``profile`` restricted to ``curr_cands``.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Returns the majority winner in the ``profile`` restricted to ``curr_cands``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A sorted list of candidates</span>
@@ -283,7 +292,7 @@
 
 <div class="viewcode-block" id="banks"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.banks">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Banks&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">banks</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot; Say that a *chain* in majority graph is a subset of candidates that is linearly ordered by the majority relation. Then a candidate :math:`a` if :math:`a` is the maximum element with respect to the majority relation of some maximal chain in the majority graph.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Say that a *chain* in majority graph is a subset of candidates that is linearly ordered by the majority relation. Then a candidate :math:`a` if :math:`a` is the maximum element with respect to the majority relation of some maximal chain in the majority graph.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -341,7 +350,7 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">maximal_paths</span><span class="p">])))</span></div>
 
 <div class="viewcode-block" id="banks_with_explanation"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.banks_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">banks_with_explanation</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Return the Banks winners and the list of maximal chains in the majority graph. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Banks winners and the list of maximal chains in the majority graph. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -411,8 +420,8 @@
 <span class="c1">#</span>
 
 <span class="k">def</span> <span class="nf">distance_to_margin_graph</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calclulate the distance of ``rel`` (a relation) to the majority graph of ``edata``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the distance of ``rel`` (a relation) to the majority graph of ``edata``. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">candidates</span> <span class="o">=</span> <span class="n">edata</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
     
@@ -430,7 +439,7 @@
 
 
 <span class="k">def</span> <span class="nf">lin_order_to_rel</span><span class="p">(</span><span class="n">lin_order</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Convert a linear order (a list of items) into a set of ordered pairs&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a linear order (a list of items) into a set of ordered pairs&quot;&quot;&quot;</span>
     <span class="n">els</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lin_order</span><span class="p">)</span>
     <span class="n">rel</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">els</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -442,8 +451,8 @@
 
 
 <div class="viewcode-block" id="slater_rankings"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.slater_rankings">[docs]</a><span class="k">def</span> <span class="nf">slater_rankings</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A Slater ranking is a linear order :math:`R` of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain :math:`R`. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Slater ranking is a linear order :math:`R` of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain :math:`R`. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -486,7 +495,7 @@
         
 <div class="viewcode-block" id="slater"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.slater">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Slater&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">slater</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;A Slater ranking is a linear order :math:`R` of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain :math:`R`.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Slater ranking is a linear order :math:`R` of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain :math:`R`.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -551,12 +560,12 @@
     <span class="k">return</span> <span class="n">lin_orders</span><span class="p">,</span> <span class="n">min_dist</span>
 
 <div class="viewcode-block" id="kemmeny_young_rankings"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.kemmeny_young_rankings">[docs]</a><span class="k">def</span> <span class="nf">kemmeny_young_rankings</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters&#39; rankings.  </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        rankings: A list of Slater rankings.</span>
@@ -593,11 +602,11 @@
 
 <div class="viewcode-block" id="kemmeny_young"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.kemmeny_young">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Kemmeny-Young&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">kemmeny_young</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters&#39; rankings.  The Kemmeny-Young winners are the candidates that are ranked first by some Kemmeny-Young ranking.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters&#39; rankings.  The Kemmeny-Young winners are the candidates that are ranked first by some Kemmeny-Young ranking.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A sorted list of candidates</span>
@@ -638,11 +647,11 @@
 
 <div class="viewcode-block" id="bucklin"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.bucklin">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Bucklin&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">bucklin</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes.  Return the candidates with the greatest overall score.  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes.  Return the candidates with the greatest overall score.  </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A sorted list of candidates</span>
@@ -686,11 +695,11 @@
 
 
 <div class="viewcode-block" id="bucklin_with_explanation"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.bucklin_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">bucklin_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Return the Bucklin winners and the score for each candidate. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Bucklin winners and the score for each candidate. </span>
 <span class="sd"> </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 
@@ -742,11 +751,11 @@
 
 <div class="viewcode-block" id="simplified_bucklin"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.simplified_bucklin">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Simplified Bucklin&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">simplified_bucklin</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A sorted list of candidates</span>
@@ -789,11 +798,11 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">cand_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">strict_maj_size</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="simplified_bucklin_with_explanation"><a class="viewcode-back" href="../../other_methods.html#pref_voting.other_methods.simplified_bucklin_with_explanation">[docs]</a><span class="k">def</span> <span class="nf">simplified_bucklin_with_explanation</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Return the Simplified Bucklin winners and the score for each candidate. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Simplified Bucklin winners and the score for each candidate. </span>
 <span class="sd"> </span>
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restrcited to the candidates in ``curr_cands``</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
 
 <span class="sd">    Returns: </span>
 
@@ -842,6 +851,60 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">cand_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">strict_maj_size</span><span class="p">]),</span> <span class="n">cand_scores</span></div>
 
 
+<span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weighted Bucklin&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">weighted_bucklin</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strict_threshold</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">num_cands</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="p">(</span><span class="n">num_cands</span> <span class="o">-</span> <span class="n">rank</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="n">num_cands</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">num_cands</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate&#39;s k-th Weighted Bucklin score is at least half the number of voters (or the strict majority size if strict_threshold = True). Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where strict_threshold = True and score = lambda num_cands, rank: 1.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+<span class="sd">        strict_threshold: If True, makes the threshold for the Bucklin procedure the strict majority size; otherwise threshold is half the number of voters, following Kilgour et al.</span>
+<span class="sd">        score (function): A function that accepts two parameters ``num_cands`` (the number of candidates) and ``rank`` (a rank of a candidate) used to calculate the score of a candidate. The default ``score`` function is the normalized version of the classic Borda score vector.</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        A sorted list of candidates</span>
+
+<span class="sd">    :Example: </span>
+
+<span class="sd">    .. exec_code:: </span>
+
+<span class="sd">        from pref_voting.profiles import Profile</span>
+<span class="sd">        from pref_voting.other_methods import weighted_bucklin</span>
+
+<span class="sd">        prof = Profile([[1, 0, 2], [0, 2, 1], [0, 1, 2]], [2, 1, 1])</span>
+
+<span class="sd">        prof.display()</span>
+<span class="sd">        weighted_bucklin.display(prof)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">strict_threshold</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">strict_maj_size</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">num_voters</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
+    
+    <span class="n">num_cands</span> <span class="o">=</span> <span class="n">candidates</span>
+    
+    <span class="n">rankings</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">_rankings</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_find_updated_profile</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">_rankings</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">]),</span> <span class="n">profile</span><span class="o">.</span><span class="n">num_cands</span><span class="p">)</span>
+
+    <span class="n">rcounts</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">_rcounts</span>
+    
+    <span class="n">num_cands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+    <span class="n">ranks</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_cands</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">cand_to_num_voters_rank</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+        <span class="n">cand_to_num_voters_rank</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_num_rank</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+                                      <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
+        <span class="n">cand_scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span><span class="nb">sum</span><span class="p">([</span><span class="n">score</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">),</span> <span class="n">_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">cand_to_num_voters_rank</span><span class="p">[</span><span class="n">_r</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">_r</span> <span class="ow">in</span> <span class="n">cand_to_num_voters_rank</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span> 
+                       <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="n">threshold</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cand_scores</span><span class="o">.</span><span class="n">values</span><span class="p">()]):</span>
+            <span class="k">break</span>
+    <span class="n">max_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cand_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">cand_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">max_score</span><span class="p">])</span>
+
 
 <span class="n">other_vms</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">banks</span><span class="p">,</span>
@@ -849,7 +912,8 @@
     <span class="n">kemmeny_young</span><span class="p">,</span> 
     <span class="n">majority</span><span class="p">,</span> 
     <span class="n">bucklin</span><span class="p">,</span>
-    <span class="n">simplified_bucklin</span>
+    <span class="n">simplified_bucklin</span><span class="p">,</span>
+    <span class="n">weighted_bucklin</span>
 <span class="p">]</span>
 </pre></div>
         </article>
@@ -884,9 +948,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

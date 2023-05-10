@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -223,7 +232,7 @@
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="c1">#from numba import jit #  remove until numba supports python 3.11</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -243,18 +252,18 @@
 <span class="c1"># Internal compiled functions to optimize reasoning with profiles</span>
 <span class="c1"># #######</span>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(fastmath=True)</span>
 <span class="k">def</span> <span class="nf">isin</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;optimized function testing if the value val is in the array arr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;optimized function testing if the value val is in the array arr</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">val</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_support</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The number of voters that rank candidate c1 over candidate c2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of voters that rank candidate c1 over candidate c2</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -279,9 +288,9 @@
     <span class="n">num_rank_c1_over_c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">diffs</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">)</span> <span class="c1"># mutliply by the number of each ranking</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">num_rank_c1_over_c2</span><span class="p">)</span>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(fastmath=True,nopython=True)</span>
 <span class="k">def</span> <span class="nf">_margin</span><span class="p">(</span><span class="n">tally</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;The margin of c1 over c2: the number of voters that rank c1 over c2 minus </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The margin of c1 over c2: the number of voters that rank c1 over c2 minus </span>
 <span class="sd">    the number of voters that rank c2 over c1</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -292,9 +301,9 @@
     <span class="k">return</span> <span class="n">tally</span><span class="p">[</span><span class="n">c1</span><span class="p">][</span><span class="n">c2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tally</span><span class="p">[</span><span class="n">c2</span><span class="p">][</span><span class="n">c1</span><span class="p">]</span>
 
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_num_rank</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The number of voters that rank cand at level </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of voters that rank cand at level </span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -307,9 +316,9 @@
     <span class="n">is_cand</span> <span class="o">=</span> <span class="n">cands_at_level</span> <span class="o">==</span> <span class="n">cand</span> <span class="c1"># set to 0 each candidate not equal to cand</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">is_cand</span> <span class="o">*</span> <span class="n">rcounts</span><span class="p">)</span> 
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_borda_score</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">,</span> <span class="n">cand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The Borda score for cand </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Borda score for cand </span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -324,9 +333,9 @@
     <span class="n">num_ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_num_rank</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">])</span>
     <span class="k">return</span>  <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">num_ranks</span> <span class="o">*</span> <span class="n">bscores</span><span class="p">)</span>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_find_updated_profile</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Optimized method to remove all candidates from cands_to_ignore</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimized method to remove all candidates from cands_to_ignore</span>
 <span class="sd">    from a list of rankings. </span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -359,13 +368,13 @@
 <span class="c1"># #######</span>
 
 <div class="viewcode-block" id="Profile"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile">[docs]</a><span class="k">class</span> <span class="nc">Profile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An anonymous profile of linear rankings of :math:`n` candidates.  It is assumed that the candidates are named :math:`0, 1, \ldots, n-1` and a ranking of the candidates is a list of candidate names.  For instance, the list ``[0, 2, 1]`` represents the ranking in which :math:`0` is ranked above :math:`2`, :math:`2` is ranked above :math:`1`, and :math:`0` is ranked above :math:`1`.   </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An anonymous profile of linear rankings of :math:`n` candidates.  It is assumed that the candidates are named :math:`0, 1, \ldots, n-1` and a ranking of the candidates is a list of candidate names.  For instance, the list ``[0, 2, 1]`` represents the ranking in which :math:`0` is ranked above :math:`2`, :math:`2` is ranked above :math:`1`, and :math:`0` is ranked above :math:`1`.   </span>
 
 <span class="sd">    :param rankings: List of rankings in the profile, where a ranking is a list of candidates.</span>
 <span class="sd">    :type rankings: list[list[int]]</span>
 <span class="sd">    :param rcounts: List of the number of voters associated with each ranking.  Should be the same length as rankings.   If not provided, it is assumed that 1 voters submitted each element of ``rankings``.   </span>
 <span class="sd">    :type rcounts: list[int], optional</span>
-<span class="sd">    :param cmap: Dictionary mapping candidates (integers) to candidate names (strings).  If not provied, each candidate name is mapped to itself. </span>
+<span class="sd">    :param cmap: Dictionary mapping candidates (integers) to candidate names (strings).  If not provided, each candidate name is mapped to itself. </span>
 <span class="sd">    :type cmap: dict[int: str], optional</span>
 
 <span class="sd">    :Example:</span>
@@ -381,10 +390,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rankings</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rankings</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> 
-        <span class="sd">&quot;&quot;&quot;The number of candidates&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of candidates&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cands</span><span class="p">))</span> 
         
@@ -397,7 +406,7 @@
         <span class="c1"># for each voter, the rankings of each candidate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">_r</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">]</span> <span class="k">for</span>  <span class="n">_r</span> <span class="ow">in</span> <span class="n">rankings</span><span class="p">])</span>
         
-        <span class="c1"># 2d array where the c,d entery is the support of c over d</span>
+        <span class="c1"># 2d array where the c,d entry is the support of c over d</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tally</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">_support</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> 
                                  <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="p">])</span>
         
@@ -406,11 +415,11 @@
                 
         <span class="c1"># total number of voters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">)</span>
-        <span class="sd">&quot;&quot;&quot;The number of voters in the election.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of voters in the election.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rankings_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the submitted rankings and the list of counts. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -418,7 +427,7 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rankings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of all the rankings in the profile .   The type is a list of tuples of integers. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -426,14 +435,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">counts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of the counts of  the rankings in the profile.   The type is a list of integers. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">)</span>
         
 <div class="viewcode-block" id="Profile.support"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.support">[docs]</a>    <span class="k">def</span> <span class="nf">support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of voters that rank :math:`c1` above :math:`c2`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of voters that rank :math:`c1` above :math:`c2`</span>
 <span class="sd">        </span>
 <span class="sd">        :param c1: the first candidate</span>
 <span class="sd">        :type c1: int</span>
@@ -446,7 +455,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tally</span><span class="p">[</span><span class="n">c1</span><span class="p">][</span><span class="n">c2</span><span class="p">]</span></div>
     
 <div class="viewcode-block" id="Profile.margin"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.margin">[docs]</a>    <span class="k">def</span> <span class="nf">margin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of voters that rank :math:`c1` above :math:`c2` minus the number of voters that rank :math:`c2` above :math:`c1`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of voters that rank :math:`c1` above :math:`c2` minus the number of voters that rank :math:`c2` above :math:`c1`.</span>
 <span class="sd">        </span>
 <span class="sd">        :param c1: the first candidate</span>
 <span class="sd">        :type c1: int</span>
@@ -455,11 +464,10 @@
 <span class="sd">        :rtype: int</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">return</span> <span class="n">_margin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tally</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="Profile.majority_prefers"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.majority_prefers">[docs]</a>    <span class="k">def</span> <span class="nf">majority_prefers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns true if more voters rank :math:`c1` over :math:`c2` than :math:`c2` over :math:`c1`; otherwise false. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if more voters rank :math:`c1` over :math:`c2` than :math:`c2` over :math:`c1`; otherwise false. </span>
 <span class="sd">        </span>
 <span class="sd">        :param c1: the first candidate</span>
 <span class="sd">        :type c1: int</span>
@@ -472,18 +480,18 @@
         <span class="k">return</span> <span class="n">_margin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tally</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="Profile.is_tied"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if ``c1`` tied with ``c2``.  That is, the same number of voters rank ``c1`` over ``c2`` as ``c2`` over ``c1``. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if ``c1`` tied with ``c2``.  That is, the same number of voters rank ``c1`` over ``c2`` as ``c2`` over ``c1``. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
 
         <span class="k">return</span> <span class="n">_margin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tally</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="Profile.cycles"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.cycles">[docs]</a>    <span class="k">def</span> <span class="nf">cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Return a list of the cycles in the profile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of the cycles in the profile.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin_graph</span><span class="p">()</span><span class="o">.</span><span class="n">cycles</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Profile.num_rank"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.num_rank">[docs]</a>    <span class="k">def</span> <span class="nf">num_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;The number of voters that rank candidate ``c`` at position ``level``</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of voters that rank candidate ``c`` at position ``level``</span>
 
 <span class="sd">        :param c: the candidate</span>
 <span class="sd">        :type c: int</span>
@@ -495,7 +503,7 @@
         <span class="k">return</span> <span class="n">_num_rank</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rankings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="Profile.plurality_scores"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.plurality_scores">[docs]</a>    <span class="k">def</span> <span class="nf">plurality_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The plurality scores in the profile restricted to the candidates in ``curr_cands``. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The plurality scores in the profile restricted to the candidates in ``curr_cands``. </span>
 
 <span class="sd">        The **plurality score** for candidate :math:`c` is the number of voters that rank :math:`c` in first place. </span>
 
@@ -511,7 +519,7 @@
         <span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_num_rank_first</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="Profile.borda_scores"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.borda_scores">[docs]</a>    <span class="k">def</span> <span class="nf">borda_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The Borda scores in the profile restricted to the candidates in ``curr_cands``. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Borda scores in the profile restricted to the candidates in ``curr_cands``. </span>
 
 <span class="sd">        The **Borda score** for candidate :math:`c` is calculate as follows: the score assigned to :math:`c` by a ranking is the number of candidates ranked below :math:`c`.  The Borda score is the sum of the score assigned to :math:`c` by each ranking in the ballot. </span>
 <span class="sd">        </span>
@@ -529,21 +537,21 @@
         <span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_borda_score</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">}</span></div>
     
 <div class="viewcode-block" id="Profile.dominators"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.dominators">[docs]</a>    <span class="k">def</span> <span class="nf">dominators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``. </span>
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
         
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">cand</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="Profile.dominates"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.dominates">[docs]</a>    <span class="k">def</span> <span class="nf">dominates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of candidates that ``cand`` is majority preferred to in the profiles restricted to ``curr_cands``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
         
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span></div>
-
+    
 <div class="viewcode-block" id="Profile.copeland_scores"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.copeland_scores">[docs]</a>    <span class="k">def</span> <span class="nf">copeland_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
-        <span class="sd">&quot;&quot;&quot;The Copeland scores in the profile restricted to the candidates in ``curr_cands``. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Copeland scores in the profile restricted to the candidates in ``curr_cands``. </span>
 
 <span class="sd">        The **Copeland score** for candidate :math:`c` is calculated as follows:  :math:`c` receives ``scores[0]`` points for every candidate that  :math:`c` is majority preferred to, ``scores[1]`` points for every candidate that is tied with :math:`c`, and ``scores[2]`` points for every candidate that is majority preferred to :math:`c`. The default ``scores`` is ``(1, 0, -1)``. </span>
 <span class="sd">        </span>
@@ -570,7 +578,7 @@
         <span class="k">return</span> <span class="n">c_scores</span></div>
 
 <div class="viewcode-block" id="Profile.condorcet_winner"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.condorcet_winner">[docs]</a>    <span class="k">def</span> <span class="nf">condorcet_winner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise return None.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise return None.</span>
 
 <span class="sd">        The **Condorcet winner** is the candidate that is majority preferred to every other candidate. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -585,7 +593,7 @@
         <span class="k">return</span> <span class="n">cw</span></div>
 
 <div class="viewcode-block" id="Profile.weak_condorcet_winner"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.weak_condorcet_winner">[docs]</a>    <span class="k">def</span> <span class="nf">weak_condorcet_winner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a list of the weak Condorcet winners in the profile restricted to ``curr_cands`` (which may be empty).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the weak Condorcet winners in the profile restricted to ``curr_cands`` (which may be empty).</span>
 
 <span class="sd">        A candidate :math:`c` is a  **weak Condorcet winner** if there is no other candidate that is majority preferred to :math:`c`.</span>
 
@@ -601,7 +609,7 @@
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">weak_cw</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weak_cw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Profile.condorcet_loser"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.condorcet_loser">[docs]</a>    <span class="k">def</span> <span class="nf">condorcet_loser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise return None.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise return None.</span>
 
 <span class="sd">        A candidate :math:`c` is a  **Condorcet loser** if every other candidate  is majority preferred to :math:`c`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -616,7 +624,7 @@
         <span class="k">return</span> <span class="n">cl</span></div>
     
 <div class="viewcode-block" id="Profile.strict_maj_size"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.strict_maj_size">[docs]</a>    <span class="k">def</span> <span class="nf">strict_maj_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the strict majority of the number of voters.  </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the strict majority of the number of voters.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># return the size of  strictly more than 50% of the voters</span>
@@ -624,31 +632,31 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_voters</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="Profile.margin_graph"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.margin_graph">[docs]</a>    <span class="k">def</span> <span class="nf">margin_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns the margin graph of the profile.  See :class:`.MarginGraph`.  </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the margin graph of the profile.  See :class:`.MarginGraph`.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
     
         <span class="k">return</span> <span class="n">MarginGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile.support_graph"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.support_graph">[docs]</a>    <span class="k">def</span> <span class="nf">support_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns the margin graph of the profile.  See :class:`.SupportGraph`.  </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the margin graph of the profile.  See :class:`.SupportGraph`.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
     
         <span class="k">return</span> <span class="n">SupportGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile.majority_graph"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.majority_graph">[docs]</a>    <span class="k">def</span> <span class="nf">majority_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns the majority graph of the profile.  See :class:`.MarginGraph`.  </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the majority graph of the profile.  See :class:`.MarginGraph`.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
     
         <span class="k">return</span> <span class="n">MajorityGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile.margin_matrix"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.margin_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">margin_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the margin matrix of the profile: A matrix where the :math:`i, j` entry is the margin of candidate :math:`i` over candidate :math:`j`.    </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the margin matrix of the profile: A matrix where the :math:`i, j` entry is the margin of candidate :math:`i` over candidate :math:`j`.    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">]</span></div>
     
 <div class="viewcode-block" id="Profile.is_uniquely_weighted"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.is_uniquely_weighted">[docs]</a>    <span class="k">def</span> <span class="nf">is_uniquely_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Returns True if the profile is uniquely weighted. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the profile is uniquely weighted. </span>
 <span class="sd">        </span>
 <span class="sd">        A profile is **uniquely weighted** when there are no 0 margins and all the margins between any two candidates are unique.     </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -656,7 +664,7 @@
         <span class="k">return</span> <span class="n">MarginGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">is_uniquely_weighted</span><span class="p">()</span></div>
     
 <div class="viewcode-block" id="Profile.remove_candidates"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.remove_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the profile. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the profile. </span>
 
 <span class="sd">        :param cands_to_ignore: list of candidates to remove from the profile</span>
 <span class="sd">        :type cands_to_ignore: list[int]</span>
@@ -680,8 +688,27 @@
         <span class="n">orig_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span>  <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">new_names</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">return</span> <span class="n">Profile</span><span class="p">([[</span><span class="n">new_names</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">updated_rankings</span><span class="p">],</span> <span class="n">rcounts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">),</span> <span class="n">orig_names</span></div>
     
+<div class="viewcode-block" id="Profile.anonymize"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.anonymize">[docs]</a>    <span class="k">def</span> <span class="nf">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a profile which is the anonymized version of this profile. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">rcounts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankings</span><span class="p">:</span>
+            <span class="n">found_it</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">_ridx</span><span class="p">,</span> <span class="n">_r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rankings</span><span class="p">):</span> 
+                <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="n">_r</span><span class="p">:</span> 
+                    <span class="n">rcounts</span><span class="p">[</span><span class="n">_ridx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">found_it</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found_it</span><span class="p">:</span> 
+                <span class="n">rankings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">rcounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Profile</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="o">=</span><span class="n">rcounts</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span></div>
+        
 <div class="viewcode-block" id="Profile.display"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).</span>
 
 <span class="sd">        :param cmap: the candidate map to use (overrides the cmap associated with this profile)</span>
 <span class="sd">        :type cmap: dict[int,str], optional</span>
@@ -708,7 +735,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="p">]</span> <span class="k">for</span> <span class="n">cs</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">transpose</span><span class="p">()],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="n">style</span><span class="p">))</span>        </div>
 
 <div class="viewcode-block" id="Profile.to_latex"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.to_latex">[docs]</a>    <span class="k">def</span> <span class="nf">to_latex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a stringer describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a stringer describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).</span>
 
 <span class="sd">        :Example: </span>
 
@@ -734,13 +761,13 @@
         <span class="k">return</span> <span class="n">latex_str</span></div>
 
 <div class="viewcode-block" id="Profile.display_margin_matrix"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.display_margin_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">display_margin_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;Display the margin matrix using tabulate.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the margin matrix using tabulate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin_matrix</span><span class="p">(),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">))</span>   </div>
 
 <div class="viewcode-block" id="Profile.display_margin_graph"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.display_margin_graph">[docs]</a>    <span class="k">def</span> <span class="nf">display_margin_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Display the margin graph of the profile (restricted to ``curr_cands``) using the ``cmap``.  See :class:`.MarginGraph`. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -748,14 +775,14 @@
         <span class="n">MarginGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile.display_margin_graph_with_defeat"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.display_margin_graph_with_defeat">[docs]</a>    <span class="k">def</span> <span class="nf">display_margin_graph_with_defeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defeat</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_undefeated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Display the margin graph of the profile (restricted to ``curr_cands``) with the defeat edges highlighted using the ``cmap``.  See :class:`.MarginGraph`. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">MarginGraph</span><span class="o">.</span><span class="n">from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">display_with_defeat</span><span class="p">(</span><span class="n">defeat</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">,</span> <span class="n">show_undefeated</span> <span class="o">=</span> <span class="n">show_undefeated</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile.write"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a string encoding the profile for to store in a file.</span>
 
 <span class="sd">        The format is based on the format used by PrefLib (https://www.preflib.org/data/format)</span>
@@ -789,7 +816,7 @@
     
 <div class="viewcode-block" id="Profile.from_string"><a class="viewcode-back" href="../../profiles.html#pref_voting.profiles.Profile.from_string">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e_str</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a profile described by ``e_str``.</span>
 
 <span class="sd">        ``e_str`` must be in the format produced by the :meth:`pref_voting.Profile.write` function.</span>
@@ -815,13 +842,17 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">num_cands</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cmap</span><span class="p">)</span></div>
     
+    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="n">rs</span><span class="p">,</span> <span class="n">cs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankings_counts</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Profile(</span><span class="si">{</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">rs</span><span class="p">]</span><span class="si">}</span><span class="s2">, rcounts=</span><span class="si">{</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">cs</span><span class="p">]</span><span class="si">}</span><span class="s2">, cmap=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="c1"># print the profile as a table</span>
         
         <span class="k">return</span> <span class="n">tabulate</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="p">]</span> <span class="k">for</span> <span class="n">cs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rankings</span><span class="o">.</span><span class="n">transpose</span><span class="p">()],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcounts</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">)</span>    </div>
 
 <span class="k">def</span> <span class="nf">simple_lift</span><span class="p">(</span><span class="n">ranking</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a ranking (i.e., a list of candidates) in which ``c`` is moved up one position in ``ranking``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">ranking</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;can&#39;t lift a candidate already in first place&quot;</span>
@@ -831,7 +862,7 @@
     <span class="k">return</span> <span class="n">ranking</span>
 
 <span class="k">def</span> <span class="nf">simple_drop</span><span class="p">(</span><span class="n">ranking</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a ranking (i.e., a list of candidates) in which ``c`` is moved down one position in ``ranking``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -873,9 +904,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

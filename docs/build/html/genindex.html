@@ -4,9 +4,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 --><title>Index - Preferential Voting Tools</title>
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 --><title>Index - Preferential Voting Tools</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -177,6 +177,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -219,11 +228,19 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.AAdom">AAdom() (pref_voting.profiles_with_ties.Ranking method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.add">add() (pref_voting.weighted_majority_graphs.MarginGraph method)</a>
 </li>
+        <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.add_unranked_candidates">add_unranked_candidates() (pref_voting.profiles_with_ties.ProfileWithTies method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="profiles.html#pref_voting.profiles.Profile.anonymize">anonymize() (pref_voting.profiles.Profile method)</a>
+</li>
         <li><a href="scoring_methods.html#pref_voting.scoring_methods.anti_plurality">anti_plurality() (in module pref_voting.scoring_methods)</a>
+</li>
+        <li><a href="axioms_overview.html#pref_voting.axiom.Axiom">Axiom (class in pref_voting.axiom)</a>
+</li>
+        <li><a href="analysis_overview.html#pref_voting.analysis.axiom_violations_data">axiom_violations_data() (in module pref_voting.analysis)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -247,11 +264,17 @@
 </li>
         <li><a href="margin_based_methods.html#pref_voting.margin_based_methods.beat_path">beat_path() (in module pref_voting.margin_based_methods)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="margin_based_methods.html#pref_voting.margin_based_methods.beat_path_defeat">beat_path_defeat() (in module pref_voting.margin_based_methods)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="margin_based_methods.html#pref_voting.margin_based_methods.beat_path_faster">beat_path_faster() (in module pref_voting.margin_based_methods)</a>
+</li>
+        <li><a href="iterative_methods.html#pref_voting.iterative_methods.benham">benham() (in module pref_voting.iterative_methods)</a>
+</li>
+        <li><a href="iterative_methods.html#pref_voting.iterative_methods.benham_put">benham_put() (in module pref_voting.iterative_methods)</a>
+</li>
+        <li><a href="iterative_methods.html#pref_voting.iterative_methods.benham_tb">benham_tb() (in module pref_voting.iterative_methods)</a>
 </li>
         <li><a href="combined_methods.html#pref_voting.combined_methods.blacks">blacks() (in module pref_voting.combined_methods)</a>
 </li>
@@ -289,6 +312,8 @@
 </li>
         <li><a href="c1_methods.html#pref_voting.c1_methods.condorcet">condorcet() (in module pref_voting.c1_methods)</a>
 </li>
+        <li><a href="analysis_overview.html#pref_voting.analysis.condorcet_efficiency_data">condorcet_efficiency_data() (in module pref_voting.analysis)</a>
+</li>
         <li><a href="combined_methods.html#pref_voting.combined_methods.condorcet_irv">condorcet_irv() (in module pref_voting.combined_methods)</a>
 </li>
         <li><a href="combined_methods.html#pref_voting.combined_methods.condorcet_irv_put">condorcet_irv_put() (in module pref_voting.combined_methods)</a>
@@ -301,6 +326,8 @@
           <li><a href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser">(pref_voting.weighted_majority_graphs.MajorityGraph method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="profiles.html#pref_voting.profiles.Profile.condorcet_winner">condorcet_winner() (pref_voting.profiles.Profile method)</a>
 
         <ul>
@@ -309,8 +336,6 @@
           <li><a href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_winner">(pref_voting.weighted_majority_graphs.MajorityGraph method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="iterative_methods.html#pref_voting.iterative_methods.coombs">coombs() (in module pref_voting.iterative_methods)</a>
 </li>
         <li><a href="iterative_methods.html#pref_voting.iterative_methods.coombs_put">coombs_put() (in module pref_voting.iterative_methods)</a>
@@ -441,14 +466,22 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="analysis.html#pref_voting.analysis.find_condorcet_efficiency">find_condorcet_efficiency() (in module pref_voting.analysis)</a>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.find_all_pareto_violations">find_all_pareto_violations() (in module pref_voting.dominance_axioms)</a>
 </li>
-        <li><a href="analysis.html#pref_voting.analysis.find_profiles_with_different_winners">find_profiles_with_different_winners() (in module pref_voting.analysis)</a>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.find_all_schwartz_violations">find_all_schwartz_violations() (in module pref_voting.dominance_axioms)</a>
 </li>
-        <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.first">first() (pref_voting.profiles_with_ties.Ranking method)</a>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.find_all_smith_violations">find_all_smith_violations() (in module pref_voting.dominance_axioms)</a>
+</li>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.find_condorcet_loser_violation">find_condorcet_loser_violation() (in module pref_voting.dominance_axioms)</a>
+</li>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.find_condorcet_winner_violation">find_condorcet_winner_violation() (in module pref_voting.dominance_axioms)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="analysis_overview.html#pref_voting.analysis.find_profiles_with_different_winners">find_profiles_with_different_winners() (in module pref_voting.analysis)</a>
+</li>
+        <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.first">first() (pref_voting.profiles_with_ties.Ranking method)</a>
+</li>
         <li><a href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.from_profile">from_profile() (pref_voting.weighted_majority_graphs.MajorityGraph class method)</a>
 
         <ul>
@@ -489,13 +522,23 @@
   <h2>H</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.has_condorcet_loser_violation">has_condorcet_loser_violation() (in module pref_voting.dominance_axioms)</a>
+</li>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.has_condorcet_winner_violation">has_condorcet_winner_violation() (in module pref_voting.dominance_axioms)</a>
+</li>
         <li><a href="margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.has_cycle">has_cycle() (pref_voting.weighted_majority_graphs.MajorityGraph method)</a>
 </li>
         <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_overvote">has_overvote() (pref_voting.profiles_with_ties.Ranking method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.has_pareto_violation">has_pareto_violation() (in module pref_voting.dominance_axioms)</a>
+</li>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.has_schwartz_violation">has_schwartz_violation() (in module pref_voting.dominance_axioms)</a>
+</li>
         <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_skipped_rank">has_skipped_rank() (pref_voting.profiles_with_ties.Ranking method)</a>
+</li>
+        <li><a href="dominance_axioms.html#pref_voting.dominance_axioms.has_smith_violation">has_smith_violation() (in module pref_voting.dominance_axioms)</a>
 </li>
         <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.Ranking.has_tie">has_tie() (pref_voting.profiles_with_ties.Ranking method)</a>
 </li>
@@ -691,11 +734,13 @@
           <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores">(pref_voting.profiles_with_ties.ProfileWithTies method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores_ignoring_overvotes">plurality_scores_ignoring_overvotes() (pref_voting.profiles_with_ties.ProfileWithTies method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="iterative_methods.html#pref_voting.iterative_methods.plurality_with_runoff">plurality_with_runoff() (in module pref_voting.iterative_methods)</a>
+</li>
+        <li><a href="vms_overview.html#pref_voting.voting_method.VotingMethod.prob">prob() (pref_voting.voting_method.VotingMethod method)</a>
 </li>
         <li><a href="profiles.html#pref_voting.profiles.Profile">Profile (class in pref_voting.profiles)</a>
 </li>
@@ -976,9 +1021,6 @@
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

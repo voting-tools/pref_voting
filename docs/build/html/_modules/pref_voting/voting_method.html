@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.voting_method - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -214,17 +223,18 @@
 <span class="sd">    File: voting_methods.py</span>
 <span class="sd">    Author: Eric Pacuit (epacuit@umd.edu)</span>
 <span class="sd">    Date: November 6, 2021</span>
+<span class="sd">    Update: January 15, 2023</span>
 <span class="sd">    </span>
 <span class="sd">    The VotingMethod class and helper functions for voting methdods</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="c1"># from numba import jit # Remove until numba supports python3.11</span>
 <span class="kn">import</span> <span class="nn">random</span>
 
 <div class="viewcode-block" id="VotingMethod"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.VotingMethod">[docs]</a><span class="k">class</span> <span class="nc">VotingMethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to add functionality to voting methods. </span>
 
 <span class="sd">    Args:</span>
@@ -243,15 +253,23 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vm</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
 <div class="viewcode-block" id="VotingMethod.choose"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.VotingMethod.choose">[docs]</a>    <span class="k">def</span> <span class="nf">choose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a randomly chosen element from the winning set. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span></div>
     
+<div class="viewcode-block" id="VotingMethod.prob"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.VotingMethod.prob">[docs]</a>    <span class="k">def</span> <span class="nf">prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dictionary representing the even-chance tiebreaking for the voting method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">ws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ws</span> <span class="k">else</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">edata</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span></div>
+    
 <div class="viewcode-block" id="VotingMethod.display"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.VotingMethod.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the winning set of candidates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
  
@@ -266,7 +284,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">w_str</span> <span class="o">+</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ws</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="VotingMethod.set_name"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.VotingMethod.set_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the name of the voting method.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the name of the voting method.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_name</span></div>
 
@@ -274,16 +292,16 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="vm"><a class="viewcode-back" href="../../vms_overview.html#pref_voting.voting_method.vm">[docs]</a><span class="k">def</span> <span class="nf">vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A decorator used when creating a voting method. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">VotingMethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(fastmath=True)</span>
 <span class="k">def</span> <span class="nf">isin</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;compiled function testing if the value val is in the array arr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compiled function testing if the value val is in the array arr</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -291,9 +309,9 @@
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span>
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_num_rank_first</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">cand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The number of voters that rank candidate cand first after ignoring the candidates in </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of voters that rank candidate cand first after ignoring the candidates in </span>
 <span class="sd">    cands_to_ignore</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -327,9 +345,9 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">is_cand</span> <span class="o">*</span> <span class="n">rcounts</span><span class="p">)</span> 
 
 
-<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#@jit(nopython=True)</span>
 <span class="k">def</span> <span class="nf">_num_rank_last</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">rcounts</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">,</span> <span class="n">cand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The number of voters that rank candidate cand last after ignoring the candidates in </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The number of voters that rank candidate cand last after ignoring the candidates in </span>
 <span class="sd">    cands_to_ignore</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -394,9 +412,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

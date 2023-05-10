@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.weighted_majority_graphs - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -227,13 +236,13 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
 
 <div class="viewcode-block" id="MajorityGraph"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph">[docs]</a><span class="k">class</span> <span class="nc">MajorityGraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.</span>
 
 <span class="sd">    :param candidates: List of the candidates.  To be used as nodes in the majority graph.</span>
 <span class="sd">    :type candidates: list[int] or  list[str]</span>
 <span class="sd">    :param edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d)` is in the list of edges, then there is an edge from :math:`c` to :math:`d`.</span>
 <span class="sd">    :type edges: list</span>
-<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</span>
+<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</span>
 <span class="sd">    :type cmap: dict[int: str], optional</span>
 
 <span class="sd">    :Example:</span>
@@ -248,23 +257,23 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructer method&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructer method&quot;&quot;&quot;</span>
 
         <span class="n">mg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mg</span> <span class="o">=</span> <span class="n">mg</span>
-        <span class="sd">&quot;&quot;&quot;A networkx DiGraph object representing the majority graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A networkx DiGraph object representing the majority graph.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cindx</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">cidx</span> <span class="k">for</span> <span class="n">cidx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">candidates</span><span class="p">)}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
-        <span class="sd">&quot;&quot;&quot;The list of candidates.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The list of candidates.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">maj_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span>
-        <span class="sd">&quot;&quot;&quot;A matrix of Boolean values representing the majority graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A matrix of Boolean values representing the majority graph.&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">:</span>
@@ -286,13 +295,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a list of the edges in the majority graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the edges in the majority graph.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_tournament</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the majority graph is a **tournament** (there is an edge between any two distinct nodes).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the majority graph is a **tournament** (there is an edge between any two distinct nodes).&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
@@ -301,15 +310,15 @@
         <span class="p">]</span>
 
 <div class="viewcode-block" id="MajorityGraph.majority_prefers"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.majority_prefers">[docs]</a>    <span class="k">def</span> <span class="nf">majority_prefers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if there is an edge from `c1` to `c2`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if there is an edge from `c1` to `c2`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.is_tied"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if there is no edge from `c1` to `c2` or from `c2` to `c1`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if there is no edge from `c1` to `c2` or from `c2` to `c1`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.copeland_scores"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.copeland_scores">[docs]</a>    <span class="k">def</span> <span class="nf">copeland_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
-        <span class="sd">&quot;&quot;&quot;The Copeland scores in the profile restricted to the candidates in ``curr_cands``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Copeland scores in the profile restricted to the candidates in ``curr_cands``.</span>
 
 <span class="sd">        The **Copeland score** for candidate :math:`c` is calculated as follows:  :math:`c` receives ``scores[0]`` points for every candidate that  :math:`c` is majority preferred to, ``scores[1]`` points for every candidate that is tied with :math:`c`, and ``scores[2]`` points for every candidate that is majority preferred to :math:`c`. The default ``scores`` is ``(1, 0, -1)``.</span>
 
@@ -335,19 +344,19 @@
         <span class="k">return</span> <span class="n">c_scores</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.dominators"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.dominators">[docs]</a>    <span class="k">def</span> <span class="nf">dominators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the list of candidates that are majority preferred to ``cand`` in the majority graph restricted to ``curr_cands``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of candidates that are majority preferred to ``cand`` in the majority graph restricted to ``curr_cands``.&quot;&quot;&quot;</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">cand</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.dominates"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.dominates">[docs]</a>    <span class="k">def</span> <span class="nf">dominates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.&quot;&quot;&quot;</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">curr_cands</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.condorcet_winner"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_winner">[docs]</a>    <span class="k">def</span> <span class="nf">condorcet_winner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Condorcet winner in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.</span>
 
 <span class="sd">        The **Condorcet winner** is the candidate that is majority preferred to every other candidate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -362,7 +371,7 @@
         <span class="k">return</span> <span class="n">cw</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.weak_condorcet_winner"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.weak_condorcet_winner">[docs]</a>    <span class="k">def</span> <span class="nf">weak_condorcet_winner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a list of the weak Condorcet winners in the profile restricted to ``curr_cands`` (which may be empty).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the weak Condorcet winners in the profile restricted to ``curr_cands`` (which may be empty).</span>
 
 <span class="sd">        A candidate :math:`c` is a  **weak Condorcet winner** if there is no other candidate that is majority preferred to :math:`c`.</span>
 
@@ -380,7 +389,7 @@
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">weak_cw</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weak_cw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.condorcet_loser"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.condorcet_loser">[docs]</a>    <span class="k">def</span> <span class="nf">condorcet_loser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Condorcet loser in the profile restricted to ``curr_cands`` if one exists, otherwise returns None.</span>
 
 <span class="sd">        A candidate :math:`c` is a  **Condorcet loser** if every other candidate  is majority preferred to :math:`c`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -395,7 +404,7 @@
         <span class="k">return</span> <span class="n">cl</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.cycles"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.cycles">[docs]</a>    <span class="k">def</span> <span class="nf">cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the margin graph has a cycle.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the margin graph has a cycle.</span>
 
 <span class="sd">        This uses the networkx method ``networkx.find_cycle`` to find the cycles in ``self.mg``.</span>
 
@@ -416,7 +425,7 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.has_cycle"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.has_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">has_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if there is a cycle in the majority graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if there is a cycle in the majority graph.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">cycle</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">find_cycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
@@ -425,7 +434,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.remove_candidates"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.remove_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
 
 <span class="sd">        :param cands_to_ignore: list of candidates to remove from the profile</span>
 <span class="sd">        :type cands_to_ignore: list[int]</span>
@@ -453,14 +462,14 @@
         <span class="k">return</span> <span class="n">MajorityGraph</span><span class="p">(</span><span class="n">new_cands</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">new_cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.to_networkx"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a networkx weighted DiGraph representing the margin graph. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.display"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Display a majority graph (restricted to ``curr_cands``) using networkx.draw.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display a majority graph (restricted to ``curr_cands``) using networkx.draw.</span>
 
 <span class="sd">        :param cmap: the candidate map to use (overrides the cmap associated with this majority graph)</span>
 <span class="sd">        :type cmap: dict[int,str], optional</span>
@@ -509,7 +518,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="MajorityGraph.display_cycles"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.display_cycles">[docs]</a>    <span class="k">def</span> <span class="nf">display_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the cycles in the margin graph.</span>
 
 <span class="sd">        Args:</span>
@@ -518,7 +527,7 @@
 
         <span class="n">cycles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycles</span><span class="p">()</span>
         
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span> 
             <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span>
             <span class="n">cmap_inverse</span> <span class="o">=</span> <span class="p">{</span><span class="n">cname</span><span class="p">:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">cname</span> <span class="ow">in</span> <span class="n">cmap</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -569,7 +578,7 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
             
 <div class="viewcode-block" id="MajorityGraph.to_latex"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.to_latex">[docs]</a>    <span class="k">def</span> <span class="nf">to_latex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_cand</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Outputs TikZ code for displaying the majority graph.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Outputs TikZ code for displaying the majority graph.</span>
 
 <span class="sd">        :param cmap: the candidate map to use (overrides the cmap associated with this majority graph)</span>
 <span class="sd">        :type cmap: dict[int,str], optional</span>
@@ -601,7 +610,7 @@
 
 <div class="viewcode-block" id="MajorityGraph.from_profile"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MajorityGraph.from_profile">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generates a majority graph from a :class:`Profile`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a majority graph from a :class:`Profile`.</span>
 
 <span class="sd">        :param profile: the profile</span>
 <span class="sd">        :type profile: Profile</span>
@@ -638,13 +647,13 @@
 
 
 <div class="viewcode-block" id="MarginGraph"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph">[docs]</a><span class="k">class</span> <span class="nc">MarginGraph</span><span class="p">(</span><span class="n">MajorityGraph</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that :math:`c` is majority preferred to :math:`d` by a **margin** of :math:`w`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that :math:`c` is majority preferred to :math:`d` by a **margin** of :math:`w`.</span>
 
 <span class="sd">    :param candidates: List of the candidates.  To be used as nodes in the majority graph.</span>
 <span class="sd">    :type candidates: list[int] or  list[str]</span>
 <span class="sd">    :param w_edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d,w)` is in the list of edges, then there is an edge from :math:`c` to :math:`d` with weight :math:`w`.</span>
 <span class="sd">    :type w_edges: list</span>
-<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</span>
+<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</span>
 <span class="sd">    :type cmap: dict[int: str], optional</span>
 
 <span class="sd">    :Example:</span>
@@ -659,29 +668,29 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">w_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="p">[(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">w_edges</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span>
-        <span class="sd">&quot;&quot;&quot;The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">margin</span> <span class="ow">in</span> <span class="n">w_edges</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">margin</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">margin</span>
 
 <div class="viewcode-block" id="MarginGraph.margin"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.margin">[docs]</a>    <span class="k">def</span> <span class="nf">margin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the margin of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the margin of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a list of the weighted edges in the margin graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the weighted edges in the margin graph.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span> <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">edges</span><span class="p">]</span>
 
 <div class="viewcode-block" id="MarginGraph.remove_candidates"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.remove_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
 
 <span class="sd">        :param cands_to_ignore: list of candidates to remove from the profile</span>
 <span class="sd">        :type cands_to_ignore: list[int]</span>
@@ -709,15 +718,15 @@
         <span class="k">return</span> <span class="n">MarginGraph</span><span class="p">(</span><span class="n">new_cands</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">new_cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MarginGraph.majority_prefers"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.majority_prefers">[docs]</a>    <span class="k">def</span> <span class="nf">majority_prefers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the margin of ``c1`` over ``c2`` is positive.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the margin of ``c1`` over ``c2`` is positive.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="MarginGraph.is_tied"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the margin ``c1`` over ``c2`` is zero.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the margin ``c1`` over ``c2`` is zero.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="MarginGraph.is_uniquely_weighted"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.is_uniquely_weighted">[docs]</a>    <span class="k">def</span> <span class="nf">is_uniquely_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates.&quot;&quot;&quot;</span>
         <span class="n">has_zero_margins</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
@@ -731,7 +740,7 @@
         <span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mg</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MarginGraph.add"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edata</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a MarginGraph in which the new margin of candidate :math:`a` over :math:`b` is the sum of the </span>
 <span class="sd">        existing margin of :math:`a` over :math:`b` with with the margin :math:`a` over :math:`b` in ``edata``. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -750,7 +759,7 @@
         <span class="k">return</span> <span class="n">MarginGraph</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MarginGraph.to_networkx"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.to_networkx">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a networkx weighted DiGraph representing the margin graph. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -761,7 +770,7 @@
         <span class="k">return</span> <span class="n">g</span></div>
 
 <div class="viewcode-block" id="MarginGraph.normalize_ordered_weights"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.normalize_ordered_weights">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_ordered_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a MarginGraph with the same order of the edges, except that the weights are 2, 4, 6,...</span>
 
 <span class="sd">        .. important::</span>
@@ -795,7 +804,7 @@
         <span class="k">return</span> <span class="n">MarginGraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MarginGraph.display"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Display a margin graph (restricted to ``curr_cands``) using networkx.draw.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display a margin graph (restricted to ``curr_cands``) using networkx.draw.</span>
 
 <span class="sd">        :param cmap: the candidate map to use (overrides the cmap associated with this majority graph)</span>
 <span class="sd">        :type cmap: dict[int,str], optional</span>
@@ -851,13 +860,13 @@
 <div class="viewcode-block" id="MarginGraph.display_with_defeat"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.display_with_defeat">[docs]</a>    <span class="k">def</span> <span class="nf">display_with_defeat</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">defeat</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_undefeated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the margin graph with any edges that are  ``defeat`` edges highlighted in blue.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            defeat (networkx.DiGraph): The defeat relation represented as a networkx object.</span>
 <span class="sd">            curr_cands (List[int], optional): If set, then use the defeat relation for the profile restricted to the candidates in ``curr_cands``</span>
-<span class="sd">            show_undfeated (bool, optional): If true, color the undefeated candidates blue and the other candidates red.</span>
+<span class="sd">            show_undefeated (bool, optional): If true, color the undefeated candidates blue and the other candidates red.</span>
 <span class="sd">            cmap (dict, optional): The cmap used to map candidates to candidate names</span>
 
 
@@ -957,7 +966,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="MarginGraph.display_cycles"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.display_cycles">[docs]</a>    <span class="k">def</span> <span class="nf">display_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the cycles in the margin graph.</span>
 
 <span class="sd">        Args:</span>
@@ -967,7 +976,7 @@
         
         <span class="n">cycles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycles</span><span class="p">()</span>
         
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There </span><span class="si">{</span><span class="s1">&#39;are&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;is&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cycle&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;cycles&#39;</span><span class="si">}{</span><span class="s1">&#39;:&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;.&#39;</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span> 
             <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmap</span>
             <span class="n">mg_with_cycle</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
@@ -1024,7 +1033,7 @@
 
 <div class="viewcode-block" id="MarginGraph.from_profile"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.MarginGraph.from_profile">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generates a majority graph from a :class:`Profile`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a majority graph from a :class:`Profile`.</span>
 
 <span class="sd">        :param profile: the profile</span>
 <span class="sd">        :type profile: Profile</span>
@@ -1064,13 +1073,13 @@
 
 
 <div class="viewcode-block" id="SupportGraph"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph">[docs]</a><span class="k">class</span> <span class="nc">SupportGraph</span><span class="p">(</span><span class="n">MajorityGraph</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A support graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that the **support** of  :math:`c` over :math:`d` is :math:`w`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A support graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that the **support** of  :math:`c` over :math:`d` is :math:`w`.</span>
 
 <span class="sd">    :param candidates: List of the candidates.  To be used as nodes in the majority graph.</span>
 <span class="sd">    :type candidates: list[int] or  list[str]</span>
-<span class="sd">    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the suppoer for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. </span>
+<span class="sd">    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the support for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. </span>
 <span class="sd">    :type w_edges: list</span>
-<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</span>
+<span class="sd">    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</span>
 <span class="sd">    :type cmap: dict[int: str], optional</span>
 
 <span class="sd">    :Example:</span>
@@ -1089,7 +1098,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">w_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor method&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">candidates</span><span class="p">,</span>
@@ -1102,7 +1111,7 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span> <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cindices</span><span class="p">]</span>
-        <span class="sd">&quot;&quot;&quot;The support matrix, where the   :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j`. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The support matrix, where the   :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j`. &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">support</span> <span class="ow">in</span> <span class="n">w_edges</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1110,7 +1119,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a list of the weighted edges in the margin graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the weighted edges in the margin graph.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">c1</span><span class="p">)))</span>
@@ -1118,7 +1127,7 @@
         <span class="p">]</span>
 
 <div class="viewcode-block" id="SupportGraph.margin"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.margin">[docs]</a>    <span class="k">def</span> <span class="nf">margin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the margin of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the margin of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span>
@@ -1126,12 +1135,12 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupportGraph.support"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.support">[docs]</a>    <span class="k">def</span> <span class="nf">support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the support of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the support of ``c1`` over ``c2``.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="SupportGraph.majority_prefers"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.majority_prefers">[docs]</a>    <span class="k">def</span> <span class="nf">majority_prefers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if ``c1`` is majority preferred to ``c2``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if ``c1`` is majority preferred to ``c2``.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span>
@@ -1139,7 +1148,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupportGraph.is_tied"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.is_tied">[docs]</a>    <span class="k">def</span> <span class="nf">is_tied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if ``c1`` is tied with  ``c2``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if ``c1`` is tied with  ``c2``.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">s_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c1</span><span class="p">]][</span><span class="bp">self</span><span class="o">.</span><span class="n">cindx</span><span class="p">[</span><span class="n">c2</span><span class="p">]]</span>
@@ -1147,7 +1156,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupportGraph.remove_candidates"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.remove_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cands_to_ignore</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all candidates from ``cands_to_ignore`` from the Majority Graph.</span>
 
 <span class="sd">        :param cands_to_ignore: list of candidates to remove from the profile</span>
 <span class="sd">        :type cands_to_ignore: list[int]</span>
@@ -1175,7 +1184,7 @@
         <span class="k">return</span> <span class="n">SupportGraph</span><span class="p">(</span><span class="n">new_cands</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">new_cmap</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupportGraph.display"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Display a support graph (restricted to ``curr_cands``) using networkx.draw.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display a support graph (restricted to ``curr_cands``) using networkx.draw.</span>
 
 <span class="sd">        :param cmap: the candidate map to use (overrides the cmap associated with this majority graph)</span>
 <span class="sd">        :type cmap: dict[int,str], optional</span>
@@ -1218,7 +1227,7 @@
 
 <div class="viewcode-block" id="SupportGraph.from_profile"><a class="viewcode-back" href="../../margin_graphs.html#pref_voting.weighted_majority_graphs.SupportGraph.from_profile">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generates a support graph from a :class:`Profile`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a support graph from a :class:`Profile`.</span>
 
 <span class="sd">        :param profile: the profile</span>
 <span class="sd">        :type profile: Profile</span>
@@ -1257,10 +1266,10 @@
 
 
 <span class="c1">###</span>
-<span class="c1"># funcitons to display graphs in tikz</span>
+<span class="c1"># functions to display graphs in tikz</span>
 <span class="c1">##</span>
 <span class="k">def</span> <span class="nf">three_cand_tikz_str</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the TikZ code to display the graph ``g`` based on 3 candidates (may be a MajorityGraph, MarginGraph or a SupportGraph).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the TikZ code to display the graph ``g`` based on 3 candidates (may be a MajorityGraph, MarginGraph or a SupportGraph).&quot;&quot;&quot;</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1276,7 +1285,7 @@
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmap</span>
 
     <span class="n">nodes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span><span class="s2"></span>
+<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (0,0) (a) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (3,0) (c) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (1.5,1.5) (b) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
@@ -1306,7 +1315,7 @@
 
 
 <span class="k">def</span> <span class="nf">four_cand_tikz_str</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the TikZ code to display the graph ``g`` based on 4 candidates (may be a MajorityGraph, MarginGraph or a SupportGraph).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the TikZ code to display the graph ``g`` based on 4 candidates (may be a MajorityGraph, MarginGraph or a SupportGraph).&quot;&quot;&quot;</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1323,7 +1332,7 @@
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmap</span>
 
     <span class="n">nodes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span><span class="s2"></span>
+<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (0,0)      (a) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (3,0)      (b) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (1.5,1.5)  (c) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
@@ -1418,7 +1427,7 @@
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmap</span>
 
     <span class="n">nodes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span><span class="s2"></span>
+<span class="se">\\</span><span class="s2">begin</span><span class="se">{{</span><span class="s2">tikzpicture</span><span class="se">}}</span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (2,1.5)  (a) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (0,1.5)  (b) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
 <span class="se">\\</span><span class="s2">node[circle,draw,minimum width=0.25in] at (0,-1.5) (c) </span><span class="se">{{</span><span class="s2">$</span><span class="si">{</span><span class="n">cmap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="se">}}</span><span class="s2">; </span>
@@ -1497,12 +1506,12 @@
 
 
 <span class="k">def</span> <span class="nf">maximal_elements</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;return the nodes in g with no incoming arrows.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return the nodes in g with no incoming arrows.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">display_mg_with_sc</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Display the margin graph with the Split Cycle defeat relation highlighted.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">pref_voting.margin_based_methods</span> <span class="kn">import</span> <span class="n">split_cycle_defeat</span>
@@ -1518,7 +1527,7 @@
 
 
 <span class="k">def</span> <span class="nf">display_graph</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Helper function to display a weighted directed graph.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to display a weighted directed graph.&quot;&quot;&quot;</span>
 
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
 
@@ -1578,9 +1587,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

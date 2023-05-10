@@ -4,7 +4,7 @@
     Date: April 5, 2021
     
     Implementations of probabilistic voting methods.   
-    Propbabilistic voting methods returns a lottery over the candidates of a profile, 
+    Probabilistic voting methods returns a lottery over the candidates of a profile, 
     where a lottery is represented as a dictionary assigning elements from [0,1]
     to  the candidates that sums to 1.  
 '''

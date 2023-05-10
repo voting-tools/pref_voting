@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="edata_overview.html" /><link rel="prev" title="Introduction" href="index.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Installation - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -215,22 +224,21 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code> package works in Python 3.5 and above. The  library is built around a full SciPy stack: MatPlotLib (<a class="reference external" href="https://matplotlib.org/">https://matplotlib.org/</a>) and Numpy (<a class="reference external" href="https://numpy.org/">https://numpy.org/</a>).  In addition, you need to have the following packages installed:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code> package works in Python 3.9 and above. The  library is built around a full SciPy stack: MatPlotLib (<a class="reference external" href="https://matplotlib.org/">https://matplotlib.org/</a>) and Numpy (<a class="reference external" href="https://numpy.org/">https://numpy.org/</a>).  In addition, you need to have the following packages installed:</p>
 <ul class="simple">
-<li><p>numba (<a class="reference external" href="http://numba.pydata.org/">http://numba.pydata.org/</a>)</p></li>
 <li><p>networkx (<a class="reference external" href="https://networkx.org/">https://networkx.org/</a>)</p></li>
 <li><p>tabulate (<a class="reference external" href="https://github.com/astanin/python-tabulate">https://github.com/astanin/python-tabulate</a>)</p></li>
-<li><p>random (<a class="reference external" href="https://docs.python.org/3/library/random.html">https://docs.python.org/3/library/random.html</a>)</p></li>
+<li><p>random (<a class="reference external" href="https://pypi.org/project/random2/">https://pypi.org/project/random2/</a>)</p></li>
 </ul>
 <p>The dependencies can be installed using pip:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install matplotlib numpy numba networkx tabulate random
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>numpy<span class="w"> </span>networkx<span class="w"> </span>tabulate<span class="w"> </span>random2
 </pre></div>
 </div>
 </section>
 <section id="install-pref-voting">
 <h2>Install <code class="docutils literal notranslate"><span class="pre">pref_voting</span></code><a class="headerlink" href="#install-pref-voting" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">pref_voting</span></code> is available on pypi and can be installed using pip.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install pref_voting
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pref_voting
 </pre></div>
 </div>
 </section>
@@ -306,9 +314,6 @@
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

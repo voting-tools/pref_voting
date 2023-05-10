@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Generate Weighted Majority Graphs" href="generate_weighted_majority_graphs.html" /><link rel="prev" title="(Weighted) Majority Graphs" href="margin_graphs.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Generate Profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -213,9 +222,9 @@
         <article role="main">
           <section class="tex2jax_ignore mathjax_ignore" id="generate-profiles">
 <h1>Generate Profiles<a class="headerlink" href="#generate-profiles" title="Permalink to this heading">#</a></h1>
-<p>We have included  the following probability models for sampling profiles:</p>
+<p>We have included the following probability models for sampling profiles:</p>
 <ol class="arabic simple">
-<li><p>IC:  Impartial Culture Model - generate a profile by sampling  from a uniform distribution over profiles with <span class="math notranslate nohighlight">\(n\)</span> candidates and <span class="math notranslate nohighlight">\(m\)</span> voters.   This is the default probability model used to generate a profile.</p></li>
+<li><p>IC: Impartial Culture Model - generate a profile by sampling from a uniform distribution over profiles with <span class="math notranslate nohighlight">\(n\)</span> candidates and <span class="math notranslate nohighlight">\(m\)</span> voters.  This is the default probability model used to generate a profile.</p></li>
 <li><p>URN: Urn model -  In the Polya-Eggenberger urn model, to generate a profile given a parameter <span class="math notranslate nohighlight">\(\alpha\in [0,\infty)\)</span>, each voter in turn randomly draws a linear order from an urn. Initially the urn is the set of all linear orders on the <span class="math notranslate nohighlight">\(n\)</span> candidates. If a voter randomly chooses <span class="math notranslate nohighlight">\(L\)</span> from the urn, we return <span class="math notranslate nohighlight">\(L\)</span> to the urn plus <span class="math notranslate nohighlight">\(\alpha n!\)</span> copies of <span class="math notranslate nohighlight">\(L\)</span>. IC is the special case where <span class="math notranslate nohighlight">\(\alpha=0\)</span>. The Impartial Anonymous Culture (IAC) is the special case where <span class="math notranslate nohighlight">\(\alpha=1/n!\)</span>.</p>
 <ul class="simple">
 <li><p>URN-<span class="math notranslate nohighlight">\(\alpha\)</span> is the URN model with parameter <span class="math notranslate nohighlight">\(\alpha\)</span>.</p></li>
@@ -255,72 +264,72 @@ compass on the map of elections,” IJCAI-21), for each generated profile, we ch
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Profile generated using the IC probability model
 +---+---+---+---+
-| 1 | 2 | 1 | 1 |
+| 2 | 1 | 1 | 1 |
 +---+---+---+---+
+| 1 | 0 | 1 | 2 |
+| 2 | 1 | 0 | 1 |
 | 0 | 2 | 2 | 0 |
-| 1 | 1 | 0 | 2 |
-| 2 | 0 | 1 | 1 |
 +---+---+---+---+
 
 
 Profile generated using the IAC probability model
 +---+---+---+
-| 3 | 1 | 1 |
+| 2 | 1 | 2 |
 +---+---+---+
-| 2 | 0 | 1 |
-| 1 | 1 | 2 |
-| 0 | 2 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 2 |
+| 2 | 2 | 1 |
 +---+---+---+
 
 
 Profile generated using the MALLOWS-0.8 probability model
-+---+---+---+
-| 3 | 1 | 1 |
-+---+---+---+
-| 0 | 2 | 1 |
-| 1 | 1 | 2 |
-| 2 | 0 | 0 |
-+---+---+---+
-
-
-Profile generated using the MALLOWS-0.2 probability model
-+---+---+
-| 1 | 4 |
-+---+---+
-| 1 | 1 |
-| 2 | 0 |
-| 0 | 2 |
-+---+---+
-
-
-Profile generated using the MALLOWS-R probability model
 +---+---+
 | 2 | 3 |
 +---+---+
+| 1 | 2 |
 | 2 | 0 |
-| 0 | 2 |
-| 1 | 1 |
+| 0 | 1 |
 +---+---+
+
+
+Profile generated using the MALLOWS-0.2 probability model
++---+---+---+
+| 3 | 1 | 1 |
++---+---+---+
+| 2 | 2 | 0 |
+| 1 | 0 | 2 |
+| 0 | 1 | 1 |
++---+---+---+
+
+
+Profile generated using the MALLOWS-R probability model
++---+---+---+
+| 2 | 2 | 1 |
++---+---+---+
+| 1 | 2 | 2 |
+| 0 | 1 | 0 |
+| 2 | 0 | 1 |
++---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-0.4 probability model
-+---+---+
-| 4 | 1 |
-+---+---+
-| 1 | 2 |
-| 2 | 1 |
-| 0 | 0 |
-+---+---+
++---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 2 | 0 | 2 | 0 |
+| 0 | 2 | 1 | 1 |
+| 1 | 1 | 0 | 2 |
++---+---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-0.375 probability model
-+---+---+
-| 4 | 1 |
-+---+---+
-| 0 | 2 |
-| 2 | 1 |
-| 1 | 0 |
-+---+---+
++---+---+---+
+| 2 | 1 | 2 |
++---+---+---+
+| 0 | 1 | 0 |
+| 2 | 0 | 1 |
+| 1 | 2 | 2 |
++---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-0 probability model
@@ -334,78 +343,88 @@ Profile generated using the MALLOWS-RELPHI-0 probability model
 
 
 Profile generated using the MALLOWS-RELPHI-1 probability model
-+---+---+---+
-| 3 | 1 | 1 |
-+---+---+---+
-| 0 | 2 | 1 |
-| 1 | 0 | 0 |
-| 2 | 1 | 2 |
-+---+---+---+
++---+
+| 5 |
++---+
+| 1 |
+| 0 |
+| 2 |
++---+
 
 
 Profile generated using the MALLOWS-RELPHI-R probability model
-+---+---+---+
-| 3 | 1 | 1 |
-+---+---+---+
-| 0 | 0 | 2 |
-| 2 | 1 | 1 |
-| 1 | 2 | 0 |
-+---+---+---+
++---+---+---+---+
+| 2 | 1 | 1 | 1 |
++---+---+---+---+
+| 1 | 2 | 2 | 1 |
+| 0 | 0 | 1 | 2 |
+| 2 | 1 | 0 | 0 |
++---+---+---+---+
 
 
 Profile generated using the MALLOWS-RELPHI-R2 probability model
-+---+---+
-| 4 | 1 |
-+---+---+
-| 2 | 0 |
-| 1 | 2 |
-| 0 | 1 |
-+---+---+
++---+
+| 5 |
++---+
+| 2 |
+| 1 |
+| 0 |
++---+
 
 
 Profile generated using the MALLOWS_2REF-0.8 probability model
 +---+---+---+
 | 2 | 2 | 1 |
 +---+---+---+
-| 2 | 0 | 2 |
-| 0 | 1 | 1 |
+| 0 | 0 | 1 |
 | 1 | 2 | 0 |
+| 2 | 1 | 2 |
 +---+---+---+
 
 
 Profile generated using the MALLOWS_2REF-RELPHI-R probability model
-+---+---+---+---+
-| 1 | 1 | 1 | 2 |
-+---+---+---+---+
-| 0 | 2 | 0 | 2 |
-| 1 | 0 | 2 | 1 |
-| 2 | 1 | 1 | 0 |
-+---+---+---+---+
++---+---+---+
+| 1 | 2 | 2 |
++---+---+---+
+| 2 | 2 | 0 |
+| 0 | 1 | 2 |
+| 1 | 0 | 1 |
++---+---+---+
 
 
 Profile generated using the MALLOWS_2REF-RELPHI-R2 probability model
-+---+---+---+---+---+
-| 1 | 1 | 1 | 1 | 1 |
-+---+---+---+---+---+
-| 0 | 0 | 2 | 1 | 1 |
-| 2 | 1 | 1 | 0 | 2 |
-| 1 | 2 | 0 | 2 | 0 |
-+---+---+---+---+---+
++---+---+
+| 3 | 2 |
++---+---+
+| 0 | 1 |
+| 2 | 2 |
+| 1 | 0 |
++---+---+
 
 
 Profile generated using the URN-10 probability model
-+---+---+---+
-| 3 | 1 | 1 |
-+---+---+---+
-| 0 | 2 | 1 |
-| 2 | 0 | 2 |
-| 1 | 1 | 0 |
-+---+---+---+
++---+---+
+| 4 | 1 |
++---+---+
+| 1 | 1 |
+| 2 | 0 |
+| 0 | 2 |
++---+---+
 
 
 Profile generated using the URN-0.1 probability model
++---+---+---+
+| 2 | 2 | 1 |
++---+---+---+
+| 2 | 1 | 0 |
+| 0 | 2 | 2 |
+| 1 | 0 | 1 |
++---+---+---+
+
+
+Profile generated using the URN-0.3 probability model
 +---+---+
-| 4 | 1 |
+| 1 | 4 |
 +---+---+
 | 1 | 2 |
 | 0 | 0 |
@@ -413,34 +432,24 @@ Profile generated using the URN-0.1 probability model
 +---+---+
 
 
-Profile generated using the URN-0.3 probability model
-+---+---+---+---+
-| 2 | 1 | 1 | 1 |
-+---+---+---+---+
-| 0 | 0 | 2 | 1 |
-| 2 | 1 | 1 | 2 |
-| 1 | 2 | 0 | 0 |
-+---+---+---+---+
-
-
 Profile generated using the URN-R probability model
 +---+---+
-| 4 | 1 |
+| 2 | 3 |
 +---+---+
-| 0 | 2 |
 | 2 | 1 |
 | 1 | 0 |
+| 0 | 2 |
 +---+---+
 
 
 Profile generated using the SinglePeaked probability model
-+---+---+---+
-| 1 | 1 | 3 |
-+---+---+---+
-| 2 | 1 | 1 |
-| 1 | 2 | 0 |
-| 0 | 0 | 2 |
-+---+---+---+
++---+---+
+| 4 | 1 |
++---+---+
+| 1 | 2 |
+| 0 | 1 |
+| 2 | 0 |
++---+---+
 </pre></div>
 </div>
 <section id="generate-a-profile">
@@ -482,54 +491,54 @@ Profile generated using the SinglePeaked probability model
 <span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+---+
-| 2 | 2 | 1 | 1 | 1 | 1 | 1 | 1 |
-+---+---+---+---+---+---+---+---+
-| 0 | 2 | 1 | 1 | 3 | 0 | 1 | 3 |
-| 1 | 0 | 2 | 0 | 2 | 1 | 3 | 1 |
-| 2 | 1 | 0 | 2 | 0 | 3 | 0 | 2 |
-| 3 | 3 | 3 | 3 | 1 | 2 | 2 | 0 |
-+---+---+---+---+---+---+---+---+
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+---+---+---+
+| 0 | 0 | 1 | 2 | 3 | 2 | 3 | 3 | 3 | 3 |
+| 1 | 2 | 0 | 3 | 2 | 3 | 1 | 0 | 1 | 2 |
+| 3 | 1 | 2 | 1 | 0 | 0 | 2 | 1 | 0 | 1 |
+| 2 | 3 | 3 | 0 | 1 | 1 | 0 | 2 | 2 | 0 |
++---+---+---+---+---+---+---+---+---+---+
 +---+---+---+---+---+---+---+
-| 2 | 1 | 1 | 1 | 2 | 1 | 2 |
+| 3 | 1 | 1 | 2 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+
-| 3 | 1 | 2 | 1 | 2 | 1 | 1 |
-| 2 | 3 | 3 | 2 | 0 | 2 | 0 |
-| 1 | 0 | 0 | 3 | 3 | 0 | 3 |
-| 0 | 2 | 1 | 0 | 1 | 3 | 2 |
+| 2 | 2 | 0 | 2 | 1 | 0 | 1 |
+| 1 | 3 | 2 | 0 | 0 | 3 | 2 |
+| 0 | 0 | 1 | 3 | 2 | 2 | 0 |
+| 3 | 1 | 3 | 1 | 3 | 1 | 3 |
 +---+---+---+---+---+---+---+
-+---+---+---+---+---+---+
-| 1 | 2 | 2 | 1 | 2 | 2 |
-+---+---+---+---+---+---+
-| 0 | 2 | 3 | 1 | 3 | 2 |
-| 1 | 1 | 2 | 3 | 0 | 0 |
-| 3 | 3 | 0 | 2 | 1 | 3 |
-| 2 | 0 | 1 | 0 | 2 | 1 |
-+---+---+---+---+---+---+
 +---+---+---+---+---+
-| 4 | 1 | 3 | 1 | 1 |
+| 5 | 2 | 1 | 1 | 1 |
 +---+---+---+---+---+
-| 1 | 3 | 1 | 0 | 0 |
-| 3 | 0 | 3 | 1 | 3 |
-| 0 | 2 | 2 | 3 | 1 |
-| 2 | 1 | 0 | 2 | 2 |
+| 2 | 1 | 3 | 0 | 0 |
+| 1 | 0 | 2 | 1 | 2 |
+| 0 | 3 | 1 | 2 | 1 |
+| 3 | 2 | 0 | 3 | 3 |
 +---+---+---+---+---+
 +---+---+---+---+---+---+---+---+
-| 3 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 1 | 1 | 2 | 2 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+---+
-| 0 | 1 | 0 | 3 | 2 | 2 | 0 | 0 |
-| 2 | 0 | 2 | 2 | 0 | 1 | 1 | 3 |
-| 3 | 2 | 1 | 0 | 3 | 0 | 2 | 2 |
-| 1 | 3 | 3 | 1 | 1 | 3 | 3 | 1 |
+| 2 | 2 | 2 | 2 | 0 | 0 | 1 | 1 |
+| 1 | 3 | 0 | 1 | 2 | 1 | 2 | 0 |
+| 3 | 1 | 1 | 0 | 1 | 3 | 3 | 3 |
+| 0 | 0 | 3 | 3 | 3 | 2 | 0 | 2 |
 +---+---+---+---+---+---+---+---+
 +---+---+---+---+---+---+
-| 3 | 2 | 1 | 2 | 1 | 1 |
+| 3 | 2 | 2 | 1 | 1 | 1 |
 +---+---+---+---+---+---+
-| 2 | 0 | 3 | 1 | 2 | 1 |
-| 3 | 1 | 2 | 2 | 1 | 2 |
-| 1 | 2 | 1 | 3 | 3 | 0 |
-| 0 | 3 | 0 | 0 | 0 | 3 |
+| 0 | 0 | 0 | 2 | 3 | 0 |
+| 3 | 1 | 2 | 0 | 0 | 3 |
+| 1 | 3 | 3 | 3 | 2 | 2 |
+| 2 | 2 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+
++---+---+---+---+---+---+---+
+| 2 | 3 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+
+| 3 | 2 | 2 | 0 | 2 | 1 | 1 |
+| 2 | 1 | 1 | 1 | 3 | 2 | 2 |
+| 1 | 0 | 3 | 2 | 1 | 3 | 0 |
+| 0 | 3 | 0 | 3 | 0 | 0 | 3 |
++---+---+---+---+---+---+---+
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -566,30 +575,30 @@ Profile generated using the SinglePeaked probability model
 <span class="n">prof</span> <span class="o">=</span> <span class="n">generate_profile</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">probmod</span><span class="o">=</span><span class="s2">&quot;URN&quot;</span><span class="p">,</span> <span class="n">probmod_param</span><span class="o">=</span><span class="k">lambda</span> <span class="n">nc</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
-| 4 | 3 | 1 | 2 |
-+---+---+---+---+
-| 2 | 1 | 0 | 2 |
-| 3 | 2 | 1 | 0 |
-| 1 | 0 | 2 | 3 |
-| 0 | 3 | 3 | 1 |
-+---+---+---+---+
-+---+---+---+---+---+---+---+---+---+
-| 1 | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 |
-+---+---+---+---+---+---+---+---+---+
-| 1 | 2 | 0 | 0 | 1 | 1 | 3 | 3 | 2 |
-| 2 | 1 | 3 | 3 | 3 | 3 | 1 | 2 | 1 |
-| 3 | 0 | 1 | 2 | 2 | 0 | 2 | 0 | 3 |
-| 0 | 3 | 2 | 1 | 0 | 2 | 0 | 1 | 0 |
-+---+---+---+---+---+---+---+---+---+
-+---+---+---+---+---+---+---+---+---+
-| 2 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-+---+---+---+---+---+---+---+---+---+
-| 1 | 3 | 0 | 2 | 3 | 0 | 2 | 2 | 2 |
-| 3 | 0 | 2 | 0 | 1 | 2 | 0 | 1 | 3 |
-| 2 | 1 | 1 | 3 | 0 | 3 | 1 | 3 | 1 |
-| 0 | 2 | 3 | 1 | 2 | 1 | 3 | 0 | 0 |
-+---+---+---+---+---+---+---+---+---+
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+
+| 1 | 1 | 1 | 6 | 1 |
++---+---+---+---+---+
+| 0 | 1 | 0 | 0 | 1 |
+| 3 | 2 | 1 | 1 | 3 |
+| 1 | 0 | 3 | 2 | 0 |
+| 2 | 3 | 2 | 3 | 2 |
++---+---+---+---+---+
++---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 3 | 1 | 1 |
++---+---+---+---+---+---+---+---+
+| 0 | 2 | 3 | 2 | 2 | 2 | 0 | 0 |
+| 2 | 0 | 2 | 0 | 3 | 3 | 3 | 2 |
+| 1 | 1 | 1 | 3 | 1 | 0 | 1 | 3 |
+| 3 | 3 | 0 | 1 | 0 | 1 | 2 | 1 |
++---+---+---+---+---+---+---+---+
++---+---+---+---+---+---+---+---+
+| 1 | 3 | 1 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+---+
+| 0 | 0 | 2 | 1 | 3 | 3 | 2 | 0 |
+| 2 | 1 | 0 | 3 | 1 | 1 | 1 | 1 |
+| 1 | 2 | 1 | 0 | 2 | 0 | 3 | 3 |
+| 3 | 3 | 3 | 2 | 0 | 2 | 0 | 2 |
++---+---+---+---+---+---+---+---+
 </pre></div>
 </div>
 </dd></dl>
@@ -599,15 +608,16 @@ Profile generated using the SinglePeaked probability model
 <h2>Generate a Profile with Truncated Linear Orders<a class="headerlink" href="#generate-a-profile-with-truncated-linear-orders" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.generate_profiles.generate_truncated_profile">
-<span class="sig-prename descclassname"><span class="pre">pref_voting.generate_profiles.</span></span><span class="sig-name descname"><span class="pre">generate_truncated_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_cands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_voters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_ranked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/generate_profiles.html#generate_truncated_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.generate_profiles.generate_truncated_profile" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pref_voting.generate_profiles.</span></span><span class="sig-name descname"><span class="pre">generate_truncated_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_cands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_voters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_ranked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probmod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/generate_profiles.html#generate_truncated_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.generate_profiles.generate_truncated_profile" title="Permalink to this definition">#</a></dt>
 <dd><p>Generate a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileWithTies</span></code> with <code class="docutils literal notranslate"><span class="pre">num_cands</span></code> candidates and <code class="docutils literal notranslate"><span class="pre">num_voters</span></code>.
-<a href="#id1"><span class="problematic" id="id2">`</span></a>The ballots will be truncated linear orders of the candidates.</p>
+The ballots will be truncated linear orders of the candidates.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>num_cands</strong> (<em>int</em>) – The number of candidates to include in the profile.</p></li>
 <li><p><strong>num_voters</strong> (<em>int</em>) – The number of voters to include in the profile.</p></li>
-<li><p><strong>max_num_ranked</strong> (<em>int</em><em>, </em><em>default=3</em>) – The maximum level to truncate the linear ranking. Each generated ranking will be truncated at a level that is randomly chosen between 1 and max_num_ranked</p></li>
+<li><p><strong>max_num_ranked</strong> (<em>int</em><em>, </em><em>default=3</em>) – The maximum level to truncate the linear ranking.</p></li>
+<li><p><strong>probmod</strong> (<em>str</em>) – optional (default “IC”)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -626,9 +636,9 @@ Profile generated using the SinglePeaked probability model
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+---+---+---+
 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+
-| 1 | 4 | 2 | 0 | 2 | 3 | 4 |
-|   | 2 | 3 | 5 |   |   | 1 |
-|   | 0 | 0 | 3 |   |   |   |
+| 1 | 2 | 4 | 5 | 5 | 3 | 2 |
+| 3 | 4 |   | 2 | 1 | 4 | 0 |
+|   | 0 |   | 3 |   | 0 |   |
 |   |   |   |   |   |   |   |
 |   |   |   |   |   |   |   |
 |   |   |   |   |   |   |   |
@@ -636,17 +646,23 @@ Profile generated using the SinglePeaked probability model
 +---+---+---+---+---+---+---+
 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 +---+---+---+---+---+---+---+
-| 0 | 4 | 4 | 4 | 0 | 2 | 1 |
-|   | 3 |   | 3 |   | 0 | 5 |
-|   |   |   | 2 |   | 1 | 4 |
-|   |   |   | 5 |   | 3 | 3 |
-|   |   |   | 1 |   | 4 | 0 |
-|   |   |   |   |   | 5 |   |
+| 4 | 4 | 1 | 4 | 2 | 4 | 0 |
+| 2 | 1 | 5 | 2 | 3 | 1 | 3 |
+| 3 | 5 | 0 | 0 | 5 | 2 | 2 |
+| 5 | 0 | 4 | 3 | 1 | 0 | 1 |
+| 1 | 2 |   | 1 | 4 | 3 |   |
+| 0 | 3 |   | 5 |   |   |   |
 +---+---+---+---+---+---+---+
 </pre></div>
 </div>
 </dd>
+<dt class="field-even">Possible Values of probmod<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
 </dl>
+<ul class="simple">
+<li><p>“IC” (Impartial Culture): each randomly generated linear order of all candidates is truncated at a level from 1 to max_num_ranked, where the probability of truncating at level t is the number of truncated linear orders of length t divided by the number of truncated linear orders of length from 1 to max_num_ranked. Then a voter is equally likely to get any of the truncated linear orders of length from 1 to max_num_ranked.</p></li>
+<li><p>“RT” (Random Truncation): each randomly generated linear order of all candidates is truncated at a level that is randomly chosen from 1 to max_num_ranked.</p></li>
+</ul>
 </dd></dl>
 
 </section>
@@ -728,9 +744,6 @@ Profile generated using the SinglePeaked probability model
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

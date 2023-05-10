@@ -43,14 +43,14 @@ def instant_runoff(profile, curr_cands = None):
     .. exec_code:: 
 
         from pref_voting.profiles import Profile
-        from pref_voting.iterative_methods import instant_runoff, ranked_choice, alterantive_vote, hare
+        from pref_voting.iterative_methods import instant_runoff, ranked_choice, alternative_vote, hare
         
         prof = Profile([[2, 1, 0], [0, 2, 1], [1, 2, 0]], [1, 2, 2])
 
         prof.display()
         instant_runoff.display(prof)
         ranked_choice.display(prof)
-        alterantive_vote.display(prof)
+        alternative_vote.display(prof)
         hare.display(prof)
 
     """
@@ -92,7 +92,7 @@ hare = copy.deepcopy(instant_runoff)
 instant_runoff.set_name("Ranked Choice")
 ranked_choice = copy.deepcopy(instant_runoff)
 instant_runoff.set_name("Alternative Vote")
-alterantive_vote = copy.deepcopy(instant_runoff)
+alternative_vote = copy.deepcopy(instant_runoff)
 
 # reset the name Instant Runoff
 instant_runoff.set_name("Instant Runoff")
@@ -168,7 +168,7 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Instant Runoff PUT")
 def instant_runoff_put(profile, curr_cands = None):
-    """Instant Runoff (:fun:`instant_runoff`) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates. 
+    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates. 
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -317,14 +317,13 @@ def instant_runoff_with_explanation(profile, curr_cands = None):
 @vm(name="Instant Runoff")
 def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = False): 
     """
-    Intant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number 
-    of first place votes, until there is a candidate with more than the treshold number of first-place votes. 
-    If a threshold is not set, then it is stirclty more than half of the non-empty ballots. 
+    Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes. 
+    If a threshold is not set, then it is strictly more than half of the non-empty ballots. 
     
     Args:
         profile (ProfileWithTies): An anonymous profile with no ties in the ballots (note that ProfileWithTies allows for truncated linear orders).
-        threshold (int, float, optional): The threshold needed to win the election.  If it is not set, then it is striclty more than half of the remaining ballots.
-        hide_warnings (bool, optional): Show or hide the warnings when more than one candidate is eleminated in a round.
+        threshold (int, float, optional): The threshold needed to win the election.  If it is not set, then it is strictly more than half of the remaining ballots.
+        hide_warnings (bool, optional): Show or hide the warnings when more than one candidate is eliminated in a round.
 
     Returns: 
         A sorted list of candidates
@@ -516,7 +515,7 @@ def plurality_with_runoff_with_explanation(profile, curr_cands = None):
 
 @vm(name = "Coombs")
 def coombs(profile, curr_cands = None):
-    """If there is a majority winner then that candidate is the Coombs winner.     If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  
+    """If there is a majority winner then that candidate is the Coombs winner.   If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  
     
     .. important::
         If there is  more than one candidate with the largest number of last-place votes, then *all* such candidates are removed from the profile. 
@@ -702,7 +701,7 @@ def coombs_put(profile, curr_cands = None):
                if _num_rank_first(rs, rcounts, np.empty(0), c) >= strict_maj_size]
 
     if len(winners) == 0:
-        # run Coombs with tie-breaker for each permulation of candidates
+        # run Coombs with tie-breaker for each permutation of candidates
         for tb in permutations(candidates):
             winners += coombs_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
 
@@ -988,7 +987,7 @@ def baldwin_put(profile, curr_cands=None):
 
 
 def baldwin_with_explanation(profile, curr_cands = None):
-    """Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated.    
+    """Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated.    
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1137,7 +1136,7 @@ def strict_nanson(profile, curr_cands = None):
 
 
 def strict_nanson_with_explanation(profile, curr_cands = None):
-    """Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.    
+    """Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.    
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1292,7 +1291,7 @@ def weak_nanson(profile, curr_cands = None):
 
 def weak_nanson_with_explanation(profile, curr_cands = None):
     """
-    Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.    
+    Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.    
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1517,7 +1516,7 @@ def benham(profile, curr_cands = None):
 
     .. seealso::
 
-        Related functions:  :func:`pref_voting.iterative_methods.benahm_put`
+        Related functions:  :func:`pref_voting.iterative_methods.benham_put`
 
     """
 
@@ -1605,7 +1604,7 @@ def benham_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Benham PUT")
 def benham_put(profile, curr_cands = None):
-    """Benham (:fun:`benham`) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates. 
+    """Benham (:func:`benham`) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates. 
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates

@@ -58,6 +58,7 @@ split_cycle.display(prof)
 - v0.2.1 (2023-2-15): Bug fixes
 - v0.2.3 (2023-4-2): Add plurality_with_runoff_with_explanation
 - v0.2.4 (2023-4-9): Update generate_truncated_profile so that it implements the IC probability model.
+- v0.2.6 (2023-5-10): Add axiom class, dominance axioms, and axiom_violations_data.
 
 ## Questions?
 

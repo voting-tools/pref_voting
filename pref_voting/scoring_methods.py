@@ -97,7 +97,7 @@ def borda(profile, curr_cands = None):
 
 @vm(name = "Anti-Plurality")
 def anti_plurality(profile, curr_cands = None):
-    """The **Anti-Plurlity score** of a candidate $c$ is the number of voters that rank $c$ in last place.  The Anti-Plurality winnners are the candidates with the smallest Anit-Plurality score in the ``profile`` restricted to ``curr_cands``. 
+    """The **Anti-Plurality score** of a candidate $c$ is the number of voters that rank $c$ in last place.  The Anti-Plurality winners are the candidates with the smallest Anti-Plurality score in the ``profile`` restricted to ``curr_cands``. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates

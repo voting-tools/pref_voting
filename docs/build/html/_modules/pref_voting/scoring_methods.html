@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.scoring_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -223,7 +232,7 @@
 
 <div class="viewcode-block" id="plurality"><a class="viewcode-back" href="../../scoring_methods.html#pref_voting.scoring_methods.plurality">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Plurality&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">plurality</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The **Plurality score** of a candidate :math:`c` is the number of voters that rank :math:`c` in first place. The Plurality winners are the candidates with the largest Plurality score in the ``profile`` restricted to ``curr_cands``.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The **Plurality score** of a candidate :math:`c` is the number of voters that rank :math:`c` in first place. The Plurality winners are the candidates with the largest Plurality score in the ``profile`` restricted to ``curr_cands``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -266,7 +275,7 @@
 
 <div class="viewcode-block" id="borda"><a class="viewcode-back" href="../../scoring_methods.html#pref_voting.scoring_methods.borda">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Borda&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">borda</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where $Rank(c,r)$ is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where $Rank(c,r)$ is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -309,7 +318,7 @@
 
 <div class="viewcode-block" id="anti_plurality"><a class="viewcode-back" href="../../scoring_methods.html#pref_voting.scoring_methods.anti_plurality">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Anti-Plurality&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">anti_plurality</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The **Anti-Plurlity score** of a candidate $c$ is the number of voters that rank $c$ in last place.  The Anti-Plurality winnners are the candidates with the smallest Anit-Plurality score in the ``profile`` restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The **Anti-Plurality score** of a candidate $c$ is the number of voters that rank $c$ in last place.  The Anti-Plurality winners are the candidates with the smallest Anti-Plurality score in the ``profile`` restricted to ``curr_cands``. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -351,7 +360,7 @@
 
 <div class="viewcode-block" id="scoring_rule"><a class="viewcode-back" href="../../scoring_methods.html#pref_voting.scoring_methods.scoring_rule">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Scoring Rule&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">scoring_rule</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">num_cands</span><span class="p">,</span> <span class="n">rank</span> <span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A general scoring rule.  Each voter assign a score to each candidate using the ``score`` function based on their submitted ranking (restricted to candidates in ``curr_cands``).   Returns that candidates with the greatest overall score in the profile restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A general scoring rule.  Each voter assign a score to each candidate using the ``score`` function based on their submitted ranking (restricted to candidates in ``curr_cands``).   Returns that candidates with the greatest overall score in the profile restricted to ``curr_cands``. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -403,9 +412,80 @@
 
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">cand_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_score</span><span class="p">])</span></div>
 
+
+<span class="c1">## Borda for ProfilesWithTies</span>
+
+<span class="k">def</span> <span class="nf">symmetric_borda_scores</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The symmetric Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r</span>
+<span class="sd">    minus the number of candidates ranked strictly below c according to r. </span>
+<span class="sd">    </span>
+<span class="sd">    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span>  <span class="p">{</span><span class="n">cand</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">_cand</span> <span class="k">for</span> <span class="n">_cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">extended_strict_pref</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">_cand</span><span class="p">)])</span> <span class="o">*</span> <span class="n">c</span> 
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span><span class="p">)])</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">_cand</span> <span class="k">for</span> <span class="n">_cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">extended_strict_pref</span><span class="p">(</span><span class="n">_cand</span><span class="p">,</span> <span class="n">cand</span><span class="p">)])</span> <span class="o">*</span> <span class="n">c</span> 
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span><span class="p">)])</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">domination_borda_scores</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The domination Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r. </span>
+<span class="sd">    </span>
+<span class="sd">    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span>  <span class="p">{</span><span class="n">cand</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">_cand</span> <span class="k">for</span> <span class="n">_cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">extended_strict_pref</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">_cand</span><span class="p">)])</span> <span class="o">*</span> <span class="n">c</span> 
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span><span class="p">)])</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">weak_domination_borda_scores</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The weak domination Borda score of a candidate c for a ranking r is the number of candidates ranked weakly above c according to r. </span>
+<span class="sd">    </span>
+<span class="sd">    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span>  <span class="p">{</span><span class="n">cand</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">_cand</span> <span class="k">for</span> <span class="n">_cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">extended_weak_pref</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">_cand</span><span class="p">)])</span> <span class="o">*</span> <span class="n">c</span> 
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span><span class="p">)])</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span>
+
+
+
+<span class="k">def</span> <span class="nf">non_domination_borda_scores</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The non-domination Borda score of a candidate c for a ranking r is -1 times  number of candidates ranked strictly above c according to r. </span>
+<span class="sd">    </span>
+<span class="sd">    See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span>  <span class="p">{</span><span class="n">cand</span><span class="p">:</span> <span class="o">-</span><span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">_cand</span> <span class="k">for</span> <span class="n">_cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">extended_strict_pref</span><span class="p">(</span><span class="n">_cand</span><span class="p">,</span> <span class="n">cand</span><span class="p">)])</span> <span class="o">*</span> <span class="n">c</span> 
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">profile</span><span class="o">.</span><span class="n">rankings_counts</span><span class="p">)])</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span><span class="p">}</span>
+
+
+<span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Borda&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">borda_for_profile_with_ties</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">borda_scores</span> <span class="o">=</span> <span class="n">symmetric_borda_scores</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Borda score for truncated linear orders using different ways of defining the Borda score for truncated linear</span>
+<span class="sd">    orders.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span> <span class="k">if</span> <span class="n">curr_cands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> 
+    
+    <span class="n">restricted_prof</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">remove_candidates</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_cands</span><span class="p">])</span>
+    
+    <span class="n">b_scores</span> <span class="o">=</span> <span class="n">borda_scores</span><span class="p">(</span><span class="n">restricted_prof</span><span class="p">)</span>
+    
+    <span class="n">max_borda_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">b_scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">restricted_prof</span><span class="o">.</span><span class="n">candidates</span> <span class="k">if</span> <span class="n">b_scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_borda_score</span><span class="p">])</span>
+
+
 <span class="n">scoring_vms</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">plurality</span><span class="p">,</span> 
     <span class="n">borda</span><span class="p">,</span> 
+    <span class="n">borda_for_profile_with_ties</span><span class="p">,</span>
     <span class="n">anti_plurality</span><span class="p">,</span>
     <span class="n">scoring_rule</span>
 <span class="p">]</span>
@@ -442,9 +522,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

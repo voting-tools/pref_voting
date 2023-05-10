@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="(Weighted) Majority Graphs" href="margin_graphs.html" /><link rel="prev" title="Profiles" href="profiles.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Profiles with Ties - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="margin_based_methods.html">Margin Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
 </ul>
 
 </div>
@@ -507,6 +516,12 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prof</span> <span class="o">=</span> <span class="n">ProfileWithTies</span><span class="p">([{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">}],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.add_unranked_candidates">
+<span class="sig-name descname"><span class="pre">add_unranked_candidates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.add_unranked_candidates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.add_unranked_candidates" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a profile in which for each voter, any  unranked candidate is added to the bottom of their ranking.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.candidates">
 <span class="sig-name descname"><span class="pre">candidates</span></span><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.candidates" title="Permalink to this definition">#</a></dt>
@@ -703,7 +718,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores">
-<span class="sig-name descname"><span class="pre">plurality_scores</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.plurality_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">plurality_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles_with_ties.html#ProfileWithTies.plurality_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles_with_ties.ProfileWithTies.plurality_scores" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the Plurality Scores of the candidates given that each voter ranks a single candidate in first place.</p>
 </dd></dl>
 
@@ -958,6 +973,7 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
 </li>
 <li><a class="reference internal" href="#profilewithties-class">ProfileWithTies Class</a><ul>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies</span></code></a><ul>
+<li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.add_unranked_candidates"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.add_unranked_candidates()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.candidates"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.candidates</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.cmap"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.cmap</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles_with_ties.ProfileWithTies.condorcet_loser"><code class="docutils literal notranslate"><span class="pre">ProfileWithTies.condorcet_loser()</span></code></a></li>
@@ -1011,9 +1027,6 @@ After normalizing:  {0: 1, 1: 1, 2: 2}
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

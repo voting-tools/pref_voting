@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Positional Scoring Rules" href="scoring_methods.html" /><link rel="prev" title="Generate Weighted Majority Graphs" href="generate_weighted_majority_graphs.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Overview - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -223,7 +232,7 @@
 </div>
 <p>The decorator <code class="docutils literal notranslate"><span class="pre">vm</span></code> adds the following attribute and methods to a voting method:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">.name</span></code>: The Human-readable name of the voting method</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.name</span></code>: The human-readable name of the voting method</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.display</span></code>: Display the winners</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.choose</span></code>: Choose a random winner from the set of winners</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.set_name</span></code>: set the name of the voting method.</p></li>
@@ -286,6 +295,12 @@ Plurality winners are {a, b}
 <dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod.display">
 <span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod.display" title="Permalink to this definition">#</a></dt>
 <dd><p>Display the winning set of candidates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.voting_method.VotingMethod.prob">
+<span class="sig-name descname"><span class="pre">prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/voting_method.html#VotingMethod.prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.voting_method.VotingMethod.prob" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a dictionary representing the even-chance tiebreaking for the voting method.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -861,6 +876,7 @@ Plurality winners are {a, b}
 <li><a class="reference internal" href="#pref_voting.voting_method.VotingMethod"><code class="docutils literal notranslate"><span class="pre">VotingMethod</span></code></a><ul>
 <li><a class="reference internal" href="#pref_voting.voting_method.VotingMethod.choose"><code class="docutils literal notranslate"><span class="pre">VotingMethod.choose()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.voting_method.VotingMethod.display"><code class="docutils literal notranslate"><span class="pre">VotingMethod.display()</span></code></a></li>
+<li><a class="reference internal" href="#pref_voting.voting_method.VotingMethod.prob"><code class="docutils literal notranslate"><span class="pre">VotingMethod.prob()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.voting_method.VotingMethod.set_name"><code class="docutils literal notranslate"><span class="pre">VotingMethod.set_name()</span></code></a></li>
 </ul>
 </li>
@@ -882,9 +898,6 @@ Plurality winners are {a, b}
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Generate Profiles" href="generate_profiles.html" /><link rel="prev" title="Profiles with Ties" href="profiles_with_ties.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>(Weighted) Majority Graphs - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -224,7 +233,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>int</em><em>] or  </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of the candidates.  To be used as nodes in the majority graph.</p></li>
 <li><p><strong>edges</strong> (<em>list</em>) – List of the pairs of candidates describing the edges in the majority graph.   If <span class="math notranslate nohighlight">\((c,d)\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
-<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
+<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
@@ -538,7 +547,7 @@ Edges: [(2, 0)]
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>int</em><em>] or  </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of the candidates.  To be used as nodes in the majority graph.</p></li>
 <li><p><strong>w_edges</strong> (<em>list</em>) – List of the pairs of candidates describing the edges in the majority graph.   If <span class="math notranslate nohighlight">\((c,d,w)\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span> with weight <span class="math notranslate nohighlight">\(w\)</span>.</p></li>
-<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
+<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
@@ -604,7 +613,7 @@ existing margin of <span class="math notranslate nohighlight">\(a\)</span> over 
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>defeat</strong> (<em>networkx.DiGraph</em>) – The defeat relation represented as a networkx object.</p></li>
 <li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then use the defeat relation for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
-<li><p><strong>show_undfeated</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, color the undefeated candidates blue and the other candidates red.</p></li>
+<li><p><strong>show_undefeated</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, color the undefeated candidates blue and the other candidates red.</p></li>
 <li><p><strong>cmap</strong> (<em>dict</em><em>, </em><em>optional</em>) – The cmap used to map candidates to candidate names</p></li>
 </ul>
 </dd>
@@ -747,8 +756,8 @@ Edges: [(2, 0, 5)]
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>int</em><em>] or  </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of the candidates.  To be used as nodes in the majority graph.</p></li>
-<li><p><strong>w_edges</strong> (<em>list</em>) – List representing the edges in the majority graph with supports. If <span class="math notranslate nohighlight">\((c,d,(n,m))\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>, the suppoer for <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(n\)</span>, and the support for <span class="math notranslate nohighlight">\(d\)</span> over <span class="math notranslate nohighlight">\(c\)</span> is <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
-<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
+<li><p><strong>w_edges</strong> (<em>list</em>) – List representing the edges in the majority graph with supports. If <span class="math notranslate nohighlight">\((c,d,(n,m))\)</span> is in the list of edges, then there is an edge from <span class="math notranslate nohighlight">\(c\)</span> to <span class="math notranslate nohighlight">\(d\)</span>, the support for <span class="math notranslate nohighlight">\(c\)</span> over <span class="math notranslate nohighlight">\(d\)</span> is <span class="math notranslate nohighlight">\(n\)</span>, and the support for <span class="math notranslate nohighlight">\(d\)</span> over <span class="math notranslate nohighlight">\(c\)</span> is <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
+<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
@@ -1024,9 +1033,6 @@ Edges: [(0, 2, (10, 5))]
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

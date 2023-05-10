@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Combined Methods" href="combined_methods.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="axioms_overview.html" /><link rel="prev" title="Combined Methods" href="combined_methods.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Other Methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -223,7 +232,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -367,7 +376,7 @@ Maximal chain: (2, 3, 1)
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.other_methods.slater">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.other_methods.</span></span><span class="sig-name descname"><span class="pre">slater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/other_methods.html#slater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.other_methods.slater" title="Permalink to this definition">#</a></dt>
-<dd><p>A Slater ranking is a linear order <span class="math notranslate nohighlight">\(R\)</span> of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain <span class="math notranslate nohighlight">\(R\)</span>.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.</p>
+<dd><p>A Slater ranking is a linear order <span class="math notranslate nohighlight">\(R\)</span> of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain <span class="math notranslate nohighlight">\(R\)</span>.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -407,7 +416,7 @@ Maximal chain: (2, 3, 1)
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.other_methods.slater_rankings">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.other_methods.</span></span><span class="sig-name descname"><span class="pre">slater_rankings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/other_methods.html#slater_rankings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.other_methods.slater_rankings" title="Permalink to this definition">#</a></dt>
-<dd><p>A Slater ranking is a linear order <span class="math notranslate nohighlight">\(R\)</span> of the candidates that minimises the number of edges in the majority graph we have to turn around before we obtain <span class="math notranslate nohighlight">\(R\)</span>.</p>
+<dd><p>A Slater ranking is a linear order <span class="math notranslate nohighlight">\(R\)</span> of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain <span class="math notranslate nohighlight">\(R\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -455,7 +464,7 @@ ranking: (0, 2, 3, 1)
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -519,7 +528,7 @@ Kemmeny-Young winner is {0}
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -586,7 +595,7 @@ ranking: (0, 1, 2)
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -626,7 +635,7 @@ Bucklin winner is {0}
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -673,7 +682,7 @@ The candidate scores are {0: 4, 1: 3, 2: 1}
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -714,7 +723,7 @@ Simplified Bucklin winners are {0, 1}
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
-<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restrcited to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -759,7 +768,15 @@ The candidate scores are {0: 4, 1: 3, 2: 1}
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="axioms_overview.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Overview</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="combined_methods.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
@@ -858,9 +875,6 @@ The candidate scores are {0: 4, 1: 3, 2: 1}
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

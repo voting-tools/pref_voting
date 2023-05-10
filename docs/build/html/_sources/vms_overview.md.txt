@@ -15,7 +15,7 @@ Voting methods are defined as follows::
 
 The decorator ``vm`` adds the following attribute and methods to a voting method: 
 
-1. ``.name``: The Human-readable name of the voting method
+1. ``.name``: The human-readable name of the voting method
 2. ``.display``: Display the winners 
 3. ``.choose``: Choose a random winner from the set of winners
 4. ``.set_name``: set the name of the voting method. 

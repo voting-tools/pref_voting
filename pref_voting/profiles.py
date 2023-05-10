@@ -153,7 +153,7 @@ class Profile(object):
     :type rankings: list[list[int]]
     :param rcounts: List of the number of voters associated with each ranking.  Should be the same length as rankings.   If not provided, it is assumed that 1 voters submitted each element of ``rankings``.   
     :type rcounts: list[int], optional
-    :param cmap: Dictionary mapping candidates (integers) to candidate names (strings).  If not provied, each candidate name is mapped to itself. 
+    :param cmap: Dictionary mapping candidates (integers) to candidate names (strings).  If not provided, each candidate name is mapped to itself. 
     :type cmap: dict[int: str], optional
 
     :Example:
@@ -185,7 +185,7 @@ class Profile(object):
         # for each voter, the rankings of each candidate
         self._ranks = np.array([[_r.index(c) + 1 for c in self.candidates] for  _r in rankings])
         
-        # 2d array where the c,d entery is the support of c over d
+        # 2d array where the c,d entry is the support of c over d
         self._tally = np.array([[_support(self._ranks, self._rcounts, c1, c2) 
                                  for c2 in self.candidates] for c1 in self.candidates ])
         
@@ -243,7 +243,6 @@ class Profile(object):
         :rtype: int
 
         """
-
         return _margin(self._tally, c1, c2)
         
     def majority_prefers(self, c1, c2): 
@@ -324,12 +323,12 @@ class Profile(object):
         return [c for c in candidates if self.majority_prefers(c, cand)]
 
     def dominates(self, cand, curr_cands = None): 
-        """Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.
+        """Returns the list of candidates that ``cand`` is majority preferred to in the profiles restricted to ``curr_cands``.
         """
         candidates = self.candidates if curr_cands is None else curr_cands
         
         return [c for c in candidates if self.majority_prefers(cand, c)]
-
+    
     def copeland_scores(self, curr_cands = None, scores = (1,0,-1)):
         """The Copeland scores in the profile restricted to the candidates in ``curr_cands``. 
 
@@ -621,6 +620,10 @@ class Profile(object):
         cmap = {int(c_cname.split(":")[0]): str(c_cname.split(":")[1]) for c_cname in cmap_data}
 
         return cls(rankings, num_cands, rcounts, cmap)
+    
+    def description(self): 
+        rs, cs = self.rankings_counts
+        return f"Profile({[list(r) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
     
     def __str__(self): 
         # print the profile as a table

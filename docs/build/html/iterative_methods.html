@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="C1 Methods" href="c1_methods.html" /><link rel="prev" title="Positional Scoring Rules" href="scoring_methods.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Iterative Methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -216,9 +225,9 @@
 <p>The voting methods defined below all follow a similar procedure: iteratively remove “poorly performing” candidates from the profile until there is a candidate with that is the majority winner. The voting methods differ in how they answer the following two questions:</p>
 <ol class="arabic simple">
 <li><p>What does it mean for a candidate to “perform poorly”?  Different definitions of a poorly performing candidate include the fewest number of first-place votes, the most last-place votes, the least Borda score, etc.</p></li>
-<li><p>How to break ties when there are more than one candidate that is identified as “poorly performing”?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).   A second approach is to use so-called <em>parallel-universe tiebreaking</em>. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).</p></li>
+<li><p>How to break ties when there are more than one candidate that is identified as “poorly performing”?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).  A second approach is to use so-called <em>parallel-universe tiebreaking</em>. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).</p></li>
 </ol>
-<p>To illustrate the difference with respect to the first question, consider the voting methods Instant Runoff and Coombs.   According to Instant Runoff, a candidate is “poorly performing” if that candidate has the fewest number first-place votes, and according to Coombs, a cnadidate is “poorly performing” if that candidate has the most last-place votes.</p>
+<p>To illustrate the difference with respect to the first question, consider the voting methods Instant Runoff and Coombs.   According to Instant Runoff, a candidate is “poorly performing” if that candidate has the fewest number first-place votes, and according to Coombs, a candidate is “poorly performing” if that candidate has the most last-place votes.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
 <span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">coombs</span>
 
@@ -293,14 +302,14 @@ Instant Runoff PUT winners are {1, 2}
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
-<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">ranked_choice</span><span class="p">,</span> <span class="n">alterantive_vote</span><span class="p">,</span> <span class="n">hare</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">ranked_choice</span><span class="p">,</span> <span class="n">alternative_vote</span><span class="p">,</span> <span class="n">hare</span>
 
 <span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 
 <span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 <span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
 <span class="n">ranked_choice</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
-<span class="n">alterantive_vote</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">alternative_vote</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
 <span class="n">hare</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -376,7 +385,7 @@ Instant Runoff TB winner is {2}
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_put">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_put" title="Permalink to this definition">#</a></dt>
-<dd><p>Instant Runoff (<a href="#id1"><span class="problematic" id="id2">:fun:`instant_runoff`</span></a>) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates.</p>
+<dd><p>Instant Runoff (<a class="reference internal" href="#pref_voting.iterative_methods.instant_runoff" title="pref_voting.iterative_methods.instant_runoff"><code class="xref py py-func docutils literal notranslate"><span class="pre">instant_runoff()</span></code></a>) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -536,15 +545,14 @@ order of elimination: [[1], [0]]
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">instant_runoff_for_truncated_linear_orders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#instant_runoff_for_truncated_linear_orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders" title="Permalink to this definition">#</a></dt>
-<dd><p>Intant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number
-of first place votes, until there is a candidate with more than the treshold number of first-place votes.
-If a threshold is not set, then it is stirclty more than half of the non-empty ballots.</p>
+<dd><p>Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes.
+If a threshold is not set, then it is strictly more than half of the non-empty ballots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>profile</strong> (<a class="reference internal" href="profiles_with_ties.html#pref_voting.profiles_with_ties.ProfileWithTies" title="pref_voting.profiles_with_ties.ProfileWithTies"><em>ProfileWithTies</em></a>) – An anonymous profile with no ties in the ballots (note that ProfileWithTies allows for truncated linear orders).</p></li>
-<li><p><strong>threshold</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – The threshold needed to win the election.  If it is not set, then it is striclty more than half of the remaining ballots.</p></li>
-<li><p><strong>hide_warnings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show or hide the warnings when more than one candidate is eleminated in a round.</p></li>
+<li><p><strong>threshold</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – The threshold needed to win the election.  If it is not set, then it is strictly more than half of the remaining ballots.</p></li>
+<li><p><strong>hide_warnings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show or hide the warnings when more than one candidate is eliminated in a round.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -595,6 +603,79 @@ eliminated.</p>
 +---+---+---+---+---+---+---+---+
 Instant Runoff winner is {0}
 </pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="benham">
+<h2>Benham<a class="headerlink" href="#benham" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.benham">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">benham</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#benham"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.benham" title="Permalink to this definition">#</a></dt>
+<dd><p>As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score. Then elect the Condorcet winner of the restricted profile.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If there is  more than one candidate with the fewest number of first-place votes, then <em>all</em> such candidates are removed from the profile.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Related functions:  <a class="reference internal" href="#pref_voting.iterative_methods.benham_put" title="pref_voting.iterative_methods.benham_put"><code class="xref py py-func docutils literal notranslate"><span class="pre">pref_voting.iterative_methods.benham_put()</span></code></a></p>
+</div>
+</dd></dl>
+
+<section id="benham-tb">
+<h3>Benham TB<a class="headerlink" href="#benham-tb" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.benham_tb">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">benham_tb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tie_breaker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#benham_tb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.benham_tb" title="Permalink to this definition">#</a></dt>
+<dd><p>Benham (<code class="docutils literal notranslate"><span class="pre">benham</span></code>) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+<li><p><strong>tie_breaker</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of the candidates in the profile to be used as a tiebreaker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="benham-put">
+<h3>Benham PUT<a class="headerlink" href="#benham-put" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="pref_voting.iterative_methods.benham_put">
+<span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">benham_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#benham_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.benham_put" title="Permalink to this definition">#</a></dt>
+<dd><p>Benham (<a class="reference internal" href="#pref_voting.iterative_methods.benham" title="pref_voting.iterative_methods.benham"><code class="xref py py-func docutils literal notranslate"><span class="pre">benham()</span></code></a>) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
+<li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of candidates</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will take a long time on profiles with many candidates.</p>
 </div>
 </dd></dl>
 
@@ -654,7 +735,7 @@ PluralityWRunoff winner is {2}
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.coombs">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">coombs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#coombs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.coombs" title="Permalink to this definition">#</a></dt>
-<dd><p>If there is a majority winner then that candidate is the Coombs winner.     If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.</p>
+<dd><p>If there is a majority winner then that candidate is the Coombs winner.   If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>If there is  more than one candidate with the largest number of last-place votes, then <em>all</em> such candidates are removed from the profile.</p>
@@ -1079,7 +1160,7 @@ Baldwin PUT winners are {0, 2}
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.baldwin_with_explanation">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">baldwin_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#baldwin_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.baldwin_with_explanation" title="Permalink to this definition">#</a></dt>
-<dd><p>Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated.</p>
+<dd><p>Baldwin with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1197,7 +1278,7 @@ Strict Nanson winner is {0}
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.strict_nanson_with_explanation">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">strict_nanson_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#strict_nanson_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.strict_nanson_with_explanation" title="Permalink to this definition">#</a></dt>
-<dd><p>Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.</p>
+<dd><p>Strict Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1293,7 +1374,7 @@ Weak Nanson winner is {2}
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.iterative_methods.weak_nanson_with_explanation">
 <span class="sig-prename descclassname"><span class="pre">pref_voting.iterative_methods.</span></span><span class="sig-name descname"><span class="pre">weak_nanson_with_explanation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/iterative_methods.html#weak_nanson_with_explanation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.iterative_methods.weak_nanson_with_explanation" title="Permalink to this definition">#</a></dt>
-<dd><p>Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile resctricted to the candidates that have not been eliminated and the average Borda score.</p>
+<dd><p>Weak Nanson with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of dictionaries specifying the Borda scores in the profile restricted to the candidates that have not been eliminated and the average Borda score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1570,6 +1651,18 @@ Iterated Split Cycle winner is {1}
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#benham">Benham</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.benham"><code class="docutils literal notranslate"><span class="pre">benham()</span></code></a></li>
+<li><a class="reference internal" href="#benham-tb">Benham TB</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.benham_tb"><code class="docutils literal notranslate"><span class="pre">benham_tb()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#benham-put">Benham PUT</a><ul>
+<li><a class="reference internal" href="#pref_voting.iterative_methods.benham_put"><code class="docutils literal notranslate"><span class="pre">benham_put()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#plurality-with-runoff">Plurality With Runoff</a><ul>
 <li><a class="reference internal" href="#pref_voting.iterative_methods.plurality_with_runoff"><code class="docutils literal notranslate"><span class="pre">plurality_with_runoff()</span></code></a></li>
 </ul>
@@ -1649,9 +1742,6 @@ Iterated Split Cycle winner is {1}
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

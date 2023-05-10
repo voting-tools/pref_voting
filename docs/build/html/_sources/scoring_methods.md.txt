@@ -3,7 +3,7 @@ Positional Scoring Rules
 
 Suppose that $\mathbf{P}$ is an anonymous profile of linear orders (i.e., a ``Profile`` object). A **scoring vector** for $m$ candidates is a tuple of numbers $\langle s_1, s_2, \ldots, s_m\rangle$ where for each $l=1,\ldots, m-1$, $s_l \ge s_{l+1}$.  
 
-Suppose that $a\in X(\mathbf{P})$ and $R\in \mathcal{L}(X(\mathbf{P}))$ is linear order on the set of candidates.  The **rank** of $a$ in $R$ is one more than the number of candidates ranked above $a$ (i.e., $|\{b\mid b\in X(\mathbf{P})\mbox{ and } b\mathrel{R}a\}| + 1$).   The **score of $a$** given $R$ is  $score(R,a)=s_r$ where $r$ is the *rank* of $a$ in $R$. 
+Suppose that $a\in X(\mathbf{P})$ and $R\in \mathcal{L}(X(\mathbf{P}))$ is linear order on the set of candidates.  The **rank** of $a$ in $R$ is one more than the number of candidates ranked above $a$ (i.e., $|\{b\mid b\in X(\mathbf{P})\mbox{ and } b\mathrel{R}a\}| + 1$).  The **score of $a$** given $R$ is  $score(R,a)=s_r$ where $r$ is the *rank* of $a$ in $R$. 
  
 For each anonymous profile $\mathbf{P}$,  $a\in X(\mathbf{P})$ and scoring vector $\vec{s}$ for the number of candidates in $\mathbf{P}$, let 
  

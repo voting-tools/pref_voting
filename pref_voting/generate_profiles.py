@@ -480,7 +480,7 @@ def strict_weak_orders(A):
 
 def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="IC"):
     """Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  
-    `The ballots will be truncated linear orders of the candidates.
+    The ballots will be truncated linear orders of the candidates.
 
     Args:
         num_cands (int): The number of candidates to include in the profile. 

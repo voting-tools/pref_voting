@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.c1_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -229,7 +238,7 @@
 
 <div class="viewcode-block" id="condorcet"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.condorcet">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Condorcet&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">condorcet</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the Condorcet winner if one exists, otherwise return all the candidates.  A Condorcet winner is a candidate :math:`c` that is majority preferred to every other candidate. </span>
 
 <span class="sd">    Args:</span>
@@ -276,7 +285,7 @@
 
 <div class="viewcode-block" id="copeland"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.copeland">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Copeland&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">copeland</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The Copeland score for c is the number of candidates that c is majority preferred to minus the number of candidates majority preferred to c.  The Copeland winners are the candidates with the maximum Copeland score in the profile restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Copeland score for c is the number of candidates that c is majority preferred to minus the number of candidates majority preferred to c.  The Copeland winners are the candidates with the maximum Copeland score in the profile restricted to ``curr_cands``. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `copeland_scores` method. </span>
@@ -323,7 +332,7 @@
 
 <div class="viewcode-block" id="llull"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.llull">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Llull&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">llull</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The Llull score for a candidate :math:`c` is the number of candidates that :math:`c` is weakly majority preferred to.  This is equivalent to calucating the Copeland scores for a candidate :math:`c` with 1 point for each candidate that :math:`c` is majority preferred to, 1/2 point for each candidate that :math:`c` is tied with, and 0 points for each candidate that is majority preferred to :math:`c`.  The Llull winners are the candidates with the maximum Llull score in the profile restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Llull score for a candidate :math:`c` is the number of candidates that :math:`c` is weakly majority preferred to.  This is equivalent to calculating the Copeland scores for a candidate :math:`c` with 1 point for each candidate that :math:`c` is majority preferred to, 1/2 point for each candidate that :math:`c` is tied with, and 0 points for each candidate that is majority preferred to :math:`c`.  The Llull winners are the candidates with the maximum Llull score in the profile restricted to ``curr_cands``. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `copeland_scores` method. </span>
@@ -383,7 +392,7 @@
 
 <div class="viewcode-block" id="uc_gill"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_gill">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Uncovered Set&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">uc_gill</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Uncovered Set (Gillies version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election if :math:`a` is majority preferred to :math:`b` and :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uncovered Set (Gillies version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election if :math:`a` is majority preferred to :math:`b` and :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `dominators` method. </span>
@@ -435,7 +444,7 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">uc_set</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="uc_gill_defeat"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_gill_defeat">[docs]</a><span class="k">def</span> <span class="nf">uc_gill_defeat</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Returns the defeat relation used to find the  Uncovered Set (Gillies version) winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the defeat relation used to find the  Uncovered Set (Gillies version) winners.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `dominators` method. </span>
@@ -475,7 +484,7 @@
 
 <div class="viewcode-block" id="uc_fish"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_fish">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Uncovered Set - Fishburn&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">uc_fish</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Uncovered Set (Fishburn version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uncovered Set (Fishburn version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `dominators` method. </span>
@@ -527,7 +536,7 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">uc_set</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="uc_fish_defeat"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_fish_defeat">[docs]</a><span class="k">def</span> <span class="nf">uc_fish_defeat</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Returns the defeat relation used to find the  Uncovered Set (Fishburn version) winners.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the defeat relation used to find the  Uncovered Set (Fishburn version) winners.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `dominators` method. </span>
@@ -566,7 +575,7 @@
 
 <div class="viewcode-block" id="uc_bordes"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_bordes">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Uncovered Set - Bordes&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">uc_bordes</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Uncovered Set (Bordes version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` Bordes covers :math:`b` if :math:`a` is majority preferred to :math:`b` and for all :math:`c`, if :math:`c` is majority preferred or tied with :math:`a`, then :math:`c` is majority preferred to or tied with :math:`b`. The winners are the set of candidates who are not Bordes covered in the election restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uncovered Set (Bordes version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` Bordes covers :math:`b` if :math:`a` is majority preferred to :math:`b` and for all :math:`c`, if :math:`c` is majority preferred or tied with :math:`a`, then :math:`c` is majority preferred to or tied with :math:`b`. The winners are the set of candidates who are not Bordes covered in the election restricted to ``curr_cands``. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has  `dominators` and `majority_prefers` methods. </span>
@@ -623,7 +632,7 @@
 
 <div class="viewcode-block" id="uc_mckelvey"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.uc_mckelvey">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Uncovered Set - McKelvey&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">uc_mckelvey</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Uncovered Set (McKelvey version):  Given candidates :math:`a` and :math:`b`, say that  :math:`a` McKelvey covers :math:`b` if a Gillies covers :math:`b` and :math:`a` Bordes covers :math:`b`. The winners are the set of candidates who are not McKelvey covered in the election restricted to ``curr_cands``. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uncovered Set (McKelvey version):  Given candidates :math:`a` and :math:`b`, say that  :math:`a` McKelvey covers :math:`b` if a Gillies covers :math:`b` and :math:`a` Bordes covers :math:`b`. The winners are the set of candidates who are not McKelvey covered in the election restricted to ``curr_cands``. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has  `dominators` and `majority_prefers` methods. </span>
@@ -679,7 +688,7 @@
 
 <div class="viewcode-block" id="top_cycle"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.top_cycle">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Top Cycle&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">top_cycle</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The smallest set of candidates such that every candidate inside the set is majority preferred to every candidate outside the set.  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The smallest set of candidates such that every candidate inside the set is majority preferred to every candidate outside the set.  </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `majority_prefers` method. </span>
@@ -740,7 +749,7 @@
 <span class="n">top_cycle</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;Top Cycle&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="top_cycle_defeat"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.top_cycle_defeat">[docs]</a><span class="k">def</span> <span class="nf">top_cycle_defeat</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the defeat relation associated with the Top Cycle voting method. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the defeat relation associated with the Top Cycle voting method. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `majority_prefers` method. </span>
@@ -772,8 +781,7 @@
 
 <div class="viewcode-block" id="gocha"><a class="viewcode-back" href="../../c1_methods.html#pref_voting.c1_methods.gocha">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;GOCHA&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">gocha</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The GOCHA set (also known as the Schwartz set) is the smallest set of candidates with the property</span>
-<span class="sd">    that every candidate inside the set is not majority preferred by every candidate outside the set.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The GOCHA set (also known as the Schwartz set) is the set of all candidates x such that if y can reach x in the transitive closer of the majority relation, then x can reach y in the transitive closer of the majority relation.</span>
 <span class="sd">      </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `majority_prefers` method. </span>
@@ -794,14 +802,12 @@
 <span class="sd">        :context: reset  </span>
 <span class="sd">        :include-source: True</span>
 
-
 <span class="sd">    .. code-block:: </span>
 
 <span class="sd">        from pref_voting.c1_methods import top_cycle, gocha, schwartz_set</span>
 
 <span class="sd">        gocha.display(prof)</span>
 <span class="sd">        schwartz_set.display(prof)</span>
-
 
 <span class="sd">    .. exec_code:: </span>
 <span class="sd">        :hide_code:</span>
@@ -882,9 +888,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

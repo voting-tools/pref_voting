@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.analysis - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -214,7 +223,8 @@
 <span class="sd">    File: analysis.py</span>
 <span class="sd">    Author: Eric Pacuit (epacuit@umd.edu)</span>
 <span class="sd">    Date: August 9, 2022</span>
-<span class="sd">    </span>
+<span class="sd">    Updated: May 9, 2023</span>
+
 <span class="sd">    Functions to analyze voting methods</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -226,7 +236,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<div class="viewcode-block" id="find_profiles_with_different_winners"><a class="viewcode-back" href="../../analysis.html#pref_voting.analysis.find_profiles_with_different_winners">[docs]</a><span class="k">def</span> <span class="nf">find_profiles_with_different_winners</span><span class="p">(</span>
+<div class="viewcode-block" id="find_profiles_with_different_winners"><a class="viewcode-back" href="../../analysis_overview.html#pref_voting.analysis.find_profiles_with_different_winners">[docs]</a><span class="k">def</span> <span class="nf">find_profiles_with_different_winners</span><span class="p">(</span>
     <span class="n">vms</span><span class="p">,</span>
     <span class="n">numbers_of_candidates</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
     <span class="n">numbers_of_voters</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -239,7 +249,7 @@
     <span class="n">probmod</span><span class="o">=</span><span class="s2">&quot;IC&quot;</span><span class="p">,</span>
     <span class="n">num_trials</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a list of voting methods, search for profiles with different winning sets.</span>
 
 <span class="sd">    Args:</span>
@@ -296,7 +306,7 @@
     <span class="p">}</span>
 
 
-<div class="viewcode-block" id="find_condorcet_efficiency"><a class="viewcode-back" href="../../analysis.html#pref_voting.analysis.find_condorcet_efficiency">[docs]</a><span class="k">def</span> <span class="nf">find_condorcet_efficiency</span><span class="p">(</span>
+<div class="viewcode-block" id="condorcet_efficiency_data"><a class="viewcode-back" href="../../analysis_overview.html#pref_voting.analysis.condorcet_efficiency_data">[docs]</a><span class="k">def</span> <span class="nf">condorcet_efficiency_data</span><span class="p">(</span>
     <span class="n">vms</span><span class="p">,</span>
     <span class="n">numbers_of_candidates</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
     <span class="n">numbers_of_voters</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
@@ -305,7 +315,7 @@
     <span class="n">use_parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">num_cpus</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a Pandas DataFrame with the Condorcet efficiency of a list of voting methods.</span>
 
 <span class="sd">    Args:</span>
@@ -327,6 +337,7 @@
         <span class="s2">&quot;num_cands&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
         <span class="s2">&quot;num_voters&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
         <span class="s2">&quot;probmod&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;num_trials&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
         <span class="s2">&quot;percent_condorcet_winners&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
         <span class="s2">&quot;condorcet_efficiency&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
     <span class="p">}</span>
@@ -334,8 +345,8 @@
         <span class="k">for</span> <span class="n">num_cands</span> <span class="ow">in</span> <span class="n">numbers_of_candidates</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">num_voters</span> <span class="ow">in</span> <span class="n">numbers_of_voters</span><span class="p">:</span>
 
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_cands</span><span class="si">}</span><span class="s2"> candidates, </span><span class="si">{</span><span class="n">num_voters</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">num_voters</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> voters&quot;</span><span class="p">)</span>
-                <span class="n">get_data0</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_cands</span><span class="si">}</span><span class="s2"> candidates, </span><span class="si">{</span><span class="n">num_voters</span><span class="si">}</span><span class="s2"> voters&quot;</span><span class="p">)</span>
+                <span class="n">get_data</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
                     <span class="n">record_condorcet_efficiency_data</span><span class="p">,</span>
                     <span class="n">vms</span><span class="p">,</span>
                     <span class="n">num_cands</span><span class="p">,</span>
@@ -343,22 +354,11 @@
                     <span class="n">probmod</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">get_data1</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-                    <span class="n">record_condorcet_efficiency_data</span><span class="p">,</span>
-                    <span class="n">vms</span><span class="p">,</span>
-                    <span class="n">num_cands</span><span class="p">,</span>
-                    <span class="n">num_voters</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                    <span class="n">probmod</span><span class="p">,</span>
-                <span class="p">)</span>
-
                 <span class="k">if</span> <span class="n">use_parallel</span><span class="p">:</span>
-                    <span class="n">data0</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_data0</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">))</span>
-                    <span class="n">data1</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_data1</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">))</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_data</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">data0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_data0</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)))</span>
-                    <span class="n">data1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_data1</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)))</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_data</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)))</span>
 
-                <span class="n">data</span> <span class="o">=</span> <span class="n">data0</span> <span class="o">+</span> <span class="n">data1</span>
                 <span class="n">num_cw</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">num_choose_cw</span> <span class="o">=</span> <span class="p">{</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">vm</span> <span class="ow">in</span> <span class="n">vms</span><span class="p">}</span>
                 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -367,20 +367,106 @@
                         <span class="k">for</span> <span class="n">vm</span> <span class="ow">in</span> <span class="n">vms</span><span class="p">:</span>
                             <span class="n">num_choose_cw</span><span class="p">[</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cw_winner&quot;</span><span class="p">][</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 
-                <span class="n">num_profiles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_trials</span>
                 <span class="k">for</span> <span class="n">vm</span> <span class="ow">in</span> <span class="n">vms</span><span class="p">:</span>
                     <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;vm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_cands&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_cands</span><span class="p">)</span>
-                    <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_voters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">num_voters</span><span class="p">,</span> <span class="n">num_voters</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                    <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_voters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_voters</span><span class="p">)</span>
                     <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;probmod&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probmod</span><span class="p">)</span>
+                    <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_trials&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)</span>
                     <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;percent_condorcet_winners&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">num_cw</span> <span class="o">/</span> <span class="n">num_profiles</span>
+                        <span class="n">num_cw</span> <span class="o">/</span> <span class="n">num_trials</span>
                     <span class="p">)</span>
                     <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;condorcet_efficiency&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="n">num_choose_cw</span><span class="p">[</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_cw</span>
                     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_for_df</span><span class="p">)</span></div>
+
+<span class="c1"># helper function for axiom_violations_data</span>
+<span class="k">def</span> <span class="nf">record_axiom_violation_data</span><span class="p">(</span>
+    <span class="n">axioms</span><span class="p">,</span> 
+    <span class="n">vms</span><span class="p">,</span> 
+    <span class="n">num_cands</span><span class="p">,</span> 
+    <span class="n">num_voters</span><span class="p">,</span> 
+    <span class="n">probmod</span><span class="p">,</span> 
+    <span class="n">verbose</span><span class="p">,</span> 
+    <span class="n">t</span>
+    <span class="p">):</span>
+
+    <span class="n">prof</span> <span class="o">=</span> <span class="n">generate_profile</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">probmod</span><span class="o">=</span><span class="n">probmod</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="n">ax</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ax</span><span class="o">.</span><span class="n">has_violation</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">vm</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span> <span class="k">for</span> <span class="n">vm</span> <span class="ow">in</span> <span class="n">vms</span><span class="p">}</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axioms</span><span class="p">}</span>
+
+<div class="viewcode-block" id="axiom_violations_data"><a class="viewcode-back" href="../../analysis_overview.html#pref_voting.analysis.axiom_violations_data">[docs]</a><span class="k">def</span> <span class="nf">axiom_violations_data</span><span class="p">(</span>
+    <span class="n">axioms</span><span class="p">,</span>
+    <span class="n">vms</span><span class="p">,</span>
+    <span class="n">numbers_of_candidates</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="n">numbers_of_voters</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span>  <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span>  <span class="mi">100</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span>  <span class="mi">500</span><span class="p">,</span> <span class="mi">501</span><span class="p">,</span>  <span class="mi">1000</span><span class="p">,</span> <span class="mi">1001</span><span class="p">],</span>
+    <span class="n">probmods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;IC&quot;</span><span class="p">],</span>
+    <span class="n">num_trials</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_cpus</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a Pandas DataFrame with the Condorcet efficiency of a list of voting methods.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vms (list(functions)): A list of voting methods,</span>
+<span class="sd">        numbers_of_candidates (list(int), default = [3, 4, 5]): The numbers of candidates to check.</span>
+<span class="sd">        numbers_of_voters (list(int), default = [5, 25, 50, 100]): The numbers of voters to check.</span>
+<span class="sd">        probmod (str, default=&quot;IC&quot;): The probability model to be passed to the ``generate_profile`` method</span>
+<span class="sd">        num_trials (int, default=10000): The number of profiles to check for different winning sets.</span>
+<span class="sd">        use_parallel (bool, default=True): If True, then use parallel processing.</span>
+<span class="sd">        num_cpus (int, default=12): The number of (virtual) cpus to use if using parallel processing.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">use_parallel</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">)</span>
+
+    <span class="n">data_for_df</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;axiom&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;vm&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;num_cands&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;num_voters&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;probmod&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;num_trials&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="s2">&quot;num_violations&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">probmod</span> <span class="ow">in</span> <span class="n">probmods</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">probmod</span><span class="si">}</span><span class="s2"> probability model&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">num_cands</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">numbers_of_candidates</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">num_voters</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">numbers_of_voters</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="c1">#print(f&quot;{num_cands} candidates, {num_voters} voters&quot;)</span>
+                <span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">use_parallel</span> <span class="k">else</span> <span class="kc">False</span>
+                <span class="n">get_data</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+                    <span class="n">record_axiom_violation_data</span><span class="p">,</span>
+                    <span class="n">axioms</span><span class="p">,</span>
+                    <span class="n">vms</span><span class="p">,</span>
+                    <span class="n">num_cands</span><span class="p">,</span>
+                    <span class="n">num_voters</span><span class="p">,</span>
+                    <span class="n">probmod</span><span class="p">,</span>
+                    <span class="n">_verbose</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">use_parallel</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_data</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_data</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)))</span>
+
+                <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axioms</span><span class="p">:</span> 
+                    <span class="k">for</span> <span class="n">vm</span> <span class="ow">in</span> <span class="n">vms</span><span class="p">:</span> 
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;axiom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;vm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_cands&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_cands</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_voters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_voters</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;probmod&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probmod</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_trials&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_trials</span><span class="p">)</span>
+                        <span class="n">data_for_df</span><span class="p">[</span><span class="s2">&quot;num_violations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">vm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_for_df</span><span class="p">)</span></div>
+
 
 </pre></div>
         </article>
@@ -415,9 +501,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

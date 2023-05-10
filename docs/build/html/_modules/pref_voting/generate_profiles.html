@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.generate_profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -272,7 +281,7 @@
 
 
 <span class="k">def</span> <span class="nf">create_rankings_urn</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">replace</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;create a list of rankings using the urn model&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create a list of rankings using the urn model&quot;&quot;&quot;</span>
     <span class="n">vote_map</span> <span class="o">=</span> <span class="n">gen_urn</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">vc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">vc</span> <span class="ow">in</span> <span class="n">vote_map</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span> <span class="p">[</span><span class="n">vc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">vc</span> <span class="ow">in</span> <span class="n">vote_map</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
 
@@ -364,7 +373,7 @@
 
 
 <span class="k">def</span> <span class="nf">create_rankings_mallows_two_rankings</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;create a profile using a Mallows model with dispersion param phi</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create a profile using a Mallows model with dispersion param phi</span>
 <span class="sd">    ref is two linear orders that are reverses of each other</span>
 
 <span class="sd">    wrapper function to call the preflib function gen_mallows with 2 reference rankings</span>
@@ -408,7 +417,7 @@
 
 
 <span class="k">def</span> <span class="nf">create_rankings_single_peaked</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;create a single-peaked list of rankings</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create a single-peaked list of rankings</span>
 
 <span class="sd">    wrapper function to call the preflib function gen_single_peaked_impartial_culture_strict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -426,7 +435,7 @@
 
 
 <span class="k">def</span> <span class="nf">voter_utility</span><span class="p">(</span><span class="n">v_pos</span><span class="p">,</span> <span class="n">c_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Based on the Rabinowitz and Macdonald (1989) mixed model</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Based on the Rabinowitz and Macdonald (1989) mixed model</span>
 <span class="sd">    described in Section 3, pp. 745 - 747 of</span>
 <span class="sd">    &quot;Voting behavior under the directional spatial model of electoral competition&quot; by S. Merrill III</span>
 
@@ -577,7 +586,7 @@
 
 
 <div class="viewcode-block" id="generate_profile"><a class="viewcode-back" href="../../generate_profiles.html#pref_voting.generate_profiles.generate_profile">[docs]</a><span class="k">def</span> <span class="nf">generate_profile</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">probmod</span><span class="o">=</span><span class="s2">&quot;IC&quot;</span><span class="p">,</span> <span class="n">probmod_param</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate a :class:`Profile` with ``num_cands`` candidates and ``num_voters`` voters using the  probabilistic model ``probmod`` (with parameter ``probmod_param``).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a :class:`Profile` with ``num_cands`` candidates and ``num_voters`` voters using the  probabilistic model ``probmod`` (with parameter ``probmod_param``).</span>
 
 <span class="sd">    :param num_cands: the number of candidates in the profile</span>
 <span class="sd">    :type num_cands: int</span>
@@ -690,14 +699,15 @@
                 <span class="k">yield</span> <span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="o">+</span> <span class="n">order</span>
 
 
-<div class="viewcode-block" id="generate_truncated_profile"><a class="viewcode-back" href="../../generate_profiles.html#pref_voting.generate_profiles.generate_truncated_profile">[docs]</a><span class="k">def</span> <span class="nf">generate_truncated_profile</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">max_num_ranked</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  </span>
-<span class="sd">    `The ballots will be truncated linear orders of the candidates.</span>
+<div class="viewcode-block" id="generate_truncated_profile"><a class="viewcode-back" href="../../generate_profiles.html#pref_voting.generate_profiles.generate_truncated_profile">[docs]</a><span class="k">def</span> <span class="nf">generate_truncated_profile</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">,</span> <span class="n">max_num_ranked</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">probmod</span><span class="o">=</span><span class="s2">&quot;IC&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  </span>
+<span class="sd">    The ballots will be truncated linear orders of the candidates.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        num_cands (int): The number of candidates to include in the profile. </span>
 <span class="sd">        num_voters (int): The number of voters to include in the profile.</span>
-<span class="sd">        max_num_ranked (int, default=3): The maximum level to truncate the linear ranking. Each generated ranking will be truncated at a level that is randomly chosen between 1 and max_num_ranked </span>
+<span class="sd">        max_num_ranked (int, default=3): The maximum level to truncate the linear ranking. </span>
+<span class="sd">        probmod (str): optional (default &quot;IC&quot;)</span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        ProfileWithTies </span>
@@ -713,16 +723,39 @@
 
 <span class="sd">            prof = generate_truncated_profile(6, 7, max_num_ranked=6)</span>
 <span class="sd">            prof.display()</span>
+
+<span class="sd">    :Possible Values of probmod:</span>
+<span class="sd">    </span>
+<span class="sd">    - &quot;IC&quot; (Impartial Culture): each randomly generated linear order of all candidates is truncated at a level from 1 to max_num_ranked, where the probability of truncating at level t is the number of truncated linear orders of length t divided by the number of truncated linear orders of length from 1 to max_num_ranked. Then a voter is equally likely to get any of the truncated linear orders of length from 1 to max_num_ranked.</span>
+<span class="sd">    - &quot;RT&quot; (Random Truncation): each randomly generated linear order of all candidates is truncated at a level that is randomly chosen from 1 to max_num_ranked.</span>
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="n">max_num_ranked</span> <span class="o">&gt;</span> <span class="n">num_cands</span><span class="p">:</span>
         <span class="n">max_num_ranked</span> <span class="o">=</span> <span class="n">num_cands</span>
+
+    <span class="k">if</span> <span class="n">probmod</span> <span class="o">==</span> <span class="s2">&quot;IC&quot;</span><span class="p">:</span>
+        <span class="n">num_rankings_of_length</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">num_rankings_of_length</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span><span class="n">num_cands</span><span class="o">-</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">num_rankings_of_length</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*=</span> <span class="n">i</span>
+
+        <span class="n">num_all_rankings</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">num_rankings_of_length</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_rankings_of_length</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_all_rankings</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
     <span class="n">lprof</span> <span class="o">=</span> <span class="n">generate_profile</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">num_voters</span><span class="p">)</span>
     
     <span class="n">rmaps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lprof</span><span class="o">.</span><span class="n">rankings</span><span class="p">:</span>
-        <span class="n">truncate_at</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">probmod</span> <span class="o">==</span> <span class="s2">&quot;RT&quot;</span><span class="p">:</span>
+            <span class="n">truncate_at</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">probmod</span> <span class="o">==</span> <span class="s2">&quot;IC&quot;</span><span class="p">:</span>
+            <span class="n">truncate_at</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_num_ranked</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">weights</span><span class="o">=</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
         <span class="n">truncated_r</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">truncate_at</span><span class="p">]</span>
 
         <span class="n">rmap</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">_r</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">_r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">truncated_r</span><span class="p">)}</span>
@@ -767,9 +800,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Other Methods" href="other_methods.html" /><link rel="prev" title="Margin Methods" href="margin_based_methods.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Combined Methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -309,19 +318,47 @@ Borda winner is {2}
 <h2>Condorcet IRV<a class="headerlink" href="#condorcet-irv" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.combined_methods.condorcet_irv">
-<span class="sig-prename descclassname"><span class="pre">pref_voting.combined_methods.</span></span><span class="sig-name descname"><span class="pre">condorcet_irv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/combined_methods.html#condorcet_irv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.combined_methods.condorcet_irv" title="Permalink to this definition">#</a></dt>
-<dd><p>If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff winners.</p>
+<span class="sig-prename descclassname"><span class="pre">pref_voting.combined_methods.</span></span><span class="sig-name descname"><span class="pre">condorcet_irv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/combined_methods.html#condorcet_irv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.combined_methods.condorcet_irv" title="Permalink to this definition">#</a></dt>
+<dd><p>If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff winners.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates, or a profile of truncated linear orders.</p></li>
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
 <li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A sorted list of candidates.</p>
+<dd class="field-even"><p>A sorted list of candidates</p>
 </dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
 </dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.combined_methods</span> <span class="kn">import</span> <span class="n">condorcet_irv</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">instant_runoff_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">condorcet_irv</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 0 | 1 | 2 | 2 |
+| 2 | 3 | 1 | 3 |
+| 1 | 0 | 3 | 0 |
+| 3 | 2 | 0 | 1 |
++---+---+---+---+
+Instant Runoff winner is {2}
+Instant Runoff PUT winners are {0, 2}
+Condorcet IRV winner is {2}
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -329,19 +366,47 @@ Borda winner is {2}
 <h2>Condorcet IRV PUT<a class="headerlink" href="#condorcet-irv-put" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pref_voting.combined_methods.condorcet_irv_put">
-<span class="sig-prename descclassname"><span class="pre">pref_voting.combined_methods.</span></span><span class="sig-name descname"><span class="pre">condorcet_irv_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/combined_methods.html#condorcet_irv_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.combined_methods.condorcet_irv_put" title="Permalink to this definition">#</a></dt>
-<dd><p>If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff PUT winners.</p>
+<span class="sig-prename descclassname"><span class="pre">pref_voting.combined_methods.</span></span><span class="sig-name descname"><span class="pre">condorcet_irv_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/combined_methods.html#condorcet_irv_put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.combined_methods.condorcet_irv_put" title="Permalink to this definition">#</a></dt>
+<dd><p>If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff put winners.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders.</p></li>
+<li><p><strong>profile</strong> (<a class="reference internal" href="profiles.html#pref_voting.profiles.Profile" title="pref_voting.profiles.Profile"><em>Profile</em></a>) – An anonymous profile of linear orders on a set of candidates</p></li>
 <li><p><strong>curr_cands</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – If set, then find the winners for the profile restricted to the candidates in <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A sorted list of candidates.</p>
+<dd class="field-even"><p>A sorted list of candidates</p>
 </dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
 </dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">pref_voting.combined_methods</span> <span class="kn">import</span> <span class="n">condorcet_irv_put</span>
+<span class="kn">from</span> <span class="nn">pref_voting.iterative_methods</span> <span class="kn">import</span> <span class="n">instant_runoff</span><span class="p">,</span> <span class="n">instant_runoff_put</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">instant_runoff</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">instant_runoff_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">condorcet_irv_put</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 0 | 1 | 2 | 2 |
+| 2 | 3 | 1 | 3 |
+| 1 | 0 | 3 | 0 |
+| 3 | 2 | 0 | 1 |
++---+---+---+---+
+Instant Runoff winner is {2}
+Instant Runoff PUT winners are {0, 2}
+Condorcet IRV PUT winners are {0, 2}
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -590,9 +655,6 @@ Copeland-Borda winner is {2}
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

@@ -1,5 +1,5 @@
-Analysis of Voting Methods
-=======================================
+Overview
+==========
 
 Functions to analyze voting methods.  
 
@@ -13,8 +13,15 @@ Functions to analyze voting methods.
 ##   Condorcet Efficiency  
 
 ```{eval-rst}
-.. autofunction:: pref_voting.analysis.find_condorcet_efficiency
+.. autofunction:: pref_voting.analysis.condorcet_efficiency_data
 
 ```
 
+
+##   Axiom Violations  
+
+```{eval-rst}
+.. autofunction:: pref_voting.analysis.axiom_violations_data
+
+```
 

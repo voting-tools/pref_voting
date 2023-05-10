@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Profiles with Ties" href="profiles_with_ties.html" /><link rel="prev" title="Overview" href="edata_overview.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>Profiles - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -179,6 +179,15 @@
 <li class="toctree-l1"><a class="reference internal" href="combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -285,7 +294,7 @@ The candidates are [0, 1, 2]
 </div>
 <section id="profile-methods">
 <h2>Profile Methods<a class="headerlink" href="#profile-methods" title="Permalink to this heading">#</a></h2>
-<p>See the <span class="xref myst">next section</span> for a complete list of the methods associated with a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
+<p>See the <a class="reference internal" href="#profile-class"><span class="xref myst">next section</span></a> for a complete list of the methods associated with a <code class="docutils literal notranslate"><span class="pre">Profile</span></code>.</p>
 <section id="margins">
 <h3>Margins<a class="headerlink" href="#margins" title="Permalink to this heading">#</a></h3>
 <p>The <strong>margin</strong> of <span class="math notranslate nohighlight">\(x\)</span> over <span class="math notranslate nohighlight">\(y\)</span> in <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is</p>
@@ -326,9 +335,9 @@ The margin of 2 over 1 is -5
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pref_voting.profiles</span> <span class="kn">import</span> <span class="n">Profile</span>
 <span class="n">prof</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 <span class="n">prof</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0 is majority preferred over 1 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0 is majority prefered over 2 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;1 is majority prefered over 2 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0 is majority preferred over 1 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0 is majority preferred over 2 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;1 is majority preferred over 2 is </span><span class="si">{</span><span class="n">prof</span><span class="o">.</span><span class="n">majority_prefers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---+---+---+
@@ -339,8 +348,8 @@ The margin of 2 over 1 is -5
 | 2 | 0 | 1 |
 +---+---+---+
 0 is majority preferred over 1 is True
-0 is majority prefered over 2 is False
-1 is majority prefered over 2 is True
+0 is majority preferred over 2 is False
+1 is majority preferred over 2 is True
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -371,7 +380,7 @@ The margin matrix for the profile is: [[0, 3, -1], [-3, 0, 5], [1, -5, 0]]
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>The <a class="reference internal" href="margin_graphs.html"><span class="doc std std-doc"><strong>margin graph</strong></span></a> is created using <code class="docutils literal notranslate"><span class="pre">.margin_graph()</span></code> and can be displayed using <code class="docutils literal notranslate"><span class="pre">.display_margin_graph()</span></code>.</p></li>
+<li><p>The <a class="reference internal" href="margin_graphs.html"><span class="std std-doc"><strong>margin graph</strong></span></a> is created using <code class="docutils literal notranslate"><span class="pre">.margin_graph()</span></code> and can be displayed using <code class="docutils literal notranslate"><span class="pre">.display_margin_graph()</span></code>.</p></li>
 </ol>
 </section>
 <section id="voting-theoretic-attributes-of-profiles">
@@ -461,7 +470,7 @@ The weak Condorcet winner(s) is(are) [0]
 <ul class="simple">
 <li><p>The <strong>Plurality score</strong> of a candidate <span class="math notranslate nohighlight">\(c\)</span> in a profile <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is the number of voters who rank <span class="math notranslate nohighlight">\(c\)</span> is first place.</p></li>
 <li><p>The <strong>Borda score</strong> of candidate <span class="math notranslate nohighlight">\(c\)</span> is calculated as follows: the score assigned to <span class="math notranslate nohighlight">\(c\)</span> by a ranking is the number of candidates ranked below <span class="math notranslate nohighlight">\(c\)</span>, and the Borda score of <span class="math notranslate nohighlight">\(c\)</span> is the sum of the scores assigned to <span class="math notranslate nohighlight">\(c\)</span> by each ranking in the profile.</p></li>
-<li><p>The <strong>Copeland score</strong> of candidate <span class="math notranslate nohighlight">\(c\)</span> is calculate as follows:  <span class="math notranslate nohighlight">\(c\)</span> receives 1 point for every candidate that  <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to, 0 points for every candidate that is tied with <span class="math notranslate nohighlight">\(c\)</span>, and -1  points for every candidate that is majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.</p></li>
+<li><p>The <strong>Copeland score</strong> of candidate <span class="math notranslate nohighlight">\(c\)</span> is calculated as follows:  <span class="math notranslate nohighlight">\(c\)</span> receives 1 point for every candidate that  <span class="math notranslate nohighlight">\(c\)</span> is majority preferred to, 0 points for every candidate that is tied with <span class="math notranslate nohighlight">\(c\)</span>, and -1  points for every candidate that is majority preferred to <span class="math notranslate nohighlight">\(c\)</span>.</p></li>
 </ul>
 </li>
 </ol>
@@ -499,7 +508,7 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rankings</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – List of rankings in the profile, where a ranking is a list of candidates.</p></li>
 <li><p><strong>rcounts</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of the number of voters associated with each ranking.  Should be the same length as rankings.   If not provided, it is assumed that 1 voters submitted each element of <code class="docutils literal notranslate"><span class="pre">rankings</span></code>.</p></li>
-<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates (integers) to candidate names (strings).  If not provied, each candidate name is mapped to itself.</p></li>
+<li><p><strong>cmap</strong> (<em>dict</em><em>[</em><em>int: str</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping candidates (integers) to candidate names (strings).  If not provided, each candidate name is mapped to itself.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
@@ -514,6 +523,12 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 <p class="admonition-title">Warning</p>
 <p>In profiles with <span class="math notranslate nohighlight">\(n\)</span> candidates, the candidates must be named using the integers <span class="math notranslate nohighlight">\(0, 1, 2, \ldots, n\)</span>. So, the following will produce an error: <code class="docutils literal notranslate"><span class="pre">Profile([[0,</span> <span class="pre">1,</span> <span class="pre">3]])</span></code>.</p>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pref_voting.profiles.Profile.anonymize">
+<span class="sig-name descname"><span class="pre">anonymize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile.anonymize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile.anonymize" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a profile which is the anonymized version of this profile.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.borda_scores">
 <span class="sig-name descname"><span class="pre">borda_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile.borda_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile.borda_scores" title="Permalink to this definition">#</a></dt>
@@ -637,7 +652,7 @@ The Copeland scores for the candidates are {0: 1.0, 1: 0.0, 2: -1.0}
 <dl class="py method">
 <dt class="sig sig-object py" id="pref_voting.profiles.Profile.dominates">
 <span class="sig-name descname"><span class="pre">dominates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_cands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pref_voting/profiles.html#Profile.dominates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pref_voting.profiles.Profile.dominates" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the list of candidates that <code class="docutils literal notranslate"><span class="pre">cand</span></code> is majority preferred to in the majority graph restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code>.</p>
+<dd><p>Returns the list of candidates that <code class="docutils literal notranslate"><span class="pre">cand</span></code> is majority preferred to in the profiles restricted to <code class="docutils literal notranslate"><span class="pre">curr_cands</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1007,6 +1022,7 @@ The string encoding:
 </li>
 <li><a class="reference internal" href="#profile-class">Profile Class</a><ul>
 <li><a class="reference internal" href="#pref_voting.profiles.Profile"><code class="docutils literal notranslate"><span class="pre">Profile</span></code></a><ul>
+<li><a class="reference internal" href="#pref_voting.profiles.Profile.anonymize"><code class="docutils literal notranslate"><span class="pre">Profile.anonymize()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles.Profile.borda_scores"><code class="docutils literal notranslate"><span class="pre">Profile.borda_scores()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles.Profile.condorcet_loser"><code class="docutils literal notranslate"><span class="pre">Profile.condorcet_loser()</span></code></a></li>
 <li><a class="reference internal" href="#pref_voting.profiles.Profile.condorcet_winner"><code class="docutils literal notranslate"><span class="pre">Profile.condorcet_winner()</span></code></a></li>
@@ -1056,9 +1072,6 @@ The string encoding:
     </aside>
   </div>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>

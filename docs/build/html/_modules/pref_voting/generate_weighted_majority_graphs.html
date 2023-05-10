@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.generate_weighted_majority_graphs - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -229,7 +238,7 @@
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
 
 <div class="viewcode-block" id="generate_edge_ordered_tournament"><a class="viewcode-back" href="../../generate_weighted_majority_graphs.html#pref_voting.generate_weighted_majority_graphs.generate_edge_ordered_tournament">[docs]</a><span class="k">def</span> <span class="nf">generate_edge_ordered_tournament</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">parity</span><span class="o">=</span><span class="s2">&quot;even&quot;</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Generate a random uniquely weighted MarginGraph for ``num_cands`` candidates.  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random uniquely weighted MarginGraph for ``num_cands`` candidates.  </span>
 
 <span class="sd">    :param num_cands: the number of candidates</span>
 <span class="sd">    :type num_cands: int</span>
@@ -264,7 +273,7 @@
     <span class="k">return</span> <span class="n">MarginGraph</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="generate_margin_graph"><a class="viewcode-back" href="../../generate_weighted_majority_graphs.html#pref_voting.generate_weighted_majority_graphs.generate_margin_graph">[docs]</a><span class="k">def</span> <span class="nf">generate_margin_graph</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">weight_domain</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">parity</span> <span class="o">=</span> <span class="s1">&#39;even&#39;</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Generate a random MarginGraph (allowing for ties in the margins) for ``num_cands`` candidates.  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random MarginGraph (allowing for ties in the margins) for ``num_cands`` candidates.  </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        num_cands (int): the number of candidates</span>
@@ -345,7 +354,7 @@
 
 
 <div class="viewcode-block" id="generate_edge_ordered_tournament_infinite_limit"><a class="viewcode-back" href="../../generate_weighted_majority_graphs.html#pref_voting.generate_weighted_majority_graphs.generate_edge_ordered_tournament_infinite_limit">[docs]</a><span class="k">def</span> <span class="nf">generate_edge_ordered_tournament_infinite_limit</span><span class="p">(</span><span class="n">num_candidates</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Using the ideas from Section 9 of the paper </span>
 <span class="sd">    *An Analysis of Random Elections with Large Numbers of Voters* by Matthew Harrison-Trainor </span>
 <span class="sd">    (https://arxiv.org/abs/2009.02979) and the code provided at  </span>
@@ -453,7 +462,7 @@
 
     
 <div class="viewcode-block" id="enumerate_canonical_edge_ordered_tournaments"><a class="viewcode-back" href="../../generate_weighted_majority_graphs.html#pref_voting.generate_weighted_majority_graphs.enumerate_canonical_edge_ordered_tournaments">[docs]</a><span class="k">def</span> <span class="nf">enumerate_canonical_edge_ordered_tournaments</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">parity</span> <span class="o">=</span> <span class="s2">&quot;even&quot;</span><span class="p">):</span>  
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A *canonical* edge-ordered tournament (ceot) is a representative from an isomorphism class of  </span>
 <span class="sd">    linearly edge-ordered tournaments.  Enumerate all ceots for ``num_cands`` candidates, representing </span>
 <span class="sd">    a ceot as a ``MaringGraph`` where the margins represent the linear order of the edges.  </span>
@@ -494,7 +503,7 @@
             <span class="k">yield from</span> <span class="n">sublists</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">::],</span> <span class="n">length</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">extended_partial_sublist</span><span class="p">)</span>
             
 <div class="viewcode-block" id="enumerate_uniquely_weighted_margin_graphs"><a class="viewcode-back" href="../../generate_weighted_majority_graphs.html#pref_voting.generate_weighted_majority_graphs.enumerate_uniquely_weighted_margin_graphs">[docs]</a><span class="k">def</span> <span class="nf">enumerate_uniquely_weighted_margin_graphs</span><span class="p">(</span><span class="n">num_cands</span><span class="p">,</span> <span class="n">weight_domain</span><span class="p">):</span>  
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Enumerate all representatives from isomorphism classes of margin graphs with weights drawn from ``weight_domain``. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
@@ -552,9 +561,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

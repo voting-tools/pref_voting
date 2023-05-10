@@ -5,11 +5,11 @@ The voting methods defined below all follow a similar procedure: iteratively rem
 
 1. What does it mean for a candidate to "perform poorly"?  Different definitions of a poorly performing candidate include the fewest number of first-place votes, the most last-place votes, the least Borda score, etc.
 
-2. How to break ties when there are more than one candidate that is identified as "poorly performing"?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).   A second approach is to use so-called *parallel-universe tiebreaking*. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).
+2. How to break ties when there are more than one candidate that is identified as "poorly performing"?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).  A second approach is to use so-called *parallel-universe tiebreaking*. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).
 
 ```{eval-rst}
 
-To illustrate the difference with respect to the first question, consider the voting methods Instant Runoff and Coombs.   According to Instant Runoff, a candidate is "poorly performing" if that candidate has the fewest number first-place votes, and according to Coombs, a cnadidate is "poorly performing" if that candidate has the most last-place votes. 
+To illustrate the difference with respect to the first question, consider the voting methods Instant Runoff and Coombs.   According to Instant Runoff, a candidate is "poorly performing" if that candidate has the fewest number first-place votes, and according to Coombs, a candidate is "poorly performing" if that candidate has the most last-place votes. 
 
 .. exec_code::
 
@@ -80,6 +80,31 @@ To illustrate the difference with respect to the first question, consider Instan
 ```{eval-rst}
 
 .. autofunction:: pref_voting.iterative_methods.instant_runoff_for_truncated_linear_orders
+
+```
+
+
+## Benham
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.benham
+
+```
+
+### Benham TB
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.benham_tb
+
+```
+
+### Benham PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.benham_put
 
 ```
 

@@ -21,7 +21,7 @@ class MajorityGraph(object):
     :type candidates: list[int] or  list[str]
     :param edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d)` is in the list of edges, then there is an edge from :math:`c` to :math:`d`.
     :type edges: list
-    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.
+    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
 
     :Example:
@@ -432,7 +432,7 @@ class MarginGraph(MajorityGraph):
     :type candidates: list[int] or  list[str]
     :param w_edges: List of the pairs of candidates describing the edges in the majority graph.   If :math:`(c,d,w)` is in the list of edges, then there is an edge from :math:`c` to :math:`d` with weight :math:`w`.
     :type w_edges: list
-    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.
+    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
 
     :Example:
@@ -645,7 +645,7 @@ class MarginGraph(MajorityGraph):
         Args:
             defeat (networkx.DiGraph): The defeat relation represented as a networkx object.
             curr_cands (List[int], optional): If set, then use the defeat relation for the profile restricted to the candidates in ``curr_cands``
-            show_undfeated (bool, optional): If true, color the undefeated candidates blue and the other candidates red.
+            show_undefeated (bool, optional): If true, color the undefeated candidates blue and the other candidates red.
             cmap (dict, optional): The cmap used to map candidates to candidate names
 
 
@@ -856,9 +856,9 @@ class SupportGraph(MajorityGraph):
 
     :param candidates: List of the candidates.  To be used as nodes in the majority graph.
     :type candidates: list[int] or  list[str]
-    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the suppoer for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. 
+    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the support for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. 
     :type w_edges: list
-    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provied, each candidate name is mapped to itself.
+    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
 
     :Example:
@@ -1045,7 +1045,7 @@ class SupportGraph(MajorityGraph):
 
 
 ###
-# funcitons to display graphs in tikz
+# functions to display graphs in tikz
 ##
 def three_cand_tikz_str(g, cmap=None):
     """Returns the TikZ code to display the graph ``g`` based on 3 candidates (may be a MajorityGraph, MarginGraph or a SupportGraph)."""

@@ -2,7 +2,8 @@
     File: analysis.py
     Author: Eric Pacuit (epacuit@umd.edu)
     Date: August 9, 2022
-    
+    Updated: May 9, 2023
+
     Functions to analyze voting methods
 """
 
@@ -84,7 +85,7 @@ def record_condorcet_efficiency_data(vms, num_cands, num_voters, probmod, t):
     }
 
 
-def find_condorcet_efficiency(
+def condorcet_efficiency_data(
     vms,
     numbers_of_candidates=[3, 4, 5],
     numbers_of_voters=[4, 10, 20, 50, 100, 500, 1000],
@@ -115,6 +116,7 @@ def find_condorcet_efficiency(
         "num_cands": list(),
         "num_voters": list(),
         "probmod": list(),
+        "num_trials": list(),
         "percent_condorcet_winners": list(),
         "condorcet_efficiency": list(),
     }
@@ -122,8 +124,8 @@ def find_condorcet_efficiency(
         for num_cands in numbers_of_candidates:
             for num_voters in numbers_of_voters:
 
-                print(f"{num_cands} candidates, {num_voters}, {num_voters + 1} voters")
-                get_data0 = partial(
+                print(f"{num_cands} candidates, {num_voters} voters")
+                get_data = partial(
                     record_condorcet_efficiency_data,
                     vms,
                     num_cands,
@@ -131,22 +133,11 @@ def find_condorcet_efficiency(
                     probmod,
                 )
 
-                get_data1 = partial(
-                    record_condorcet_efficiency_data,
-                    vms,
-                    num_cands,
-                    num_voters + 1,
-                    probmod,
-                )
-
                 if use_parallel:
-                    data0 = pool.map(get_data0, range(num_trials))
-                    data1 = pool.map(get_data1, range(num_trials))
+                    data = pool.map(get_data, range(num_trials))
                 else:
-                    data0 = list(map(get_data0, range(num_trials)))
-                    data1 = list(map(get_data1, range(num_trials)))
+                    data = list(map(get_data, range(num_trials)))
 
-                data = data0 + data1
                 num_cw = 0
                 num_choose_cw = {vm.name: 0 for vm in vms}
                 for d in data:
@@ -155,18 +146,104 @@ def find_condorcet_efficiency(
                         for vm in vms:
                             num_choose_cw[vm.name] += int(d["cw_winner"][vm.name])
 
-                num_profiles = 2 * num_trials
                 for vm in vms:
                     data_for_df["vm"].append(vm.name)
                     data_for_df["num_cands"].append(num_cands)
-                    data_for_df["num_voters"].append((num_voters, num_voters + 1))
+                    data_for_df["num_voters"].append(num_voters)
                     data_for_df["probmod"].append(probmod)
+                    data_for_df["num_trials"].append(num_trials)
                     data_for_df["percent_condorcet_winners"].append(
-                        num_cw / num_profiles
+                        num_cw / num_trials
                     )
                     data_for_df["condorcet_efficiency"].append(
                         num_choose_cw[vm.name] / num_cw
                     )
 
     return pd.DataFrame(data_for_df)
+
+# helper function for axiom_violations_data
+def record_axiom_violation_data(
+    axioms, 
+    vms, 
+    num_cands, 
+    num_voters, 
+    probmod, 
+    verbose, 
+    t
+    ):
+
+    prof = generate_profile(num_cands, num_voters, probmod=probmod)
+    
+    return {ax.name: {vm.name: ax.has_violation(prof, vm, verbose=verbose) for vm in vms} for ax in axioms}
+
+def axiom_violations_data(
+    axioms,
+    vms,
+    numbers_of_candidates=[3, 4, 5],
+    numbers_of_voters=[4, 5, 10, 11,  20, 21, 50, 51,  100, 101,  500, 501,  1000, 1001],
+    probmods=["IC"],
+    num_trials=10000,
+    verbose=False,
+    use_parallel=True,
+    num_cpus=12,
+):
+    """
+    Returns a Pandas DataFrame with the Condorcet efficiency of a list of voting methods.
+
+    Args:
+        vms (list(functions)): A list of voting methods,
+        numbers_of_candidates (list(int), default = [3, 4, 5]): The numbers of candidates to check.
+        numbers_of_voters (list(int), default = [5, 25, 50, 100]): The numbers of voters to check.
+        probmod (str, default="IC"): The probability model to be passed to the ``generate_profile`` method
+        num_trials (int, default=10000): The number of profiles to check for different winning sets.
+        use_parallel (bool, default=True): If True, then use parallel processing.
+        num_cpus (int, default=12): The number of (virtual) cpus to use if using parallel processing.
+
+    """
+
+    if use_parallel:
+        pool = Pool(num_cpus)
+
+    data_for_df = {
+        "axiom": list(),
+        "vm": list(),
+        "num_cands": list(),
+        "num_voters": list(),
+        "probmod": list(),
+        "num_trials": list(),
+        "num_violations": list(),
+    }
+    for probmod in probmods:
+        print(f"{probmod} probability model")
+        for num_cands in tqdm(numbers_of_candidates, leave=False):
+            for num_voters in tqdm(numbers_of_voters, leave=False):
+                #print(f"{num_cands} candidates, {num_voters} voters")
+                _verbose = verbose if not use_parallel else False
+                get_data = partial(
+                    record_axiom_violation_data,
+                    axioms,
+                    vms,
+                    num_cands,
+                    num_voters,
+                    probmod,
+                    _verbose
+                )
+
+                if use_parallel:
+                    data = pool.map(get_data, range(num_trials))
+                else:
+                    data = list(map(get_data, range(num_trials)))
+
+                for ax in axioms: 
+                    for vm in vms: 
+                        data_for_df["axiom"].append(ax.name)
+                        data_for_df["vm"].append(vm.name)
+                        data_for_df["num_cands"].append(num_cands)
+                        data_for_df["num_voters"].append(num_voters)
+                        data_for_df["probmod"].append(probmod)
+                        data_for_df["num_trials"].append(num_trials)
+                        data_for_df["num_violations"].append(sum([d[ax.name][vm.name] for d in data]))
+    print("Done.")
+    return pd.DataFrame(data_for_df)
+
 

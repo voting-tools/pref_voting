@@ -111,7 +111,7 @@ def copeland(edata, curr_cands = None):
 
 @vm(name = "Llull")
 def llull(edata, curr_cands = None):
-    """The Llull score for a candidate :math:`c` is the number of candidates that :math:`c` is weakly majority preferred to.  This is equivalent to calucating the Copeland scores for a candidate :math:`c` with 1 point for each candidate that :math:`c` is majority preferred to, 1/2 point for each candidate that :math:`c` is tied with, and 0 points for each candidate that is majority preferred to :math:`c`.  The Llull winners are the candidates with the maximum Llull score in the profile restricted to ``curr_cands``. 
+    """The Llull score for a candidate :math:`c` is the number of candidates that :math:`c` is weakly majority preferred to.  This is equivalent to calculating the Copeland scores for a candidate :math:`c` with 1 point for each candidate that :math:`c` is majority preferred to, 1/2 point for each candidate that :math:`c` is tied with, and 0 points for each candidate that is majority preferred to :math:`c`.  The Llull winners are the candidates with the maximum Llull score in the profile restricted to ``curr_cands``. 
 
     Args:
         edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `copeland_scores` method. 
@@ -560,8 +560,7 @@ def top_cycle_defeat(edata, curr_cands = None):
 
 @vm(name = "GOCHA")
 def gocha(edata, curr_cands = None):
-    """The GOCHA set (also known as the Schwartz set) is the smallest set of candidates with the property
-    that every candidate inside the set is not majority preferred by every candidate outside the set.
+    """The GOCHA set (also known as the Schwartz set) is the set of all candidates x such that if y can reach x in the transitive closer of the majority relation, then x can reach y in the transitive closer of the majority relation.
       
     Args:
         edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `majority_prefers` method. 
@@ -582,14 +581,12 @@ def gocha(edata, curr_cands = None):
         :context: reset  
         :include-source: True
 
-
     .. code-block:: 
 
         from pref_voting.c1_methods import top_cycle, gocha, schwartz_set
 
         gocha.display(prof)
         schwartz_set.display(prof)
-
 
     .. exec_code:: 
         :hide_code:

@@ -838,6 +838,9 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         for r,c in rs.items(): 
             print(f"{r} {c}")
 
+    def description(self): 
+        return f"ProfileWithTies({[r.rmap for r in self.rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
+
     def display(self, cmap=None, style="pretty", curr_cands=None):
         """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
 

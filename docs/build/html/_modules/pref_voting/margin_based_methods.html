@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.margin_based_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -230,7 +239,7 @@
 
 <div class="viewcode-block" id="minimax"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.minimax">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Minimax&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">minimax</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Minimax winners are the candidates with the smallest maximum pairwise defeat.  That is, for each candidate :math:`a` find the biggest margin of a candidate :math:`b` over :math:`a`, then elect the candidate(s) with the smallest such loss. Also known as the Simpson-Kramer Rule.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
@@ -279,12 +288,12 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">min_score</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="minimax_scores"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.minimax_scores">[docs]</a><span class="k">def</span> <span class="nf">minimax_scores</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">score_method</span><span class="o">=</span><span class="s2">&quot;margins&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the minimax scores for each candidate, where the minimax score for :math:`c` is -1 * the maximum pairwise majority loss. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the minimax scores for each candidate, where the minimax score for :math:`c` is -1 * the maximum pairwise majority loss. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
 <span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
-<span class="sd">        score_method (str, optional): Options include &quot;margins&quot; (the default), &quot;winning&quot; assings to each candidate :math:`c` the maximum support of a candidate majority preferred to :math:`c`,  and &quot;pairwise_opposition&quot; assings to each candidate :math:`c` the maximum support of any candidate over :math:`c`.   These scores only lead to different results on non-linear profiles. </span>
+<span class="sd">        score_method (str, optional): Options include &quot;margins&quot; (the default), &quot;winning&quot; assigns to each candidate :math:`c` the maximum support of a candidate majority preferred to :math:`c`,  and &quot;pairwise_opposition&quot; assigns to each candidate :math:`c` the maximum support of any candidate over :math:`c`.   These scores only lead to different results on non-linear profiles. </span>
 
 <span class="sd">    Returns: </span>
 <span class="sd">        A dictionary associating each candidate with its minimax score.</span>
@@ -344,13 +353,13 @@
 
 
 <span class="k">def</span> <span class="nf">maximal_elements</span><span class="p">(</span><span class="n">g</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;return the nodes in g with no incoming arrows.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return the nodes in g with no incoming arrows.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="beat_path"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.beat_path">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Beat Path&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">beat_path</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;For candidates :math:`a` and :math:`b`, a **path** from :math:`a` to :math:`b` is a sequence </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For candidates :math:`a` and :math:`b`, a **path** from :math:`a` to :math:`b` is a sequence </span>
 <span class="sd">    :math:`x_1, \ldots, x_n` of distinct candidates  with  :math:`x_1=a` and :math:`x_n=b` such that </span>
 <span class="sd">    for :math:`1\leq k\leq n-1`, :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The **strength of a path**</span>
 <span class="sd">    is the minimal margin along that path.  Say that :math:`a` defeats :math:`b` according to Beat Path if the the strength of the strongest path from :math:`a` to :math:`b` is greater than the strength of the strongest path from :math:`b` to :math:`a`. Then, the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule. </span>
@@ -418,7 +427,7 @@
 
 <div class="viewcode-block" id="beat_path_faster"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.beat_path_faster">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Beat Path&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">beat_path_faster</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;An implementation of Beat Path using a variation of the Floyd Warshall-Algorithm</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An implementation of Beat Path using a variation of the Floyd Warshall-Algorithm</span>
 <span class="sd">    See https://en.wikipedia.org/wiki/Schulze_method#Implementation)</span>
 <span class="sd"> </span>
 <span class="sd">    Args:</span>
@@ -486,7 +495,7 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">winners</span><span class="p">[</span><span class="n">c</span><span class="p">]])</span></div>
 
 <div class="viewcode-block" id="beat_path_defeat"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.beat_path_defeat">[docs]</a><span class="k">def</span> <span class="nf">beat_path_defeat</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;Returns the defeat relation for Beat Path. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the defeat relation for Beat Path. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -535,7 +544,7 @@
     
 <div class="viewcode-block" id="split_cycle"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.split_cycle">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Split Cycle&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">split_cycle</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  </span>
 <span class="sd">    </span>
 <span class="sd">    1. In each cycle, identify the head-to-head win(s) with the smallest margin of victory in that cycle.</span>
 <span class="sd">    2. After completing step 1 for all cycles, discard the identified wins. All remaining wins count as defeats of the losing candidates.</span>
@@ -626,7 +635,7 @@
 
 <div class="viewcode-block" id="split_cycle_faster"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.split_cycle_faster">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Split Cycle&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">split_cycle_faster</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;An implementation of Split Cycle based on the Floyd-Warshall Algorithm. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An implementation of Split Cycle based on the Floyd-Warshall Algorithm. </span>
 
 <span class="sd">    See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. </span>
 
@@ -703,7 +712,7 @@
 
 
 <div class="viewcode-block" id="split_cycle_defeat"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.split_cycle_defeat">[docs]</a><span class="k">def</span> <span class="nf">split_cycle_defeat</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the Split Cycle defeat relation. </span>
 
 <span class="sd">    See https://arxiv.org/abs/2008.08451 for an extended discussion of this notion of defeat in an election. </span>
@@ -768,7 +777,7 @@
 <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">does_create_cycle</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;return True if adding the edge to g create a cycle.</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;return True if adding the edge to g create a cycle.</span>
 <span class="sd">    it is assumed that edge is already in g&#39;&#39;&#39;</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -779,7 +788,7 @@
 
 <div class="viewcode-block" id="ranked_pairs"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ranked Pairs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ranked_pairs</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Order the edges in the margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle.  If there are ties in the margins, break the ties using a tie-breaking rule: a linear ordering over the edges.   A candidate is a Ranked Pairs winner if it wins according to some tie-breaking rule. Also known as Tideman&#39;s Rule.</span>
 
 <span class="sd">    .. warning:: </span>
@@ -851,7 +860,7 @@
 
 <div class="viewcode-block" id="ranked_pairs_with_test"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_with_test">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ranked Pairs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ranked_pairs_with_test</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;Find the Ranked Pairs winners, but include a test to determined if it will take too long to compute the Ranked Pairs winners. If the calculation of the winners will take too long, return None.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the Ranked Pairs winners, but include a test to determined if it will take too long to compute the Ranked Pairs winners. If the calculation of the winners will take too long, return None.</span>
 
 <span class="sd">    .. important::</span>
 <span class="sd">        This voting method that might return None rather than a list of candidates.  </span>
@@ -922,7 +931,7 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">winners</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="ranked_pairs_defeats"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_defeats">[docs]</a><span class="k">def</span> <span class="nf">ranked_pairs_defeats</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the Ranked Pairs defeat relations produced by the Ranked Pairs algorithm. </span>
 
 <span class="sd">    .. important::</span>
@@ -981,7 +990,7 @@
     <span class="k">return</span> <span class="n">rp_defeats</span></div>
 
 <span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the powerset of ``iterable``</span>
 
 <span class="sd">    powerset([1,2,3]) --&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</span>
@@ -991,7 +1000,7 @@
 
 
 <div class="viewcode-block" id="is_stack"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.is_stack">[docs]</a><span class="k">def</span> <span class="nf">is_stack</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">cand_list</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A **stack** is a linear order :math:`L` on the candidate such that for all candidates :math:`a` and :math:`b`, if :math:`aLb`, then there are distinct candidates :math:`x_1,\dots,x_n` with :math:`x_1=a` and :math:`x_n=b` such that :math:`x_i L x_{i+1}` and for all :math:`i\in \{1,\dots, n-1\}`, the margin of :math:`x_1` over :math:`x_{i+1}` is greater than or equal to the margin of :math:`b` over :math:`a`.</span>
 
 <span class="sd">    This definition is due to Zavist and Tideman 1989, and is used as an alternative characterization of Ranked Pairs: :math:`a` is a Ranked Pairs winner if and only if :math:`a` is the maximum element of some stack. </span>
@@ -1046,7 +1055,7 @@
 
 <div class="viewcode-block" id="ranked_pairs_from_stacks"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_from_stacks">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ranked Pairs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ranked_pairs_from_stacks</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Find the Ranked Pairs winners by iterating over all permutations of candidates (restricted to ``curr_cands`` if not None), and checking if the list is a stack. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the Ranked Pairs winners by iterating over all permutations of candidates (restricted to ``curr_cands`` if not None), and checking if the list is a stack. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -1098,7 +1107,7 @@
 
 <div class="viewcode-block" id="ranked_pairs_tb"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_tb">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ranked Pairs T&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ranked_pairs_tb</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tie_breaker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ranked Pairs with a fixed linear order on the candidates to break any ties in the margins.   </span>
 <span class="sd">    Since the tie_breaker is a linear order, this method is resolute.   </span>
 
@@ -1162,7 +1171,7 @@
 
 <div class="viewcode-block" id="ranked_pairs_zt"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.ranked_pairs_zt">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ranked Pairs ZT&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ranked_pairs_zt</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;Ranked pairs where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  This is known as Ranked Pairs ZT, for Zavist Tideman.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ranked pairs where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  This is known as Ranked Pairs ZT, for Zavist Tideman.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile): A profile of linear orders</span>
@@ -1202,7 +1211,7 @@
 
 <div class="viewcode-block" id="river"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.river">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;River&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">river</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Order the edges in the weak margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle *and edges in which there is already an edge pointing to the target*.  Break ties using a tie-breaking  linear ordering over the edges.  A candidate is a River winner if it wins according to some tie-breaking rule. See https://electowiki.org/wiki/River.</span>
 
 <span class="sd">    Args:</span>
@@ -1254,7 +1263,7 @@
 
 <div class="viewcode-block" id="river_with_test"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.river_with_test">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;River&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">river_with_test</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>   
-    <span class="sd">&quot;&quot;&quot;Find the River winners with a test to determined if it will take too long to compute the River winners. If the calculation of the winners will take too long, return None. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the River winners with a test to determined if it will take too long to compute the River winners. If the calculation of the winners will take too long, return None. </span>
 <span class="sd">        </span>
 <span class="sd">    .. important::</span>
 <span class="sd">        This voting method that might return None rather than a list of candidates.  </span>
@@ -1303,7 +1312,7 @@
 
 <span class="c1"># Simple Stable Voting </span>
 <span class="k">def</span> <span class="nf">_simple_stable_voting</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mem_sv_winners</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Determine the Simple Stable Voting winners while keeping track </span>
 <span class="sd">    of the winners in any subprofiles checked during computation. </span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -1342,7 +1351,7 @@
           
 <div class="viewcode-block" id="simple_stable_voting"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.simple_stable_voting">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Simple Stable Voting&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">simple_stable_voting</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Implementation of  Simple Stable Voting from https://arxiv.org/abs/2108.00542. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of  Simple Stable Voting from https://arxiv.org/abs/2108.00542. </span>
 
 <span class="sd">    Simple Stable Voting is a recursive voting method defined as follows: </span>
 
@@ -1380,7 +1389,7 @@
 
 <div class="viewcode-block" id="simple_stable_voting_faster"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.simple_stable_voting_faster">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Simple Stable Voting&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">simple_stable_voting_faster</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Simple Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winnerFirst check if there is a Condorcet winner.  If so, return the Condorcet winner, otherwise find the Simple Stable Voting winnner using _simple_stable_voting</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winnerFirst check if there is a Condorcet winner.  If so, return the Condorcet winner, otherwise find the Simple Stable Voting winner using _simple_stable_voting</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. </span>
@@ -1417,7 +1426,7 @@
 
     
 <span class="k">def</span> <span class="nf">_stable_voting</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mem_sv_winners</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation. </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
@@ -1455,7 +1464,7 @@
         
 <div class="viewcode-block" id="stable_voting"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.stable_voting">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Stable Voting&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">stable_voting</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;Implementation of  Stable Voting from https://arxiv.org/abs/2108.00542. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of  Stable Voting from https://arxiv.org/abs/2108.00542. </span>
 
 <span class="sd">    Stable Voting is a recursive voting method defined as follows: </span>
 
@@ -1492,7 +1501,7 @@
 
 <div class="viewcode-block" id="stable_voting_faster"><a class="viewcode-back" href="../../margin_based_methods.html#pref_voting.margin_based_methods.stable_voting_faster">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Stable Voting&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">stable_voting_faster</span><span class="p">(</span><span class="n">edata</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strength_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winner.  </span>
 
 <span class="sd">    Args:</span>
@@ -1602,9 +1611,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

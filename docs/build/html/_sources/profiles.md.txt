@@ -111,8 +111,8 @@ There are a number of other methods that related to the margins of a profile.
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], [4, 3, 2])
     prof.display()
     print(f"0 is majority preferred over 1 is {prof.majority_prefers(0, 1)}")
-    print(f"0 is majority prefered over 2 is {prof.majority_prefers(0, 2)}")
-    print(f"1 is majority prefered over 2 is {prof.majority_prefers(1, 2)}")
+    print(f"0 is majority preferred over 2 is {prof.majority_prefers(0, 2)}")
+    print(f"1 is majority preferred over 2 is {prof.majority_prefers(1, 2)}")
 
 ```
 
@@ -181,7 +181,7 @@ There are a number of other methods that related to the margins of a profile.
 
     - The **Borda score** of candidate $c$ is calculated as follows: the score assigned to $c$ by a ranking is the number of candidates ranked below $c$, and the Borda score of $c$ is the sum of the scores assigned to $c$ by each ranking in the profile.
 
-    - The **Copeland score** of candidate $c$ is calculate as follows:  $c$ receives 1 point for every candidate that  $c$ is majority preferred to, 0 points for every candidate that is tied with $c$, and -1  points for every candidate that is majority preferred to $c$. 
+    - The **Copeland score** of candidate $c$ is calculated as follows:  $c$ receives 1 point for every candidate that  $c$ is majority preferred to, 0 points for every candidate that is tied with $c$, and -1  points for every candidate that is majority preferred to $c$. 
 
 ```{eval-rst}
 

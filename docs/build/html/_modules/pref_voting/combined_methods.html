@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>pref_voting.combined_methods - Preferential Voting Tools</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -178,6 +178,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../combined_methods.html">Combined Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other_methods.html">Other Methods</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Axioms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../axioms_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dominance_axioms.html">Dominance Axioms</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis_overview.html">Overview</a></li>
+</ul>
 
 </div>
 </div>
@@ -227,7 +236,7 @@
 
 <div class="viewcode-block" id="daunou"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.daunou">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Daunou&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">daunou</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implementation of Daunou&#39;s voting method as described in the paper: https://link.springer.com/article/10.1007/s00355-020-01276-w</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of Daunou&#39;s voting method as described in the paper: https://link.springer.com/article/10.1007/s00355-020-01276-w</span>
 
 <span class="sd">    If there is a Condorcet winner, then that candidate is the winner.  Otherwise, iteratively remove all Condorcet losers then select the plurality winner from among the remaining candidates.</span>
 
@@ -268,7 +277,7 @@
 
 <div class="viewcode-block" id="blacks"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.blacks">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Blacks&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">blacks</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;If a Condorcet winner exists return that winner. Otherwise, return the Borda winning set.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a Condorcet winner exists return that winner. Otherwise, return the Borda winning set.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -304,48 +313,9 @@
 
     <span class="k">return</span> <span class="n">winners</span></div>
 
-<span class="n">vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Condorcet IRV&quot;</span><span class="p">)</span>
-<div class="viewcode-block" id="condorcet_irv"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.condorcet_irv">[docs]</a><span class="k">def</span> <span class="nf">condorcet_irv</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff winners.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates, or a profile of truncated linear orders.</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A sorted list of candidates.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cw</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
-        <span class="k">return</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span> <span class="o">==</span> <span class="n">Profile</span><span class="p">:</span> 
-        <span class="k">return</span> <span class="n">instant_runoff</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span> <span class="o">==</span> <span class="n">ProfileWithTies</span><span class="p">:</span> 
-        <span class="k">return</span> <span class="n">instant_runoff_for_truncated_linear_orders</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span></div>
-
-<span class="n">vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Condorcet IRV PUT&quot;</span><span class="p">)</span>
-<div class="viewcode-block" id="condorcet_irv_put"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.condorcet_irv_put">[docs]</a><span class="k">def</span> <span class="nf">condorcet_irv_put</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
-    <span class="sd">&quot;&quot;&quot;If there is a Condorcet winner, then the Condorcet winner is the winner.  Otherwise, return the Instant Runoff PUT winners.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        profile (Profile): An anonymous profile of linear orders.</span>
-<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A sorted list of candidates.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cw</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
-        <span class="k">return</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
-    
-    <span class="k">return</span> <span class="n">instant_runoff_put</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">curr_cands</span> <span class="o">=</span> <span class="n">curr_cands</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="smith_irv"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.smith_irv">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Smith IRV&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">smith_irv</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;After restricting to the Smith Set, return the Instant Runoff winner.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;After restricting to the Smith Set, return the Instant Runoff winner.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -378,7 +348,7 @@
 
 <div class="viewcode-block" id="smith_irv_put"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.smith_irv_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Smith IRV PUT&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">smith_irv_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;After restricting to the Smith Set, return the Instant Runoff winner.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;After restricting to the Smith Set, return the Instant Runoff winner.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -410,8 +380,78 @@
     <span class="k">return</span> <span class="n">instant_runoff_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="n">smith</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="condorcet_irv"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.condorcet_irv">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Condorcet IRV&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">condorcet_irv</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff winners.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A sorted list of candidates</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">    .. exec_code::</span>
+
+<span class="sd">        from pref_voting.profiles import Profile</span>
+<span class="sd">        from pref_voting.combined_methods import condorcet_irv</span>
+<span class="sd">        from pref_voting.iterative_methods import instant_runoff, instant_runoff_put</span>
+
+<span class="sd">        prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])</span>
+
+<span class="sd">        prof.display()</span>
+
+<span class="sd">        instant_runoff.display(prof)</span>
+<span class="sd">        instant_runoff_put.display(prof)</span>
+<span class="sd">        condorcet_irv.display(prof)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span><span class="o">=</span><span class="n">curr_cands</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">instant_runoff</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="n">curr_cands</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="condorcet_irv_put"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.condorcet_irv_put">[docs]</a><span class="nd">@vm</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Condorcet IRV PUT&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">condorcet_irv_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff put winners.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
+<span class="sd">        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A sorted list of candidates</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">    .. exec_code::</span>
+
+<span class="sd">        from pref_voting.profiles import Profile</span>
+<span class="sd">        from pref_voting.combined_methods import condorcet_irv_put</span>
+<span class="sd">        from pref_voting.iterative_methods import instant_runoff, instant_runoff_put</span>
+
+<span class="sd">        prof = Profile([[0, 2, 1, 3], [1, 3, 0, 2], [2, 1, 3, 0], [2, 3, 0, 1]], [1, 1, 1, 1])</span>
+
+<span class="sd">        prof.display()</span>
+
+<span class="sd">        instant_runoff.display(prof)</span>
+<span class="sd">        instant_runoff_put.display(prof)</span>
+<span class="sd">        condorcet_irv_put.display(prof)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">condorcet_winner</span><span class="p">(</span><span class="n">curr_cands</span><span class="o">=</span><span class="n">curr_cands</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="p">[</span><span class="n">cw</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">instant_runoff_put</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">curr_cands</span><span class="o">=</span><span class="n">curr_cands</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="compose"><a class="viewcode-back" href="../../combined_methods.html#pref_voting.combined_methods.compose">[docs]</a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="n">vm1</span><span class="p">,</span> <span class="n">vm2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;After restricting the profile to the set of vm1 winners, run vm2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;After restricting the profile to the set of vm1 winners, run vm2</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        profile (Profile): An anonymous profile of linear orders on a set of candidates</span>
@@ -493,9 +533,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
