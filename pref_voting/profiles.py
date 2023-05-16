@@ -622,6 +622,9 @@ class Profile(object):
         return cls(rankings, num_cands, rcounts, cmap)
     
     def description(self): 
+        """
+        Returns a string describing the profile.
+        """
         rs, cs = self.rankings_counts
         return f"Profile({[list(r) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
     

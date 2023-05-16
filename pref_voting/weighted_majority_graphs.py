@@ -247,6 +247,12 @@ class MajorityGraph(object):
 
         return self.mg
 
+    def description(self): 
+        """
+        Returns a string describing the Majority Graph.
+        """
+        return f"MajorityGraph({self.candidates}, {self.edges}, cmap={self.cmap})"
+
     def display(self, cmap=None, curr_cands=None):
         """Display a majority graph (restricted to ``curr_cands``) using networkx.draw.
 
@@ -581,6 +587,12 @@ class MarginGraph(MajorityGraph):
                 new_edges.append((e[0], e[1], new_margin))
 
         return MarginGraph(self.candidates, new_edges, cmap=self.cmap)
+
+    def description(self): 
+        """
+        Returns a string describing the Margin Graph.
+        """
+        return f"MarginGraph({self.candidates}, {self.edges}, cmap={self.cmap})"
 
     def display(self, curr_cands=None, cmap=None):
         """Display a margin graph (restricted to ``curr_cands``) using networkx.draw.
