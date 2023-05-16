@@ -1175,8 +1175,8 @@ def simple_stable_voting(edata, curr_cands = None, strength_function = None):
     return sorted(_simple_stable_voting(edata, 
                                         curr_cands = curr_cands, 
                                         mem_sv_winners = {}, 
-                                        strength_function = strength_function)[0],
-                                        sorted_matches = None)
+                                        strength_function = strength_function, 
+                                        sorted_matches = None)[0])
 
 
 @vm(name = "Simple Stable Voting")
@@ -1217,8 +1217,8 @@ def simple_stable_voting_faster(edata, curr_cands = None, strength_function = No
         return sorted(_simple_stable_voting(edata, 
                                             curr_cands = curr_cands, 
                                             mem_sv_winners = {}, 
-                                            strength_function = strength_function)[0],
-                                            sorted_matches = None)
+                                            strength_function = strength_function, 
+                                            sorted_matches = None)[0])
 
     
 def _stable_voting(edata, 
@@ -1305,8 +1305,8 @@ def stable_voting(edata, curr_cands = None, strength_function = None):
     return sorted(_stable_voting(edata, 
                                  curr_cands = curr_cands, 
                                  mem_sv_winners = {}, 
-                                 strength_function = strength_function)[0],
-                                 sorted_matches = None)
+                                 strength_function = strength_function,
+                                 sorted_matches= None)[0])
 
 
 @vm(name = "Stable Voting")
@@ -1348,8 +1348,8 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
         return sorted(_stable_voting(edata, 
                                      curr_cands = curr_cands, 
                                      mem_sv_winners = {}, 
-                                     strength_function = strength_function)[0],
-                                     sorted_matches = None) 
+                                     strength_function = strength_function, 
+                                     sorted_matches = None)[0]) 
 
 
 
