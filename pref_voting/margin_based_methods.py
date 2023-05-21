@@ -1176,7 +1176,6 @@ def simple_stable_voting(edata, curr_cands = None, strength_function = None):
                                         mem_sv_winners = {}, 
                                         sorted_matches = sorted_matches)[0])
 
-
 @vm(name = "Simple Stable Voting")
 def simple_stable_voting_faster(edata, curr_cands = None, strength_function = None): 
     """Simple Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winnerFirst check if there is a Condorcet winner.  If so, return the Condorcet winner, otherwise find the Simple Stable Voting winner using _simple_stable_voting
@@ -1312,7 +1311,6 @@ def stable_voting(edata, curr_cands = None, strength_function = None):
                                  mem_sv_winners = {}, 
                                  sorted_matches = sorted_matches)[0])
 
-
 @vm(name = "Stable Voting")
 def stable_voting_faster(edata, curr_cands = None, strength_function = None): 
     """
@@ -1360,7 +1358,6 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
                                     strength_function = strength_function,
                                     mem_sv_winners = {}, 
                                     sorted_matches = sorted_matches)[0])
-
 
 
 mg_vms = [
