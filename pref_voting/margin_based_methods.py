@@ -1091,33 +1091,25 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
 
 # Simple Stable Voting 
 def _simple_stable_voting(edata, 
-                          curr_cands = None, 
-                          mem_sv_winners = {}, 
-                          strength_function = None,
-                          sorted_matches = None): 
+                          curr_cands, 
+                          strength_function,
+                          mem_sv_winners, 
+                          sorted_matches):
     '''
     Determine the Simple Stable Voting winners while keeping track 
     of the winners in any subprofiles checked during computation. 
     '''
     
-    # curr_cands is the set of candidates who have not been removed
-    curr_cands = edata.candidates if curr_cands is None else curr_cands
-    strength_function = edata.margin if strength_function is None else strength_function  
-    
     sv_winners = list()
-
-    if sorted_matches is None:
-        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
-        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
         
     if len(curr_cands) == 1: 
         mem_sv_winners[tuple(curr_cands)] = curr_cands
         return curr_cands, mem_sv_winners
     
-    max_margin_witnessing_win = -math.inf
+    margin_witnessing_win = -math.inf
 
     for a, b, s in sorted_matches:
-        if s < max_margin_witnessing_win: 
+        if s < margin_witnessing_win: 
             break
         if a not in sv_winners: 
             cands_minus_b = [c for c in curr_cands if c != b]
@@ -1125,18 +1117,18 @@ def _simple_stable_voting(edata,
             if cands_minus_b_key not in mem_sv_winners.keys(): 
                 ws, mem_sv_winners = _simple_stable_voting(edata, 
                                                            curr_cands = cands_minus_b,
-                                                           mem_sv_winners = mem_sv_winners,
-                                                           strength_function = strength_function, 
+                                                           strength_function = strength_function,
+                                                           mem_sv_winners = mem_sv_winners, 
                                                            sorted_matches = [(a, c, s) for a, c, s in sorted_matches if c != b and a != b])
                 mem_sv_winners[cands_minus_b_key] = ws
             else: 
                 ws = mem_sv_winners[cands_minus_b_key]
             if a in ws:
                 sv_winners.append(a)
-                max_margin_witnessing_win = s
-    return sv_winners, mem_sv_winners
+                margin_witnessing_win = s
 
-          
+    return sv_winners, mem_sv_winners
+    
 @vm(name = "Simple Stable Voting")
 def simple_stable_voting(edata, curr_cands = None, strength_function = None): 
     """Implementation of  Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
@@ -1172,12 +1164,17 @@ def simple_stable_voting(edata, curr_cands = None, strength_function = None):
 
     """
     
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function  
+
+    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+    
     return sorted(_simple_stable_voting(edata, 
                                         curr_cands = curr_cands, 
+                                        strength_function = strength_function,
                                         mem_sv_winners = {}, 
-                                        strength_function = strength_function, 
-                                        sorted_matches = None)[0])
-
+                                        sorted_matches = sorted_matches)[0])
 
 @vm(name = "Simple Stable Voting")
 def simple_stable_voting_faster(edata, curr_cands = None, strength_function = None): 
@@ -1214,42 +1211,40 @@ def simple_stable_voting_faster(edata, curr_cands = None, strength_function = No
     if cw is not None: 
         return [cw]
     else: 
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_function = edata.margin if strength_function is None else strength_function  
+
+        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+    
         return sorted(_simple_stable_voting(edata, 
                                             curr_cands = curr_cands, 
+                                            strength_function = strength_function,
                                             mem_sv_winners = {}, 
-                                            strength_function = strength_function, 
-                                            sorted_matches = None)[0])
+                                            sorted_matches = sorted_matches)[0])
 
     
 def _stable_voting(edata, 
-                   curr_cands = None,
-                   mem_sv_winners = {}, 
-                   strength_function = None, 
-                   sorted_matches = None): 
+                   curr_cands,
+                   strength_function,
+                   mem_sv_winners,
+                   sorted_matches): 
     '''
     Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation. 
     '''
-    
-    # curr_cands is the set of candidates who have not been removed
-    curr_cands = edata.candidates if curr_cands is None else curr_cands
-    strength_function = edata.margin if strength_function is None else strength_function  
     
     sv_winners = list()
     
     undefeated_candidates = split_cycle_faster(edata, curr_cands = curr_cands)
 
-    if sorted_matches is None:
-        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
-        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
-        
     if len(curr_cands) == 1: 
         mem_sv_winners[tuple(curr_cands)] = curr_cands
         return curr_cands, mem_sv_winners
     
-    max_margin_witnessing_win = -math.inf
+    margin_witnessing_win = -math.inf
 
     for a, b, s in sorted_matches:
-        if s < max_margin_witnessing_win: 
+        if s < margin_witnessing_win: 
             break
         if a in undefeated_candidates and a not in sv_winners: 
             cands_minus_b = [c for c in curr_cands if c != b]
@@ -1257,15 +1252,16 @@ def _stable_voting(edata,
             if cands_minus_b_key not in mem_sv_winners.keys(): 
                 ws, mem_sv_winners = _stable_voting(edata,
                                                     curr_cands = cands_minus_b,
+                                                    strength_function = strength_function,
                                                     mem_sv_winners = mem_sv_winners,
-                                                    strength_function = strength_function, 
                                                     sorted_matches = [(a, c, s) for a, c, s in sorted_matches if c != b and a != b])
                 mem_sv_winners[cands_minus_b_key] = ws
             else: 
                 ws = mem_sv_winners[cands_minus_b_key]
             if a in ws:
                 sv_winners.append(a)
-                max_margin_witnessing_win = s
+                margin_witnessing_win = s
+                
     return sv_winners, mem_sv_winners
         
 @vm(name = "Stable Voting")
@@ -1302,12 +1298,18 @@ def stable_voting(edata, curr_cands = None, strength_function = None):
         stable_voting.display(mg)
 
     """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function  
+
+    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
     return sorted(_stable_voting(edata, 
                                  curr_cands = curr_cands, 
-                                 mem_sv_winners = {}, 
                                  strength_function = strength_function,
-                                 sorted_matches= None)[0])
-
+                                 mem_sv_winners = {}, 
+                                 sorted_matches = sorted_matches)[0])
 
 @vm(name = "Stable Voting")
 def stable_voting_faster(edata, curr_cands = None, strength_function = None): 
@@ -1345,12 +1347,17 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
     if cw is not None: 
         return [cw]
     else: 
-        return sorted(_stable_voting(edata, 
-                                     curr_cands = curr_cands, 
-                                     mem_sv_winners = {}, 
-                                     strength_function = strength_function, 
-                                     sorted_matches = None)[0]) 
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_function = edata.margin if strength_function is None else strength_function  
 
+        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
+        return sorted(_stable_voting(edata, 
+                                    curr_cands = curr_cands, 
+                                    strength_function = strength_function,
+                                    mem_sv_winners = {}, 
+                                    sorted_matches = sorted_matches)[0])
 
 
 mg_vms = [
