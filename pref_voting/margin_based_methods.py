@@ -411,7 +411,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
 
 @vm(name="Split Cycle")
-def split_cycle_faster(edata, curr_cands = None, strength_function = None):   
+def split_cycle_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
     """An implementation of Split Cycle based on the Floyd-Warshall Algorithm. 
 
     See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
