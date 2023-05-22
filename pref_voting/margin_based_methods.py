@@ -363,7 +363,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.split_cycle_faster`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
+        :meth:`pref_voting.margin_based_methods.split_cycle_Floyd_Warshall`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
 
     :Example: 
 
@@ -438,22 +438,22 @@ def split_cycle_Floyd_Warshall(edata, curr_cands = None, strength_function = Non
 
     .. code-block:: 
 
-        from pref_voting.margin_based_methods import split_cycle, split_cycle_faster
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
 
         split_cycle.display(mg)
-        split_cycle_faster.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
 
 
     .. exec_code:: 
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import split_cycle, split_cycle_faster
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
         
         split_cycle.display(mg)
-        split_cycle_faster.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
 
 
     """
@@ -503,7 +503,7 @@ def split_cycle_defeat(edata, curr_cands = None, strength_function = None):
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.split_cycle`, :meth:`pref_voting.margin_based_methods.split_cycle_faster`
+        :meth:`pref_voting.margin_based_methods.split_cycle`, :meth:`pref_voting.margin_based_methods.split_cycle_Floyd_Warshall`
 
     :Example: 
 
@@ -1231,7 +1231,7 @@ def _stable_voting(edata,
     
     sv_winners = list()
     
-    undefeated_candidates = split_cycle_faster(edata, curr_cands = curr_cands)
+    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands)
 
     if len(curr_cands) == 1: 
         mem_sv_winners[tuple(curr_cands)] = curr_cands
