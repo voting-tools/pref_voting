@@ -390,15 +390,20 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
         split_cycle.display(mg)
     """
     
-    candidates = edata.candidates if curr_cands is None else curr_cands   
+    candidates = edata.candidates if curr_cands is None else curr_cands  
+
+    if strength_function is None: 
+        strength_matrix = np.array(edata.m_matrix) if isinstance(edata,MarginGraph) else np.array(edata.margin_matrix())
+    else:
+        strength_matrix = np.array([[strength_function(a,b) for b in candidates] for a in candidates])
+
     strength_function = edata.margin if strength_function is None else strength_function 
-    margin_matrix = np.array(edata.m_matrix) if isinstance(edata,MarginGraph) else np.array(edata.margin_matrix())
 
     potential_winners = set(edata.candidates)
 
     for a in candidates:
         for b in candidates:
-            if strength_function(b,a) > 0 and not has_strong_path(margin_matrix, a, b, strength_function(b,a)):
+            if strength_function(b,a) > 0 and not has_strong_path(strength_matrix, a, b, strength_function(b,a)):
                 potential_winners.discard(a)
                 break
 
