@@ -323,14 +323,33 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
 
     return defeat_graph
     
+def has_strong_path(A, source, target, k):
+    """Given a square matrix A, return True if there is a path from source to target in the associated directed graph
+    where each edge has a weight greater than or equal to k, and False otherwise."""
+    
+    n = A.shape[0] # assume A is a square matrix
+    visited = np.zeros(n, dtype=bool)
+
+    def dfs(node):
+        if node == target:
+            return True
+        visited[node] = True
+        for neighbor, weight in enumerate(A[node, :]):
+            if weight >= k and not visited[neighbor]:
+                if dfs(neighbor):
+                    return True
+        return False
+
+    return dfs(source)
+
 @vm(name="Split Cycle")
 def split_cycle(edata, curr_cands = None, strength_function = None):
+
     """A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  
     
-    1. In each cycle, identify the head-to-head win(s) with the smallest margin of victory in that cycle.
-    2. After completing step 1 for all cycles, discard the identified wins. All remaining wins count as defeats of the losing candidates.
-
-    The candidates that are undefeated are the Split Cycle winners. 
+    If candidate x has a positive margin over y and (x,y) is not the weakest edge in a cycle, then x defeats y. Equivalently, if x has a positive margin over y and there is no path from y back to x of strength at least the margin of x over y, then x defeats y. 
+    
+    The candidates that are undefeated are the Split Cycle winners.
 
     See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
 
@@ -345,7 +364,6 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
     .. seealso::
 
         :meth:`pref_voting.margin_based_methods.split_cycle_faster`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
-
 
     :Example: 
 
@@ -370,48 +388,21 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
         
         split_cycle.display(mg)
-
-
     """
-
-    candidates = edata.candidates if curr_cands is None else curr_cands    
+    
+    candidates = edata.candidates if curr_cands is None else curr_cands   
     strength_function = edata.margin if strength_function is None else strength_function 
-    
-    # create the majority graph
-    mg = get_mg(edata, curr_cands = curr_cands) 
-    
-    # find the cycle number for each candidate
-    cycle_number = {cs:0 for cs in permutations(candidates,2)}
-    for cycle in nx.simple_cycles(mg): # for each cycle in the margin graph
-        
-        # get all the margins (i.e., the weights) of the edges in the cycle
-        strengths = list() 
-        for idx,c1 in enumerate(cycle): 
-            next_idx = idx + 1 if (idx + 1) < len(cycle) else 0
-            c2 = cycle[next_idx]
-            strengths.append(strength_function(c1, c2))
-            
-        split_number = min(strengths) # the split number of the cycle is the minimal margin
-        
-        for c1,c2 in cycle_number.keys():
-            c1_index = cycle.index(c1) if c1 in cycle else -1
-            c2_index = cycle.index(c2) if c2 in cycle else -1
+    margin_matrix = np.array(edata.m_matrix) if isinstance(edata,MarginGraph) else np.array(edata.margin_matrix())
 
-            # only need to check cycles with an edge from c1 to c2
-            if (c1_index != -1 and c2_index != -1) and ((c2_index == c1_index + 1) or (c1_index == len(cycle)-1 and c2_index == 0)):
-                cycle_number[(c1,c2)] = split_number if split_number > cycle_number[(c1,c2)] else cycle_number[(c1,c2)]        
-    
-    # construct the defeat relation, where a defeats b if margin(a,b) > cycle_number(a,b) (see Lemma 3.13)
-    defeat = nx.DiGraph()
-    defeat.add_nodes_from(candidates)
-    defeat.add_edges_from([(c1,c2)  
-           for c1 in candidates 
-           for c2 in candidates if c1 != c2 if edata.majority_prefers(c1, c2) and strength_function(c1,c2) > cycle_number[(c1,c2)]])
-   
-    # the winners are candidates not defeated by any other candidate
-    winners = maximal_elements(defeat)
-    
-    return sorted(list(set(winners)))
+    potential_winners = set(edata.candidates)
+
+    for a in candidates:
+        for b in candidates:
+            if strength_function(b,a) > 0 and not has_strong_path(margin_matrix, a, b, strength_function(b,a)):
+                potential_winners.discard(a)
+                break
+
+    return sorted(potential_winners)
 
 
 @vm(name="Split Cycle")
