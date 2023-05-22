@@ -490,6 +490,18 @@ def split_cycle_faster(edata, curr_cands = None, strength_function = None):
     return sorted([c for c in candidates if winners[c]])
 
 
+def has_path(A, i, j):
+    """Given a square matrix A, return True if there is a path from i to j in the associated directed graph,
+    which holds if for some k, the (i,j) entry of the k-th power of A is positive."""
+    
+    n = A.shape[0] # assume A is a square matrix
+    A_power = np.eye(n)
+    for _ in range(n):
+        A_power = np.matmul(A_power, A)
+        if A_power[i, j] > 0:
+            return True
+    return False
+
 def split_cycle_defeat(edata, curr_cands = None):
     """
     Returns the Split Cycle defeat relation. 
@@ -499,10 +511,9 @@ def split_cycle_defeat(edata, curr_cands = None):
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
-        A networkx DiGraph representing the Beat Path defeat relation. 
+        A networkx DiGraph representing the Split Cycle defeat relation. 
 
     .. seealso::
 
@@ -517,38 +528,25 @@ def split_cycle_defeat(edata, curr_cands = None):
     """
     
     candidates = edata.candidates if curr_cands is None else curr_cands
+
+    mg = edata if isinstance(edata, MarginGraph) else edata.margin_graph()
+    margin_matrix = np.array(mg.m_matrix)
+    pos_margins = set(margin_matrix[margin_matrix > 0].flatten())
+
+    thresholded_matrices = dict()
+
+    for k in pos_margins:
+        mask = margin_matrix < k
+        thresholded_matrices[k] = np.ma.array(margin_matrix, mask=mask).filled(0) # threshold the margin matrix at k
+
+    defeat_graph = nx.DiGraph()
+    defeat_graph.add_nodes_from(candidates)
     
-    # create the margin graph
-    mg = get_mg(edata, curr_cands = curr_cands)
-    
-    # find the cycle number for each candidate
-    cycle_number = {cs:0 for cs in permutations(candidates,2)}
-    for cycle in nx.simple_cycles(mg): # for each cycle in the margin graph
+    for e in mg.edges:
+        if e[2] > 0 and not has_path(thresholded_matrices[e[2]], e[1], e[0]): # if e[2] is positive and there is no path from e[1] to e[0] in the margin matrix thresholded at e[2], then e is a defeat edge
+            defeat_graph.add_weighted_edges_from([e])
 
-        # get all the margins (i.e., the weights) of the edges in the cycle
-        margins = list() 
-        for idx,c1 in enumerate(cycle): 
-            next_idx = idx + 1 if (idx + 1) < len(cycle) else 0
-            c2 = cycle[next_idx]
-            margins.append(edata.margin(c1, c2))
-            
-        split_number = min(margins) # the split number of the cycle is the minimal margin
-        for c1,c2 in cycle_number.keys():
-            c1_index = cycle.index(c1) if c1 in cycle else -1
-            c2_index = cycle.index(c2) if c2 in cycle else -1
-
-            # only need to check cycles with an edge from c1 to c2
-            if (c1_index != -1 and c2_index != -1) and ((c2_index == c1_index + 1) or (c1_index == len(cycle)-1 and c2_index == 0)):
-                cycle_number[(c1,c2)] = split_number if split_number > cycle_number[(c1,c2)] else cycle_number[(c1,c2)]        
-
-    # construct the defeat relation, where a defeats b if margin(a,b) > cycle_number(a,b) (see Lemma 3.13)
-    defeat = nx.DiGraph()
-    defeat.add_nodes_from(candidates)
-    defeat.add_weighted_edges_from([(c1,c2, edata.margin(c1, c2))  
-           for c1 in candidates 
-           for c2 in candidates if c1 != c2 if edata.margin(c1,c2) > cycle_number[(c1,c2)]])
-
-    return defeat
+    return defeat_graph
 
 
 
