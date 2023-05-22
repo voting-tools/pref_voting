@@ -296,30 +296,32 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
 
     """
 
-    defeat = nx.DiGraph()
-    
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function
-    
-    mg = get_mg(edata, curr_cands = curr_cands)
-    
-    beat_paths_weights = {c: {c2:0 for c2 in candidates if c2 != c} for c in candidates}
-    for c in candidates: 
-        for other_c in beat_paths_weights[c].keys():
-            all_paths = list(nx.all_simple_paths(mg, c, other_c))
-            if len(all_paths) > 0:
-                beat_paths_weights[c][other_c] = max([min([strength_function(p[i], p[i+1]) for i in range(0,len(p)-1)]) for p in all_paths])
         
-    defeat.add_nodes_from(candidates)
-    edges = list()
-    for c1 in candidates: 
-        for c2 in candidates: 
-            if c1 != c2: 
-                if beat_paths_weights[c1][c2] > beat_paths_weights[c2][c1]: 
-                    edges.append((c1, c2))
+    s_matrix = [[-np.inf for _ in candidates] for _ in candidates]
+    for c1_idx, c1 in enumerate(candidates):
+        for c2_idx, c2 in enumerate(candidates):
+            if (edata.majority_prefers(c1, c2) or c1 == c2):
+                s_matrix[c1_idx][c2_idx] = strength_function(c1, c2) 
+    strength = list(map(lambda i : list(map(lambda j : j , i)) , s_matrix))
+    for i_idx, i in enumerate(candidates):         
+        for j_idx, j in enumerate(candidates): 
+            if i!= j:
+                for k_idx, k in enumerate(candidates): 
+                    if i!= k and j != k:
+                        strength[j_idx][k_idx] = max(strength[j_idx][k_idx], min(strength[j_idx][i_idx],strength[i_idx][k_idx]))
 
-    defeat.add_edges_from(edges)
-    return defeat
+    defeat_graph = nx.DiGraph()
+    defeat_graph.add_nodes_from(candidates)
+    
+    for i_idx, i in enumerate(candidates): 
+        for j_idx, j in enumerate(candidates):
+            if i!=j:
+                if strength[j_idx][i_idx] > strength[i_idx][j_idx]:
+                    defeat_graph.add_weighted_edges_from([(j,i,s_matrix[j_idx][i_idx])])
+
+    return defeat_graph
     
 @vm(name="Split Cycle")
 def split_cycle(edata, curr_cands = None, strength_function = None):
@@ -490,19 +492,7 @@ def split_cycle_faster(edata, curr_cands = None, strength_function = None):
     return sorted([c for c in candidates if winners[c]])
 
 
-def has_path(A, i, j):
-    """Given a square matrix A, return True if there is a path from i to j in the associated directed graph,
-    which holds if for some k, the (i,j) entry of the k-th power of A is positive."""
-    
-    n = A.shape[0] # assume A is a square matrix
-    A_power = np.eye(n)
-    for _ in range(n):
-        A_power = np.matmul(A_power, A)
-        if A_power[i, j] > 0:
-            return True
-    return False
-
-def split_cycle_defeat(edata, curr_cands = None):
+def split_cycle_defeat(edata, curr_cands = None, strength_function = None):   
     """
     Returns the Split Cycle defeat relation. 
 
@@ -526,26 +516,38 @@ def split_cycle_defeat(edata, curr_cands = None):
         :include-source: True
 
     """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    strength_function = edata.margin if strength_function is None else strength_function 
+ 
+    weak_condorcet_winners = {c:True for c in candidates}
+    s_matrix = [[-np.inf for _ in candidates] for _ in candidates]
     
-    candidates = edata.candidates if curr_cands is None else curr_cands
-
-    mg = edata if isinstance(edata, MarginGraph) else edata.margin_graph()
-    margin_matrix = np.array(mg.m_matrix)
-    pos_margins = set(margin_matrix[margin_matrix > 0].flatten())
-
-    thresholded_matrices = dict()
-
-    for k in pos_margins:
-        mask = margin_matrix < k
-        thresholded_matrices[k] = np.ma.array(margin_matrix, mask=mask).filled(0) # threshold the margin matrix at k
-
+    # initialize the s_matrix
+    for c1_idx, c1 in enumerate(candidates):
+        for c2_idx, c2 in enumerate(candidates):
+            if (edata.majority_prefers(c1, c2) or c1 == c2):
+                s_matrix[c1_idx][c2_idx] = strength_function(c1, c2) 
+                weak_condorcet_winners[c2] = weak_condorcet_winners[c2] and (c1 == c2) # weak Condorcet winners are Split Cycle winners
+    
+    strength = list(map(lambda i : list(map(lambda j : j , i)) , s_matrix))
+    for i_idx, i in enumerate(candidates): 
+        for j_idx, j in enumerate(candidates):
+            if i!= j:
+                if not weak_condorcet_winners[j]: # weak Condorcet winners are Split Cycle winners
+                    for k_idx, k in enumerate(candidates): 
+                        if i != k and j != k:
+                            strength[j_idx][k_idx] = max(strength[j_idx][k_idx], min(strength[j_idx][i_idx],strength[i_idx][k_idx]))
+ 
     defeat_graph = nx.DiGraph()
     defeat_graph.add_nodes_from(candidates)
-    
-    for e in mg.edges:
-        if e[2] > 0 and not has_path(thresholded_matrices[e[2]], e[1], e[0]): # if e[2] is positive and there is no path from e[1] to e[0] in the margin matrix thresholded at e[2], then e is a defeat edge
-            defeat_graph.add_weighted_edges_from([e])
 
+    for i_idx, i in enumerate(candidates):
+        for j_idx, j in enumerate(candidates):
+            if i != j:
+                if s_matrix[j_idx][i_idx] > strength[i_idx][j_idx]: # the main difference with Beat Path
+                    defeat_graph.add_weighted_edges_from([(j,i,s_matrix[j_idx][i_idx])])
+                
     return defeat_graph
 
 
