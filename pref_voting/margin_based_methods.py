@@ -205,8 +205,8 @@ def beat_path(edata, curr_cands = None, strength_function = None):
 
 
 @vm(name="Beat Path")
-def beat_path_faster(edata, curr_cands = None, strength_function = None):   
-    """An implementation of Beat Path using a variation of the Floyd Warshall-Algorithm
+def beat_path_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
+    """An implementation of Beat Path using a variation of the Floyd-Warshall Algorithm
     See https://en.wikipedia.org/wiki/Schulze_method#Implementation)
  
     Args:
@@ -1359,9 +1359,9 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
 mg_vms = [
     minimax, 
     split_cycle,
-    split_cycle_faster,
+    split_cycle_Floyd_Warshall,
     beat_path,
-    beat_path_faster,
+    beat_path_Floyd_Warshall,
     #ranked_pairs,
     #ranked_pairs_with_test,
     ranked_pairs_zt,
@@ -1378,9 +1378,9 @@ mg_vms = [
 mg_vms_all = [
     minimax, 
     split_cycle,
-    split_cycle_faster,
+    split_cycle_Floyd_Warshall,
     beat_path,
-    beat_path_faster,
+    beat_path_Floyd_Warshall,
     ranked_pairs,
     ranked_pairs_with_test,
     ranked_pairs_zt,
