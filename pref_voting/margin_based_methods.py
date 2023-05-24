@@ -205,8 +205,8 @@ def beat_path(edata, curr_cands = None, strength_function = None):
 
 
 @vm(name="Beat Path")
-def beat_path_faster(edata, curr_cands = None, strength_function = None):   
-    """An implementation of Beat Path using a variation of the Floyd Warshall-Algorithm
+def beat_path_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
+    """An implementation of Beat Path using a variation of the Floyd-Warshall Algorithm
     See https://en.wikipedia.org/wiki/Schulze_method#Implementation)
  
     Args:
@@ -296,39 +296,60 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
 
     """
 
-    defeat = nx.DiGraph()
-    
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function
-    
-    mg = get_mg(edata, curr_cands = curr_cands)
-    
-    beat_paths_weights = {c: {c2:0 for c2 in candidates if c2 != c} for c in candidates}
-    for c in candidates: 
-        for other_c in beat_paths_weights[c].keys():
-            all_paths = list(nx.all_simple_paths(mg, c, other_c))
-            if len(all_paths) > 0:
-                beat_paths_weights[c][other_c] = max([min([strength_function(p[i], p[i+1]) for i in range(0,len(p)-1)]) for p in all_paths])
         
-    defeat.add_nodes_from(candidates)
-    edges = list()
-    for c1 in candidates: 
-        for c2 in candidates: 
-            if c1 != c2: 
-                if beat_paths_weights[c1][c2] > beat_paths_weights[c2][c1]: 
-                    edges.append((c1, c2))
+    s_matrix = [[-np.inf for _ in candidates] for _ in candidates]
+    for c1_idx, c1 in enumerate(candidates):
+        for c2_idx, c2 in enumerate(candidates):
+            if (edata.majority_prefers(c1, c2) or c1 == c2):
+                s_matrix[c1_idx][c2_idx] = strength_function(c1, c2) 
+    strength = list(map(lambda i : list(map(lambda j : j , i)) , s_matrix))
+    for i_idx, i in enumerate(candidates):         
+        for j_idx, j in enumerate(candidates): 
+            if i!= j:
+                for k_idx, k in enumerate(candidates): 
+                    if i!= k and j != k:
+                        strength[j_idx][k_idx] = max(strength[j_idx][k_idx], min(strength[j_idx][i_idx],strength[i_idx][k_idx]))
 
-    defeat.add_edges_from(edges)
-    return defeat
+    defeat_graph = nx.DiGraph()
+    defeat_graph.add_nodes_from(candidates)
     
+    for i_idx, i in enumerate(candidates): 
+        for j_idx, j in enumerate(candidates):
+            if i!=j:
+                if strength[j_idx][i_idx] > strength[i_idx][j_idx]:
+                    defeat_graph.add_weighted_edges_from([(j,i,s_matrix[j_idx][i_idx])])
+
+    return defeat_graph
+    
+def has_strong_path(A, source, target, k):
+    """Given a square matrix A, return True if there is a path from source to target in the associated directed graph
+    where each edge has a weight greater than or equal to k, and False otherwise."""
+    
+    n = A.shape[0] # assume A is a square matrix
+    visited = np.zeros(n, dtype=bool)
+
+    def dfs(node):
+        if node == target:
+            return True
+        visited[node] = True
+        for neighbor, weight in enumerate(A[node, :]):
+            if weight >= k and not visited[neighbor]:
+                if dfs(neighbor):
+                    return True
+        return False
+
+    return dfs(source)
+
 @vm(name="Split Cycle")
 def split_cycle(edata, curr_cands = None, strength_function = None):
+
     """A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  
     
-    1. In each cycle, identify the head-to-head win(s) with the smallest margin of victory in that cycle.
-    2. After completing step 1 for all cycles, discard the identified wins. All remaining wins count as defeats of the losing candidates.
-
-    The candidates that are undefeated are the Split Cycle winners. 
+    If candidate x has a positive margin over y and (x,y) is not the weakest edge in a cycle, then x defeats y. Equivalently, if x has a positive margin over y and there is no path from y back to x of strength at least the margin of x over y, then x defeats y. 
+    
+    The candidates that are undefeated are the Split Cycle winners.
 
     See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
 
@@ -342,8 +363,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.split_cycle_faster`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
-
+        :meth:`pref_voting.margin_based_methods.split_cycle_Floyd_Warshall`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
 
     :Example: 
 
@@ -368,52 +388,30 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
         
         split_cycle.display(mg)
-
-
     """
+    
+    candidates = edata.candidates if curr_cands is None else curr_cands  
 
-    candidates = edata.candidates if curr_cands is None else curr_cands    
+    if strength_function is None: 
+        strength_matrix = np.array(edata.m_matrix) if isinstance(edata,MarginGraph) else np.array(edata.margin_matrix())
+    else:
+        strength_matrix = np.array([[strength_function(a,b) for b in candidates] for a in candidates])
+
     strength_function = edata.margin if strength_function is None else strength_function 
-    
-    # create the majority graph
-    mg = get_mg(edata, curr_cands = curr_cands) 
-    
-    # find the cycle number for each candidate
-    cycle_number = {cs:0 for cs in permutations(candidates,2)}
-    for cycle in nx.simple_cycles(mg): # for each cycle in the margin graph
-        
-        # get all the margins (i.e., the weights) of the edges in the cycle
-        strengths = list() 
-        for idx,c1 in enumerate(cycle): 
-            next_idx = idx + 1 if (idx + 1) < len(cycle) else 0
-            c2 = cycle[next_idx]
-            strengths.append(strength_function(c1, c2))
-            
-        split_number = min(strengths) # the split number of the cycle is the minimal margin
-        
-        for c1,c2 in cycle_number.keys():
-            c1_index = cycle.index(c1) if c1 in cycle else -1
-            c2_index = cycle.index(c2) if c2 in cycle else -1
 
-            # only need to check cycles with an edge from c1 to c2
-            if (c1_index != -1 and c2_index != -1) and ((c2_index == c1_index + 1) or (c1_index == len(cycle)-1 and c2_index == 0)):
-                cycle_number[(c1,c2)] = split_number if split_number > cycle_number[(c1,c2)] else cycle_number[(c1,c2)]        
-    
-    # construct the defeat relation, where a defeats b if margin(a,b) > cycle_number(a,b) (see Lemma 3.13)
-    defeat = nx.DiGraph()
-    defeat.add_nodes_from(candidates)
-    defeat.add_edges_from([(c1,c2)  
-           for c1 in candidates 
-           for c2 in candidates if c1 != c2 if edata.majority_prefers(c1, c2) and strength_function(c1,c2) > cycle_number[(c1,c2)]])
-   
-    # the winners are candidates not defeated by any other candidate
-    winners = maximal_elements(defeat)
-    
-    return sorted(list(set(winners)))
+    potential_winners = set(edata.candidates)
+
+    for a in candidates:
+        for b in candidates:
+            if strength_function(b,a) > 0 and not has_strong_path(strength_matrix, a, b, strength_function(b,a)):
+                potential_winners.discard(a)
+                break
+
+    return sorted(potential_winners)
 
 
 @vm(name="Split Cycle")
-def split_cycle_faster(edata, curr_cands = None, strength_function = None):   
+def split_cycle_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
     """An implementation of Split Cycle based on the Floyd-Warshall Algorithm. 
 
     See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
@@ -440,22 +438,22 @@ def split_cycle_faster(edata, curr_cands = None, strength_function = None):
 
     .. code-block:: 
 
-        from pref_voting.margin_based_methods import split_cycle, split_cycle_faster
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
 
         split_cycle.display(mg)
-        split_cycle_faster.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
 
 
     .. exec_code:: 
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import split_cycle, split_cycle_faster
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
         
         split_cycle.display(mg)
-        split_cycle_faster.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
 
 
     """
@@ -490,7 +488,7 @@ def split_cycle_faster(edata, curr_cands = None, strength_function = None):
     return sorted([c for c in candidates if winners[c]])
 
 
-def split_cycle_defeat(edata, curr_cands = None):
+def split_cycle_defeat(edata, curr_cands = None, strength_function = None):   
     """
     Returns the Split Cycle defeat relation. 
 
@@ -499,14 +497,13 @@ def split_cycle_defeat(edata, curr_cands = None):
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
-        A networkx DiGraph representing the Beat Path defeat relation. 
+        A networkx DiGraph representing the Split Cycle defeat relation. 
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.split_cycle`, :meth:`pref_voting.margin_based_methods.split_cycle_faster`
+        :meth:`pref_voting.margin_based_methods.split_cycle`, :meth:`pref_voting.margin_based_methods.split_cycle_Floyd_Warshall`
 
     :Example: 
 
@@ -515,40 +512,39 @@ def split_cycle_defeat(edata, curr_cands = None):
         :include-source: True
 
     """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    strength_function = edata.margin if strength_function is None else strength_function 
+ 
+    weak_condorcet_winners = {c:True for c in candidates}
+    s_matrix = [[-np.inf for _ in candidates] for _ in candidates]
     
-    candidates = edata.candidates if curr_cands is None else curr_cands
+    # initialize the s_matrix
+    for c1_idx, c1 in enumerate(candidates):
+        for c2_idx, c2 in enumerate(candidates):
+            if (edata.majority_prefers(c1, c2) or c1 == c2):
+                s_matrix[c1_idx][c2_idx] = strength_function(c1, c2) 
+                weak_condorcet_winners[c2] = weak_condorcet_winners[c2] and (c1 == c2) # weak Condorcet winners are Split Cycle winners
     
-    # create the margin graph
-    mg = get_mg(edata, curr_cands = curr_cands)
-    
-    # find the cycle number for each candidate
-    cycle_number = {cs:0 for cs in permutations(candidates,2)}
-    for cycle in nx.simple_cycles(mg): # for each cycle in the margin graph
+    strength = list(map(lambda i : list(map(lambda j : j , i)) , s_matrix))
+    for i_idx, i in enumerate(candidates): 
+        for j_idx, j in enumerate(candidates):
+            if i!= j:
+                if not weak_condorcet_winners[j]: # weak Condorcet winners are Split Cycle winners
+                    for k_idx, k in enumerate(candidates): 
+                        if i != k and j != k:
+                            strength[j_idx][k_idx] = max(strength[j_idx][k_idx], min(strength[j_idx][i_idx],strength[i_idx][k_idx]))
+ 
+    defeat_graph = nx.DiGraph()
+    defeat_graph.add_nodes_from(candidates)
 
-        # get all the margins (i.e., the weights) of the edges in the cycle
-        margins = list() 
-        for idx,c1 in enumerate(cycle): 
-            next_idx = idx + 1 if (idx + 1) < len(cycle) else 0
-            c2 = cycle[next_idx]
-            margins.append(edata.margin(c1, c2))
-            
-        split_number = min(margins) # the split number of the cycle is the minimal margin
-        for c1,c2 in cycle_number.keys():
-            c1_index = cycle.index(c1) if c1 in cycle else -1
-            c2_index = cycle.index(c2) if c2 in cycle else -1
-
-            # only need to check cycles with an edge from c1 to c2
-            if (c1_index != -1 and c2_index != -1) and ((c2_index == c1_index + 1) or (c1_index == len(cycle)-1 and c2_index == 0)):
-                cycle_number[(c1,c2)] = split_number if split_number > cycle_number[(c1,c2)] else cycle_number[(c1,c2)]        
-
-    # construct the defeat relation, where a defeats b if margin(a,b) > cycle_number(a,b) (see Lemma 3.13)
-    defeat = nx.DiGraph()
-    defeat.add_nodes_from(candidates)
-    defeat.add_weighted_edges_from([(c1,c2, edata.margin(c1, c2))  
-           for c1 in candidates 
-           for c2 in candidates if c1 != c2 if edata.margin(c1,c2) > cycle_number[(c1,c2)]])
-
-    return defeat
+    for i_idx, i in enumerate(candidates):
+        for j_idx, j in enumerate(candidates):
+            if i != j:
+                if s_matrix[j_idx][i_idx] > strength[i_idx][j_idx]: # the main difference with Beat Path
+                    defeat_graph.add_weighted_edges_from([(j,i,s_matrix[j_idx][i_idx])])
+                
+    return defeat_graph
 
 
 
@@ -1235,7 +1231,7 @@ def _stable_voting(edata,
     
     sv_winners = list()
     
-    undefeated_candidates = split_cycle_faster(edata, curr_cands = curr_cands)
+    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands)
 
     if len(curr_cands) == 1: 
         mem_sv_winners[tuple(curr_cands)] = curr_cands
@@ -1363,9 +1359,9 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
 mg_vms = [
     minimax, 
     split_cycle,
-    split_cycle_faster,
+    split_cycle_Floyd_Warshall,
     beat_path,
-    beat_path_faster,
+    beat_path_Floyd_Warshall,
     #ranked_pairs,
     #ranked_pairs_with_test,
     ranked_pairs_zt,
@@ -1382,9 +1378,9 @@ mg_vms = [
 mg_vms_all = [
     minimax, 
     split_cycle,
-    split_cycle_faster,
+    split_cycle_Floyd_Warshall,
     beat_path,
-    beat_path_faster,
+    beat_path_Floyd_Warshall,
     ranked_pairs,
     ranked_pairs_with_test,
     ranked_pairs_zt,
