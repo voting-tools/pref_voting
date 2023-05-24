@@ -45,23 +45,31 @@ class MajorityGraph(object):
         """A networkx DiGraph object representing the majority graph."""
 
         self.cmap = cmap if cmap is not None else {c: str(c) for c in candidates}
-        self.cindx = {c: cidx for cidx, c in enumerate(candidates)}
+        
         self.candidates = list(candidates)
         """The list of candidates."""
+        
+        self.num_cands = len(self.candidates)
+        """The number of candidates."""
 
-        self.cindices = range(len(candidates))
+        self.cindices = list(range(self.num_cands))
+        self._cand_to_cindex = {c: i for i, c in enumerate(self.candidates)}
+        self.cand_to_cindex = lambda c: self._cand_to_cindex[c]
+        self._cindex_to_cand = {i: c for i, c in enumerate(self.candidates)}
+        self.cindex_to_cand = lambda i: self._cindex_to_cand[i]
+        """A dictionary mapping each candidate to its index in the list of candidates and vice versa."""
 
         self.maj_matrix = [[False for c2 in self.cindices] for c1 in self.cindices]
         """A matrix of Boolean values representing the majority graph."""
 
-        for c1 in self.cindices:
-            for c2 in self.cindices:
-                if mg.has_edge(c1, c2):
-                    self.maj_matrix[c1][c2] = True
-                    self.maj_matrix[c2][c1] = False
-                elif mg.has_edge(c2, c1):
-                    self.maj_matrix[c2][c1] = True
-                    self.maj_matrix[c1][c2] = False
+        for c1_idx in self.cindices:
+            for c2_idx in self.cindices:
+                if mg.has_edge(self.cindex_to_cand(c1_idx), self.cindex_to_cand(c2_idx)):
+                    self.maj_matrix[c1_idx][c2_idx] = True
+                    self.maj_matrix[c2_idx][c1_idx] = False
+                elif mg.has_edge(self.cindex_to_cand(c2_idx), self.cindex_to_cand(c1_idx)):
+                    self.maj_matrix[c2_idx][c1_idx] = True
+                    self.maj_matrix[c1_idx][c2_idx] = False
 
     def margin(self, c1, c2):
         raise NotImplemented
@@ -461,12 +469,12 @@ class MarginGraph(MajorityGraph):
         """The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. """
 
         for c1, c2, margin in w_edges:
-            self.margin_matrix[self.cindx[c1]][self.cindx[c2]] = margin
-            self.margin_matrix[self.cindx[c2]][self.cindx[c1]] = -1 * margin
+            self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] = margin
+            self.margin_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)] = -1 * margin
 
     def margin(self, c1, c2):
         """Returns the margin of ``c1`` over ``c2``."""
-        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]]
+        return self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
 
     @property
     def edges(self):
@@ -504,11 +512,11 @@ class MarginGraph(MajorityGraph):
 
     def majority_prefers(self, c1, c2):
         """Returns True if the margin of ``c1`` over ``c2`` is positive."""
-        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]] > 0
+        return self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] > 0
 
     def is_tied(self, c1, c2):
         """Returns True if the margin ``c1`` over ``c2`` is zero."""
-        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]] == 0
+        return self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] == 0
 
     def is_uniquely_weighted(self):
         """Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates."""

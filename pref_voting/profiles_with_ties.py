@@ -386,6 +386,14 @@ class ProfileWithTies(object):
         """The number of candidates in the profile."""
 
         self.ranks = list(range(1, self.num_cands + 1))
+        """The ranks that are possible in the profile. """
+
+        self.cindices = list(range(self.num_cands))
+        self._cand_to_cindex = {c: i for i, c in enumerate(self.candidates)}
+        self.cand_to_cindex = lambda c: self._cand_to_cindex[c]
+        self._cindex_to_cand = {i: c for i, c in enumerate(self.candidates)}
+        self.cindex_to_cand = lambda i: self._cindex_to_cand[i]
+        """Maps candidates to their index in the list of candidates and vice versa. """
 
         self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
         """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
@@ -479,7 +487,7 @@ class ProfileWithTies(object):
         """Returns the margin matrix of the profile, where the entry at row ``i`` and column ``j`` is the margin of candidate ``i`` over candidate ``j``."""
 
         return np.array(
-            [[self.margin(c1, c2) for c2 in self.candidates] for c1 in self.candidates]
+            [[self.margin(self.cindex_to_cand(c1_idx), self.cindex_to_cand(c2_idx)) for c2_idx in self.cindices] for c1_idx in self.cindices]
         )
     
     def is_tied(self, c1, c2): 

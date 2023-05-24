@@ -176,6 +176,11 @@ class Profile(object):
 
         self.candidates = list(range(0, self.num_cands)) 
         
+        # needed for uniformity with ProfileWithTies and MarginGraph
+        self.cindices = self.candidates
+        self.cand_to_cindex = lambda c: c
+        self.cindex_to_cand = lambda i: i
+
         # linear ordering of the candidates for each voter
         self._rankings = np.array(rankings)   
         
