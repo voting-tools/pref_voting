@@ -125,8 +125,8 @@ There are a number of other methods that related to the margins of a profile.
     from pref_voting.profiles import Profile 
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], [4, 3, 2])
     prof.display()
-    print(f"The margin matrix for the profile is: {prof.margin_matrix()}")
-    prof.display_margin_matrix()
+    print(f"The margin matrix for the profile is: {prof.margin_matrix}")
+    prof.display_margin_matrix
 
 ```
 

@@ -457,16 +457,16 @@ class MarginGraph(MajorityGraph):
 
         super().__init__(candidates, [(e[0], e[1]) for e in w_edges], cmap=cmap)
 
-        self.m_matrix = [[0 for c2 in self.cindices] for c1 in self.cindices]
+        self.margin_matrix = [[0 for c2 in self.cindices] for c1 in self.cindices]
         """The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. """
 
         for c1, c2, margin in w_edges:
-            self.m_matrix[self.cindx[c1]][self.cindx[c2]] = margin
-            self.m_matrix[self.cindx[c2]][self.cindx[c1]] = -1 * margin
+            self.margin_matrix[self.cindx[c1]][self.cindx[c2]] = margin
+            self.margin_matrix[self.cindx[c2]][self.cindx[c1]] = -1 * margin
 
     def margin(self, c1, c2):
         """Returns the margin of ``c1`` over ``c2``."""
-        return self.m_matrix[self.cindx[c1]][self.cindx[c2]]
+        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]]
 
     @property
     def edges(self):
@@ -504,11 +504,11 @@ class MarginGraph(MajorityGraph):
 
     def majority_prefers(self, c1, c2):
         """Returns True if the margin of ``c1`` over ``c2`` is positive."""
-        return self.m_matrix[self.cindx[c1]][self.cindx[c2]] > 0
+        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]] > 0
 
     def is_tied(self, c1, c2):
         """Returns True if the margin ``c1`` over ``c2`` is zero."""
-        return self.m_matrix[self.cindx[c1]][self.cindx[c2]] == 0
+        return self.margin_matrix[self.cindx[c1]][self.cindx[c2]] == 0
 
     def is_uniquely_weighted(self):
         """Returns True if all the margins between distinct candidates are unique and there is no 0 margin between distinct candidates."""
@@ -841,12 +841,12 @@ class MarginGraph(MajorityGraph):
             prof = Profile([[0,1,2], [1,2,0], [2,0,1]], [2, 1, 2])
             mg = MarginGraph.from_profile(prof)
             print(mg.edges)
-            print(mg.m_matrix)
+            print(mg.margin_matrix)
 
             # it is better to use the Profile method
             mg = prof.margin_graph()
             print(mg.edges)
-            print(mg.m_matrix)
+            print(mg.margin_matrix)
 
         """
 

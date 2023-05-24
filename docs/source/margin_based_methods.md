@@ -30,11 +30,12 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Beat Path Faster
+### Beat Path Floyd-Warshall
 
+ 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.margin_based_methods.beat_path_faster
+.. autofunction:: pref_voting.margin_based_methods.beat_path_floyd_warshall
 
 ```
 
@@ -54,11 +55,12 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Split Cycle Faster
+### Split Cycle Floyd-Warshall
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.margin_based_methods.split_cycle_faster
+.. autofunction:: pref_voting.margin_based_methods.split_cycle_floyd_warshall
+
 
 ```
 

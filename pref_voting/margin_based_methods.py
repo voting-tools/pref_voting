@@ -11,9 +11,7 @@ from pref_voting.voting_method import  *
 from pref_voting.helper import get_mg
 import math
 from itertools import product, permutations, combinations, chain
-
 import networkx as nx
-import matplotlib.pyplot as plt
 
 
 @vm(name = "Minimax")
@@ -153,7 +151,7 @@ def beat_path(edata, curr_cands = None, strength_function = None):
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.beat_path_faster`, :meth:`pref_voting.margin_based_methods.beat_path_defeat`
+        :meth:`pref_voting.margin_based_methods.beat_path_Floyd_Warshall`, :meth:`pref_voting.margin_based_methods.beat_path_defeat`
 
 
     :Example: 
@@ -231,22 +229,22 @@ def beat_path_Floyd_Warshall(edata, curr_cands = None, strength_function = None)
 
     .. code-block:: 
 
-        from pref_voting.margin_based_methods import beat_path_faster
+        from pref_voting.margin_based_methods import beat_path_Floyd_Warshall
 
         beat_path.display(mg)
-        beat_path_faster.display(mg)
+        beat_path_Floyd_Warshall.display(mg)
 
 
     .. exec_code:: 
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import beat_path, beat_path_faster
+        from pref_voting.margin_based_methods import beat_path, beat_path_Floyd_Warshall
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
 
         beat_path.display(mg)
-        beat_path_faster.display(mg)
+        beat_path_Floyd_Warshall.display(mg)
 
     """
 
@@ -286,7 +284,7 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.beat_path`, :meth:`pref_voting.margin_based_methods.beat_path_faster`
+        :meth:`pref_voting.margin_based_methods.beat_path`, :meth:`pref_voting.margin_based_methods.beat_path_Floyd_Warshall`
 
     :Example: 
 
@@ -324,8 +322,7 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
     return defeat_graph
     
 def has_strong_path(A, source, target, k):
-    """Given a square matrix A, return True if there is a path from source to target in the associated directed graph
-    where each edge has a weight greater than or equal to k, and False otherwise."""
+    """Given a square matrix A, return True if there is a path from source to target in the associated directed graph     where each edge has a weight greater than or equal to k, and False otherwise."""
     
     n = A.shape[0] # assume A is a square matrix
     visited = np.zeros(n, dtype=bool)
@@ -393,7 +390,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
     candidates = edata.candidates if curr_cands is None else curr_cands  
 
     if strength_function is None: 
-        strength_matrix = np.array(edata.m_matrix) if isinstance(edata,MarginGraph) else np.array(edata.margin_matrix())
+        strength_matrix = np.array(edata.margin_matrix)
     else:
         strength_matrix = np.array([[strength_function(a,b) for b in candidates] for a in candidates])
 

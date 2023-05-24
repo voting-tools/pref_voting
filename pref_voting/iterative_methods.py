@@ -10,7 +10,7 @@
 from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
-from pref_voting.margin_based_methods import split_cycle_faster
+from pref_voting.margin_based_methods import split_cycle
 
 import copy
 from itertools import permutations, product
@@ -220,7 +220,7 @@ def instant_runoff_put(profile, curr_cands = None):
                if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
 
     if len(winners) == 0:
-        # run Instant Runoff with tie-breaker for each permulation of candidates
+        # run Instant Runoff with tie-breaker for each permutation of candidates
         for tb in permutations(candidates):
             winners += instant_runoff_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
     return sorted(list(set(winners)))
@@ -979,7 +979,7 @@ def baldwin_put(profile, curr_cands=None):
     winners = list() if cw is None else [cw]
 
     if len(winners) == 0:
-        # run Coombs with tie-breaker for each permulation of candidates
+        # run Coombs with tie-breaker for each permutation of candidates
         for tb in permutations(candidates):
             winners += baldwin_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
 
@@ -1480,21 +1480,21 @@ def iterated_split_cycle(edata, curr_cands = None, strength_function = None):
 
         from pref_voting.profiles import Profile
         from pref_voting.iterative_methods import iterated_split_cycle
-        from pref_voting.margin_based_methods import split_cycle_faster
+        from pref_voting.margin_based_methods import split_cycle
         
         prof = Profile([[2, 0, 3, 1], [2, 3, 0, 1], [3, 1, 2, 0], [2, 1, 3, 0], [3, 0, 1, 2], [1, 2, 3, 0]], [1, 1, 1, 1, 1, 2])
 
         prof.display()
-        split_cycle_faster.display(prof)
+        split_cycle.display(prof)
         iterated_split_cycle.display(prof)
     
     """    
     prev_sc_winners = edata.candidates if curr_cands is None else curr_cands
-    sc_winners = split_cycle_faster(edata, curr_cands = curr_cands, strength_function = strength_function)
+    sc_winners = split_cycle(edata, curr_cands = curr_cands, strength_function = strength_function)
     
     while len(sc_winners) != 1 and sc_winners != prev_sc_winners: 
         prev_sc_winners = sc_winners
-        sc_winners = split_cycle_faster(edata, curr_cands = sc_winners, strength_function = strength_function)
+        sc_winners = split_cycle(edata, curr_cands = sc_winners, strength_function = strength_function)
         
     return sorted(sc_winners)
 
@@ -1627,7 +1627,7 @@ def benham_put(profile, curr_cands = None):
     winners = [cw] if cw is not None else list()
         
     if len(winners) == 0:
-        # run Instant Runoff with tie-breaker for each permulation of candidates
+        # run Instant Runoff with tie-breaker for each permutation of candidates
         for tb in permutations(candidates):
             winners += instant_runoff_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
     return sorted(list(set(winners)))

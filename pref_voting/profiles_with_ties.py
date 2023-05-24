@@ -25,7 +25,7 @@ class Ranking(object):
 
     :param rmap: Dictionary in which the keys are the candidates and the values are the ranks.
     :type rmap: dict[int or str: int]
-    :param cmap: Dictionary mapping candidates (keys of the ``rmap``) to candidate names (strings).  If not provied, each candidate  is mapped to itself.
+    :param cmap: Dictionary mapping candidates (keys of the ``rmap``) to candidate names (strings).  If not provided, each candidate  is mapped to itself.
     :type cmap: dict[int: str], optional
 
     :Example:
@@ -470,10 +470,18 @@ class ProfileWithTies(object):
         return self._supports[c1][c2]
 
     def margin(self, c1, c2):
-        """Returns the margin of candidate ``c1`` over candidate ``c2``, where the maring is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``."""
+        """Returns the margin of candidate ``c1`` over candidate ``c2``, where the margin is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``."""
 
         return self._supports[c1][c2] - self._supports[c2][c1]
 
+    @property
+    def margin_matrix(self):
+        """Returns the margin matrix of the profile, where the entry at row ``i`` and column ``j`` is the margin of candidate ``i`` over candidate ``j``."""
+
+        return np.array(
+            [[self.margin(c1, c2) for c2 in self.candidates] for c1 in self.candidates]
+        )
+    
     def is_tied(self, c1, c2): 
         """Returns True if ``c1`` and ``c2`` are tied (i.e., the margin of ``c1`` over ``c2`` is 0)."""
 
@@ -706,7 +714,7 @@ class ProfileWithTies(object):
 
                 mg = prof.margin_graph()
                 print(mg.edges)
-                print(mg.m_matrix)
+                print(mg.margin_matrix)
         """
 
         return MarginGraph.from_profile(self)

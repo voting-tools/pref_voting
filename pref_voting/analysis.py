@@ -37,7 +37,7 @@ def find_profiles_with_different_winners(
         show_profiles (bool, default=True): If True, show profiles with different winning sets for the voting methods when discovered.
         show_margin_graphs (bool, default=True): If True, show margin graphs of the profiles with different winning sets for the voting methods when discovered.
         show_winning_sets (bool, default=True): If True, show the different winning sets for the voting methods when discovered.
-        show_rankings_counts (bool, default=True): If True, show the rankins and counts of the profiles with different winning sets for the voting methods.
+        show_rankings_counts (bool, default=True): If True, show the rankings and counts of the profiles with different winning sets for the voting methods.
         return_multiple_profiles (bool, default=True): If True, return all profiles that are found.
         probmod (str, default="IC"): The probability model to be passed to the ``generate_profile`` method
         num_trials (int, default=10000): The number of profiles to check for different winning sets.

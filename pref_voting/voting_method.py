@@ -4,12 +4,12 @@
     Date: November 6, 2021
     Update: January 15, 2023
     
-    The VotingMethod class and helper functions for voting methdods
+    The VotingMethod class and helper functions for voting methods
 '''
 
 import functools
 import numpy as np
-# from numba import jit # Remove until numba supports python3.11
+# from numba import jit # Remove until numba supports python 3.11
 import random
 
 class VotingMethod(object): 

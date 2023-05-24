@@ -428,6 +428,7 @@ class Profile(object):
     
         return MajorityGraph.from_profile(self)
 
+    @property
     def margin_matrix(self):
         """Returns the margin matrix of the profile: A matrix where the :math:`i, j` entry is the margin of candidate :math:`i` over candidate :math:`j`.    
         """
@@ -543,7 +544,7 @@ class Profile(object):
         """Display the margin matrix using tabulate.
         """
         
-        print(tabulate(self.margin_matrix(), tablefmt="grid"))   
+        print(tabulate(self.margin_matrix, tablefmt="grid"))   
 
     def display_margin_graph(self, cmap=None, curr_cands = None):
         """ 

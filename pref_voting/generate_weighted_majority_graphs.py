@@ -251,7 +251,7 @@ def enumerate_canonical_edge_ordered_tournaments(num_cands, parity = "even"):
         parity (str, optional): The parity of the margins, either 'even' or 'odd'.
 
     Returns:
-        A generator of ``MarginGraph`` for ``num_candidats``
+        A generator of ``MarginGraph`` for ``num_candidates``
         
     .. warning:: It is only feasible to run this function for up to 5 candidates.    
 
@@ -290,7 +290,7 @@ def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):
         weight_domain (List[int]): The list of weights in the margin graph.
         
     Returns:
-        A generator of ``MarginGraph`` for ``num_candidats``
+        A generator of ``MarginGraph`` for ``num_candidates``
         
 
     .. warning:: It is only feasible to run this function for up to 5 candidates.    
