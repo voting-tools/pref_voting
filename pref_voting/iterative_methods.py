@@ -315,7 +315,7 @@ def instant_runoff_with_explanation(profile, curr_cands = None):
 
 
 @vm(name="Instant Runoff")
-def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = False): 
+def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = True): 
     """
     Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes. 
     If a threshold is not set, then it is strictly more than half of the non-empty ballots. 

@@ -12,6 +12,7 @@ from math import ceil
 import copy
 import numpy as np
 from tabulate import tabulate
+from pref_voting.profiles import Profile
 from pref_voting.weighted_majority_graphs import (
     MajorityGraph,
     MarginGraph,
@@ -165,6 +166,16 @@ class Ranking(object):
 
         return not self.has_tie() and len(self.rmap.keys()) == num_cands
 
+    def to_linear(self): 
+        """
+        If the ranking has no ties, return 
+        a tuple representing the ranking; otherwise, return None.
+        """
+        if self.has_tie():
+            return None
+        else:   
+            return [c for c, r in sorted(self.rmap.items(), key=lambda x: x[1])]
+        
     def is_truncated_linear(self, num_cands): 
         """Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates. 
         """
@@ -374,16 +385,30 @@ class ProfileWithTies(object):
         assert rcounts is None or len(rankings) == len(
             rcounts
         ), "The number of rankings much be the same as the number of rcounts"
+        
 
+        get_cands = lambda r: list(r.keys()) if type(r) == dict else r.cands
         self.candidates = (
             sorted(candidates)
             if candidates is not None
-            else sorted(list(set([c for r in rankings for c in r.keys()])))
+            else sorted(list(set([c for r in rankings for c in get_cands(r)])))
         )
         """The candidates in the profile. """
 
         self.num_cands = len(self.candidates)
         """The number of candidates in the profile."""
+
+        self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
+        """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
+
+        self.rankings = [
+            Ranking(r, cmap=self.cmap)
+            if type(r) == dict
+            else Ranking(r.rmap, cmap=self.cmap)
+            for r in rankings
+        ]
+        """The list of rankings in the Profile (each ranking is a :class:`Ranking` object). 
+        """
 
         self.ranks = list(range(1, self.num_cands + 1))
         """The ranks that are possible in the profile. """
@@ -395,17 +420,7 @@ class ProfileWithTies(object):
         self.cindex_to_cand = lambda i: self._cindex_to_cand[i]
         """Maps candidates to their index in the list of candidates and vice versa. """
 
-        self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
-        """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
         
-        self.rankings = [
-            Ranking(r, cmap=self.cmap)
-            if type(r) == dict
-            else Ranking(r.rmap, cmap=self.cmap)
-            for r in rankings
-        ]
-        """The list of rankings in the Profile (each ranking is a :class:`Ranking` object). 
-        """
 
         self.rcounts = [1] * len(rankings) if rcounts is None else list(rcounts)
 
@@ -703,6 +718,16 @@ class ProfileWithTies(object):
                 rcounts.append(1)
 
         return ProfileWithTies([r.rmap for r in ranks], rcounts=rcounts, cmap=self.cmap)
+
+    def to_linear_profile(self):
+        """Return a linear profile from the profile with ties. """
+        
+        rankings, rcounts = self.rankings_counts
+        new_rankings = [r.to_linear() for r in rankings]
+        if any([r is None or len(r) != len(self.candidates) for r in new_rankings]): 
+            print("Error: Cannot convert to linear profile.")
+            return None
+        return Profile(new_rankings, rcounts=rcounts, cmap=self.cmap)
 
     def unique_rankings(self): 
         """Return to the list of unique rankings in the profile. 
