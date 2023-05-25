@@ -62,7 +62,7 @@ split_cycle.display(prof)
 - v0.2.8 (2023-5-16): Add description function to Majority Graphs.
 - v0.2.11 (2023-5-16): Update implementation of Simple Stable Voting and Stable Voting.
 - v0.2.13 (2023-5-24): Improve implementation of split_cycle; Breaking changes: split_cycle_faster renamed split_cycle_Floyd_Warshall and beat_path_faster renamed beat_path_Floyd_Warshall.
-- v0.2.14 (2023-5-25): Add to_linear_profile to ProfileWithTies
+- v0.2.15 (2023-5-25): Add to_linear_profile to ProfileWithTies
 ## Questions?
 
 Feel free to [send me an email](https://pacuit.org/) if you have questions about the project.

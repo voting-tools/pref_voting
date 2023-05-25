@@ -913,8 +913,8 @@ class SupportGraph(MajorityGraph):
         """The support matrix, where the   :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j`. """
 
         for c1, c2, support in w_edges:
-            self.s_matrix[self.cindx[c1]][self.cindx[c2]] = support[0]
-            self.s_matrix[self.cindx[c2]][self.cindx[c1]] = support[1]
+            self.s_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] = support[0]
+            self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)] = support[1]
 
     @property
     def edges(self):
@@ -929,29 +929,29 @@ class SupportGraph(MajorityGraph):
         """Returns the margin of ``c1`` over ``c2``."""
 
         return (
-            self.s_matrix[self.cindx[c1]][self.cindx[c2]]
-            - self.s_matrix[self.cindx[c2]][self.cindx[c1]]
+            self.s_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
+            - self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)]
         )
 
     def support(self, c1, c2):
         """Returns the support of ``c1`` over ``c2``."""
 
-        return self.s_matrix[self.cindx[c1]][self.cindx[c2]]
+        return self.s_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
 
     def majority_prefers(self, c1, c2):
         """Returns True if ``c1`` is majority preferred to ``c2``."""
 
         return (
-            self.s_matrix[self.cindx[c1]][self.cindx[c2]]
-            > self.s_matrix[self.cindx[c2]][self.cindx[c1]]
+            self.s_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
+            > self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)]
         )
 
     def is_tied(self, c1, c2):
         """Returns True if ``c1`` is tied with  ``c2``."""
 
         return (
-            self.s_matrix[self.cindx[c1]][self.cindx[c2]]
-            == self.s_matrix[self.cindx[c2]][self.cindx[c1]]
+            self.s_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
+            == self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)]
         )
 
     def remove_candidates(self, cands_to_ignore):
