@@ -389,7 +389,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
     
     candidates = edata.candidates if curr_cands is None else curr_cands  
 
-    strength_matrix = np.array(edata.margin_matrix) if strength_function is None else np.array([[strength_function(edata.cindex_to_cand(a),edata.cindex_to_cand(b)) for b_idx in edata.cindices] for a_idx in edata.cindices])
+    strength_matrix = np.array(edata.margin_matrix) if strength_function is None else np.array([[strength_function(edata.cindex_to_cand(a_idx),edata.cindex_to_cand(b_idx)) for b_idx in edata.cindices] for a_idx in edata.cindices])
 
     strength_function = edata.margin if strength_function is None else strength_function 
 
