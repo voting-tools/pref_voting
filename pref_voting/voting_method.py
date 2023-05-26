@@ -56,7 +56,7 @@ class VotingMethod(object):
 
         ws = self.__call__(edata, curr_cands = curr_cands, **kwargs)
 
-        if ws is None:  # some voting methods, such as Ranked Pairs, may return None if it is taking long to compute the winner.
+        if ws is None:  # some voting methods, such as ``ranked_pairs_with_test``, may return None if it is taking long to compute the winner.
             print(f"{self.name} winning set is not available")
         else: 
             w_str = f"{self.name} winner is " if len(ws) == 1 else f"{self.name} winners are "

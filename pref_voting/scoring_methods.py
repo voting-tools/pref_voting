@@ -3,7 +3,7 @@
     Author: Eric Pacuit (epacuit@umd.edu)
     Date: January 6, 2022
     
-    Implemenation of scoring rules. 
+    Implementations of scoring rules. 
 '''
 from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last 

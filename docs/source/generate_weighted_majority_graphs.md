@@ -3,6 +3,7 @@ Generate Weighted Majority Graphs
 
 ## Generate Linearly Edge-Ordered Tournaments
 
+
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_weighted_majority_graphs.generate_edge_ordered_tournament
 
@@ -10,12 +11,14 @@ Generate Weighted Majority Graphs
 
 ### ... For Large Numbers of Voters
 
+
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_weighted_majority_graphs.generate_edge_ordered_tournament_infinite_limit
 
 ```
 
 ## Generate Margin Graphs
+
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_weighted_majority_graphs.generate_margin_graph
@@ -34,6 +37,3 @@ Generate Weighted Majority Graphs
 
 ```
 
-
-
-enumerate_canonical_edge_ordered_tournaments
