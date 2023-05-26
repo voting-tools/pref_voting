@@ -47,9 +47,11 @@ Contents
    edata_overview
    profiles
    profiles_with_ties
+   utility_profiles
    margin_graphs
    generate_profiles
    generate_weighted_majority_graphs
+   generate_utility_profiles
 
 .. toctree::
    :maxdepth: 2
@@ -62,6 +64,7 @@ Contents
    margin_based_methods
    combined_methods
    other_methods
+   utility_methods
 
 .. toctree::
    :maxdepth: 2

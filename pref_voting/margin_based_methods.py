@@ -393,7 +393,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
     strength_function = edata.margin if strength_function is None else strength_function 
 
-    potential_winners = set(edata.candidates)
+    potential_winners = set(candidates)
 
     for a in candidates:
         for b in candidates:

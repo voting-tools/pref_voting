@@ -42,7 +42,6 @@ To illustrate the difference with respect to the first question, consider Instan
 ```
 
 
-
 ## Instant Runoff
 
 ```{eval-rst}
@@ -147,6 +146,7 @@ To illustrate the difference with respect to the first question, consider Instan
 
 ```
 
+
 ## Baldwin
 
 ```{eval-rst}
@@ -230,12 +230,4 @@ To illustrate the difference with respect to the first question, consider Instan
 
 ```
 
-## Iterative Removal of Split Cycle Losers
-
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.iterative_methods.iterated_split_cycle
-
-```
 

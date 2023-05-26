@@ -35,7 +35,7 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
  
 ```{eval-rst}
 
-.. autofunction:: pref_voting.margin_based_methods.beat_path_floyd_warshall
+.. autofunction:: pref_voting.margin_based_methods.beat_path_Floyd_Warshall
 
 ```
 
@@ -59,7 +59,7 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.margin_based_methods.split_cycle_floyd_warshall
+.. autofunction:: pref_voting.margin_based_methods.split_cycle_Floyd_Warshall
 
 
 ```
