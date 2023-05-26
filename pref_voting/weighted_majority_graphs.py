@@ -13,6 +13,7 @@ from tabulate import tabulate
 import matplotlib.pyplot as plt
 import string
 from itertools import combinations
+import numpy as np
 
 class MajorityGraph(object):
     """A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.
@@ -475,6 +476,24 @@ class MarginGraph(MajorityGraph):
     def margin(self, c1, c2):
         """Returns the margin of ``c1`` over ``c2``."""
         return self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
+
+    def strength_matrix(self, curr_cands = None, strength_function = None): 
+        """
+        Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function."""
+        
+        if curr_cands is not None: 
+            cindices = [cidx for cidx, _ in enumerate(curr_cands)]
+            cindex_to_cand = lambda cidx: curr_cands[cidx]
+            cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
+            strength_function = self.margin if strength_function is None else strength_function
+            strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+        else:  
+            cindices = self.cindices
+            cindex_to_cand = self.cindex_to_cand
+            cand_to_cindex = self.cand_to_cindex
+            strength_matrix = np.array(self.margin_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+
+        return strength_matrix, cand_to_cindex
 
     @property
     def edges(self):

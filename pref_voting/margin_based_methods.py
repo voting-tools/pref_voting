@@ -387,19 +387,9 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
         split_cycle.display(mg)
     """
     
-    candidates = edata.candidates if curr_cands is None else curr_cands  
+    strength_matrix, cand_to_cindex = edata.strength_matrix(curr_cands = curr_cands, strength_function=strength_function)
 
-    if curr_cands is not None: 
-        cindices = [cidx for cidx, c in enumerate(curr_cands)]
-        cindex_to_cand = lambda cidx: curr_cands[cidx]
-        cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
-        strength_function = edata.margin if strength_function is None else strength_function
-        strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
-    else:  
-        cindices = edata.cindices
-        cindex_to_cand = edata.cindex_to_cand
-        cand_to_cindex = edata.cand_to_cindex
-        strength_matrix = np.array(edata.margin_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+    candidates = edata.candidates if curr_cands is None else curr_cands  
 
     strength_function = edata.margin if strength_function is None else strength_function 
 
