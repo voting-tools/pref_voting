@@ -71,7 +71,7 @@ There are two things to keep in mind when defining a ``Profile``.
 ## Profile Methods
 
 
-See the [next section](#profile-class) for a complete list of the methods associated with a ``Profile``.
+See the next section for a complete list of the methods associated with a ``Profile``.
 
 ### Margins
 
