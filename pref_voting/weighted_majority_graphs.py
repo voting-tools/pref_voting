@@ -973,6 +973,24 @@ class SupportGraph(MajorityGraph):
             == self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)]
         )
 
+    def strength_matrix(self, curr_cands = None, strength_function = None): 
+        """
+        Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function."""
+        
+        if curr_cands is not None: 
+            cindices = [cidx for cidx, _ in enumerate(curr_cands)]
+            cindex_to_cand = lambda cidx: curr_cands[cidx]
+            cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
+            strength_function = self.support if strength_function is None else strength_function
+            strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+        else:  
+            cindices = self.cindices
+            cindex_to_cand = self.cindex_to_cand
+            cand_to_cindex = self.cand_to_cindex
+            strength_matrix = np.array(self.s_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+
+        return strength_matrix, cand_to_cindex
+
     def remove_candidates(self, cands_to_ignore):
         """Remove all candidates from ``cands_to_ignore`` from the Majority Graph.
 
