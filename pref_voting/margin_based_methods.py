@@ -389,7 +389,17 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
     
     candidates = edata.candidates if curr_cands is None else curr_cands  
 
-    strength_matrix = np.array(edata.margin_matrix) if strength_function is None else np.array([[strength_function(edata.cindex_to_cand(a_idx),edata.cindex_to_cand(b_idx)) for b_idx in edata.cindices] for a_idx in edata.cindices])
+    if curr_cands is not None: 
+        cindices = [cidx for cidx, c in enumerate(curr_cands)]
+        cindex_to_cand = lambda cidx: curr_cands[cidx]
+        cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
+        strength_function = edata.margin if strength_function is None else strength_function
+        strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+    else:  
+        cindices = edata.cindices
+        cindex_to_cand = edata.cindex_to_cand
+        cand_to_cindex = edata.cand_to_cindex
+        strength_matrix = np.array(edata.margin_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
 
     strength_function = edata.margin if strength_function is None else strength_function 
 
@@ -397,7 +407,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
     for a in candidates:
         for b in candidates:
-            if strength_function(b,a) > 0 and not has_strong_path(strength_matrix, edata.cand_to_cindex(a), edata.cand_to_cindex(b), strength_function(b,a)):
+            if strength_function(b,a) > 0 and not has_strong_path(strength_matrix, cand_to_cindex(a), cand_to_cindex(b), strength_function(b,a)):
                 potential_winners.discard(a)
                 break
 

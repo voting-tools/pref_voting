@@ -231,3 +231,12 @@ To illustrate the difference with respect to the first question, consider Instan
 ```
 
 
+## Iterated Split Cycle
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.iterated_split_cycle
+
+```
+
+
