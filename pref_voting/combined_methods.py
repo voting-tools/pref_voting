@@ -268,6 +268,8 @@ def compose(vm1, vm2):
 
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name}")
 
+smith_minimax = compose(top_cycle, minimax)
+
 copeland_borda = compose(copeland, borda)
 
 combined_vms = [
@@ -277,5 +279,6 @@ combined_vms = [
     condorcet_irv_put, 
     smith_irv, 
     smith_irv_put, 
-    copeland_borda
+    smith_minimax,
+    copeland_borda,
     ]
