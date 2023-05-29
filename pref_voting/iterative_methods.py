@@ -1632,6 +1632,32 @@ def benham_put(profile, curr_cands = None):
         winners = winners + new_winners
     
     return sorted(set(winners))
+
+def iterated(vm):
+    """Iteratively restrict the set of candidates to the vm winners until reaching a fixpoint.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A voting method that iterates vm.
+
+    """
+
+    def _vm(edata, curr_cands = None):
+
+        candidates = edata.candidates if curr_cands is None else curr_cands
+
+        vm_ws = vm(edata, curr_cands=candidates)
+
+        while not vm_ws == candidates:
+            candidates = vm_ws
+            vm_ws = vm(edata, curr_cands=candidates)
+
+        return vm_ws
+
+    return VotingMethod(_vm, name=f"Iterated {vm.name}")
     
 iterated_vms = [
     instant_runoff,
