@@ -168,7 +168,7 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Instant Runoff PUT")
 def instant_runoff_put(profile, curr_cands = None):
-    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT).  Apply the Instant Runoff method with a tie-breaker for each possible linear order over the candidates. 
+    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with minimal plurality score such that after removing y from the profile, x is an IRV-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -178,7 +178,7 @@ def instant_runoff_put(profile, curr_cands = None):
         A sorted list of candidates
 
     .. warning:: 
-        This will take a long time on profiles with many candidates. 
+        This will take a long time on profiles with many candidates having the same plurality scores
 
     :Example: 
 
@@ -209,21 +209,22 @@ def instant_runoff_put(profile, curr_cands = None):
 
     """
     
-    candidates = profile.candidates if curr_cands is None else curr_cands
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
-    
-    strict_maj_size = profile.strict_maj_size()
-    
-    rs, rcounts = profile.rankings_counts # get all the ranking data
-        
-    winners = [c for c in candidates 
-               if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+    candidates = profile.candidates if curr_cands is None else curr_cands 
 
-    if len(winners) == 0:
-        # run Instant Runoff with tie-breaker for each permutation of candidates
-        for tb in permutations(candidates):
-            winners += instant_runoff_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
-    return sorted(list(set(winners)))
+    strict_maj_size = profile.strict_maj_size()
+    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
+
+    if len(majority_winner) > 0:
+        return majority_winner
+
+    cands_to_remove = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    
+    winners = []
+    for cand_to_remove in cands_to_remove:
+        new_winners = instant_runoff_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+        winners = winners + new_winners
+    
+    return sorted(set(winners))
 
 
 # Create some aliases for instant runoff
@@ -1501,7 +1502,7 @@ def iterated_split_cycle(edata, curr_cands = None, strength_function = None):
 @vm(name = "Benham")
 def benham(profile, curr_cands = None):
     """
-    As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score. Then elect the Condorcet winner of the restricted profile. 
+    As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score.
     
     .. important::
         If there is  more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. 
@@ -1604,7 +1605,7 @@ def benham_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Benham PUT")
 def benham_put(profile, curr_cands = None):
-    """Benham (:func:`benham`) with parallel universe tie-breaking (PUT).  Apply the Benham method with a tie-breaker for each possible linear order over the candidates. 
+    """Benham (:func:`benham`) with parallel universe tie-breaking (PUT), defined recursively: if there is a Condorcet winner, that candidate is the Benham-PUT winner; otherwise a candidate x is a Benham-PUT winner if there is some candidate y with minimal plurality score such that after removing y from the profile, x is a Benham-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1614,23 +1615,23 @@ def benham_put(profile, curr_cands = None):
         A sorted list of candidates
 
     .. warning:: 
-        This will take a long time on profiles with many candidates. 
-
+        This will take a long time on profiles with many candidates having the same plurality scores.
 
     """
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+
+    cw = profile.condorcet_winner(candidates)
+    if cw is not None:
+        return [cw]
+
+    cands_to_remove = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
     
-    candidates = profile.candidates if curr_cands is None else curr_cands
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    winners = []
+    for cand_to_remove in cands_to_remove:
+        new_winners = benham_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+        winners = winners + new_winners
     
-    cw = profile.condorcet_winner(curr_cands = [c for c in profile.candidates if not isin(cands_to_ignore, c)])
-    
-    winners = [cw] if cw is not None else list()
-        
-    if len(winners) == 0:
-        # run Instant Runoff with tie-breaker for each permutation of candidates
-        for tb in permutations(candidates):
-            winners += instant_runoff_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
-    return sorted(list(set(winners)))
+    return sorted(set(winners))
     
 iterated_vms = [
     instant_runoff,

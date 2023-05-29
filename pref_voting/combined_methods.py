@@ -233,11 +233,10 @@ def compose(vm1, vm2):
     """After restricting the profile to the set of vm1 winners, run vm2
 
     Args:
-        profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        vm1, vm2 (VotingMethod): The voting methods to be composed.
 
     Returns:
-        A sorted list of candidates
+        A VotingMethod that composes vm1 and vm2.
 
     :Example:
 
