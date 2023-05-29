@@ -1637,8 +1637,7 @@ def iterated(vm):
     """Iteratively restrict the set of candidates to the vm winners until reaching a fixpoint.
 
     Args:
-        profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        vm (VotingMethod): A voting method.
 
     Returns:
         A voting method that iterates vm.
