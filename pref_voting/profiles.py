@@ -678,3 +678,5 @@ def simple_drop(ranking, c):
     c_idx = ranking.index(c)
     ranking[c_idx + 1], ranking[c_idx] = ranking[c_idx],ranking[c_idx + 1]
     return ranking
+
+    

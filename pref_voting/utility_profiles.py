@@ -316,6 +316,36 @@ class UtilityProfile(object):
             cmap = self.cmap
         )
     
+    def write(self):
+        """Write the profile to a string."""
+
+        uprof_str = f"{len(self.domain)};{self.num_voters}"
+        for u in self.utilities: 
+            u_str = ''
+            for c in u.domain: 
+                if u.has_utility(c):
+                    u_str += f"{c}:{u(c)},"
+            uprof_str += f";{u_str[0:-1]}"
+        return str(uprof_str)
+
+    @classmethod
+    def from_string(cls, uprof_str): 
+        """
+        Returns a profile of utilities described by ``uprof_str``.
+
+        ``uprof_str`` must be in the format produced by the :meth:`pref_voting.UtilityProfile.write` function.
+        """
+        uprof_data = uprof_str.split(";")
+
+        num_alternatives,num_voters,utilities = int(uprof_data[0]),int(uprof_data[1]),uprof_data[2:]
+
+        util_maps = [{int(cu.split(":")[0]): float(cu.split(":")[1]) for cu in utils.split(",")} if utils != '' else {} for utils in utilities]
+
+        if len(util_maps) != num_voters: 
+            raise Exception("Number of voters does not match the number of utilities.")
+        
+        return cls(util_maps, domain=range(num_alternatives))
+
     def display(self, vmap = None, show_totals=False):
         """Display a utility profile as an ascii table (using tabulate). If ``show_totals`` is true then the sum, min, and max of the utilities are displayed.
 
