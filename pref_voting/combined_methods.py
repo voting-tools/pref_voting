@@ -9,7 +9,8 @@
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality, borda
 from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put, instant_runoff_for_truncated_linear_orders
-from pref_voting.c1_methods import smith_set, copeland
+from pref_voting.c1_methods import smith_set, copeland, top_cycle
+from pref_voting.margin_based_methods import minimax
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 
