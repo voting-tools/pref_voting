@@ -1,11 +1,13 @@
 Iterative Methods
 =========================
 
-The voting methods defined below all follow a similar procedure: iteratively remove "poorly performing" candidates from the profile until there is a candidate with that is the majority winner. The voting methods differ in how they answer the following two questions: 
+The voting methods defined below all follow a similar procedure: iteratively remove "poorly performing" candidates from the profile until there is a "clear winner" in the current stage. The voting methods differ in how they answer the following two questions: 
 
 1. What does it mean for a candidate to "perform poorly"?  Different definitions of a poorly performing candidate include the fewest number of first-place votes, the most last-place votes, the least Borda score, etc.
 
-2. How to break ties when there are more than one candidate that is identified as "poorly performing"?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates are removed, then the remaining candidates are tied for the win).  A second approach is to use so-called *parallel-universe tiebreaking*. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).
+2. How to break ties when there are more than one candidate that is identified as "poorly performing"?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates would be removed, then the remaining candidates are tied for the win).  A second approach is to use so-called *parallel-universe tiebreaking*. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).
+
+3. What counts as a ``clear winner'' in the current stage? Possible answers include a candidate with a strict majority of first-place votes, a Condorcet winner, etc.
 
 ```{eval-rst}
 
@@ -24,7 +26,7 @@ To illustrate the difference with respect to the first question, consider the vo
 
 ```
 
-To illustrate the difference with respect to the first question, consider Instant Runoff and Instant Runoff PUT that uses parallel-universe tiebreaking. 
+To illustrate the difference with respect to the second question, consider Instant Runoff and Instant Runoff PUT that uses parallel-universe tiebreaking. 
 
 ```{eval-rst}
 
