@@ -86,7 +86,7 @@ def generate_spatial_utility_profile(num_cands, num_voters, params = None):
     """
     Create a spatial utility profile using the Rabinowitz and Macdonald (1989) mixed model described in Section 3, pp. 745 - 747 of "Voting behavior under the directional spatial model of electoral competition" by S. Merrill III. 
 
-    .. note:  When, beta = 1, it is the proximity model (i.e., utilities are the negative of the Euclidean distance), and when beta = 0, it is the directional model.
+    .. note:  When, beta = 1, it is the proximity model (i.e., utilities are the negative of the squared Euclidean distance), and when beta = 0, it is the directional model.
 
     Args:
         num_cands (int): The number of candidates.
@@ -100,7 +100,7 @@ def generate_spatial_utility_profile(num_cands, num_voters, params = None):
 
     # the first component of the parameter is the number of dimensions, 
     # the second component is used to define the mixed model: 
-    # beta = 1 is proximity model (i.e., Euclidean distance)
+    # beta = 1 is proximity model (i.e., squared Euclidean distance)
     num_dim, beta = params
 
     mean = [0] * num_dim  # mean is 0 for each dimension
