@@ -7,7 +7,7 @@ The voting methods defined below all follow a similar procedure: iteratively rem
 
 2. How to break ties when there are more than one candidate that is identified as "poorly performing"?  One approach is to remove all candidates that are poorly performing at each round (and if all remaining candidates would be removed, then the remaining candidates are tied for the win).  A second approach is to use so-called *parallel-universe tiebreaking*. On this approach, a candidate is a winner if that candidate wins using some tiebreaking ordering (a linear order over the set of candidates).
 
-3. What counts as a ``clear winner'' in the current stage? Possible answers include a candidate with a strict majority of first-place votes, a Condorcet winner, etc.
+3. What counts as a "clear winner" in the current stage? Possible answers include a candidate with a strict majority of first-place votes, a Condorcet winner, etc.
 
 ```{eval-rst}
 

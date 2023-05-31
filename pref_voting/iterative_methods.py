@@ -168,7 +168,7 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Instant Runoff PUT")
 def instant_runoff_put(profile, curr_cands = None):
-    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with minimal plurality score such that after removing y from the profile, x is an IRV-PUT winner.
+    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with a minimal number of first-place votes such that after removing y from the profile, x is an IRV-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -652,7 +652,7 @@ def coombs_tb(profile, curr_cands = None, tie_breaker=None):
 
 @vm(name = "Coombs PUT")
 def coombs_put(profile, curr_cands = None):
-    """Coombs with parallel universe tie-breaking (PUT).  Apply the Coombs method with a tie-breaker for each possible linear order over the candidates. 
+    """Coombs with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the Coombs-PUT winner; otherwise a candidate x is a Coombs-PUT winner if there is some candidate y with a maximal number of last-place votes such that after removing y from the profile, x is a Coombs-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -662,7 +662,7 @@ def coombs_put(profile, curr_cands = None):
         A sorted list of candidates
 
     .. warning:: 
-        This will take a long time on profiles with many candidates. 
+        This will take a long time on profiles with many candidates having the same number of last-place votes.
 
     :Example: 
 
@@ -692,21 +692,27 @@ def coombs_put(profile, curr_cands = None):
         coombs_put.display(prof)
     """
 
-    candidates = profile.candidates if curr_cands is None else curr_cands
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
 
     strict_maj_size = profile.strict_maj_size()
+    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
+
+    if len(majority_winner) > 0:
+        return majority_winner
     
     rs, rcounts = profile.rankings_counts # get all the ranking data
     
-    winners = [c for c in candidates 
-               if _num_rank_first(rs, rcounts, np.empty(0), c) >= strict_maj_size]
+    last_place_scores = {c: _num_rank_last(rs, rcounts, cands_to_ignore, c) for c in candidates}  
+    max_last_place_score = max(last_place_scores.values())
+    cands_to_remove = [c for c in last_place_scores.keys() if last_place_scores[c] == max_last_place_score]
 
-    if len(winners) == 0:
-        # run Coombs with tie-breaker for each permutation of candidates
-        for tb in permutations(candidates):
-            winners += coombs_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
-
-    return sorted(list(set(winners)))
+    winners = []
+    for cand_to_remove in cands_to_remove:
+        new_winners = coombs_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+        winners = winners + new_winners
+    
+    return sorted(set(winners))
 
 def coombs_with_explanation(profile, curr_cands = None):
     """
