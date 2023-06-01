@@ -215,7 +215,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-## Iterative Removal of Condorcet Loser
+## Iterated Removal of Condorcet Loser
 
 
 ```{eval-rst}
@@ -224,7 +224,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-### Iterative Removal of Condorcet Loser with Explanation
+### Iterated Removal of Condorcet Loser with Explanation
 
 ```{eval-rst}
 
@@ -232,6 +232,14 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+## Iterated Removal of Worst Loser
+
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.iterated_removal_worst_loser
+
+```
 
 ## Iterated Split Cycle
 

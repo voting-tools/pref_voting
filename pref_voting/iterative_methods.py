@@ -10,7 +10,7 @@
 from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
-from pref_voting.margin_based_methods import split_cycle
+from pref_voting.margin_based_methods import split_cycle, minimax_scores
 
 import copy
 from itertools import permutations, product
@@ -1475,6 +1475,34 @@ def iterated_removal_cl_with_explanation(edata, curr_cands = None):
             
     return sorted(remaining_cands), elim_list
 
+def _remove_worst_losers(edata,curr_cands,score_method):
+    m_scores = minimax_scores(edata,curr_cands,score_method)
+    worst_m_score = min([m_scores[c] for c in curr_cands])
+    worst_losers = [c for c in curr_cands if m_scores[c] == worst_m_score]
+    if len(worst_losers) == len(curr_cands):
+        return curr_cands
+    else:
+        return [c for c in curr_cands if c not in worst_losers]
+
+@vm(name = "Iterated Removal of Worst Losers")
+def iterated_removal_worst_losers(edata, curr_cands=None, score_method = "margins"):
+    """Method discussed by Nicolaus Tideman (p.c.): Iteratively remove the candidate(s) whose worst loss is biggest, unless all candidates have the same worst loss.
+    
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``.
+        score_method (str, optional): Options include "margins" (the default), "winning" assigns to each candidate :math:`c` the maximum support of a candidate majority preferred to :math:`c`,  and "pairwise_opposition" assigns to each candidate :math:`c` the maximum support of any candidate over :math:`c`.   These scores only lead to different results on non-linear profiles. 
+
+    Returns: 
+        A sorted list of candidates. 
+    """
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    new_cands = _remove_worst_losers(edata,candidates,score_method)
+    while not new_cands == candidates:
+        candidates = new_cands
+        new_cands = _remove_worst_losers(edata,candidates,score_method)
+    return sorted(candidates)
+
 @vm(name="Iterated Split Cycle")
 def iterated_split_cycle(edata, curr_cands = None, strength_function = None):
     """Iteratively remove candidates that are not Split Cycle winners until there is a unique winner or all remaining candidates are Split Cycle winners. 
@@ -1671,6 +1699,7 @@ def iterated(vm):
         return vm_ws
 
     return VotingMethod(_vm, name=f"Iterated {vm.name}")
+
     
 iterated_vms = [
     instant_runoff,
@@ -1688,6 +1717,7 @@ iterated_vms = [
     baldwin_tb,
     baldwin_put,
     iterated_removal_cl,
+    iterated_removal_worst_losers,
     iterated_split_cycle,
     benham,
     benham_put,
