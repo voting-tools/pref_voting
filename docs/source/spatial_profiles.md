@@ -4,10 +4,13 @@ Spatial Profiles
 
 ## Spatial Profile Class
 
+
 ```{eval-rst}
 
- .. autoclass:: pref_voting.spatial_profiles.SpatialProfile
+
+.. autoclass:: pref_voting.spatial_profiles.SpatialProfile
     :members: 
+
 
 ```
 
