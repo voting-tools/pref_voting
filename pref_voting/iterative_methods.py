@@ -940,7 +940,7 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
 
 @vm(name = "Baldwin PUT")
 def baldwin_put(profile, curr_cands=None):
-    """Baldwin with parallel universe tie-breaking (PUT).  Apply the Baldwin method with a tie-breaker for each possible linear order over the candidates. 
+    """Baldwin with parallel universe tie-breaking (PUT), defined recursively: if there is a single candidate in the profile, that candidate wins; otherwise a candidate x is a Baldwin-PUT winner if there is some candidate y with a minimal Borda score such that after removing y from the profile, x is a Baldwin-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -948,9 +948,6 @@ def baldwin_put(profile, curr_cands=None):
 
     Returns: 
         A sorted list of candidates
-
-    .. warning:: 
-        This will take a long time on profiles with many candidates. 
 
     :Example: 
 
@@ -980,17 +977,28 @@ def baldwin_put(profile, curr_cands=None):
         baldwin_put.display(prof)
     """
 
-    candidates = profile.candidates if curr_cands is None else curr_cands    
-    cw = profile.condorcet_winner(curr_cands=curr_cands)
+    num_original_cands = len(profile.candidates)
+    candidates = profile.candidates if curr_cands is None else curr_cands 
     
-    winners = list() if cw is None else [cw]
+    if len(candidates) == 1:
+        return candidates
+    
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    
+    rankings, rcounts = profile.rankings_counts # get all the ranking data
+    updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_original_cands)
 
-    if len(winners) == 0:
-        # run Coombs with tie-breaker for each permutation of candidates
-        for tb in permutations(candidates):
-            winners += baldwin_tb(profile, curr_cands = curr_cands, tie_breaker = tb) 
+    borda_scores = {c: _borda_score(updated_rankings, rcounts, num_original_cands - cands_to_ignore.shape[0], c) for c in candidates if not isin(cands_to_ignore, c)}
+    min_borda_score = min(list(borda_scores.values()))
+    
+    cands_to_remove = [c for c in candidates if c in borda_scores.keys() and borda_scores[c] == min_borda_score]
 
-    return sorted(list(set(winners)))
+    winners = []
+    for cand_to_remove in cands_to_remove:
+        new_winners = baldwin_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+        winners = winners + new_winners
+    
+    return sorted(set(winners))
 
 
 def baldwin_with_explanation(profile, curr_cands = None):
