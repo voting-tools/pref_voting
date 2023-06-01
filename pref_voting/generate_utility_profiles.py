@@ -14,6 +14,7 @@ from scipy.spatial import distance
 from functools import partial
 
 from pref_voting.utility_profiles import UtilityProfile
+from pref_voting.utility_functions import *
 
 # turn off future warnings.
 # getting the following warning when calling tabulate to display a profile: 

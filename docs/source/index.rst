@@ -48,10 +48,12 @@ Contents
    profiles
    profiles_with_ties
    utility_profiles
+   spatial_profiles
    margin_graphs
    generate_profiles
    generate_weighted_majority_graphs
    generate_utility_profiles
+   generate_spatial_profiles
 
 .. toctree::
    :maxdepth: 2
