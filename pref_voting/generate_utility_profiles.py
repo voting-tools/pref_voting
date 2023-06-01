@@ -10,6 +10,9 @@
 
 from math import ceil
 import numpy as np
+from scipy.spatial import distance
+from functools import partial
+
 from pref_voting.utility_profiles import UtilityProfile
 
 # turn off future warnings.
@@ -62,55 +65,77 @@ def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1):
     return UtilityProfile(utilities).normalize()
 
 
-def voter_utility(v_pos, c_pos, beta):
-    """Based on the Rabinowitz and Macdonald (1989) mixed model described in Section 3, pp. 745 - 747 of
-    "Voting behavior under the directional spatial model of electoral competition" by S. Merrill III.
 
-    beta = 1 is the proximity model
-    beta = 0 is the directional model
+utility_functions = {
+    "RM": {
+        "func": mixed_rm_utility,
+        "param": 1
+    },
+    "Linear": {
+        "func": linear_utility,
+        "param": None
+    },
+    "Quadratic": 
+    {   
+        "func": quadratic_utility,
+        "param": None
+    },
+    "Shepsle": {
+        "func": shepsle_utility,
+        "param": None
+    },
+    "City Block": { 
+        "func": city_block_utility,
+        "param": None
+    },
+    "Matthews": { 
+        "func": matthews_utility,
+        "param": None
+    }
 
-    Args:
-        v_pos (numpy array): The position(s) of the voter.
-        c_pos (numpy array): The position(s) of the candidate.
-        beta (float): The beta parameter of the mixed model.
+}
+def generate_spatial_utility_profile(num_cands, 
+                                     num_voters, 
+                                     num_dims = 2, 
+                                     utility_function = "Quadratic", 
+                                     utility_function_param = None):
     
-    Returns:
-        float: The utility of the candidate to the voter.
     """
-    return 2 * np.dot(v_pos, c_pos) - beta * (
-        np.linalg.norm(v_pos) ** 2 + np.linalg.norm(c_pos) ** 2
-    )
+    Create a spatial utility profile using specified utility functions. 
 
-
-def generate_spatial_utility_profile(num_cands, num_voters, params = None):
-    """
-    Create a spatial utility profile using the Rabinowitz and Macdonald (1989) mixed model described in Section 3, pp. 745 - 747 of "Voting behavior under the directional spatial model of electoral competition" by S. Merrill III. 
-
-    .. note:  When, beta = 1, it is the proximity model (i.e., utilities are the negative of the squared Euclidean distance), and when beta = 0, it is the directional model.
 
     Args:
         num_cands (int): The number of candidates.
         num_voters (int): The number of voters.
-        params (tuple): A tuple of the form (num_dim, beta) where num_dim is the number of dimensions and beta is the beta parameter of the mixed model. The default is (2, 1).
-
+        num_dims (int): The number of dimensions. The default is 2.
+        utility_function (str): The utility function to use. The default is "Linear".
+        utility_function_param (float): The parameter of the utility function. The default is None.
+        
     Returns:
         UtilityProfile: A spatial utility profile.
     """
-    params = params if params is not None else (2, 1)
 
     # the first component of the parameter is the number of dimensions, 
     # the second component is used to define the mixed model: 
     # beta = 1 is proximity model (i.e., squared Euclidean distance)
-    num_dim, beta = params
 
-    mean = [0] * num_dim  # mean is 0 for each dimension
-    cov = np.diag([1] * num_dim)  # diagonal covariance
+    mean = [0] * num_dims  # mean is 0 for each dimension
+    cov = np.diag([1] * num_dims)  # diagonal covariance
+
+    _utility_fnc = utility_functions[utility_function]["func"]
+
+    if utility_functions[utility_function]["param"] is not None or utility_function_param is not None: 
+        util_parm = utility_function_param  if utility_function_param is not None else utility_functions[utility_function]["param"]
+        utility_fnc = partial(_utility_fnc, util_parm)
+
+    else: 
+        utility_fnc = _utility_fnc
 
     # sample candidate/voter positions using a multivariate normal distribution
     cand_positions = np.random.multivariate_normal(np.array(mean), cov, num_cands)
     voter_positions = np.random.multivariate_normal(np.array(mean), cov, num_voters)
 
-    utilities = [{c: voter_utility(v_pos, c_pos, beta) for c, c_pos in enumerate(cand_positions)} 
+    utilities = [{c: utility_fnc(v_pos, c_pos)  for c, c_pos in enumerate(cand_positions)} 
                  for _, v_pos in enumerate(voter_positions)]
 
     return UtilityProfile(utilities)
