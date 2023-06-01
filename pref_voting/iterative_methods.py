@@ -168,7 +168,8 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
 
 @vm(name = "Instant Runoff PUT")
 def instant_runoff_put(profile, curr_cands = None):
-    """Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with a minimal number of first-place votes such that after removing y from the profile, x is an IRV-PUT winner.
+    """
+    Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with a minimal number of first-place votes such that after removing y from the profile, x is an IRV-PUT winner.
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -206,6 +207,7 @@ def instant_runoff_put(profile, curr_cands = None):
         instant_runoff_tb.display(prof, tie_breaker=[2, 1, 0])
         print()
         instant_runoff_put.display(prof)
+
 
     """
     
@@ -329,10 +331,7 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
     Returns: 
         A sorted list of candidates
     
-    .. note:: This is the simultaneous version of instant runoff, not the parallel-universe tiebreaking version. 
-    It is intended to be run on profiles with large number of voters in which there is a very low probability 
-    of a tie in the fewest number of first place votes.   A warning is displayed when more than one candidate is
-    eliminated. 
+    .. note:: This is the simultaneous version of instant runoff, not the parallel-universe tiebreaking version. It is intended to be run on profiles with large number of voters in which there is a very low probability of a tie in the fewest number of first place votes.  A warning is displayed when more than one candidate is eliminated. 
 
     :Example: 
 
@@ -349,6 +348,7 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
             print(f"{r} --> {new_r}: {count}")
         tprof.display()
         instant_runoff_for_truncated_linear_orders.display(tprof)
+    
     
     """
     
