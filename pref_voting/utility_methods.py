@@ -50,7 +50,7 @@ def relative_utilitarian(uprof, curr_cands=None):
     
     curr_cands = curr_cands if curr_cands is not None else uprof.domain
 
-    rel_utils = [u.normalize() for u in uprof.utilities]
+    rel_utils = [u.normalize_by_range() for u in uprof.utilities]
     sums = {x:np.sum([u(x) for u in rel_utils if u(x) is not None]) for x in curr_cands}
     sorted_sums = sorted(list(set(sums.values())), reverse=True)
     return Ranking({x: uidx+1 for uidx, u in enumerate(sorted_sums) 
