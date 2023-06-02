@@ -6,11 +6,11 @@
     
     Implementations of iterative voting methods.
 '''
-
 from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
 from pref_voting.margin_based_methods import split_cycle, minimax_scores
+from pref_voting.c1_methods import top_cycle, gocha
 
 import copy
 from itertools import permutations, product
@@ -407,6 +407,46 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
     max_pl_score = max(pl_scores.values())
     
     return sorted([c for c in pl_scores.keys() if pl_scores[c] == max_pl_score])
+
+@vm(name="Bottom-Two-Runoff Instant Runoff")
+def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
+    """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
+
+    .. note:: 
+        BTR-IRV is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then BTR-IRV will elect the Condorcet winner. 
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+
+    if len(candidates) == 1:
+        return candidates
+
+    cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+
+    if len(cands_with_lowest_plurality_score) > 1:
+        cands_with_second_lowest_plurality_score = cands_with_lowest_plurality_score
+    else:
+        cands_with_second_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == sorted(profile.plurality_scores(candidates).values())[1]]
+    
+    winners = []
+
+    for c1 in cands_with_lowest_plurality_score:
+        for c2 in cands_with_second_lowest_plurality_score:
+            if c1 != c2:
+                if profile.margin(c1,c2) <= 0:
+                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c1])
+                else:
+                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c2])
+                
+                winners = winners + additional_winners
+    
+    return sorted(set(winners))
     
 @vm(name = "PluralityWRunoff")
 def plurality_with_runoff(profile, curr_cands = None):
@@ -787,7 +827,7 @@ def baldwin(profile, curr_cands = None):
     """Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.
 
     .. note:: 
-        Baldwin is a Condorcet consistent voting method means that if a Condorcet winner exists, then Baldwin will elect the Condorcet winner. 
+        Baldwin is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then Baldwin will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1085,7 +1125,7 @@ def strict_nanson(profile, curr_cands = None):
 
     .. note:: 
         
-        Strict Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Strict Nanson will elect the Condorcet winner. 
+        Strict Nanson is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then Strict Nanson will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1229,7 +1269,7 @@ def weak_nanson(profile, curr_cands = None):
 
     .. note:: 
 
-        Weak Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Weak Nanson will elect the Condorcet winner. 
+        Weak Nanson is a Condorcet consistent voting method, i.e.,  if a Condorcet winner exists, then Weak Nanson will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1700,6 +1740,41 @@ def iterated(vm):
 
     return VotingMethod(_vm, name=f"Iterated {vm.name}")
 
+def tideman_alternative(vm):
+    """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. Parallel-universe tiebreaking is used when there are multiple candidates with the fewest first-place votes.
+
+    Args:
+        vm (VotingMethod): A voting method.
+
+    Returns:
+        The Tideman Alternative version of vm.
+
+    """
+    
+    def _ta(profile, curr_cands = None):
+
+        candidates = profile.candidates if curr_cands is None else curr_cands 
+    
+        vm_ws = vm(profile, curr_cands = candidates)
+
+        if len(vm_ws) == 1:
+            return vm_ws
+    
+        else: 
+            cands_to_remove = [cand for cand, value in profile.plurality_scores(vm_ws).items() if value == min(profile.plurality_scores(vm_ws).values())]
+        
+            winners = []
+            for cand_to_remove in cands_to_remove:
+                additional_winners = _ta(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+                winners = winners + additional_winners
+
+        return sorted(set(winners))
+
+    return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
+
+tideman_alternative_smith = tideman_alternative(top_cycle)
+tideman_alternative_schwartz = tideman_alternative(gocha)
+
     
 iterated_vms = [
     instant_runoff,
@@ -1707,21 +1782,24 @@ iterated_vms = [
     instant_runoff_put,
     hare,
     ranked_choice,
+    bottom_two_runoff_instant_runoff,
+    benham,
+    benham_put,
+    benham_tb
     plurality_with_runoff,
     coombs,
     coombs_tb,
     coombs_put,
-    strict_nanson,
-    weak_nanson,
     baldwin,
     baldwin_tb,
     baldwin_put,
+    strict_nanson,
+    weak_nanson,
     iterated_removal_cl,
     iterated_removal_worst_losers,
     iterated_split_cycle,
-    benham,
-    benham_put,
-    benham_tb
+    tideman_alternative_smith,
+    tideman_alternative_schwartz
 ]
 
 iterated_vms_with_explanation = [
@@ -1733,4 +1811,3 @@ iterated_vms_with_explanation = [
     weak_nanson_with_explanation,
     iterated_removal_cl_with_explanation,
 ]
-
