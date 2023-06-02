@@ -407,6 +407,49 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
     max_pl_score = max(pl_scores.values())
     
     return sorted([c for c in pl_scores.keys() if pl_scores[c] == max_pl_score])
+
+@vm(name="Bottom-Two-Runoff Instant Runoff")
+def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
+    """If there is a majority winner, then that candidate is the winner. Otherwise, find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
+
+    .. note:: 
+        BTR-IRV is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then BTR-IRV will elect the Condorcet winner. 
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+
+    strict_maj_size = profile.strict_maj_size()
+    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
+
+    if len(majority_winner) > 0:
+        return majority_winner
+
+    cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+
+    if len(cands_with_lowest_plurality_score) > 1:
+        cands_with_second_lowest_plurality_score = cands_with_lowest_plurality_score
+    else:
+        cands_with_second_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == sorted(profile.plurality_scores(candidates).values())[1]]
+    
+    winners = []
+
+    for c1 in cands_with_lowest_plurality_score:
+        for c2 in cands_with_second_lowest_plurality_score:
+            if c1 != c2:
+                if profile.margin(c1,c2) <= 0:
+                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c1])
+                else:
+                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c2])
+                
+                winners = winners + additional_winners
+    
+    return sorted(set(winners))
     
 @vm(name = "PluralityWRunoff")
 def plurality_with_runoff(profile, curr_cands = None):
@@ -787,7 +830,7 @@ def baldwin(profile, curr_cands = None):
     """Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.
 
     .. note:: 
-        Baldwin is a Condorcet consistent voting method means that if a Condorcet winner exists, then Baldwin will elect the Condorcet winner. 
+        Baldwin is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then Baldwin will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1085,7 +1128,7 @@ def strict_nanson(profile, curr_cands = None):
 
     .. note:: 
         
-        Strict Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Strict Nanson will elect the Condorcet winner. 
+        Strict Nanson is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then Strict Nanson will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -1229,7 +1272,7 @@ def weak_nanson(profile, curr_cands = None):
 
     .. note:: 
 
-        Weak Nanson is a Condorcet consistent voting method means that if a Condorcet winner exists, then Weak Nanson will elect the Condorcet winner. 
+        Weak Nanson is a Condorcet consistent voting method, i.e.,  if a Condorcet winner exists, then Weak Nanson will elect the Condorcet winner. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
