@@ -84,6 +84,13 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+## Plurality With Runoff
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.plurality_with_runoff
+
+```
 
 ## Benham
 
@@ -109,11 +116,19 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-## Plurality With Runoff
+### Bottom-Two-Runoff Instant Runoff
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.iterative_methods.plurality_with_runoff
+.. autofunction:: pref_voting.iterative_methods.bottom_two_runoff_instant_runoff
+
+```
+
+### Tideman's Alternative
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.tideman_alternative
 
 ```
 
@@ -147,7 +162,6 @@ To illustrate the difference with respect to the second question, consider Insta
 .. autofunction:: pref_voting.iterative_methods.coombs_with_explanation
 
 ```
-
 
 ## Baldwin
 
@@ -248,5 +262,3 @@ To illustrate the difference with respect to the second question, consider Insta
 .. autofunction:: pref_voting.iterative_methods.iterated_split_cycle
 
 ```
-
-

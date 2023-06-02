@@ -6,11 +6,11 @@
     
     Implementations of iterative voting methods.
 '''
-
 from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
 from pref_voting.margin_based_methods import split_cycle, minimax_scores
+from pref_voting.c1_methods import top_cycle, gocha
 
 import copy
 from itertools import permutations, product
@@ -1740,6 +1740,41 @@ def iterated(vm):
 
     return VotingMethod(_vm, name=f"Iterated {vm.name}")
 
+def tideman_alternative(vm):
+    """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. Parallel-universe tiebreaking is used when there are multiple candidates with the fewest first-place votes.
+
+    Args:
+        vm (VotingMethod): A voting method.
+
+    Returns:
+        The Tideman Alternative version of vm.
+
+    """
+    
+    def _ta(profile, curr_cands = None):
+
+        candidates = profile.candidates if curr_cands is None else curr_cands 
+    
+        vm_ws = vm(profile, curr_cands = candidates)
+
+        if len(vm_ws) == 1:
+            return vm_ws
+    
+        else: 
+            cands_to_remove = [cand for cand, value in profile.plurality_scores(vm_ws).items() if value == min(profile.plurality_scores(vm_ws).values())]
+        
+            winners = []
+            for cand_to_remove in cands_to_remove:
+                additional_winners = _ta(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+                winners = winners + additional_winners
+
+        return sorted(set(winners))
+
+    return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
+
+tideman_alternative_smith = tideman_alternative(top_cycle)
+tideman_alternative_schwartz = tideman_alternative(gocha)
+
     
 iterated_vms = [
     instant_runoff,
@@ -1747,21 +1782,24 @@ iterated_vms = [
     instant_runoff_put,
     hare,
     ranked_choice,
+    bottom_two_runoff_instant_runoff,
+    benham,
+    benham_put,
+    benham_tb
     plurality_with_runoff,
     coombs,
     coombs_tb,
     coombs_put,
-    strict_nanson,
-    weak_nanson,
     baldwin,
     baldwin_tb,
     baldwin_put,
+    strict_nanson,
+    weak_nanson,
     iterated_removal_cl,
     iterated_removal_worst_losers,
     iterated_split_cycle,
-    benham,
-    benham_put,
-    benham_tb
+    tideman_alternative_smith,
+    tideman_alternative_schwartz
 ]
 
 iterated_vms_with_explanation = [
@@ -1773,4 +1811,3 @@ iterated_vms_with_explanation = [
     weak_nanson_with_explanation,
     iterated_removal_cl_with_explanation,
 ]
-
