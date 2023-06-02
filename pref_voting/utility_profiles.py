@@ -9,6 +9,7 @@
 
 from math import ceil
 import numpy as np
+from scipy import stats
 import networkx as nx
 from tabulate import tabulate
 from tabulate import  SEPARATING_LINE
@@ -140,7 +141,7 @@ class Utility(object):
         lin_func = lambda x: a * self.utils[x] + b
         return self.transformation(lin_func)
     
-    def normalize(self): 
+    def normalize_by_range(self): 
         """Return a normalized utility function.  Applies the *Kaplan* normalization to the utility function: 
         The new utility of an element x of the domain is (u(x) - min({u(x) | x in the domain})) / (max({u(x) | x in the domain })).
         """
@@ -155,6 +156,7 @@ class Utility(object):
                 x: (self.utils[x] - min_util) / (max_util - min_util) for x in self.utils.keys()
             }, domain = self.domain)
 
+        
     def expectation(self, prob):
         """Return the expected utility given a probability distribution ``prob``."""
 
@@ -253,13 +255,27 @@ class UtilityProfile(object):
         return us
 
 
-    def normalize(self): 
+    def normalize_by_range(self): 
         """Return a profile in which each utility is normalized."""
         
         return UtilityProfile([
-            u.normalize() for u in self._utilities
+            u.normalize_by_range() for u in self._utilities
         ], ucounts = self.ucounts, domain = self.domain, cmap=self.cmap)
     
+    def normalize_by_standard_score(self):
+        """Return a normalized utility function.  
+        """
+        voter_utilities = {x: [u(x) for u in self._utilities] for x in self.domain}
+        
+        normalized_utilities = {x: stats.zscore(voter_utilities[x]) for x in self.domain}
+
+        return UtilityProfile(
+            [{x: normalized_utilities[x][uidx] for x in self.domain} 
+             for uidx, _ in enumerate(self._utilities)], 
+             ucounts=self.ucounts, 
+             domain=self.domain, 
+             cmap=self.cmap)
+
     def has_utility(self, x):
         """Return True if ``x`` is assigned a utility by at least one voter."""
 
