@@ -251,7 +251,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.iterative_methods.iterated_removal_worst_loser
+.. autofunction:: pref_voting.iterative_methods.iterated_removal_worst_losers
 
 ```
 

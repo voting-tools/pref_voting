@@ -59,6 +59,43 @@ class SpatialProfile(object):
              for c in self.candidates} for v in self.voters
             ])
     
+    
+    def write(self): 
+        """
+        Returns a string representation of the spatial profile.
+        """
+
+        sp_str = ''
+        for c in self.candidates: 
+            sp_str += f'C-{c}:{",".join([str(x) for x in self.candidate_position(c)])}_'
+        for v in self.voters: 
+            sp_str += f'V-{v}:{",".join([str(x) for x in self.voter_position(v)])}_'
+        return sp_str[:-1]
+    
+
+    @classmethod
+    def from_string(cls, sp_str): 
+        """
+        Returns a spatial profile described by ``sp_str``.
+
+        ``sp_str`` must be in the format produced by the :meth:`pref_voting.SpatialProfile.write` function.
+        """
+
+        cand_positions = {}
+        voter_positions = {}
+
+        sp_data = sp_str.split('_')
+
+        for d in sp_data: 
+            if d.startswith("C-"): 
+                cand,positions = d.split(':')
+                cand_positions[int(cand[2:])] = np.array([float(x) for x in positions.split(',')])
+            elif d.startswith("V-"):
+                voter,positions = d.split(':')
+                voter_positions[int(voter[2:])] = np.array([float(x) for x in positions.split(',')])
+
+        return cls(cand_positions, voter_positions)
+
     def view(self, show_labels = False): 
         """ 
         Displays the spatial model in a 1D, 2D, or 3D plot.

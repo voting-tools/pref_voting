@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pref_voting",                   
-    version="0.4.2",     
+    version="0.4.7",     
     author="Eric Pacuit",
     author_email='epacuit@umd.edu',      
     description="pref_voting is a Python packaging that contains tools to reason about election profiles and margin graphs, and implementations of a variety of preferential voting methods.",
