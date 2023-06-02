@@ -116,7 +116,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-### Bottom-Two-Runoff Instant Runoff
+## Bottom-Two-Runoff Instant Runoff
 
 ```{eval-rst}
 
@@ -124,7 +124,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-### Tideman's Alternative
+## Tideman's Alternative
 
 ```{eval-rst}
 
