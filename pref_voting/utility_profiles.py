@@ -265,13 +265,13 @@ class UtilityProfile(object):
     def normalize_by_standard_score(self):
         """Return a normalized utility function.  
         """
-        voter_utilities = {x: [u(x) for u in self._utilities] for x in self.domain}
+        voter_utilities = {x: [u(x) for u in self.utilities] for x in self.domain}
         
         normalized_utilities = {x: stats.zscore(voter_utilities[x]) for x in self.domain}
 
         return UtilityProfile(
             [{x: normalized_utilities[x][uidx] for x in self.domain} 
-             for uidx, _ in enumerate(self._utilities)], 
+             for uidx, _ in enumerate(self.utilities)], 
              ucounts=self.ucounts, 
              domain=self.domain, 
              cmap=self.cmap)
@@ -316,7 +316,7 @@ class UtilityProfile(object):
 
         return Utility(
             {
-                x: self.util_sum(x) / len(self.domain)
+                x: np.average([u(x) for u in self.utilities])
                 for x in self.domain
             },
             domain=self.domain,
