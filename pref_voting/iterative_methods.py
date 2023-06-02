@@ -410,7 +410,7 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
 
 @vm(name="Bottom-Two-Runoff Instant Runoff")
 def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
-    """If there is a majority winner, then that candidate is the winner. Otherwise, find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
+    """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
 
     .. note:: 
         BTR-IRV is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then BTR-IRV will elect the Condorcet winner. 
@@ -424,11 +424,8 @@ def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
     """
     candidates = profile.candidates if curr_cands is None else curr_cands 
 
-    strict_maj_size = profile.strict_maj_size()
-    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
-
-    if len(majority_winner) > 0:
-        return majority_winner
+    if len(candidates) == 1:
+        return candidates
 
     cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
 
