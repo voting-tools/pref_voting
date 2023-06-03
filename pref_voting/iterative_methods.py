@@ -1524,9 +1524,9 @@ def _remove_worst_losers(edata,curr_cands,score_method):
     else:
         return [c for c in curr_cands if c not in worst_losers]
 
-@vm(name = "Iterated Removal of Worst Losers")
-def iterated_removal_worst_losers(edata, curr_cands=None, score_method = "margins"):
-    """Method discussed by Nicolaus Tideman (p.c.): Iteratively remove the candidate(s) whose worst loss is biggest, unless all candidates have the same worst loss.
+@vm(name = "Raynaud")
+def raynaud(edata, curr_cands=None, score_method = "margins"):
+    """Iteratively remove the candidate(s) whose worst loss is biggest, unless all candidates have the same worst loss. See https://electowiki.org/wiki/Raynaud.
     
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -1542,44 +1542,6 @@ def iterated_removal_worst_losers(edata, curr_cands=None, score_method = "margin
         candidates = new_cands
         new_cands = _remove_worst_losers(edata,candidates,score_method)
     return sorted(candidates)
-
-@vm(name="Iterated Split Cycle")
-def iterated_split_cycle(edata, curr_cands = None, strength_function = None):
-    """Iteratively remove candidates that are not Split Cycle winners until there is a unique winner or all remaining candidates are Split Cycle winners. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data with a margin method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-
-    .. seealso: 
-        :meth:pref_voting.margin_based_methods.split_cycle
-
-    Returns: 
-        A sorted list of candidates
-
-    :Example: 
-
-    .. exec_code:: 
-
-        from pref_voting.profiles import Profile
-        from pref_voting.iterative_methods import iterated_split_cycle
-        from pref_voting.margin_based_methods import split_cycle
-        
-        prof = Profile([[2, 0, 3, 1], [2, 3, 0, 1], [3, 1, 2, 0], [2, 1, 3, 0], [3, 0, 1, 2], [1, 2, 3, 0]], [1, 1, 1, 1, 1, 2])
-
-        prof.display()
-        split_cycle.display(prof)
-        iterated_split_cycle.display(prof)
-    
-    """    
-    prev_sc_winners = edata.candidates if curr_cands is None else curr_cands
-    sc_winners = split_cycle(edata, curr_cands = curr_cands, strength_function = strength_function)
-    
-    while len(sc_winners) != 1 and sc_winners != prev_sc_winners: 
-        prev_sc_winners = sc_winners
-        sc_winners = split_cycle(edata, curr_cands = sc_winners, strength_function = strength_function)
-        
-    return sorted(sc_winners)
 
 @vm(name = "Benham")
 def benham(profile, curr_cands = None):
@@ -1796,8 +1758,7 @@ iterated_vms = [
     strict_nanson,
     weak_nanson,
     iterated_removal_cl,
-    iterated_removal_worst_losers,
-    iterated_split_cycle,
+    raynaud,
     tideman_alternative_smith,
     tideman_alternative_schwartz
 ]
