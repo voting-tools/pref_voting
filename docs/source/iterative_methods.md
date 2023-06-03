@@ -229,6 +229,16 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+## Raynaud
+
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.raynaud
+
+```
+
+
 ## Iterated Removal of Condorcet Loser
 
 
@@ -246,19 +256,3 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-## Iterated Removal of Worst Loser
-
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.iterative_methods.iterated_removal_worst_losers
-
-```
-
-## Iterated Split Cycle
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.iterative_methods.iterated_split_cycle
-
-```

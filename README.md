@@ -67,6 +67,7 @@ split_cycle.display(prof)
 - v0.3.4 (2023-5-30): Add write and from_string methods to a UtilityProfile.
 - v0.4.7 (2023-5-31): Add SpatialProfile class and utility functions for generating utility profiles from spatial profiles; add functions to generate a SpatialProfile.
 - v0.4.8 (2023-5-31): Add bottom two IRV and Tideman's alternative voting methods.
+- v0.4.11 (2023-6-3): Add probabilistic methods.
 
 ## Questions?
 
