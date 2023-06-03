@@ -155,7 +155,19 @@ class Utility(object):
             return Utility({
                 x: (self.utils[x] - min_util) / (max_util - min_util) for x in self.utils.keys()
             }, domain = self.domain)
+        
+    def normalize_by_standard_score(self): 
+        """Replace each utility value with its standard score.  The standard score of a value is the number of standard deviations it is above the mean.
+        """
 
+        utility_values = np.array(list(self.utils.values()))
+    
+        mean_utility = np.mean(utility_values)
+        std_dev_utility = np.std(utility_values)
+
+        return Utility({
+                x: (self.utils[x] - mean_utility) / std_dev_utility for x in self.utils.keys()
+            }, domain = self.domain)
         
     def expectation(self, prob):
         """Return the expected utility given a probability distribution ``prob``."""
@@ -256,25 +268,18 @@ class UtilityProfile(object):
 
 
     def normalize_by_range(self): 
-        """Return a profile in which each utility is normalized."""
+        """Return a profile in which each utility is normalized by range."""
         
         return UtilityProfile([
             u.normalize_by_range() for u in self._utilities
         ], ucounts = self.ucounts, domain = self.domain, cmap=self.cmap)
     
     def normalize_by_standard_score(self):
-        """Return a normalized utility function.  
+        """Return a profile in which each utility is normalized by standard scores.
         """
-        voter_utilities = {x: [u(x) for u in self.utilities] for x in self.domain}
-        
-        normalized_utilities = {x: stats.zscore(voter_utilities[x]) for x in self.domain}
-
-        return UtilityProfile(
-            [{x: normalized_utilities[x][uidx] for x in self.domain} 
-             for uidx, _ in enumerate(self.utilities)], 
-             ucounts=self.ucounts, 
-             domain=self.domain, 
-             cmap=self.cmap)
+        return UtilityProfile([
+            u.normalize_by_standard_score() for u in self._utilities
+        ], ucounts = self.ucounts, domain = self.domain, cmap=self.cmap)
 
     def has_utility(self, x):
         """Return True if ``x`` is assigned a utility by at least one voter."""
