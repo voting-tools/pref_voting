@@ -8,6 +8,7 @@
 '''
 
 from pref_voting.voting_method import  *
+from pref_voting.probabilistic_methods import  maximal_lottery
 from pref_voting.helper import get_mg
 import math
 from itertools import product, permutations, combinations, chain
@@ -1350,6 +1351,23 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
                                     sorted_matches = sorted_matches)[0])
 
 
+@vm(name="Essential Set")
+def essential(edata, curr_cands=None, threshold = 0.0000001): 
+    """The Essential Set is the support of the (chosen) C2 maximal lottery.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin_matrix` attribute.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+
+    """
+    ml = maximal_lottery(edata, curr_cands=curr_cands)
+
+    return sorted([c for c in ml.keys() if ml[c] > threshold])
+
+
 mg_vms = [
     minimax, 
     split_cycle,
@@ -1385,4 +1403,5 @@ mg_vms_all = [
     simple_stable_voting_faster,
     stable_voting,
     stable_voting_faster,
+    essential
 ]

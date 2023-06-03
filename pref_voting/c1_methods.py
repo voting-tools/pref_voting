@@ -9,6 +9,7 @@
 
 from pref_voting.voting_method import  *
 from pref_voting.helper import get_mg, get_weak_mg
+from pref_voting.probabilistic_methods import c1_maximal_lottery
 import copy
 import math
 from itertools import product, permutations
@@ -617,6 +618,23 @@ schwartz_set = copy.deepcopy(gocha)
 # reset the name GETCHA
 gocha.set_name("GOCHA")
 
+
+@vm(name="Bipartisan Set")
+def bipartisan(edata, curr_cands = None, threshold = 0.0000001): 
+    """The Bipartisan Set is the support of the (chosen) C1 maximal lottery.
+
+    Args:
+        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `margin_matrix` attribute.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+    """
+
+    ml = c1_maximal_lottery(edata, curr_cands=curr_cands)
+    return sorted([c for c in ml.keys() if  ml[c] > threshold])
+
+
 c1_vms = [
     condorcet,
     copeland,
@@ -627,6 +645,7 @@ c1_vms = [
     uc_mckelvey,
     top_cycle,
     gocha,
+    bipartisan
 ]
 
 defeat_methods = [
