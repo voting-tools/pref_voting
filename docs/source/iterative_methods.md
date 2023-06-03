@@ -241,6 +241,18 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+## Woodall
+
+
+
+```{eval-rst}
+
+
+.. autofunction:: pref_voting.iterative_methods.woodall
+
+
+```
+
 
 ## Iterated Removal of Condorcet Loser
 
