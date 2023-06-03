@@ -129,7 +129,7 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 ```
 
 
-### River
+## River
 
 ```{eval-rst}
 
