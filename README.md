@@ -65,7 +65,8 @@ split_cycle.display(prof)
 - v0.2.17 (2023-5-25): Add to_linear_profile to ProfileWithTies
 - v0.3.3 (2023-5-26): Add implementations of UtilityProfile and a number of different utility methods.
 - v0.3.4 (2023-5-30): Add write and from_string methods to a UtilityProfile.
-- v0.4.3 (2023-5-31): Add SpatialProfile class and utility functions for generating utility profiles from spatial profiles; add functions to generate a SpatialProfile.
+- v0.4.7 (2023-5-31): Add SpatialProfile class and utility functions for generating utility profiles from spatial profiles; add functions to generate a SpatialProfile.
+- v0.4.8 (2023-5-31): Add bottom two IRV and Tideman's alternative voting methods.
 
 ## Questions?
 

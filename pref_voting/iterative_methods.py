@@ -1785,7 +1785,7 @@ iterated_vms = [
     bottom_two_runoff_instant_runoff,
     benham,
     benham_put,
-    benham_tb
+    benham_tb,
     plurality_with_runoff,
     coombs,
     coombs_tb,

@@ -44,14 +44,15 @@ def generate_utility_profile_uniform(num_candidates, num_voters):
     
     return UtilityProfile(utilities)
 
-def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1):
+def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1, normalize = None):
     """
-    Generate a utility profile where each voter assigns a random number drawn from a normal distribution with a randomly chosen mean (between 0 and 1) with standard deviation ``std`` to each candidate.  Normalize the 
+    Generate a utility profile where each voter assigns a random number drawn from a normal distribution with a randomly chosen mean (between 0 and 1) with standard deviation ``std`` to each candidate.   
     
     Args:
         num_candidates (int): The number of candidates.
         num_voters (int): The number of voters. 
         std (float): The standard deviation of the normal distribution. The default is 0.1.
+        normalize (str): The normalization method to use. The default is None.
     
     Returns:
         UtilityProfile: A utility profile.
@@ -60,10 +61,17 @@ def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1):
     utilities = list()
     
     mean_utilities = {c: np.random.uniform(0, 1) for c in range(num_candidates)}
-    utilities = [{c: np.random.normal(mean_utilities[c], std) for c in range(num_candidates)} 
-                 for _ in range(num_voters)]
+    utilities = [
+        {c: np.random.normal(mean_utilities[c], std) 
+         for c in range(num_candidates)} 
+         for _ in range(num_voters)]
     
-    return UtilityProfile(utilities).normalize()
+    if normalize == "range": 
+        return UtilityProfile(utilities).normalize_by_range()
+    elif normalize == "score":
+        return UtilityProfile(utilities).normalize_by_standard_score()
+    else: # do not normalize
+        return UtilityProfile(utilities)
 
 
 
