@@ -124,6 +124,15 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+### Bottom-Two-Runoff Instant Runoff
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.bottom_two_runoff_instant_runoff_put
+
+```
+
+
 ## Tideman's Alternative
 
 ```{eval-rst}

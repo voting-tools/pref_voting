@@ -410,6 +410,53 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
 
 @vm(name="Bottom-Two-Runoff Instant Runoff")
 def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
+    """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. 
+    
+    If there is a tie for lowest or second lowest plurality score, consider all head-to-head matches between a candidate with lowest and a candidate with second lowest plurality score, and remove all the losers of the head-to-head matches, unless this would remove all candidates.
+
+    .. note:: 
+        BTR-IRV is a Condorcet consistent voting method, i.e., if a Condorcet winner exists, then BTR-IRV will elect the Condorcet winner. 
+
+    .. seealso::
+
+        Related functions:  :func:`pref_voting.iterative_methods.bottom_two_runoff_instant_runoff_put`
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+
+    if len(candidates) == 1:
+        return candidates
+
+    cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+
+    if len(cands_with_lowest_plurality_score) > 1:
+        cands_with_second_lowest_plurality_score = cands_with_lowest_plurality_score
+    else:
+        cands_with_second_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == sorted(profile.plurality_scores(candidates).values())[1]]
+    
+    cands_to_remove = []
+
+    for c1 in cands_with_lowest_plurality_score:
+        for c2 in cands_with_second_lowest_plurality_score:
+            if c1 != c2:
+                if profile.margin(c1,c2) <= 0:
+                    cands_to_remove.append(c1)
+                else:
+                    cands_to_remove.append(c2)
+    
+    if len(set(cands_to_remove)) == len(candidates):
+        return candidates
+    else:
+        return bottom_two_runoff_instant_runoff(profile, [cand for cand in candidates if cand not in set(cands_to_remove)])
+
+@vm(name="Bottom-Two-Runoff Instant Runoff PUT")
+def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
 
     .. note:: 
@@ -440,9 +487,9 @@ def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
         for c2 in cands_with_second_lowest_plurality_score:
             if c1 != c2:
                 if profile.margin(c1,c2) <= 0:
-                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c1])
+                    additional_winners = bottom_two_runoff_instant_runoff_put(profile, curr_cands = [c for c in candidates if not c == c1])
                 else:
-                    additional_winners = bottom_two_runoff_instant_runoff(profile, curr_cands = [c for c in candidates if not c == c2])
+                    additional_winners = bottom_two_runoff_instant_runoff_put(profile, curr_cands = [c for c in candidates if not c == c2])
                 
                 winners = winners + additional_winners
     
@@ -1745,6 +1792,7 @@ iterated_vms = [
     hare,
     ranked_choice,
     bottom_two_runoff_instant_runoff,
+    bottom_two_runoff_instant_runoff_put,
     benham,
     benham_put,
     benham_tb,
