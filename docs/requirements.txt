@@ -16,3 +16,4 @@ scipy
 multiprocess
 tqdm
 pandas
+nashpy
