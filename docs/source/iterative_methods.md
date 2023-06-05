@@ -124,7 +124,7 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-### Bottom-Two-Runoff Instant Runoff
+### Bottom-Two-Runoff Instant Runoff PUT
 
 ```{eval-rst}
 
