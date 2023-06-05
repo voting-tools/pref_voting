@@ -241,9 +241,12 @@ To illustrate the difference with respect to the second question, consider Insta
 ## Raynaud
 
 
+
 ```{eval-rst}
 
+
 .. autofunction:: pref_voting.iterative_methods.raynaud
+
 
 ```
 
