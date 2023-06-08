@@ -135,7 +135,6 @@ def condorcet_efficiency_data(
                     data = pool.map(get_data, range(num_trials))
                 else:
                     data = list(map(get_data, range(num_trials)))
-
                 num_cw = 0
                 num_choose_cw = {vm.name: 0 for vm in vms}
                 for d in data:
