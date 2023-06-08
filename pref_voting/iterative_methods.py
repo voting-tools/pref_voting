@@ -497,7 +497,7 @@ def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     
 @vm(name = "PluralityWRunoff")
 def plurality_with_runoff(profile, curr_cands = None):
-    """If there is a majority winner then that candidate is the plurality with runoff winner. If there is no majority winner, then hold a runoff with  the top two candidates: either two (or more candidates) with the most first place votes or the candidate with the most first place votes and the candidate with the 2nd highest first place votes are ranked first by the fewest number of voters.   A candidate is a Plurality with Runoff winner in the profile restricted to ``curr_cands`` if it is a winner in a runoff between two pairs of first- or second- ranked candidates. If the candidates are all tied for the most first place votes, then all candidates are winners.
+    """If there is a majority winner then that candidate is the Plurality with Runoff winner. Otherwise hold a runoff between the top two candidates: the candidate with the most first place votes and the candidate with the 2nd most first place votes (or perhaps tied for the most first place votes). In the case of multiple candidates tied for the most or 2nd most first place votes, use parallel-universe tiebreaking: a candidate is a Plurality with Runoff winner if it is a winner in some runoff as described. If the candidates are all tied for the most first place votes, then all candidates are winners.
         
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -507,7 +507,7 @@ def plurality_with_runoff(profile, curr_cands = None):
         A sorted list of candidates
         
     .. note:: 
-        Plurality with Runoff is the same as Instant Runoff when there are 3 candidates, but give different answers with 4 or more candidates. 
+        Plurality with Runoff is the same as Instant Runoff when there are 3 candidates, but they can give different answers with 4 or more candidates. 
 
     :Example: 
 
@@ -1750,13 +1750,43 @@ def iterated(vm):
     return VotingMethod(_vm, name=f"Iterated {vm.name}")
 
 def tideman_alternative(vm):
+    """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates all the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. If at some stage all remaining candidates are tied for the fewest number of first-place votes, then all remaining candidates win.
+
+    Args:
+        vm (VotingMethod): A voting method.
+
+    Returns:
+        The Tideman Alternative PUT version of vm.
+
+    """
+    
+    def _ta(profile, curr_cands = None):
+
+        candidates = profile.candidates if curr_cands is None else curr_cands 
+    
+        vm_ws = vm(profile, curr_cands = candidates)
+
+        cands_to_remove = [cand for cand, value in profile.plurality_scores(vm_ws).items() if value == min(profile.plurality_scores(vm_ws).values())]
+        
+        if len(cands_to_remove) == len(vm_ws):
+            return vm_ws
+            
+        else:
+            return _ta(profile, curr_cands = [c for c in candidates if not c in cands_to_remove])
+
+    return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
+
+tideman_alternative_smith = tideman_alternative(top_cycle)
+tideman_alternative_schwartz = tideman_alternative(gocha)
+
+def tideman_alternative_put(vm):
     """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. Parallel-universe tiebreaking is used when there are multiple candidates with the fewest first-place votes.
 
     Args:
         vm (VotingMethod): A voting method.
 
     Returns:
-        The Tideman Alternative version of vm.
+        The Tideman Alternative PUT version of vm.
 
     """
     
@@ -1779,10 +1809,10 @@ def tideman_alternative(vm):
 
         return sorted(set(winners))
 
-    return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
+    return VotingMethod(_ta, name=f"Tideman Alternative {vm.name} PUT")
 
-tideman_alternative_smith = tideman_alternative(top_cycle)
-tideman_alternative_schwartz = tideman_alternative(gocha)
+tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
+tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
 
 @vm(name = "Woodall")
 def woodall(profile, curr_cands = None):
