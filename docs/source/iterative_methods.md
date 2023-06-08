@@ -140,6 +140,13 @@ To illustrate the difference with respect to the second question, consider Insta
 .. autofunction:: pref_voting.iterative_methods.tideman_alternative
 
 ```
+### Tideman's Alternative PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.tideman_alternative_put
+
+```
 
 ## Coombs
 
