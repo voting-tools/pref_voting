@@ -84,11 +84,11 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-## Plurality With Runoff
+## Plurality With Runoff PUT
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.iterative_methods.plurality_with_runoff
+.. autofunction:: pref_voting.iterative_methods.plurality_with_runoff_put
 
 ```
 

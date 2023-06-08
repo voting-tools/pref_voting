@@ -495,8 +495,8 @@ def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     
     return sorted(set(winners))
     
-@vm(name = "PluralityWRunoff")
-def plurality_with_runoff(profile, curr_cands = None):
+@vm(name = "PluralityWRunoff PUT")
+def plurality_with_runoff_put(profile, curr_cands = None):
     """If there is a majority winner then that candidate is the Plurality with Runoff winner. Otherwise hold a runoff between the top two candidates: the candidate with the most first place votes and the candidate with the 2nd most first place votes (or perhaps tied for the most first place votes). In the case of multiple candidates tied for the most or 2nd most first place votes, use parallel-universe tiebreaking: a candidate is a Plurality with Runoff winner if it is a winner in some runoff as described. If the candidates are all tied for the most first place votes, then all candidates are winners.
         
     Args:
@@ -514,12 +514,12 @@ def plurality_with_runoff(profile, curr_cands = None):
     .. exec_code:: 
 
         from pref_voting.profiles import Profile
-        from pref_voting.iterative_methods import instant_runoff, plurality_with_runoff
+        from pref_voting.iterative_methods import instant_runoff, plurality_with_runoff_put
 
         prof = Profile([[0, 1, 2, 3], [3, 1, 2, 0], [2, 0, 3, 1], [1, 2, 3, 0], [2, 3, 0, 1], [0, 3, 2, 1]], [2, 1, 2, 2, 1, 2])
         prof.display()
         instant_runoff.display(prof)
-        plurality_with_runoff.display(prof)
+        plurality_with_runoff_put.display(prof)
     
     """    
 
@@ -556,7 +556,7 @@ def plurality_with_runoff(profile, curr_cands = None):
     
     return sorted(list(set(winners)))
 
-def plurality_with_runoff_with_explanation(profile, curr_cands = None):
+def plurality_with_runoff_put_with_explanation(profile, curr_cands = None):
     """Plurality with Runoff with an explanation. In addition to the winner(s), return list of the pairs of candidate that move on to runoff round.    
   
     Args:
@@ -1887,7 +1887,7 @@ iterated_vms = [
     benham,
     benham_put,
     benham_tb,
-    plurality_with_runoff,
+    plurality_with_runoff_put,
     coombs,
     coombs_tb,
     coombs_put,
@@ -1907,7 +1907,7 @@ iterated_vms = [
 iterated_vms_with_explanation = [
     instant_runoff_with_explanation,
     coombs_with_explanation,
-    plurality_with_runoff_with_explanation,
+    plurality_with_runoff_put_with_explanation,
     baldwin_with_explanation,
     strict_nanson_with_explanation,
     weak_nanson_with_explanation,
