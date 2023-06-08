@@ -269,6 +269,7 @@ def compose(vm1, vm2):
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name}")
 
 smith_minimax = compose(top_cycle, minimax)
+smith_minimax.set_name("Smith-Minimax")
 
 copeland_borda = compose(copeland, borda)
 
