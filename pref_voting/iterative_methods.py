@@ -1899,7 +1899,9 @@ iterated_vms = [
     iterated_removal_cl,
     raynaud,
     tideman_alternative_smith,
-    tideman_alternative_schwartz
+    tideman_alternative_smith_put,
+    tideman_alternative_schwartz,
+    tideman_alternative_schwartz_put,
 ]
 
 iterated_vms_with_explanation = [
