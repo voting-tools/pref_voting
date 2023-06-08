@@ -145,6 +145,23 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
+### River with Tiebreaking
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.river_tb
+
+
+```
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.river_zt
+
+
+```
+
+
 ## Stable Voting
 
 ```{eval-rst}

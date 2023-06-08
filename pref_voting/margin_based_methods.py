@@ -875,7 +875,7 @@ def ranked_pairs_from_stacks(edata, curr_cands = None):
             
     return sorted(list(set(winners)))
 
-@vm(name="Ranked Pairs T")
+@vm(name="Ranked Pairs TB")
 def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None):   
     """
     Ranked Pairs with a fixed linear order on the candidates to break any ties in the margins.   
@@ -1079,6 +1079,76 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
                             river_defeat.remove_edge(e[0], e[1])
                 winners.append(maximal_elements(river_defeat)[0])
     return sorted(list(set(winners)))
+
+
+@vm(name="River TB")
+def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None):   
+    """
+    River with a fixed linear order on the candidates to break any ties in the margins.  Since the tie_breaker is a linear order, this method is resolute.   
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        tie_breaker (List[int], optional): A linear order on the candidates.  If not set, then the candidates are sorted in ascending order.
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+
+    """
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    strength_function = edata.margin if strength_function is None else strength_function    
+
+    tb_ranking = tie_breaker if tie_breaker is not None else sorted(list(candidates))
+
+    cw = edata.condorcet_winner()
+    # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
+    if cw is not None: 
+        winners = [cw]
+    else:
+        w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
+        winners = list()  
+        strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
+        river_defeat = nx.DiGraph() 
+        for s in strengths: 
+            edges = [e for e in w_edges if e[2] == s]
+            
+            # break ties using the lexicographic ordering on tuples given tb_ranking
+            sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
+            for e in sorted_edges: 
+                if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
+                    river_defeat.add_edge(e[0], e[1], weight=e[2])
+                    if does_create_cycle(river_defeat, e):
+                        river_defeat.remove_edge(e[0], e[1])
+            winners.append(maximal_elements(river_defeat)[0])
+    return sorted(list(set(winners)))
+
+
+@vm(name="River ZT")
+def river_zt(profile, curr_cands = None, strength_function = None):   
+    """River where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  
+
+    Args:
+        edata (Profile): A profile of linear orders
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.river`, :meth:`pref_voting.margin_based_methods.river_with_test`, :meth:`pref_voting.margin_based_methods.ranked_pairs`
+
+    
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands    
+    
+    # the tie-breaker is always the first voter. 
+    tb_ranking = tuple([c for c in list(profile._rankings[0]) if c in candidates])
+    
+    return river_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
+
 
 # Simple Stable Voting 
 def _simple_stable_voting(edata, 

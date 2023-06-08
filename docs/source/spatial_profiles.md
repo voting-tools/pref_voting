@@ -7,8 +7,12 @@ Spatial Profiles
 
 
 ```{eval-rst}
+
+
 .. autoclass:: pref_voting.spatial_profiles.SpatialProfile
     :members: 
+
+
 ```
 
 

@@ -1814,6 +1814,67 @@ def tideman_alternative_put(vm):
 tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
 tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
 
+@vm(name = "Woodall")
+def woodall(profile, curr_cands = None):
+    """
+    If there is a single member of the Smith Set (i.e., a Condorcet winner) then that candidate is the winner.  If there the Smith Set contains more than one candidate, then remove all candidates that are ranked first by the fewest number of voters.  Continue removing candidates with the fewest number first-place votes until there is a single member of the originally Smith Set remaining.  
+    
+    .. important::
+        If there is  more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. 
+    
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. seealso::
+
+        Related functions:  :func:`pref_voting.iterative_methods.instant_runoff`
+
+           
+    """
+
+    # need the total number of all candidates in a profile to check when all candidates have been removed   
+    
+    candidates = profile.candidates if curr_cands is None else curr_cands
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+
+    s_set = top_cycle(profile, curr_cands=candidates)
+
+    if len(s_set) == 1:
+        return s_set
+    
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+    
+    winners = []
+
+    while len(winners) == 0:
+        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) 
+                            for c in candidates if  not isin(cands_to_ignore,c)}  
+        min_plurality_score = min(plurality_scores.values())
+        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                             if  plurality_scores[c] == min_plurality_score])
+
+        remaining_cands_in_smith_set = [c for c in candidates if not isin(cands_to_ignore,c) and isin(np.array(s_set), c)]
+
+        # remove cands with lowest plurality score
+        new_cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
+        
+        new_remaining_cands_in_smith_set = [c for c in candidates if not isin(new_cands_to_ignore,c) and isin(np.array(s_set), c)]
+
+        if len(new_remaining_cands_in_smith_set) == 0: 
+            winners = remaining_cands_in_smith_set
+        
+        if len(new_remaining_cands_in_smith_set) == 1:
+            winners = new_remaining_cands_in_smith_set 
+     
+        cands_to_ignore = new_cands_to_ignore
+
+    return sorted(winners)
+
     
 iterated_vms = [
     instant_runoff,
