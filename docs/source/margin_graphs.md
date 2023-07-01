@@ -9,7 +9,6 @@
     :members: 
 ```
 
-
 ## MarginGraph Class
 
 ```{eval-rst}

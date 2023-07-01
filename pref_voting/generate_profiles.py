@@ -225,7 +225,6 @@ def voter_utility(v_pos, c_pos, beta):
         np.linalg.norm(v_pos) ** 2 + np.linalg.norm(c_pos) ** 2
     )
 
-
 def create_prof_spatial_model(num_voters, cmap, params):
     num_dim = params[
         0
@@ -271,7 +270,7 @@ def calculateExpectedNumberSwaps(num_candidates, phi):
 # Given the number m of candidates and a absolute number of expected swaps exp_abs, this function returns a value of phi such that in a vote sampled from Mallows model with this parameter the expected number of swaps is exp_abs
 def phi_from_relphi(num_candidates, relphi=None):
     if relphi is None:
-        relphi = np.random.uniform(0.001, 0.999)
+        relphi = random.uniform(0.001, 0.999)
     if relphi == 1:
         return 1
     exp_abs = relphi * (num_candidates * (num_candidates - 1)) / 4
@@ -308,7 +307,7 @@ prob_models = {
     "MALLOWS-0.2": {"func": create_rankings_mallows, "param": 0.2},
     "MALLOWS-R": {
         "func": create_rankings_mallows,
-        "param": lambda nc: np.random.uniform(0.001, 0.999),
+        "param": lambda nc: random.uniform(0.001, 0.999),
     },
     "MALLOWS-RELPHI-0.4": {
         "func": create_rankings_mallows,
@@ -332,7 +331,7 @@ prob_models = {
     },
     "MALLOWS-RELPHI-R2": {
         "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, np.random.uniform(0.001, 0.5)),
+        "param": lambda nc: phi_from_relphi(nc, random.uniform(0.001, 0.5)),
     },
     "MALLOWS_2REF-0.8": {"func": create_rankings_mallows_two_rankings, "param": 0.8},
     "MALLOWS_2REF-RELPHI-R": {
@@ -341,7 +340,7 @@ prob_models = {
     },
     "MALLOWS_2REF-RELPHI-R2": {
         "func": create_rankings_mallows_two_rankings,
-        "param": lambda nc: phi_from_relphi(nc, np.random.uniform(0.001, 0.5)),
+        "param": lambda nc: phi_from_relphi(nc, random.uniform(0.001, 0.5)),
     },
     "URN-10": {"func": create_rankings_urn, "param": 10},
     "URN-0.1": {
