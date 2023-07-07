@@ -1151,11 +1151,9 @@ def river_zt(profile, curr_cands = None, strength_function = None):
 
 
 # Simple Stable Voting 
-def _simple_stable_voting(edata, 
-                          curr_cands, 
-                          strength_function,
-                          mem_sv_winners, 
-                          sorted_matches):
+def _simple_stable_voting(curr_cands, 
+                          sorted_matches,
+                          mem_sv_winners):
     '''
     Determine the Simple Stable Voting winners while keeping track 
     of the winners in any subprofiles checked during computation. 
@@ -1176,11 +1174,9 @@ def _simple_stable_voting(edata,
             cands_minus_b = [c for c in curr_cands if c != b]
             cands_minus_b_key = tuple(sorted(cands_minus_b))
             if cands_minus_b_key not in mem_sv_winners.keys(): 
-                ws, mem_sv_winners = _simple_stable_voting(edata, 
-                                                           curr_cands = cands_minus_b,
-                                                           strength_function = strength_function,
-                                                           mem_sv_winners = mem_sv_winners, 
-                                                           sorted_matches = [(a, c, s) for a, c, s in sorted_matches if c != b and a != b])
+                ws, mem_sv_winners = _simple_stable_voting(curr_cands = cands_minus_b,
+                                                           sorted_matches = [(a, c, s) for a, c, s in sorted_matches if a != b and c != b],
+                                                           mem_sv_winners = mem_sv_winners)
                 mem_sv_winners[cands_minus_b_key] = ws
             else: 
                 ws = mem_sv_winners[cands_minus_b_key]
@@ -1192,11 +1188,11 @@ def _simple_stable_voting(edata,
     
 @vm(name = "Simple Stable Voting")
 def simple_stable_voting(edata, curr_cands = None, strength_function = None): 
-    """Implementation of  Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
+    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
 
     Simple Stable Voting is a recursive voting method defined as follows: 
 
-    1.  If there is only one candidate in the profile, then that candidate is the winner. 
+    1. If there is only one candidate in the profile, then that candidate is the winner. 
     2. Order the pairs :math:`(a,b)` of candidates from largest to smallest value of the margin of :math:`a` over :math:`b`, and declare as Simple Stable Voting winners the candidate(s) :math:`a` from the earliest pair(s) :math:`(a,b)` such that :math:`a` is a Simple Stable Voting winner in the election without :math:`b`. 
 
     Args:
@@ -1231,11 +1227,9 @@ def simple_stable_voting(edata, curr_cands = None, strength_function = None):
     matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
     sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
     
-    return sorted(_simple_stable_voting(edata, 
-                                        curr_cands = curr_cands, 
-                                        strength_function = strength_function,
-                                        mem_sv_winners = {}, 
-                                        sorted_matches = sorted_matches)[0])
+    return sorted(_simple_stable_voting(curr_cands = curr_cands, 
+                                        sorted_matches = sorted_matches,
+                                        mem_sv_winners = {})[0])
 
 @vm(name = "Simple Stable Voting")
 def simple_stable_voting_faster(edata, curr_cands = None, strength_function = None): 
@@ -1278,25 +1272,23 @@ def simple_stable_voting_faster(edata, curr_cands = None, strength_function = No
         matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
         sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
     
-        return sorted(_simple_stable_voting(edata, 
-                                            curr_cands = curr_cands, 
-                                            strength_function = strength_function,
-                                            mem_sv_winners = {}, 
-                                            sorted_matches = sorted_matches)[0])
+        return sorted(_simple_stable_voting(curr_cands = curr_cands, 
+                                            sorted_matches = sorted_matches,
+                                            mem_sv_winners = {})[0])
 
     
 def _stable_voting(edata, 
                    curr_cands,
                    strength_function,
-                   mem_sv_winners,
-                   sorted_matches): 
+                   sorted_matches,
+                   mem_sv_winners): 
     '''
     Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation. 
     '''
     
     sv_winners = list()
     
-    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands)
+    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands, strength_function = strength_function)
 
     if len(curr_cands) == 1: 
         mem_sv_winners[tuple(curr_cands)] = curr_cands
@@ -1314,8 +1306,8 @@ def _stable_voting(edata,
                 ws, mem_sv_winners = _stable_voting(edata,
                                                     curr_cands = cands_minus_b,
                                                     strength_function = strength_function,
-                                                    mem_sv_winners = mem_sv_winners,
-                                                    sorted_matches = [(a, c, s) for a, c, s in sorted_matches if c != b and a != b])
+                                                    sorted_matches = [(a, c, s) for a, c, s in sorted_matches if a != b and c != b],
+                                                    mem_sv_winners = mem_sv_winners)
                 mem_sv_winners[cands_minus_b_key] = ws
             else: 
                 ws = mem_sv_winners[cands_minus_b_key]
@@ -1369,8 +1361,8 @@ def stable_voting(edata, curr_cands = None, strength_function = None):
     return sorted(_stable_voting(edata, 
                                  curr_cands = curr_cands, 
                                  strength_function = strength_function,
-                                 mem_sv_winners = {}, 
-                                 sorted_matches = sorted_matches)[0])
+                                 sorted_matches = sorted_matches,
+                                 mem_sv_winners = {})[0])
 
 @vm(name = "Stable Voting")
 def stable_voting_faster(edata, curr_cands = None, strength_function = None): 
@@ -1417,8 +1409,8 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
         return sorted(_stable_voting(edata, 
                                     curr_cands = curr_cands, 
                                     strength_function = strength_function,
-                                    mem_sv_winners = {}, 
-                                    sorted_matches = sorted_matches)[0])
+                                    sorted_matches = sorted_matches,
+                                    mem_sv_winners = {})[0])
 
 
 @vm(name="Essential Set")
