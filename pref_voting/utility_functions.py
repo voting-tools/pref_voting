@@ -1,9 +1,10 @@
 
 import numpy as np
 from scipy.spatial import distance
+from numba import jit, float32 
 
-
-def mixed_rm_utility(v_pos, c_pos, beta = 0.5):
+@jit(nopython=True, fastmath=True)
+def mixed_rm_utility(v_pos: float32[:], c_pos: float32[:], beta = 0.5):
     """Based on the Rabinowitz and Macdonald (1989) mixed model described on pages 43-44 of "A Unified Theory of Voting" by S. Merrill III and B. Grofman.
 
     beta = 1 is the proximity quadratic utility function
@@ -19,7 +20,7 @@ def mixed_rm_utility(v_pos, c_pos, beta = 0.5):
     """
     return 2 * (1-beta) * np.dot(v_pos, c_pos) - beta * np.linalg.norm(v_pos - c_pos) ** 2 
 
-def rm_utility(v_pos, c_pos): 
+def rm_utility(v_pos: float32[:], c_pos: float32[:]): 
     """Based on the Rabinowitz and Macdonald (1989) pure directional model. See "A Unified Theory of Voting" by S. Merrill III and B. Grofman, pg. 31.  
 
     Args:
@@ -32,7 +33,7 @@ def rm_utility(v_pos, c_pos):
 
     return np.dot(v_pos, c_pos)
 
-def linear_utility(v_pos, c_pos):
+def linear_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     The utility of the voter for the candidate is negative of the difference in positions. 
 
@@ -44,7 +45,7 @@ def linear_utility(v_pos, c_pos):
     """
     return -np.linalg.norm(v_pos - c_pos)
 
-def quadratic_utility(v_pos, c_pos):
+def quadratic_utility(v_pos: float32[:], c_pos: float32[:]):
     """ 
     The utility of the voter for the candidate is negative of the squared difference in positions.
 
@@ -56,7 +57,8 @@ def quadratic_utility(v_pos, c_pos):
     """
     return -np.linalg.norm(v_pos - c_pos)**2
 
-def city_block_utility(v_pos, c_pos):
+@jit(nopython=True, fastmath=True)
+def city_block_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     The utility of the voter for the candidate is negative of the city-block distance between the positions (also known as the Manhattan distance). 
 
@@ -68,7 +70,8 @@ def city_block_utility(v_pos, c_pos):
     """
     return -distance.cityblock(v_pos, c_pos)
 
-def shepsle_utility(v_pos, c_pos):
+@jit(nopython=True, fastmath=True)
+def shepsle_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     The Shepsle utility function from "The Strategy of Ambiguity: Uncertainty and Electoral Competition" by Kenneth A. Shepsle, American Political Science Review, 1972, vol. 66, issue 2, pp. 555-568.   For a justification of this utility function, see Appendix B from *Making Multicandidate Elections More Democratic* (https://doi.org/10.1515/9781400859504.114) by S. Merrill III. 
 
@@ -82,7 +85,8 @@ def shepsle_utility(v_pos, c_pos):
     return np.exp(-d**2 / 2)
 
 
-def matthews_utility(v_pos, c_pos):
+@jit(nopython=True, fastmath=True)
+def matthews_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     Based on the Matthews directional model.  See "A Unified Theory of Voting" by S. Merrill III and B. Grofman, pg. 26.
     

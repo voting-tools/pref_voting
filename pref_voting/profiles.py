@@ -11,7 +11,7 @@
 
 from math import ceil
 import numpy as np
-#from numba import jit #  remove until numba supports python 3.11
+from numba import jit  
 import networkx as nx
 from tabulate import tabulate
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # Internal compiled functions to optimize reasoning with profiles
 # #######
 
-#@jit(fastmath=True)
+@jit(nopython=True, fastmath=True)
 def isin(arr, val):
     """optimized function testing if the value val is in the array arr
     """
@@ -40,7 +40,7 @@ def isin(arr, val):
             return True
     return False
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _support(ranks, rcounts, c1, c2):
     """The number of voters that rank candidate c1 over candidate c2
     
@@ -67,7 +67,7 @@ def _support(ranks, rcounts, c1, c2):
     num_rank_c1_over_c2 = np.multiply(diffs, rcounts) # mutliply by the number of each ranking
     return np.sum(num_rank_c1_over_c2)
 
-#@jit(fastmath=True,nopython=True)
+@jit(nopython=True, fastmath=True)
 def _margin(tally, c1, c2): 
     """The margin of c1 over c2: the number of voters that rank c1 over c2 minus 
     the number of voters that rank c2 over c1
@@ -80,7 +80,7 @@ def _margin(tally, c1, c2):
     return tally[c1][c2] - tally[c2][c1]
 
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _num_rank(rankings, rcounts, cand, level):
     """The number of voters that rank cand at level 
 
@@ -95,7 +95,7 @@ def _num_rank(rankings, rcounts, cand, level):
     is_cand = cands_at_level == cand # set to 0 each candidate not equal to cand
     return np.sum(is_cand * rcounts) 
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _borda_score(rankings, rcounts, num_cands, cand):
     """The Borda score for cand 
 
@@ -112,7 +112,7 @@ def _borda_score(rankings, rcounts, num_cands, cand):
     num_ranks = np.array([_num_rank(rankings, rcounts, cand, level) for level in levels])
     return  np.sum(num_ranks * bscores)
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _find_updated_profile(rankings, cands_to_ignore, num_cands):
     """Optimized method to remove all candidates from cands_to_ignore
     from a list of rankings. 

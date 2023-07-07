@@ -26,7 +26,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-def generate_utility_profile_uniform(num_candidates, num_voters):
+def generate_utility_profile_uniform(num_candidates, num_voters, num_profiles = 1):
     """
     Generate a utility profile where each voter assigns a random number between 0 and 1 to each candidate.
 
@@ -39,10 +39,14 @@ def generate_utility_profile_uniform(num_candidates, num_voters):
 
     """
 
-    utilities = [{c: np.random.uniform() for c in range(num_candidates)} 
-                 for _ in range(num_voters)]
+    cand_utils = np.random.uniform(size=(num_profiles, num_voters, num_candidates))
+
+    uprofs = [UtilityProfile([{c: cand_utils[pidx][v][c] 
+                               for c in range(num_candidates)} 
+                               for v in range(num_voters)]) 
+                               for pidx in range(num_profiles)]
     
-    return UtilityProfile(utilities)
+    return uprofs if num_profiles > 1 else uprofs[0]
 
 def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1, normalize = None):
     """
