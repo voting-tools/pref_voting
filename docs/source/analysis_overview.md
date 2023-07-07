@@ -38,3 +38,15 @@ Functions that can be used to compare and contrast voting methods.
 
 ```
 
+## Bootstrap Confidence Intervals Analysis  
+
+
+```{eval-rst}
+
+
+.. autofunction:: pref_voting.analysis.bootstrap_cia
+
+
+```
+
+
