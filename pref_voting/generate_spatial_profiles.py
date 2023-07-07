@@ -2,7 +2,6 @@ import numpy as np
 from pref_voting.spatial_profiles import SpatialProfile
 
 
-
 def generate_covariance(n_dimensions, std, rho):
     """
     Generates a covariance matrix for a multivariate normal distribution with the given standard deviation and correlation coefficient.

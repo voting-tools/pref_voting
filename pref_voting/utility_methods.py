@@ -121,7 +121,7 @@ def lexicographic_maximin_ws(uprof, curr_cands=None):
     return sorted(lexicographic_maximin(uprof, curr_cands=curr_cands).first())
 
 
-def nash(uprof, sq=None, curr_cands=None): 
+def nash_bargaining(uprof, sq=None, curr_cands=None): 
     """
     Rank the alternatives according to the Nash product ranking. Given the status quo ``sq``, the Nash product ranking ranks alternatives according to the product of the utilities of the alternatives minus the utility of the status quo.
     
@@ -154,4 +154,4 @@ def nash_ws(uprof, sq=None, curr_cands=None):
     """
     Return the winning set of candidates according to Nash product ranking.
     """
-    return sorted(nash(uprof, sq=sq, curr_cands=curr_cands).first())
+    return sorted(nash_bargaining(uprof, sq=sq, curr_cands=curr_cands).first())

@@ -32,6 +32,10 @@ The utility functions that are used to generate the utility profile from a spati
 
 .. autofunction:: pref_voting.utility_functions.shepsle_utility
 
+.. autofunction:: pref_voting.utility_functions.matthews_utility
+
+.. autofunction:: pref_voting.utility_functions.rm_utility
+
 .. autofunction:: pref_voting.utility_functions.mixed_rm_utility
 
 

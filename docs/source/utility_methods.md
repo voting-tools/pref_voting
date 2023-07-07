@@ -63,7 +63,7 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.nash
+.. autofunction:: pref_voting.utility_methods.nash_bargaining
 
 ```
 

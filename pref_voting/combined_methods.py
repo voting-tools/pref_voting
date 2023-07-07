@@ -9,6 +9,8 @@
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality, borda
 from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put, instant_runoff_for_truncated_linear_orders
+from pref_voting.profiles import _find_updated_profile, _num_rank
+
 from pref_voting.c1_methods import smith_set, copeland, top_cycle
 from pref_voting.margin_based_methods import minimax
 from pref_voting.profiles import Profile
@@ -269,8 +271,39 @@ def compose(vm1, vm2):
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name}")
 
 smith_minimax = compose(top_cycle, minimax)
+smith_minimax.set_name("Smith-Minimax")
 
-copeland_borda = compose(copeland, borda)
+copeland_local_borda = compose(copeland, borda)
+copeland_local_borda.set_name("Copeland-Local-Borda")
+
+def voting_method_with_scoring_tiebreaker(vm, score, name):
+
+    def _vm(profile, curr_cands=None):
+
+        vm_ws = vm(profile, curr_cands=curr_cands)
+
+        if len(vm_ws) == 1: 
+            return vm_ws
+        
+        # get (restricted) rankings
+        _rankings, rcounts = profile.rankings_counts
+
+        cands_to_ignore = np.array([c for c in profile.candidates if c not in curr_cands]) if curr_cands is not None else np.array([])
+
+        rankings = _rankings if curr_cands is None else _find_updated_profile(np.array(_rankings), cands_to_ignore, len(profile.candidates))
+        
+        curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+        # find the candidate scores using the score function
+        cand_scores = {c: sum(_num_rank(rankings, rcounts, c, level) * score(len(curr_cands), level) for level in range(1, len(curr_cands) + 1)) for c in curr_cands}
+    
+        max_ws_score = max([cand_scores[w] for w in vm_ws])
+
+        return sorted([w for w in vm_ws if cand_scores[w] == max_ws_score])
+
+    return VotingMethod(_vm, name=name) 
+
+copeland_global_borda = voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")
 
 combined_vms = [
     daunou, 
@@ -280,5 +313,6 @@ combined_vms = [
     smith_irv, 
     smith_irv_put, 
     smith_minimax,
-    copeland_borda,
+    copeland_local_borda,
+    copeland_global_borda
     ]

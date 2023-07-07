@@ -17,3 +17,4 @@ multiprocess
 tqdm
 pandas
 nashpy
+seaborn

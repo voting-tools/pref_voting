@@ -12,7 +12,6 @@
 import networkx as nx
 from itertools import combinations
 from pref_voting.weighted_majority_graphs import MarginGraph
-import random
 import numpy as np
 from scipy.stats import multivariate_normal
 
@@ -37,14 +36,14 @@ def generate_edge_ordered_tournament(num_cands, parity="even"):
         for c2 in candidates: 
             if c1 != c2: 
                 if (c1, c2) not in _edges and (c2, c1) not in _edges:
-                    if random.choice([True, False]): 
+                    if np.random.choice([True, False]): 
                         _edges.append((c1, c2))
                     else: 
                         _edges.append((c2, c1))
                    
     edges = list()
     edge_indices = list(range(len(_edges)))
-    random.shuffle(edge_indices)
+    np.random.shuffle(edge_indices)
     
     for i, e_idx in enumerate(edge_indices):
         edges.append((_edges[e_idx][0], _edges[e_idx][1], 2 * (i+1) if parity == 'even' else 2 * i+1)) 
@@ -77,10 +76,10 @@ def generate_margin_graph(num_cands, weight_domain = None, parity = 'even'):
 
     for c1, c2 in pairs_of_cands:
 
-        margin = random.choice(weight_domain)
+        margin = np.random.choice(weight_domain)
         
         if margin != 0: 
-            if random.choice([True, False]): 
+            if np.random.choice([True, False]): 
                 edges.append((c1, c2, margin))
             else:
                 edges.append((c2, c1, margin))
@@ -132,7 +131,7 @@ def generate_covariance_matrix(num_candidates):
     return cov
 
 
-def generate_edge_ordered_tournament_infinite_limit(num_candidates): 
+def generate_edge_ordered_tournament_infinite_limit(num_candidates, cov_matrix = None): 
     """
     Using the ideas from Section 9 of the paper 
     *An Analysis of Random Elections with Large Numbers of Voters* by Matthew Harrison-Trainor 
@@ -157,7 +156,7 @@ def generate_edge_ordered_tournament_infinite_limit(num_candidates):
     """
     
     candidates = range(num_candidates)
-    cov_matrix = generate_covariance_matrix(num_candidates)
+    cov_matrix = cov_matrix if cov_matrix is not None else generate_covariance_matrix(num_candidates)
     # random_var is a random variable with the multivariate normal distribution of margin graphs
     random_var = multivariate_normal(None, cov_matrix)
     rv = random_var.rvs()
