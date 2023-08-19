@@ -18,3 +18,4 @@ tqdm
 pandas
 nashpy
 seaborn
+numba

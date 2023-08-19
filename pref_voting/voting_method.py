@@ -9,7 +9,7 @@
 
 import functools
 import numpy as np
-# from numba import jit # Remove until numba supports python 3.11
+from numba import jit # Remove until numba supports python 3.11
 import random
 
 class VotingMethod(object): 
@@ -78,7 +78,7 @@ def vm(name = None):
         return VotingMethod(f, name=name)
     return wrapper
 
-#@jit(fastmath=True)
+@jit(nopython=True, fastmath=True)
 def isin(arr, val):
     """compiled function testing if the value val is in the array arr
     """
@@ -88,7 +88,7 @@ def isin(arr, val):
             return True
     return False
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _num_rank_first(rankings, rcounts, cands_to_ignore, cand):
     """The number of voters that rank candidate cand first after ignoring the candidates in 
     cands_to_ignore
@@ -124,7 +124,7 @@ def _num_rank_first(rankings, rcounts, cands_to_ignore, cand):
     return np.sum(is_cand * rcounts) 
 
 
-#@jit(nopython=True)
+@jit(nopython=True, fastmath=True)
 def _num_rank_last(rankings, rcounts, cands_to_ignore, cand):
     """The number of voters that rank candidate cand last after ignoring the candidates in 
     cands_to_ignore

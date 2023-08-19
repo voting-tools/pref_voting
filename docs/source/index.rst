@@ -74,6 +74,7 @@ Contents
 
    axioms_overview
    dominance_axioms
+   variable_voter_axioms
 
 .. toctree::
    :maxdepth: 2
