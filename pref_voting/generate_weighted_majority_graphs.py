@@ -185,6 +185,13 @@ def generate_edge_ordered_tournament_infinite_limit(num_candidates, cov_matrix =
 
 def _enumerate_ceots(num_cands, num_edges, partial_ceot, used_nodes, next_node):
 
+    # Given a partial ceot P, we can extend it with any new edge (A,B) satisfying one of the following conditions:
+
+    # 1. A and B have both already been used in edges in P, but neither (A,B) nor (B,A) is in P;
+    # 2. A has already been used in an edge in P, and B is the next integer after the largest integer in an edge in P.
+    # 3. A is the next integer after the largest integer in an edge in P, and B has already been used in an edge in P;
+    # 4. A is the next integer after the largest integer in an edge in P, and B is the next integer after A.
+
     if len(partial_ceot) == num_edges:
         yield partial_ceot
 
@@ -198,7 +205,7 @@ def _enumerate_ceots(num_cands, num_edges, partial_ceot, used_nodes, next_node):
 
         for n in available_nodes:
 
-            if n == next_node and next_node < num_cands - 1:
+            if n == next_node and next_node < num_cands - 1: # If n == next_node, we are in Case 3 or Case 4 above
                 
                 available_nodes = used_nodes + [next_node + 1]
 
@@ -208,18 +215,18 @@ def _enumerate_ceots(num_cands, num_edges, partial_ceot, used_nodes, next_node):
                 
                     new_ceot = [edge for edge in partial_ceot] + [(n,m)]
 
-                    if not (n == next_node or m == next_node): 
+                    if not (n == next_node or m == next_node): # Then we are in Case 1 above
 
                         yield from _enumerate_ceots(num_cands,num_edges,new_ceot,used_nodes,next_node)
 
-                    if (n == next_node or m == next_node) and not m == next_node + 1:
+                    if (n == next_node or m == next_node) and not m == next_node + 1: # Then we are in Case 2 or 3 above
 
                         new_used_nodes = list(set(used_nodes + [n,m]))
                         new_next_node = next_node + 1
                         
                         yield from _enumerate_ceots(num_cands,num_edges,new_ceot,new_used_nodes,new_next_node)
 
-                    if m == next_node + 1:
+                    if m == next_node + 1: # Then we are in Case 4 above
 
                         new_used_nodes = list(set(used_nodes + [n,m]))
                         new_next_node = next_node + 2
@@ -243,7 +250,7 @@ def enumerate_canonical_edge_ordered_tournaments(num_cands, parity = "even"):
     """
     A *canonical* edge-ordered tournament (ceot) is a representative from an isomorphism class of  
     linearly edge-ordered tournaments.  Enumerate all ceots for ``num_cands`` candidates, representing 
-    a ceot as a ``MaringGraph`` where the margins represent the linear order of the edges.  
+    a ceot as a ``MarginGraph`` where the margins represent the linear order of the edges.  
     
     Args:
         num_cands (int): the number of candidates
