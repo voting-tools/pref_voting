@@ -277,8 +277,9 @@ def bootstrap_cia(
 
     """
     
+    num_gen_samples = 0
     # Generate initial samples
-    samples = generate_samples(num_samples = initial_trials)
+    samples = generate_samples(num_samples = initial_trials, num_gen_samples = num_gen_samples)
 
     # Process the results
     values = process_samples(samples)
@@ -303,12 +304,16 @@ def bootstrap_cia(
 
     # Continue running simulations until the confidence interval is narrow enough
     num_trials = initial_trials
+    num_gen_samples += 1
     while np.any(half_widths > precision):
         if verbose:
             print("Number of trials:", num_trials)
-            print(f"Remaining half widths > {precision}:", np.sum(half_widths > precision))
+            print(f"Remaining half widths greater than {precision}:", np.sum(half_widths > precision))
+            print(f"Half widths that are still greater than {precision}:\n",half_widths[half_widths > precision])
 
-        new_samples = generate_samples(num_samples = step_trials)
+        new_samples = generate_samples(num_samples = step_trials, num_gen_samples = num_gen_samples)
+        num_gen_samples += 1
+
         samples = np.concatenate((samples, new_samples), axis=averaging_axis)
         num_trials += step_trials
 

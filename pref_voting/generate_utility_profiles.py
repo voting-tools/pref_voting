@@ -48,7 +48,7 @@ def generate_utility_profile_uniform(num_candidates, num_voters, num_profiles = 
     
     return uprofs if num_profiles > 1 else uprofs[0]
 
-def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1, normalize = None):
+def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1, normalize = None, num_profiles = 1):
     """
     Generate a utility profile where each voter assigns a random number drawn from a normal distribution with a randomly chosen mean (between 0 and 1) with standard deviation ``std`` to each candidate.   
     
@@ -61,24 +61,28 @@ def generate_utility_profile_normal(num_candidates, num_voters, std = 0.1, norma
     Returns:
         UtilityProfile: A utility profile.
     """
-
-    utilities = list()
     
     mean_utilities = {c: np.random.uniform(0, 1) for c in range(num_candidates)}
-    utilities = [
-        {c: np.random.normal(mean_utilities[c], std) 
-         for c in range(num_candidates)} 
-         for _ in range(num_voters)]
+    cand_utils = {c: np.random.normal(mean_utilities[c], std, size=(num_profiles, num_voters)) for c in range(num_candidates)}
     
     if normalize == "range": 
-        return UtilityProfile(utilities).normalize_by_range()
+        uprofs = [UtilityProfile([{c: cand_utils[c][pidx][vidx] 
+                                   for c in range(num_candidates)} 
+                                   for vidx in range(num_voters)]).normalize_by_range() 
+                                   for pidx in range(num_profiles)]
     elif normalize == "score":
-        return UtilityProfile(utilities).normalize_by_standard_score()
+        uprofs = [UtilityProfile([{c: cand_utils[c][pidx][vidx] 
+                                   for c in range(num_candidates)} 
+                                   for vidx in range(num_voters)]).normalize_by_standard_score() 
+                                   for pidx in range(num_profiles)]
     else: # do not normalize
-        return UtilityProfile(utilities)
+        uprofs = [UtilityProfile([{c: cand_utils[c][pidx][vidx] 
+                                   for c in range(num_candidates)} 
+                                   for vidx in range(num_voters)]) 
+                                   for pidx in range(num_profiles)]
 
 
-
+    return uprofs if num_profiles > 1 else uprofs[0]
 utility_functions = {
     "RM": {
         "func": mixed_rm_utility,
