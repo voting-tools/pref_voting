@@ -121,3 +121,59 @@ def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profil
                             for pidx in range(num_profiles)]
     
     return profs[0] if num_profiles == 1 else profs
+
+
+def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
+        cand_clusters, 
+        num_voters,
+        voter_distributions, 
+        num_profiles = 1):
+    """
+    Generates a spatial profile with polarized clusters of candidates and voters.   
+    
+    Parameters
+    ----------
+    cand_clusters : list
+        A list of tuples of the form (mean, covariance, number of candidates) for each cluster of candidates.
+    num_voters : int
+        The number of voters.
+    voter_distributions : list
+        A list of tuples of the form (mean, covariance,) for each distribution of voters.
+    num_profiles : int, optional
+        The number of profiles to generate. The default is 1.
+
+    Returns
+    -------
+    SpatialProfile
+        A spatial profile with polarized clusters of candidates and voters.
+    """
+
+    cand_samples = list()
+    total_num_cands = 0
+    for cand_cluster in cand_clusters:
+        cand_mean, cand_cov, num_cands = cand_cluster
+        total_num_cands += num_cands
+        cluster_samples = np.random.multivariate_normal(cand_mean, cand_cov, 
+                                                        size=(num_profiles,num_cands))
+        if len(cand_samples) == 0:
+            cand_samples = cluster_samples
+        else:
+            cand_samples = np.concatenate([cand_samples, cluster_samples], axis=1)
+
+    all_potential_voters = list()
+    for voter_distribution in voter_distributions:
+        voter_mean, voter_cov = voter_distribution
+        all_potential_voters.append(np.random.multivariate_normal(voter_mean, voter_cov, size=(num_profiles, num_voters)))
+
+    # for each profile, randomly assign voters to clusters
+
+    #voters = range(num_voters)
+
+    voters_clusters_assignment = np.random.choice(len(all_potential_voters), size=(num_profiles, num_voters))
+    profs = [SpatialProfile({cidx: cand_samples[pidx][cidx]
+                           for cidx in range(total_num_cands)},
+                           {vidx: all_potential_voters[voters_clusters_assignment[pidx][vidx]][pidx][vidx]
+                            for vidx in range(num_voters)}) 
+                            for pidx in range(num_profiles)]
+    
+    return profs[0] if num_profiles == 1 else profs
