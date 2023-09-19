@@ -270,17 +270,64 @@ def compose(vm1, vm2):
 
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name}")
 
-smith_minimax = compose(top_cycle, minimax)
-smith_minimax.set_name("Smith-Minimax")
 
-condorcet_plurality = compose(condorcet, plurality)
-"""
-Return the Condorcet winner if one exists, otherwise return the plurality winners.
-"""
-condorcet_plurality.set_name("Condorcet Plurality")
+def _compose(vm1, vm2):
+    """
+    Same as compose, but used to make it easier to document composed voting methods.
+    """
 
-copeland_local_borda = compose(copeland, borda)
-copeland_local_borda.set_name("Copeland-Local-Borda")
+    def _vm(edata, curr_cands=None):
+
+        vm1_ws = vm1(edata, curr_cands=curr_cands)
+
+        return vm2(edata, curr_cands=vm1_ws)
+
+    return _vm
+
+@vm(name="Condorcet Plurality")
+def condorcet_plurality(profile, curr_cands = None):
+    """Return the Condorcet winner if one exists, otherwise return the plurality winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+
+    return _compose(condorcet, plurality)(profile, curr_cands=curr_cands)
+
+
+@vm(name="Smith-Minimax")
+def smith_minimax(profile, curr_cands = None):
+    """Return the Minimax winner after restricting to the Smith set.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+
+    return _compose(top_cycle, minimax)(profile, curr_cands=curr_cands)
+
+@vm(name="Copeland-Local-Borda")
+def copeland_local_borda(profile, curr_cands = None):
+    """Return the Borda winner after restricting to the Copeland winners.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+    return _compose(copeland, borda)(profile, curr_cands=curr_cands)
 
 def voting_method_with_scoring_tiebreaker(vm, score, name):
 
@@ -307,7 +354,14 @@ def voting_method_with_scoring_tiebreaker(vm, score, name):
 
         return sorted([w for w in vm_ws if cand_scores[w] == max_ws_score])
 
-    return VotingMethod(_vm, name=name) 
+    return _vm 
+
+@vm(name="Copeland-Global-Borda")
+def copeland_global_borda(profile, curr_cands=None):
+    """From the Copeland winners, return the candidate with the largest *global* Borda score.
+    """
+
+    return voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")(profile, curr_cands=curr_cands)
 
 copeland_global_borda = voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")
 

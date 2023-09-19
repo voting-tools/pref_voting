@@ -56,3 +56,39 @@ Combined Methods
 .. autofunction:: pref_voting.combined_methods.compose
 
 ```
+
+## Condorcet Plurality
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.condorcet_plurality
+
+```
+
+## Smith-Minimax
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.smith_minimax
+
+```
+
+## Copeland-Local-Borda
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.copeland_local_borda
+
+```
+
+## Copeland-Global-Borda
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.copeland_global_borda
+
+```
+
+
+
+
