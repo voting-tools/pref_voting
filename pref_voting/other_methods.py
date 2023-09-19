@@ -699,16 +699,19 @@ def bracket_voting(profile, curr_cands = None):
     .. warning::
         This method is only defined for profiles with at least 4 candidates.
 
+    .. note::
+        This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
+
     """
     cands = curr_cands if curr_cands else profile.candidates
 
     assert len(cands) >= 4, "Bracket voting requires at least 4 candidates"
     
-    # Generate a random tie breaking orderings of cands
+    # Generate a random tie breaking ordering of cands
     tie_breaking_ordering = cands.copy()
     random.shuffle(tie_breaking_ordering)
 
-    plurality_scores = profile.plurality_scores(cands)
+    plurality_scores = profile.plurality_scores(curr_cands = cands)
     descending_plurality_scores = sorted(plurality_scores.values(), reverse=True)
     
     # If there is a tie for max plurality score, the first seed is the candidate with max plurality score who appears first in the tie breaking ordering
