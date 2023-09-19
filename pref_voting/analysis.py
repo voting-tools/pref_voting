@@ -72,9 +72,9 @@ def find_profiles_with_different_winners(
     return profiles
 
 
-def record_condorcet_efficiency_data(vms, num_cands, num_voters, probmod, t):
+def record_condorcet_efficiency_data(vms, num_cands, num_voters, probmod, probmod_param, t):
 
-    prof = generate_profile(num_cands, num_voters, probmod=probmod)
+    prof = generate_profile(num_cands, num_voters, probmod=probmod, probmod_param=probmod_param)
     cw = prof.condorcet_winner()
 
     return {
@@ -88,6 +88,7 @@ def condorcet_efficiency_data(
     numbers_of_candidates=[3, 4, 5],
     numbers_of_voters=[4, 10, 20, 50, 100, 500, 1000],
     probmods=["IC"],
+    probmod_params=None,
     num_trials=10000,
     use_parallel=True,
     num_cpus=12,
@@ -106,6 +107,10 @@ def condorcet_efficiency_data(
 
     """
 
+    probmod_params_list = [None]*len(probmods) if probmod_params is None else probmod_params
+
+    assert len(probmod_params_list) == len(probmods), "probmod_params must be a list of the same length as probmods"
+
     if use_parallel:
         pool = Pool(num_cpus)
 
@@ -114,11 +119,12 @@ def condorcet_efficiency_data(
         "num_cands": list(),
         "num_voters": list(),
         "probmod": list(),
+        "probmod_param":list(),
         "num_trials": list(),
         "percent_condorcet_winners": list(),
         "condorcet_efficiency": list(),
     }
-    for probmod in probmods:
+    for probmod,probmod_param in zip(probmods, probmod_params_list):
         for num_cands in numbers_of_candidates:
             for num_voters in numbers_of_voters:
 
@@ -129,6 +135,7 @@ def condorcet_efficiency_data(
                     num_cands,
                     num_voters,
                     probmod,
+                    probmod_param
                 )
 
                 if use_parallel:
@@ -148,6 +155,7 @@ def condorcet_efficiency_data(
                     data_for_df["num_cands"].append(num_cands)
                     data_for_df["num_voters"].append(num_voters)
                     data_for_df["probmod"].append(probmod)
+                    data_for_df["probmod_param"].append(probmod_param)
                     data_for_df["num_trials"].append(num_trials)
                     data_for_df["percent_condorcet_winners"].append(
                         num_cw / num_trials

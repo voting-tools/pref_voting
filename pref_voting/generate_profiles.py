@@ -10,6 +10,8 @@
 
 from itertools import combinations
 from pref_voting.profiles import Profile
+from pref_voting.generate_spatial_profiles import generate_spatial_profile
+from pref_voting.generate_utility_profiles import linear_utility
 import numpy as np  # for the SPATIAL model
 import math
 import random
@@ -434,6 +436,14 @@ def generate_profile(num_cands, num_voters, probmod="IC", probmod_param=None):
         create_rankings = prob_models[probmod]["func"]
         _probmod_param = prob_models[probmod]["param"]
 
+    elif probmod == "Spatial":
+
+        num_dims = probmod_param[0] if probmod_param is not None else 2
+        voter_utility = probmod_param[1] if probmod_param is not None else linear_utility
+
+        sprof = generate_spatial_profile(num_cands, num_voters, num_dims=num_dims)
+
+        return sprof.to_utility_profile(utility_function=voter_utility).to_ranking_profile()
     elif probmod == "URN":
 
         create_rankings = create_rankings_urn
