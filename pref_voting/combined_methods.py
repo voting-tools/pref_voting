@@ -359,11 +359,18 @@ def voting_method_with_scoring_tiebreaker(vm, score, name):
 @vm(name="Copeland-Global-Borda")
 def copeland_global_borda(profile, curr_cands=None):
     """From the Copeland winners, return the candidate with the largest *global* Borda score.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
     """
 
     return voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")(profile, curr_cands=curr_cands)
 
-copeland_global_borda = voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")
 
 combined_vms = [
     daunou, 
