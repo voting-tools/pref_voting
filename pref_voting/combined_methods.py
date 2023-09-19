@@ -11,7 +11,7 @@ from pref_voting.scoring_methods import plurality, borda
 from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, instant_runoff_put, instant_runoff_for_truncated_linear_orders
 from pref_voting.profiles import _find_updated_profile, _num_rank
 
-from pref_voting.c1_methods import smith_set, copeland, top_cycle
+from pref_voting.c1_methods import condorcet, smith_set, copeland, top_cycle
 from pref_voting.margin_based_methods import minimax
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
@@ -273,6 +273,9 @@ def compose(vm1, vm2):
 smith_minimax = compose(top_cycle, minimax)
 smith_minimax.set_name("Smith-Minimax")
 
+condorcet_plurality = compose(condorcet, plurality)
+condorcet_plurality.set_name("Condorcet Plurality")
+
 copeland_local_borda = compose(copeland, borda)
 copeland_local_borda.set_name("Copeland-Local-Borda")
 
@@ -313,6 +316,7 @@ combined_vms = [
     smith_irv, 
     smith_irv_put, 
     smith_minimax,
+    condorcet_plurality,
     copeland_local_borda,
-    copeland_global_borda
+    copeland_global_borda,
     ]
