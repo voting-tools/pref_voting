@@ -685,6 +685,67 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
     return sorted([c for c in candidates if cand_scores[c] >= max_score])
 
 
+@vm(name = "Bracket Voting")
+def bracket_voting(profile, curr_cands = None):
+    """A version of bracket voting as proposed by Edward B. Foley. The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. warning::
+        This method is only defined for profiles with at least 4 candidates.
+
+    .. note::
+        This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
+
+    """
+    cands = curr_cands if curr_cands else profile.candidates
+
+    assert len(cands) >= 4, "Bracket voting requires at least 4 candidates"
+    
+    # Generate a random tie breaking ordering of cands
+    tie_breaking_ordering = cands.copy()
+    random.shuffle(tie_breaking_ordering)
+
+    plurality_scores = profile.plurality_scores(curr_cands = cands)
+    descending_plurality_scores = sorted(plurality_scores.values(), reverse=True)
+    
+    # If there is a tie for max plurality score, the first seed is the candidate with max plurality score who appears first in the tie breaking ordering
+    potential_first_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[0]]
+    first_seed = min(potential_first_seeds, key = lambda c: tie_breaking_ordering.index(c)) 
+
+    potential_second_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[1] and c != first_seed]
+    second_seed = min(potential_second_seeds, key = lambda c: tie_breaking_ordering.index(c))
+
+    potential_third_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[2] and c not in [first_seed, second_seed]]
+    third_seed = min(potential_third_seeds, key = lambda c: tie_breaking_ordering.index(c))
+
+    potential_fourth_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[3] and c not in [first_seed, second_seed, third_seed]]
+    fourth_seed = min(potential_fourth_seeds, key = lambda c: tie_breaking_ordering.index(c))
+
+    # Ties in semi-final head-to-head matches are broken in favor of the higher-seeded candidate
+    one_four_winner = first_seed if profile.margin(first_seed, fourth_seed) >= 0 else fourth_seed
+    one_four_winner_seed = 1 if one_four_winner == first_seed else 4
+
+    two_three_winner = second_seed if profile.margin(second_seed, third_seed) >= 0 else third_seed
+    two_three_winner_seed = 2 if two_three_winner == second_seed else 3
+
+    if profile.margin(one_four_winner, two_three_winner) > 0:
+        winner = one_four_winner
+
+    elif profile.margin(one_four_winner, two_three_winner) < 0:
+        winner = two_three_winner
+
+    # Ties in the final head-to-head match are broken in favor of the higher-seeded candidate
+    else:
+        winner = one_four_winner if one_four_winner_seed < two_three_winner_seed else two_three_winner
+
+    return [winner]
+
 other_vms = [
     banks,
     slater,
@@ -692,5 +753,6 @@ other_vms = [
     majority, 
     bucklin,
     simplified_bucklin,
-    weighted_bucklin
+    weighted_bucklin,
+    bracket_voting
 ]
