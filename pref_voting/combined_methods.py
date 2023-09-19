@@ -274,6 +274,9 @@ smith_minimax = compose(top_cycle, minimax)
 smith_minimax.set_name("Smith-Minimax")
 
 condorcet_plurality = compose(condorcet, plurality)
+"""
+Return the Condorcet winner if one exists, otherwise return the plurality winners.
+"""
 condorcet_plurality.set_name("Condorcet Plurality")
 
 copeland_local_borda = compose(copeland, borda)

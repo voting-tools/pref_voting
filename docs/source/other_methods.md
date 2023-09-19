@@ -92,4 +92,13 @@ Other Methods
 
 ```
 
+### Bracket Voting
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.bracket_voting
+
+```
+
+
 
