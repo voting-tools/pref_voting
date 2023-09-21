@@ -252,6 +252,94 @@ def axiom_violations_data(
     return pd.DataFrame(data_for_df)
 
 
+def estimated_variance_of_sampling_dist( 
+    values_for_each_experiment,
+    mean_for_each_experiment=None):
+    # values_for_each_vm is a 2d numpy array
+
+    mean_for_each_experiment = np.nanmean(values_for_each_experiment, axis=1) if mean_for_each_experiment is not None else mean_for_each_experiment
+
+    num_val_for_each_exp = np.sum(~np.isnan(values_for_each_experiment), axis=1)
+    
+    row_means_reshaped = mean_for_each_experiment[:, np.newaxis]
+    return np.where(
+        num_val_for_each_exp * (num_val_for_each_exp - 1) != 0.0,
+        (1 / (num_val_for_each_exp * (num_val_for_each_exp - 1))) * np.nansum(
+            (values_for_each_experiment - row_means_reshaped) ** 2, 
+            axis=1),
+            np.nan
+            )
+
+def estimated_std_error(values_for_each_experiment, mean_for_each_experiment=None):
+    # values_for_each_vm is a 2d numpy array
+    return np.sqrt(estimated_variance_of_sampling_dist(values_for_each_experiment, mean_for_each_experiment=mean_for_each_experiment))
+
+def means_with_estimated_standard_error(
+        generate_samples, 
+        max_std_error, 
+        initial_trials=1000, 
+        step_trials=1000,
+        min_num_trials=10_000, 
+        max_num_trials=None,
+        verbose=False
+        ):
+    """
+    For each list of numbers produced by generate_samples, returns the means, the [estimated standard error](https://en.wikipedia.org/wiki/Standard_error) of the means, the variance of the samples, and the total number of trials.  
+
+    Uses the estimated_variance_of_sampling_dist (as described in [https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html](https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html)) and estimated_std_error functions. 
+    
+    Args:
+        generate_samples (function): A function that generates samples. It should take a single argument num_profiles and return a 2d numpy array of samples.
+        max_std_error (float): The desired estimated standard error for the mean of each sample.
+        initial_trials (int, default=1000): The number of samples to initially generate.
+        step_trials (int, default=1000): The number of samples to generate in each step.
+        min_num_trials (int, default=10000): The minimum number of trials to run.
+        max_num_trials (int, default=None): If not None, then the maximum number of trials to run.
+        verbose (bool, default=False): If True, then print progress information.
+
+    Returns:
+        A tuple (means, est_std_errors, variances, num_trials) where means is an array of the means of the samples, est_std_errors is an array of estimated standard errors of the samples,  variances is an array of the variances of the samples, and num_trials is the total number of trials.
+
+    """
+    
+    # samples is a 2d numpy array
+    samples = generate_samples(num_profiles = initial_trials)
+    
+    means = np.nanmean(samples, axis=1)
+    variances = np.nanvar(samples, axis=1)
+    est_std_errors = estimated_std_error( 
+        samples, 
+        mean_for_each_experiment=means)
+        
+    if verbose:
+        print("Initial number of trials:", initial_trials)
+        print(f"Remaining estimated standard errors greater than {max_std_error}:", np.sum(est_std_errors > max_std_error))
+        print(f"Estimated standard errors that are still greater than {max_std_error}:\n",est_std_errors[est_std_errors > max_std_error])
+
+    num_trials = initial_trials
+    
+    while (np.isnan(est_std_errors).any() or np.any(est_std_errors > max_std_error) or (num_trials < min_num_trials)) and (max_num_trials is None or num_trials < max_num_trials):
+        if verbose:
+            print("Number of trials:", num_trials)
+            print(f"Remaining estimated standard errors greater than {max_std_error}:", np.sum(est_std_errors > max_std_error))
+            print(f"Estimated standard errors that are still greater than {max_std_error}:\n",est_std_errors[est_std_errors > max_std_error])
+
+        new_samples = generate_samples(num_profiles = step_trials)
+
+        samples = np.concatenate((samples, new_samples), axis=1)
+
+        num_trials += step_trials
+
+        means = np.nanmean(samples, axis=1)
+        variances = np.nanvar(samples, axis=1)
+        est_std_errors = estimated_std_error(
+            samples, 
+            mean_for_each_experiment=means)
+
+    return means, est_std_errors, variances, num_trials
+
+
+#### Bootstrap confidence interval analysis (to be removed) ####
 
 def bootstrap_cia(
         generate_samples,

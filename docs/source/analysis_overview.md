@@ -38,13 +38,13 @@ Functions that can be used to compare and contrast voting methods.
 
 ```
 
-## Bootstrap Confidence Intervals Analysis  
+## Means with Estimated Standard Error  
 
 
 ```{eval-rst}
 
 
-.. autofunction:: pref_voting.analysis.bootstrap_cia
+.. autofunction:: pref_voting.analysis.means_with_estimated_standard_error
 
 
 ```
