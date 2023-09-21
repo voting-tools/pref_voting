@@ -284,9 +284,9 @@ def means_with_estimated_standard_error(
         verbose=False
         ):
     """
-    For each list of numbers produced by generate_samples, returns the means, the [estimated standard error](https://en.wikipedia.org/wiki/Standard_error) of the means, the variance of the samples, and the total number of trials.  
+    For each list of numbers produced by generate_samples, returns the means, the estimated standard error (https://en.wikipedia.org/wiki/Standard_error) of the means, the variance of the samples, and the total number of trials.  
 
-    Uses the estimated_variance_of_sampling_dist (as described in [https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html](https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html)) and estimated_std_error functions. 
+    Uses the estimated_variance_of_sampling_dist (as described in https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html) and estimated_std_error functions. 
     
     Args:
         generate_samples (function): A function that generates samples. It should take a single argument num_profiles and return a 2d numpy array of samples.
