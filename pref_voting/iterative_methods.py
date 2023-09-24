@@ -533,6 +533,7 @@ def plurality_with_runoff_put(profile, curr_cands = None):
     max_plurality_score = max(plurality_scores.values())
     
     first = [c for c in curr_cands if plurality_scores[c] == max_plurality_score]
+
     second = list()
     if len(first) == 1:
         second_plurality_score = list(reversed(sorted(plurality_scores.values())))[1]

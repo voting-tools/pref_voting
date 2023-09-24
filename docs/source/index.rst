@@ -49,7 +49,13 @@ Contents
    profiles_with_ties
    utility_profiles
    spatial_profiles
+   grade_profiles
    margin_graphs
+   
+.. toctree::
+   :maxdepth: 2
+   :caption: Generating Elections
+
    generate_profiles
    generate_weighted_majority_graphs
    generate_utility_profiles
@@ -67,6 +73,7 @@ Contents
    combined_methods
    other_methods
    utility_methods
+   grade_methods
 
 .. toctree::
    :maxdepth: 2

@@ -289,7 +289,7 @@ def means_with_estimated_standard_error(
     Uses the estimated_variance_of_sampling_dist (as described in https://berkeley-stat243.github.io/stat243-fall-2023/units/unit9-sim.html) and estimated_std_error functions. 
     
     Args:
-        generate_samples (function): A function that generates samples. It should take a single argument num_profiles and return a 2d numpy array of samples.
+        generate_samples (function): A function that a 2d numpy array of samples.  It should take two arguments:  num_samples and step (only used if samples are drawn from a pre-computed source in order to ensure that we get new samples during the while loop below).
         max_std_error (float): The desired estimated standard error for the mean of each sample.
         initial_trials (int, default=1000): The number of samples to initially generate.
         step_trials (int, default=1000): The number of samples to generate in each step.
@@ -303,7 +303,8 @@ def means_with_estimated_standard_error(
     """
     
     # samples is a 2d numpy array
-    samples = generate_samples(num_profiles = initial_trials)
+    step = 0
+    samples = generate_samples(num_samples = initial_trials, step = step)
     
     means = np.nanmean(samples, axis=1)
     variances = np.nanvar(samples, axis=1)
@@ -324,7 +325,8 @@ def means_with_estimated_standard_error(
             print(f"Remaining estimated standard errors greater than {max_std_error}:", np.sum(est_std_errors > max_std_error))
             print(f"Estimated standard errors that are still greater than {max_std_error}:\n",est_std_errors[est_std_errors > max_std_error])
 
-        new_samples = generate_samples(num_profiles = step_trials)
+        step += 1
+        new_samples = generate_samples(num_samples=step_trials, step=step)
 
         samples = np.concatenate((samples, new_samples), axis=1)
 

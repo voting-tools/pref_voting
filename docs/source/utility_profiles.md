@@ -6,7 +6,7 @@ Profiles of utility values for candidates.
 ## Utility Class
 
 ```{eval-rst}
-.. autoclass:: pref_voting.utility_profiles.Utility
+.. autoclass:: pref_voting.mappings.Utility
     :members: 
 ```
 
