@@ -21,7 +21,15 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class _Mapping(object): 
     """
-    A partial function on a set of items.  
+    A partial function on a set of items. 
+
+    Attributes:
+        mapping: a dictionary representing the mapping
+        domain: the domain of the mapping
+        codomain: the codomain of the mapping
+        item_map: a dictionary mapping items to their names
+        val_map: a dictionary mapping values to their names
+        compare_function: a function used to compare values 
     """
     def __init__(
         self, 

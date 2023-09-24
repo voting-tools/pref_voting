@@ -45,11 +45,12 @@ Contents
    :caption: Elections
 
    edata_overview
+   ballots
    profiles
    profiles_with_ties
+   grade_profiles
    utility_profiles
    spatial_profiles
-   grade_profiles
    margin_graphs
    
 .. toctree::
