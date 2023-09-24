@@ -1,11 +1,11 @@
 Grade Methods
 =======================================
 
-## Score Voting
+## Score Vote
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.grade_methods.score_voting
+.. autofunction:: pref_voting.grade_methods.score_vote
 
 ```
 
