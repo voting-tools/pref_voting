@@ -19,6 +19,14 @@ from pref_voting.rankings import Ranking
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+# some helper functions
+
+def val_map_function(v, val_map):
+    return "None" if v is None else val_map[v]
+
+def default_compare_function(v1, v2):
+    return  (v1 > v2) - (v2 > v1)
+
 class _Mapping(object): 
     """
     A partial function on a set of items. 
@@ -51,9 +59,11 @@ class _Mapping(object):
         self.domain = domain if domain is not None else sorted(list(mapping.keys())) # if domain is None, then it is assumed to be all keys (so mapping is a total function)
         self.codomain = codomain # if codomain is None, then it is assumed to be any number
         self.item_map = item_map if item_map is not None else {x:str(x) for x in self.domain} # a dictionary mapping items in the domain to their names
-        self.val_map = (lambda v : "None" if v is None else val_map[v]) if val_map is not None else (lambda v: str(v)) # a function mapping values to their names
+
+        val_map = val_map if val_map is not None else {v:str(v) for v in self.mapping.values()} # a dictionary mapping values to their names
+        self.val_map = functools.partial(val_map_function, val_map = val_map) # a function mapping values to their names
         
-        self.compare_function = compare_function if compare_function is not None else lambda v1, v2: (v1 > v2) - (v2 > v1)
+        self.compare_function = compare_function if compare_function is not None else default_compare_function
 
     def val(self, x): 
         """
@@ -251,7 +261,7 @@ class Utility(_Mapping):
 
         self.cmap = {x:str(x) for x in self.domain} if "cmap" not in kwargs else kwargs["cmap"]
 
-        assert self.domain is None or all([x in self.domain for x in utils.keys()]), f"The domain {domain} must contain all elements in the utility map {utils}"
+        assert self.domain is None or all([x in self.domain for x in utils.keys()]), f"The domain {self.domain} must contain all elements in the utility map {utils}"
         
         super().__init__(utils, domain=self.domain, item_map = self.cmap)
 

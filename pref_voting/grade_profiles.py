@@ -79,7 +79,7 @@ class GradeProfile(object):
 
         self.use_grade_order = grade_order is not None
 
-        self.compare_function = lambda v1, v2: (v1 < v2) - (v2 < v1) if grade_order is None else lambda v1, v2: (grade_order.index(v1) < grade_order.index(v2)) - (grade_order.index(v2) < grade_order.index(v1))
+        self.compare_function = lambda v1, v2: (v1 > v2) - (v2 > v1) if grade_order is None else lambda v1, v2: (grade_order.index(v1) < grade_order.index(v2)) - (grade_order.index(v2) < grade_order.index(v1))
 
         self.gmap = gmap if gmap is not None else {g: str(g) for g in self.grades}
         """The candidate map is a dictionary associating an alternative with the name used when displaying a alternative."""
@@ -177,7 +177,7 @@ class GradeProfile(object):
 
         if use_lower:
             return (self.grade_order[-1 * median_grades[0]] if self.use_grade_order else median_grades[0]) if self.has_grade(c) else None
-        elif average_ties:
+        elif use_average:
             return (np.average([self.grade_order[-1 * m] for m in median_grades]) if self.use_grade_order else np.average(median_grades)) if self.has_grade(c) else None
         else:
             return ([self.grade_order[-1 * m] for m in median_grades] if self.use_grade_order else median_grades) if self.has_grade(c) else None
@@ -210,6 +210,53 @@ class GradeProfile(object):
             item_map=self.cmap, 
             compare_function=self.compare_function
         )
+
+
+    def proportion_with_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a ``grade`` to ``cand`` .
+        """
+
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+        num_with_higher_grade = 0
+        for g,num in zip(*self.grades_counts):
+            if self.compare_function(g(cand),grade) == 0: 
+                num_with_higher_grade += num
+        return num_with_higher_grade / self.num_voters
+
+
+    def proportion_with_higher_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a strictly higher grade to ``cand`` than ``grade``.
+        """
+        
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+        num_with_higher_grade = 0
+        for g,num in zip(*self.grades_counts):
+            if self.compare_function(g(cand),grade) == 1: 
+                num_with_higher_grade += num
+        return num_with_higher_grade / self.num_voters
+
+
+    def proportion_with_lower_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a strictly lower grade to ``cand`` than ``grade``.
+        """
+
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+
+        num_with_lower_grade = 0
+        for g,num in zip(*self.grades_counts):
+            if self.compare_function(g(cand),grade) == -1: 
+                num_with_lower_grade += num
+        return num_with_lower_grade / self.num_voters
+
 
     def to_ranking_profile(self): 
         """Return a ranking profile (a :class:ProfileWithTies) corresponding to the profile."""

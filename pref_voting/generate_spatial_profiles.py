@@ -138,7 +138,7 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
     num_voters : int
         The number of voters.
     voter_distributions : list
-        A list of tuples of the form (mean, covariance,) for each distribution of voters.
+        A list of tuples of the form (mean, covariance, prob) for each distribution of voters, where prob is the probability that a voter is assigned to this cluster.
     num_profiles : int, optional
         The number of profiles to generate. The default is 1.
 
@@ -153,23 +153,24 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
     for cand_cluster in cand_clusters:
         cand_mean, cand_cov, num_cands = cand_cluster
         total_num_cands += num_cands
-        cluster_samples = np.random.multivariate_normal(cand_mean, cand_cov, 
-                                                        size=(num_profiles,num_cands))
+        cluster_samples = np.random.multivariate_normal(cand_mean, cand_cov, size=(num_profiles,num_cands))
         if len(cand_samples) == 0:
             cand_samples = cluster_samples
         else:
             cand_samples = np.concatenate([cand_samples, cluster_samples], axis=1)
 
     all_potential_voters = list()
+    voter_cluster_probs = list()
     for voter_distribution in voter_distributions:
-        voter_mean, voter_cov = voter_distribution
+        voter_mean, voter_cov, prob = voter_distribution
         all_potential_voters.append(np.random.multivariate_normal(voter_mean, voter_cov, size=(num_profiles, num_voters)))
+        voter_cluster_probs.append(prob)
 
     # for each profile, randomly assign voters to clusters
 
     #voters = range(num_voters)
 
-    voters_clusters_assignment = np.random.choice(len(all_potential_voters), size=(num_profiles, num_voters))
+    voters_clusters_assignment = np.random.choice(len(all_potential_voters), size=(num_profiles, num_voters), p = voter_cluster_probs)
     profs = [SpatialProfile({cidx: cand_samples[pidx][cidx]
                            for cidx in range(total_num_cands)},
                            {vidx: all_potential_voters[voters_clusters_assignment[pidx][vidx]][pidx][vidx]
