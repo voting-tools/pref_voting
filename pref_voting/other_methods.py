@@ -746,6 +746,37 @@ def bracket_voting(profile, curr_cands = None):
 
     return [winner]
 
+@vm(name = "Consensus Scoring")
+def consensus_scoring(profile, curr_cands = None):
+    """To calculate the consensus score of a candidate A, set A's initial score to be the number of first-place votes for A, and then for every other candidate B, if A beats B head-to-head, add to A’s score the number of first-place votes for B. The candidate with the highest consensus score wins. 
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note::
+        Devised by W. Holliday as a simple example of a method that weights each of A's head-to-head wins by some measure of the electoral support for the losing candidate (in this case, number of first-place votes). Always elects a Condorcet winner if one exits and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote.
+
+    """
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+    # Calculate the consensus score for each candidate
+    consensus_scores = {cand: profile.plurality_scores(curr_cands)[cand] for cand in curr_cands}
+
+    for cand in curr_cands:
+        for other_cand in curr_cands:
+            if profile.margin(cand, other_cand) > 0:
+                consensus_scores[cand] += profile.plurality_scores(curr_cands)[other_cand]
+    
+    # Find the candidates with the highest consensus score
+    max_score = max(consensus_scores.values())
+    winners = [cand for cand in curr_cands if consensus_scores[cand] == max_score]
+
+    return winners
+
 other_vms = [
     banks,
     slater,
@@ -754,5 +785,6 @@ other_vms = [
     bucklin,
     simplified_bucklin,
     weighted_bucklin,
-    bracket_voting
+    bracket_voting,
+    consensus_scoring
 ]
