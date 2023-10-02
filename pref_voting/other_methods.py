@@ -758,7 +758,7 @@ def consensus_scoring(profile, curr_cands = None):
         A sorted list of candidates
 
     .. note::
-        Devised by W. Holliday as a simple example of a method that weights each of A's head-to-head wins by some measure of the electoral support for the losing candidate (in this case, number of first-place votes). Always elects a Condorcet winner if one exits and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote.
+        Devised by W. Holliday as an example of a simple method that weights each of A's head-to-head wins by some measure of the electoral support for the losing candidate (in this case, number of first-place votes). Always elects a Condorcet winner if one exits and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote.
 
     """
     curr_cands = profile.candidates if curr_cands is None else curr_cands
