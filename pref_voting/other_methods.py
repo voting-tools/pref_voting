@@ -687,7 +687,7 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
 
 @vm(name = "Bracket Voting")
 def bracket_voting(profile, curr_cands = None):
-    """A version of bracket voting as proposed by Edward B. Foley. The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
+    """The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -700,7 +700,7 @@ def bracket_voting(profile, curr_cands = None):
         This method is only defined for profiles with at least 4 candidates.
 
     .. note::
-        This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
+        A version of bracket voting as proposed by Edward B. Foley. This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
 
     """
     cands = curr_cands if curr_cands else profile.candidates
@@ -746,9 +746,9 @@ def bracket_voting(profile, curr_cands = None):
 
     return [winner]
 
-@vm(name = "Consensus Scoring")
-def consensus_scoring(profile, curr_cands = None):
-    """To calculate the consensus score of a candidate A, set A's initial score to be the number of first-place votes for A, and then for every other candidate B, if A beats B head-to-head, add to A’s score the number of first-place votes for B. The candidate with the highest consensus score wins. 
+@vm(name = "Superior Voting")
+def superior_voting(profile, curr_cands = None):
+    """One candidate is superior to another if more ballots rank the first candidate above the second than vice versa. A candidate earns a point from a ballot if they are ranked first on that ballot or they are superior to the candidate ranked first on that ballot. The candidate with the most points wins.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -758,22 +758,21 @@ def consensus_scoring(profile, curr_cands = None):
         A sorted list of candidates
 
     .. note::
-        Devised by W. Holliday as an example of a simple method that weights each of A's head-to-head wins by some measure of the electoral support for the losing candidate (in this case, number of first-place votes). Always elects a Condorcet winner if one exits and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote.
+        Devised by Wesley H. Holliday as a simple Condorcet-compliant method for political elections. Always elects a Condorcet winner if one exists and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote. Edward B. Foley suggested the name 'Superior Voting' because the method is based on the idea that if A is superior to B, then A should get B's first-place votes added to their own.
 
     """
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
-    # Calculate the consensus score for each candidate
-    consensus_scores = {cand: profile.plurality_scores(curr_cands)[cand] for cand in curr_cands}
-
+    # Calculate the points for each candidate
+    points = {cand: profile.plurality_scores(curr_cands)[cand] for cand in curr_cands}
     for cand in curr_cands:
         for other_cand in curr_cands:
             if profile.margin(cand, other_cand) > 0:
-                consensus_scores[cand] += profile.plurality_scores(curr_cands)[other_cand]
+                points[cand] += profile.plurality_scores(curr_cands)[other_cand]
     
-    # Find the candidates with the highest consensus score
-    max_score = max(consensus_scores.values())
-    winners = [cand for cand in curr_cands if consensus_scores[cand] == max_score]
+    # Find the candidates with the most points
+    max_score = max(points.values())
+    winners = [cand for cand in curr_cands if points[cand] == max_score]
 
     return winners
 
@@ -786,5 +785,5 @@ other_vms = [
     simplified_bucklin,
     weighted_bucklin,
     bracket_voting,
-    consensus_scoring
+    superior_voting
 ]
