@@ -748,7 +748,7 @@ def bracket_voting(profile, curr_cands = None):
 
 @vm(name = "Superior Voting")
 def superior_voting(profile, curr_cands = None):
-    """A candidate earns a point for each first-place vote they receive. They also earn a point for each first-place vote given to an inferior candidate, meaning a candidate who is ranked below them more often than above them. The candidate with the most points wins.
+    """One candidate is superior to another if more ballots rank the first candidate above the second than vice versa. A candidate earns a point from a ballot if they are ranked first on that ballot or they are superior to the candidate ranked first on that ballot. The candidate with the most points wins.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
