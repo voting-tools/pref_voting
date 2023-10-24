@@ -1429,6 +1429,44 @@ def essential(edata, curr_cands=None, threshold = 0.0000001):
 
     return sorted([c for c in ml.keys() if ml[c] > threshold])
 
+@vm(name = "Loss-Trimmer Voting")
+def loss_trimmer(edata, curr_cands = None):
+    """Iteratively eliminate the candidate with the largest sum of margins of loss until a Condorcet winner is found. In this version of the method, parallel-universe tiebreaking is used if there are multiple candidates with the largest sum of margins of loss.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a margin method.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note::
+        Method proposed by Richard B. Darlington in "The Case for the Loss-Trimmer Voting System."
+
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    # If there are weak Condorcet winners, return those candidates
+    if edata.weak_condorcet_winner(curr_cands = curr_cands) is not None:
+        return edata.weak_condorcet_winner(curr_cands = curr_cands)
+    
+    # Otherwise, calculate the sum of margins of loss for each candidate
+    sum_of_margins_of_loss = {cand: sum([edata.margin(other_cand, cand) for other_cand in curr_cands if edata.margin(other_cand, cand) > 0]) for cand in curr_cands}
+
+    # Find the candidates with the largest sum of margins of loss
+    max_sum_of_margins_of_loss = max(sum_of_margins_of_loss.values())
+    biggest_losers = [cand for cand in curr_cands if sum_of_margins_of_loss[cand] == max_sum_of_margins_of_loss]
+
+    winners = []
+
+    # For each biggest loser, calculate the winners after removing that candidate. The union of these sets is the set of winners.
+    for bl in biggest_losers:
+        winners_without_bl = loss_trimmer(edata, curr_cands = [cand for cand in curr_cands if cand != bl])
+        winners += winners_without_bl
+
+    return list(set(winners))
+
 
 mg_vms = [
     minimax, 
@@ -1446,6 +1484,7 @@ mg_vms = [
     simple_stable_voting_faster,
     stable_voting,
     stable_voting_faster,
+    loss_trimmer
 ]
 
 
@@ -1465,5 +1504,6 @@ mg_vms_all = [
     simple_stable_voting_faster,
     stable_voting,
     stable_voting_faster,
-    essential
+    essential,
+    loss_trimmer
 ]

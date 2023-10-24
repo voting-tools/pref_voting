@@ -314,7 +314,7 @@ def slater(edata, curr_cands = None):
     return sorted(list(set([r[0] for r in rankings])))
 
 
-## Kemmeny-Young Method 
+## Kemeny-Young Method 
 #
 def kendalltau_dist(rank_a, rank_b):
     rank_a = tuple(rank_a)
@@ -326,7 +326,7 @@ def kendalltau_dist(rank_a, rank_b):
     return tau
 
 
-def _kemmeny_young_rankings(rankings, rcounts, candidates): 
+def _kemeny_young_rankings(rankings, rcounts, candidates): 
     
     rankings_dist = dict()
     for ranking in permutations(candidates): 
@@ -338,9 +338,9 @@ def _kemmeny_young_rankings(rankings, rcounts, candidates):
     
     return lin_orders, min_dist
 
-def kemmeny_young_rankings(profile, curr_cands = None): 
+def kemeny_young_rankings(profile, curr_cands = None): 
     """
-    A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  
+    A Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -356,18 +356,18 @@ def kemmeny_young_rankings(profile, curr_cands = None):
         .. exec_code::
 
             from pref_voting.profiles import Profile
-            from pref_voting.other_methods import kemmeny_young, kemmeny_young_rankings
+            from pref_voting.other_methods import kemeny_young, kemeny_young_rankings
             
             prof1 = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]], [3, 1, 2])
             prof1.display()
-            kyrs, d = kemmeny_young_rankings(prof1)
+            kyrs, d = kemeny_young_rankings(prof1)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
 
             prof2 = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0]], [5, 1, 2])
             prof2.display()
-            kyrs, d = kemmeny_young_rankings(prof2)
+            kyrs, d = kemeny_young_rankings(prof2)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
@@ -376,12 +376,12 @@ def kemmeny_young_rankings(profile, curr_cands = None):
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]),  profile.num_cands)
-    return _kemmeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
+    return _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
 
 
-@vm(name = "Kemmeny-Young")
-def kemmeny_young(profile, curr_cands = None): 
-    """A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  The Kemmeny-Young winners are the candidates that are ranked first by some Kemmeny-Young ranking.
+@vm(name = "Kemeny-Young")
+def kemeny_young(profile, curr_cands = None): 
+    """A Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  The Kemeny-Young winners are the candidates that are ranked first by some Kemeny-Young ranking.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -395,30 +395,30 @@ def kemmeny_young(profile, curr_cands = None):
         .. exec_code::
 
             from pref_voting.profiles import Profile
-            from pref_voting.other_methods import kemmeny_young, kemmeny_young_rankings
+            from pref_voting.other_methods import kemeny_young, kemeny_young_rankings
             
             prof1 = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]], [3, 1, 2])
             prof1.display()
-            kyrs, d = kemmeny_young_rankings(prof1)
+            kyrs, d = kemeny_young_rankings(prof1)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
-            kemmeny_young.display(prof1)
+            kemeny_young.display(prof1)
 
             prof2 = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0]], [5, 1, 2])
             prof2.display()
-            kyrs, d = kemmeny_young_rankings(prof2)
+            kyrs, d = kemeny_young_rankings(prof2)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
-            kemmeny_young.display(prof2)
+            kemeny_young.display(prof2)
 
     """
 
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]),  profile.num_cands)
-    ky_rankings, min_dist = _kemmeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
+    ky_rankings, min_dist = _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
     
     return sorted(list(set([r[0] for r in ky_rankings])))
 
@@ -779,7 +779,7 @@ def superior_voting(profile, curr_cands = None):
 other_vms = [
     banks,
     slater,
-    kemmeny_young, 
+    kemeny_young, 
     majority, 
     bucklin,
     simplified_bucklin,
