@@ -69,7 +69,6 @@ split_cycle.display(prof)
 - v0.4.8 (2023-5-31): Add bottom two IRV and Tideman's alternative voting methods.
 - v0.4.12 (2023-6-3): Add probabilistic methods.
 - v0.5.0 (2023-9-24): Add _Mapping class with Utility and Grade as subclasses of _Mapping, add GradeProfile class, add Score Vote, Approval Vote, and STAR Vote.
-
 - v0.5.4 (2023-10-01): Add median grading voting methods.
 
 ## Questions?

@@ -6,6 +6,7 @@
     Implementations of scoring rules. 
 '''
 from pref_voting.voting_method import  *
+from pref_voting.profiles import Profile
 from pref_voting.voting_method import _num_rank_last 
 from pref_voting.profiles import _find_updated_profile, _num_rank
 
@@ -250,6 +251,10 @@ def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symme
     Borda score for truncated linear orders using different ways of defining the Borda score for truncated linear
     orders.  
     """
+    # profile must be a ProfileWithTies object
+    if isinstance(profile, Profile): 
+        return borda(profile, curr_cands = curr_cands)
+
     curr_cands = curr_cands if curr_cands is not None else profile.candidates 
     
     restricted_prof = profile.remove_candidates([c for c in profile.candidates if c not in curr_cands])
