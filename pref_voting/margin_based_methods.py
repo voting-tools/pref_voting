@@ -1,8 +1,8 @@
 '''
     File: margin_based_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 10, 2022
-    Update: July 31, 2022
+    Update: October 24, 2023
     
     Implementations of voting methods that work on both profiles and margin graphs.
 '''

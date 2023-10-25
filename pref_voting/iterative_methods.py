@@ -1,8 +1,8 @@
 '''
     File: iterative_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 6, 2022
-    Update: July 23, 2022
+    Update: October 2, 2023
     
     Implementations of iterative voting methods.
 '''
