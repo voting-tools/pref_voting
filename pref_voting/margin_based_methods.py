@@ -713,7 +713,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
-        A networkx DiGraph representing the Beat Path defeat relation. 
+        A networkx DiGraph representing the Ranked Pairs defeat relation. 
 
     .. seealso::
 
@@ -1030,6 +1030,44 @@ def river(edata, curr_cands = None, strength_function = None):
             winners.append(maximal_elements(river_defeat)[0])
     return sorted(list(set(winners)))
 
+def river_defeats(edata, curr_cands = None, strength_function = None):
+    """
+    Returns the River defeat relations produced by the River algorithm.
+
+    .. important::
+        Unlike the other functions that return a single defeat relation, this returns a list of defeat relations. 
+        
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A networkx DiGraph representing the River defeat relation. 
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    strength_function = edata.margin if strength_function is None else strength_function    
+
+    w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
+    winners = list()            
+    strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
+    sorted_edges = [[e for e in w_edges if e[2] == s] for s in strengths]
+    tbs = product(*[permutations(edges) for edges in sorted_edges])
+
+    river_defeats = list()
+    for tb in tbs:
+        edges = flatten(tb)
+        river_defeat = nx.DiGraph() 
+        for e in edges: 
+            if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
+                river_defeat.add_edge(e[0], e[1], weight=e[2])
+                if does_create_cycle(river_defeat, e):
+                    river_defeat.remove_edge(e[0], e[1])
+            
+        river_defeats.append(river_defeat)
+
+    return river_defeats
 
 @vm(name="River")
 def river_with_test(edata, curr_cands = None, strength_function = None):   
@@ -1148,7 +1186,7 @@ def river_zt(profile, curr_cands = None, strength_function = None):
     tb_ranking = tuple([c for c in list(profile._rankings[0]) if c in candidates])
     
     return river_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
-
+    
 
 # Simple Stable Voting 
 def _simple_stable_voting(curr_cands, 
