@@ -1,7 +1,8 @@
 '''
     File: mg_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 12, 2022
+    Updated: October 24, 2023
     
     Implementations of 
 '''
@@ -314,7 +315,7 @@ def slater(edata, curr_cands = None):
     return sorted(list(set([r[0] for r in rankings])))
 
 
-## Kemmeny-Young Method 
+## Kemeny-Young Method 
 #
 def kendalltau_dist(rank_a, rank_b):
     rank_a = tuple(rank_a)
@@ -326,7 +327,7 @@ def kendalltau_dist(rank_a, rank_b):
     return tau
 
 
-def _kemmeny_young_rankings(rankings, rcounts, candidates): 
+def _kemeny_young_rankings(rankings, rcounts, candidates): 
     
     rankings_dist = dict()
     for ranking in permutations(candidates): 
@@ -338,9 +339,9 @@ def _kemmeny_young_rankings(rankings, rcounts, candidates):
     
     return lin_orders, min_dist
 
-def kemmeny_young_rankings(profile, curr_cands = None): 
+def kemeny_young_rankings(profile, curr_cands = None): 
     """
-    A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  
+    A Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  
     
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -356,18 +357,18 @@ def kemmeny_young_rankings(profile, curr_cands = None):
         .. exec_code::
 
             from pref_voting.profiles import Profile
-            from pref_voting.other_methods import kemmeny_young, kemmeny_young_rankings
+            from pref_voting.other_methods import kemeny_young, kemeny_young_rankings
             
             prof1 = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]], [3, 1, 2])
             prof1.display()
-            kyrs, d = kemmeny_young_rankings(prof1)
+            kyrs, d = kemeny_young_rankings(prof1)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
 
             prof2 = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0]], [5, 1, 2])
             prof2.display()
-            kyrs, d = kemmeny_young_rankings(prof2)
+            kyrs, d = kemeny_young_rankings(prof2)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
@@ -376,12 +377,12 @@ def kemmeny_young_rankings(profile, curr_cands = None):
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]),  profile.num_cands)
-    return _kemmeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
+    return _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
 
 
-@vm(name = "Kemmeny-Young")
-def kemmeny_young(profile, curr_cands = None): 
-    """A Kemmeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  The Kemmeny-Young winners are the candidates that are ranked first by some Kemmeny-Young ranking.
+@vm(name = "Kemeny-Young")
+def kemeny_young(profile, curr_cands = None): 
+    """A Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  The Kemeny-Young winners are the candidates that are ranked first by some Kemeny-Young ranking.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -395,30 +396,30 @@ def kemmeny_young(profile, curr_cands = None):
         .. exec_code::
 
             from pref_voting.profiles import Profile
-            from pref_voting.other_methods import kemmeny_young, kemmeny_young_rankings
+            from pref_voting.other_methods import kemeny_young, kemeny_young_rankings
             
             prof1 = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]], [3, 1, 2])
             prof1.display()
-            kyrs, d = kemmeny_young_rankings(prof1)
+            kyrs, d = kemeny_young_rankings(prof1)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
-            kemmeny_young.display(prof1)
+            kemeny_young.display(prof1)
 
             prof2 = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0]], [5, 1, 2])
             prof2.display()
-            kyrs, d = kemmeny_young_rankings(prof2)
+            kyrs, d = kemeny_young_rankings(prof2)
             print(f"Minimal distance: {d}")
             for kyr in kyrs: 
                 print(f"ranking: {kyr}")
-            kemmeny_young.display(prof2)
+            kemeny_young.display(prof2)
 
     """
 
     candidates = profile.candidates if curr_cands is None else curr_cands
     
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]),  profile.num_cands)
-    ky_rankings, min_dist = _kemmeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
+    ky_rankings, min_dist = _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
     
     return sorted(list(set([r[0] for r in ky_rankings])))
 
@@ -689,6 +690,9 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
 def bracket_voting(profile, curr_cands = None):
     """The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
 
+    .. note::
+        A version of bracket voting as proposed by Edward B. Foley. This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
+
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
@@ -698,9 +702,6 @@ def bracket_voting(profile, curr_cands = None):
 
     .. warning::
         This method is only defined for profiles with at least 4 candidates.
-
-    .. note::
-        A version of bracket voting as proposed by Edward B. Foley. This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
 
     """
     cands = curr_cands if curr_cands else profile.candidates
@@ -750,15 +751,15 @@ def bracket_voting(profile, curr_cands = None):
 def superior_voting(profile, curr_cands = None):
     """One candidate is superior to another if more ballots rank the first candidate above the second than vice versa. A candidate earns a point from a ballot if they are ranked first on that ballot or they are superior to the candidate ranked first on that ballot. The candidate with the most points wins.
 
+    .. note::
+        Devised by Wesley H. Holliday as a simple Condorcet-compliant method for political elections. Always elects a Condorcet winner if one exists and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote. Edward B. Foley suggested the name 'Superior Voting' because the method is based on the idea that if A is superior to B, then A should get B's first-place votes added to their own.
+
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
         A sorted list of candidates
-
-    .. note::
-        Devised by Wesley H. Holliday as a simple Condorcet-compliant method for political elections. Always elects a Condorcet winner if one exists and elects only the Condorcet winner provided the Condorcet winner receives at least one first-place vote. Edward B. Foley suggested the name 'Superior Voting' because the method is based on the idea that if A is superior to B, then A should get B's first-place votes added to their own.
 
     """
     curr_cands = profile.candidates if curr_cands is None else curr_cands
@@ -779,7 +780,7 @@ def superior_voting(profile, curr_cands = None):
 other_vms = [
     banks,
     slater,
-    kemmeny_young, 
+    kemeny_young, 
     majority, 
     bucklin,
     simplified_bucklin,

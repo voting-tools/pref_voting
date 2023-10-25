@@ -1,8 +1,8 @@
 '''
     File: iterative_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 6, 2022
-    Update: July 23, 2022
+    Update: October 2, 2023
     
     Implementations of iterative voting methods.
 '''
@@ -1166,7 +1166,6 @@ def baldwin_with_explanation(profile, curr_cands = None):
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
     return sorted(winners), elims_list
 
-
 @vm(name = "Strict Nanson")
 def strict_nanson(profile, curr_cands = None):
     """Iteratively remove all candidates with the  Borda score strictly below the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.
@@ -1876,6 +1875,69 @@ def woodall(profile, curr_cands = None):
 
     return sorted(winners)
 
+@vm(name = "Knockout Voting")
+def knockout(profile, curr_cands=None):
+    """Find the two candidates in curr_cands with the lowest and second lowest Borda scores among any candidates in curr_cands. Then remove from curr_cands whichever one loses to the other in a head-to-head majority comparison. Repeat this process, always using the original Borda score (i.e., the Borda scores calculated with respect to all candidates in the profile, not with respect to curr_cands as for Baldwin and Nanson) until only one candidate remains in curr_cands. Parallel universe tie-breaking (PUT) is used when there are ties in lowest or second lowest Borda scores.
+
+    .. note::
+        Proposed by Edward B. Foley (with unspecified handling of ties in Borda scores, so PUT is used here as an example).
+    
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands 
+    
+    if len(candidates) == 1:
+        return candidates
+
+    # Key point: use global Borda score, calculated with respect to the full profile, not just the candidates in curr_cands
+    borda_scores = profile.borda_scores()
+    min_borda_score = min([borda_scores[c] for c in candidates])
+    cands_with_lowest_borda_score = [c for c in candidates if c in borda_scores.keys() and borda_scores[c] == min_borda_score]
+    
+    winners = []
+
+    # If multiple candidates tie for lowest Borda score, consider all head-to-head matchups of these candidates
+    if len(cands_with_lowest_borda_score) > 1:
+        for c1 in cands_with_lowest_borda_score:
+            for c2 in cands_with_lowest_borda_score:
+                if c1 != c2:
+                    # If c1 has a non-negative margin over c2, then remove c2 from curr_cands and calculate the winning set
+                    # Take the union over all such winning sets as the ultimate winning set
+                    if profile.margin(c1, c2) >= 0:
+                        new_winners = knockout(profile, curr_cands = [c for c in candidates if not c == c2])
+                        winners = winners + new_winners
+    
+    # If there is a candidate with the uniquely lowest Borda score
+    if len(cands_with_lowest_borda_score) == 1:
+        cand_with_lowest_borda_score = cands_with_lowest_borda_score[0]
+
+        # There may be multiple candidates with the second lowest Borda score
+        second_lowest_borda_score = min([borda_scores[c] for c in candidates if c not in cands_with_lowest_borda_score])
+        cands_with_second_lowest_borda_score = [c for c in candidates if c in borda_scores.keys() and borda_scores[c] == second_lowest_borda_score]
+
+        # Consider all head-to-head matchups between the candidate with the lowest Borda score and the candidates with the second lowest Borda score
+        for c2 in cands_with_second_lowest_borda_score:
+
+            # If a candidate with second lowest Borda score has a non-negative margin over the candidate with the lowest Borda score, 
+            # then remove the latter from curr_cands and calculate the winning set
+            if profile.margin(c2, cand_with_lowest_borda_score) >= 0:
+                new_winners = knockout(profile, curr_cands = [c for c in candidates if not c == cand_with_lowest_borda_score])
+                winners = winners + new_winners
+
+            # If the candidate with the lowest Borda score has a positive margin over a candidate with the second lowest Borda score, 
+            # then remove the latter from curr_cands and calculate the winning set
+            if profile.margin(cand_with_lowest_borda_score, c2) > 0:
+                new_winners = knockout(profile, curr_cands = [c for c in candidates if not c == c2])
+                winners = winners + new_winners
+
+    return sorted(set(winners))
+
     
 iterated_vms = [
     instant_runoff,
@@ -1903,6 +1965,7 @@ iterated_vms = [
     tideman_alternative_smith_put,
     tideman_alternative_schwartz,
     tideman_alternative_schwartz_put,
+    knockout
 ]
 
 iterated_vms_with_explanation = [

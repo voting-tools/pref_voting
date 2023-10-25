@@ -1,8 +1,8 @@
 '''
     File: margin_based_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 10, 2022
-    Update: July 31, 2022
+    Update: October 24, 2023
     
     Implementations of voting methods that work on both profiles and margin graphs.
 '''
@@ -713,7 +713,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
-        A networkx DiGraph representing the Beat Path defeat relation. 
+        A networkx DiGraph representing the Ranked Pairs defeat relation. 
 
     .. seealso::
 
@@ -1030,6 +1030,44 @@ def river(edata, curr_cands = None, strength_function = None):
             winners.append(maximal_elements(river_defeat)[0])
     return sorted(list(set(winners)))
 
+def river_defeats(edata, curr_cands = None, strength_function = None):
+    """
+    Returns the River defeat relations produced by the River algorithm.
+
+    .. important::
+        Unlike the other functions that return a single defeat relation, this returns a list of defeat relations. 
+        
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A networkx DiGraph representing the River defeat relation. 
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    strength_function = edata.margin if strength_function is None else strength_function    
+
+    w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
+    winners = list()            
+    strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
+    sorted_edges = [[e for e in w_edges if e[2] == s] for s in strengths]
+    tbs = product(*[permutations(edges) for edges in sorted_edges])
+
+    river_defeats = list()
+    for tb in tbs:
+        edges = flatten(tb)
+        river_defeat = nx.DiGraph() 
+        for e in edges: 
+            if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
+                river_defeat.add_edge(e[0], e[1], weight=e[2])
+                if does_create_cycle(river_defeat, e):
+                    river_defeat.remove_edge(e[0], e[1])
+            
+        river_defeats.append(river_defeat)
+
+    return river_defeats
 
 @vm(name="River")
 def river_with_test(edata, curr_cands = None, strength_function = None):   
@@ -1148,7 +1186,7 @@ def river_zt(profile, curr_cands = None, strength_function = None):
     tb_ranking = tuple([c for c in list(profile._rankings[0]) if c in candidates])
     
     return river_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
-
+    
 
 # Simple Stable Voting 
 def _simple_stable_voting(curr_cands, 
@@ -1429,6 +1467,44 @@ def essential(edata, curr_cands=None, threshold = 0.0000001):
 
     return sorted([c for c in ml.keys() if ml[c] > threshold])
 
+@vm(name = "Loss-Trimmer Voting")
+def loss_trimmer(edata, curr_cands = None):
+    """Iteratively eliminate the candidate with the largest sum of margins of loss until a Condorcet winner is found. In this version of the method, parallel-universe tiebreaking is used if there are multiple candidates with the largest sum of margins of loss.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a margin method.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note::
+        Method proposed by Richard B. Darlington in "The Case for the Loss-Trimmer Voting System."
+
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    # If there are weak Condorcet winners, return those candidates
+    if edata.weak_condorcet_winner(curr_cands = curr_cands) is not None:
+        return edata.weak_condorcet_winner(curr_cands = curr_cands)
+    
+    # Otherwise, calculate the sum of margins of loss for each candidate
+    sum_of_margins_of_loss = {cand: sum([edata.margin(other_cand, cand) for other_cand in curr_cands if edata.margin(other_cand, cand) > 0]) for cand in curr_cands}
+
+    # Find the candidates with the largest sum of margins of loss
+    max_sum_of_margins_of_loss = max(sum_of_margins_of_loss.values())
+    biggest_losers = [cand for cand in curr_cands if sum_of_margins_of_loss[cand] == max_sum_of_margins_of_loss]
+
+    winners = []
+
+    # For each biggest loser, calculate the winners after removing that candidate. The union of these sets is the set of winners.
+    for bl in biggest_losers:
+        winners_without_bl = loss_trimmer(edata, curr_cands = [cand for cand in curr_cands if cand != bl])
+        winners += winners_without_bl
+
+    return list(set(winners))
+
 
 mg_vms = [
     minimax, 
@@ -1446,6 +1522,7 @@ mg_vms = [
     simple_stable_voting_faster,
     stable_voting,
     stable_voting_faster,
+    loss_trimmer
 ]
 
 
@@ -1465,5 +1542,6 @@ mg_vms_all = [
     simple_stable_voting_faster,
     stable_voting,
     stable_voting_faster,
-    essential
+    essential,
+    loss_trimmer
 ]
