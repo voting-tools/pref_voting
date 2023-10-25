@@ -325,8 +325,6 @@ class Profile(object):
         """The Borda scores in the profile restricted to the candidates in ``curr_cands``. 
 
         The **Borda score** for candidate :math:`c` is calculate as follows: the score assigned to :math:`c` by a ranking is the number of candidates ranked below :math:`c`.  The Borda score is the sum of the score assigned to :math:`c` by each ranking in the ballot. 
-        
-        number of voters that rank :math:`c` in first place. 
 
         :param curr_cands: restrict attention to candidates in this list. Defaults to all candidates in the profile if not provided. 
         :type curr_cands: list[int], optional
