@@ -205,6 +205,98 @@ reinforcement = Axiom(
     find_all_violations = find_all_reinforcement_violations, 
 )
 
+def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns True if removing some voter who ranked a losing candidate A in first place causes A to win, thereby violating positive involvement.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise."""
+
+    winners = vm(prof)   
+    losers = [c for c in prof.candidates if c not in winners]
+
+    if violation_type == "Removal":
+        for loser in losers:
+            for r in prof._rankings: # for each type of ranking
+                if r[0] == loser:
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if loser in vm(prof2):
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+                        return True
+                    
+def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, thereby violating positive involvement.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        
+    Returns:
+        A List of pairs (loser,ranking) witnessing violations of positive involvement."""
+
+    winners = vm(prof)   
+    losers = [c for c in prof.candidates if c not in winners]
+
+    witnesses = list()
+
+    if violation_type == "Removal":
+        for loser in losers:
+            for r in prof._rankings: # for each type of ranking
+                if r[0] == loser:
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if loser in vm(prof2):
+                        witnesses.append((loser, list(r)))
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+    return witnesses
+
+positive_involvement = Axiom(
+    "Positive Involvement",
+    has_violation = has_positive_involvement_violation,
+    find_all_violations = find_all_positive_involvement_violations, 
+)
+
 variable_voter_axioms = [
     reinforcement,
+    positive_involvement
 ]
