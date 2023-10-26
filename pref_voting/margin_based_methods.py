@@ -1141,7 +1141,7 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
     tb_ranking = tie_breaker if tie_breaker is not None else sorted(list(candidates))
 
     cw = edata.condorcet_winner()
-    # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
+    # River is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
     else:
