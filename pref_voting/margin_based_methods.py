@@ -1159,7 +1159,7 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
                     river_defeat.add_edge(e[0], e[1], weight=e[2])
                     if does_create_cycle(river_defeat, e):
                         river_defeat.remove_edge(e[0], e[1])
-            winners.append(maximal_elements(river_defeat)[0])
+        winners.append(maximal_elements(river_defeat)[0])
     return sorted(list(set(winners)))
 
 
