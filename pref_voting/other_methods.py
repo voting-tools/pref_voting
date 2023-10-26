@@ -7,7 +7,8 @@
     Implementations of 
 '''
 
-from pref_voting.voting_method import  *
+from pref_voting.voting_method import *
+from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
 from pref_voting.helper import get_mg
 from itertools import combinations, permutations, chain
@@ -700,13 +701,11 @@ def bracket_voting(profile, curr_cands = None):
     Returns: 
         A sorted list of candidates
 
-    .. warning::
-        This method is only defined for profiles with at least 4 candidates.
-
     """
     cands = curr_cands if curr_cands else profile.candidates
 
-    assert len(cands) >= 4, "Bracket voting requires at least 4 candidates"
+    if len(cands) == 2:
+        return plurality(profile, curr_cands = curr_cands)
     
     # Generate a random tie breaking ordering of cands
     tie_breaking_ordering = cands.copy()
@@ -725,12 +724,16 @@ def bracket_voting(profile, curr_cands = None):
     potential_third_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[2] and c not in [first_seed, second_seed]]
     third_seed = min(potential_third_seeds, key = lambda c: tie_breaking_ordering.index(c))
 
-    potential_fourth_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[3] and c not in [first_seed, second_seed, third_seed]]
-    fourth_seed = min(potential_fourth_seeds, key = lambda c: tie_breaking_ordering.index(c))
+    potential_fourth_seeds = [c for c in cands if plurality_scores[c] == descending_plurality_scores[3] and c not in [first_seed, second_seed, third_seed]] if len(cands) > 3 else []
+    fourth_seed = min(potential_fourth_seeds, key = lambda c: tie_breaking_ordering.index(c)) if len(potential_fourth_seeds) > 0 else None
 
     # Ties in semi-final head-to-head matches are broken in favor of the higher-seeded candidate
-    one_four_winner = first_seed if profile.margin(first_seed, fourth_seed) >= 0 else fourth_seed
-    one_four_winner_seed = 1 if one_four_winner == first_seed else 4
+    if len(cands) == 3:
+        one_four_winner = first_seed
+        one_four_winner_seed = 1
+    else: 
+        one_four_winner = first_seed if profile.margin(first_seed, fourth_seed) >= 0 else fourth_seed
+        one_four_winner_seed = 1 if one_four_winner == first_seed else 4
 
     two_three_winner = second_seed if profile.margin(second_seed, third_seed) >= 0 else third_seed
     two_three_winner_seed = 2 if two_three_winner == second_seed else 3

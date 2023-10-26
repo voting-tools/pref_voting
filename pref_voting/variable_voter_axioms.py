@@ -207,7 +207,7 @@ reinforcement = Axiom(
 
 def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
     """
-    If violation_type = "Removal", returns True if removing some voter who ranked a losing candidate A in first place causes A to win, thereby violating positive involvement.
+    If violation_type = "Removal", returns True if removing some voter who ranked a losing candidate A in first place causes A to win, witnessing a violation of positive involvement.
     
     Args:
         profile: a Profile object.
@@ -249,7 +249,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     
 def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
     """
-    If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, thereby violating positive involvement.
+    If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, witnessing a violation of positive involvement.
     
     Args:
         profile: a Profile object.
@@ -300,7 +300,7 @@ positive_involvement = Axiom(
 
 def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
     """
-    If violation_type = "Removal", returns True if removing some voter who ranked a winning candidate A in last place causes A to lose, thereby violating negative involvement 
+    If violation_type = "Removal", returns True if removing some voter who ranked a winning candidate A in last place causes A to lose, witnessing a violation of negative involvement 
     Args:
         profile: a Profile object.
         vm (VotingMethod): A voting method to test.
@@ -340,7 +340,7 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
                     
 def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
     """
-    If violation_type = "Removal", returns a list of pairs (winner,ranking) such that removing a voter with the given ranking causes the winner to lose, thereby violating negative involvement.
+    If violation_type = "Removal", returns a list of pairs (winner,ranking) such that removing a voter with the given ranking causes the winner to lose, witnessing a violation of negative involvement.
     
     Args:
         profile: a Profile object.
@@ -388,8 +388,129 @@ negative_involvement = Axiom(
     find_all_violations = find_all_negative_involvement_violations, 
 )
 
+def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns True if it is possible to cause a loser A to win by removing some voter who ranked A above every candidate B such that A is not majority preferred to B, witnessing a violation of  tolerant positive involvement.
+
+    ..note:
+        A strengthening of positive involvement, introduced in https://arxiv.org/abs/2210.12503
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise."""
+
+    winners = vm(prof)   
+    losers = [c for c in prof.candidates if c not in winners]
+
+    if violation_type == "Removal":
+        for loser in losers:
+            for r in prof._rankings: # for each type of ranking
+                
+                rl = list(r)
+                tolerant_ballot = True
+
+                # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
+                for c in prof.candidates:
+                    if not prof.majority_prefers(loser, c):
+                        if rl.index(c) < rl.index(loser):
+                            tolerant_ballot = False
+                            break
+
+                if tolerant_ballot:
+
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if loser in vm(prof2):
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {rl}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+                        return True
+                    
+def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, witnessing a violation of tolerant positive involvement.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        
+    Returns:
+        A List of pairs (loser,ranking) witnessing violations of positive involvement."""
+
+    winners = vm(prof)   
+    losers = [c for c in prof.candidates if c not in winners]
+
+    witnesses = list()
+
+    if violation_type == "Removal":
+        for loser in losers:
+            for r in prof._rankings: # for each type of ranking
+
+                rl = list(r)
+                tolerant_ballot = True
+
+                # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
+                for c in prof.candidates:
+                    if not prof.majority_prefers(loser, c):
+                        if rl.index(c) < rl.index(loser):
+                            tolerant_ballot = False
+                            break
+
+                if tolerant_ballot:
+
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if loser in vm(prof2):
+                        witnesses.append((loser, list(r)))
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+    return witnesses
+                    
+tolerant_positive_involvement = Axiom(
+    "Tolerant Positive Involvement",
+    has_violation = has_tolerant_positive_involvement_violation,
+    find_all_violations = find_all_tolerant_positive_involvement_violations, 
+)
+
 variable_voter_axioms = [
     reinforcement,
     positive_involvement,
-    negative_involvement
+    negative_involvement,
+    tolerant_positive_involvement
 ]
