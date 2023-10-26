@@ -213,6 +213,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
         profile: a Profile object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
         
     Returns:
         Result of the test (bool): Returns True if there is a violation and False otherwise."""
@@ -254,6 +255,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
         profile: a Profile object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
         
     Returns:
         A List of pairs (loser,ranking) witnessing violations of positive involvement."""
@@ -296,7 +298,98 @@ positive_involvement = Axiom(
     find_all_violations = find_all_positive_involvement_violations, 
 )
 
+def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns True if removing some voter who ranked a winning candidate A in last place causes A to lose, thereby violating negative involvement 
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise."""
+    
+    winners = vm(prof)   
+    
+    if violation_type == "Removal":
+        for winner in winners:
+            for r in prof._rankings: # for each type of ranking
+                if r[-1] == winner:
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if winner not in vm(prof2):
+                        if verbose:
+                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {list(r)}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+                        return True
+                    
+def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
+    """
+    If violation_type = "Removal", returns a list of pairs (winner,ranking) such that removing a voter with the given ranking causes the winner to lose, thereby violating negative involvement.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        
+    Returns:
+        A List of pairs (winner, ranking) witnessing violations of negative involvement."""
+    
+    winners = vm(prof)   
+    
+    witnesses = list()
+    
+    if violation_type == "Removal":
+        for winner in winners:
+            for r in prof._rankings: # for each type of ranking
+                if r[-1] == winner:
+                    rankings = prof.rankings
+                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    prof2 = Profile(rankings)
+                    if winner not in vm(prof2):
+                        witnesses.append((winner, list(r)))
+                        if verbose:
+                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {list(r)}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print("Profile with voter removed")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+    return witnesses
+
+negative_involvement = Axiom(
+    "Negative Involvement",
+    has_violation = has_negative_involvement_violation,
+    find_all_violations = find_all_negative_involvement_violations, 
+)
+
 variable_voter_axioms = [
     reinforcement,
-    positive_involvement
+    positive_involvement,
+    negative_involvement
 ]
