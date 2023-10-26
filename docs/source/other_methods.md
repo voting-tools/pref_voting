@@ -43,20 +43,20 @@ Other Methods
 ```
 
 
-## Kemmeny-Young
+## Kemeny-Young
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.other_methods.kemmeny_young
+.. autofunction:: pref_voting.other_methods.kemeny_young
 
 ```
 
-### Kemmeny-Young Rankings
+### Kemeny-Young Rankings
 
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.other_methods.kemmeny_young_rankings
+.. autofunction:: pref_voting.other_methods.kemeny_young_rankings
 
 ```
 
