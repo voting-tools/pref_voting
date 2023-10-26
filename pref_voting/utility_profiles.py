@@ -9,6 +9,7 @@
 
 from math import ceil
 import numpy as np
+import json
 from scipy import stats
 import networkx as nx
 from tabulate import tabulate
@@ -192,6 +193,36 @@ class UtilityProfile(object):
             uprof_str += f";{u_str[0:-1]}"
         return str(uprof_str)
 
+    def as_dict(self): 
+        """Return a the profile as a dictionary."""
+
+        return {
+            "domain": self.domain,
+            "utilities": [u.as_dict() for u in self._utilities],
+            "ucounts": self.ucounts,
+            "cmap": self.cmap
+        }
+    
+    @classmethod
+    def from_json(cls, uprof_json): 
+        """
+        Returns a profile of utilities described by ``uprof_json``.
+
+        ``uprof_jsom`` must be in the format produced by the :meth:`pref_voting.UtilityProfile.as_dict` function.
+        """
+        domain = uprof_json["domain"]
+        util_maps = uprof_json["utilities"]
+        ucounts = uprof_json["ucounts"]
+        cmap = uprof_json["cmap"]
+
+        # since json converts all keys to strings, we need to convert them back to integers if the domain is integers.
+        integer_domain = all([type(x) == int for x in domain])
+        if integer_domain:
+            util_maps = [{int(c):v for c,v in u.items()} for u in util_maps]
+            cmap = {int(c):v for c,v in cmap.items()}
+        
+        return cls(util_maps, domain=domain, ucounts=ucounts, cmap=cmap)
+
     @classmethod
     def from_string(cls, uprof_str): 
         """
@@ -227,3 +258,17 @@ class UtilityProfile(object):
             tbl ={"Voter" : [vmap[v] for v in voters]}
             tbl.update({str(x): [utilities[v](x) for v in voters] for x in self.domain})
         print( tabulate(tbl, headers="keys"))
+
+def write_utility_profiles_to_json(uprofs, filename):
+    """Write a list of utility profiles to a json file."""
+
+    uprofs_json = [uprof.as_dict() for uprof in uprofs]
+    with open(filename, "w") as f:
+        json.dump(uprofs_json, f)
+
+def read_utility_profiles_from_json(filename):
+    """Read a list of utility profiles to a json file."""
+
+    with open(filename, "r") as f:
+        uprofs_json = json.load(f)
+    return [UtilityProfile.from_json(uprof_json) for uprof_json in uprofs_json]
