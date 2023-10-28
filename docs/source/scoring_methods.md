@@ -102,6 +102,14 @@ One problem with the above code is that the name of the scoring rule is "Scoring
 
 ```
 
+### Borda for ProfilesWithTies
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.scoring_methods.borda_for_profile_with_ties
+
+```
+
 ## Anti-Plurality
 
 ```{eval-rst}
@@ -117,6 +125,5 @@ One problem with the above code is that the name of the scoring rule is "Scoring
 .. autofunction:: pref_voting.scoring_methods.scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank: 1 if rank == 1 else 0)
 
 ```
-
 
 
