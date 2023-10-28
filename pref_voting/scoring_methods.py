@@ -197,8 +197,8 @@ def scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank : 1 
 
 def symmetric_borda_scores(profile): 
     """
-    The symmetric Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r
-    minus the number of candidates ranked strictly below c according to r. 
+    The symmetric Borda score of a candidate c for a ranking r is the number of candidates ranked strictly below c according to r
+    minus the number of candidates ranked strictly above c according to r. 
     
     See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
     """
@@ -210,7 +210,7 @@ def symmetric_borda_scores(profile):
 
 def domination_borda_scores(profile): 
     """
-    The domination Borda score of a candidate c for a ranking r is the number of candidates ranked strictly above c according to r. 
+    The domination Borda score of a candidate c for a ranking r is the number of candidates ranked strictly below c according to r. 
     
     See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
 
@@ -222,7 +222,7 @@ def domination_borda_scores(profile):
 
 def weak_domination_borda_scores(profile): 
     """
-    The weak domination Borda score of a candidate c for a ranking r is the number of candidates ranked weakly above c according to r. 
+    The weak domination Borda score of a candidate c for a ranking r is the number of candidates ranked weakly below c according to r. 
     
     See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
 
@@ -235,7 +235,7 @@ def weak_domination_borda_scores(profile):
 
 def non_domination_borda_scores(profile): 
     """
-    The non-domination Borda score of a candidate c for a ranking r is -1 times  number of candidates ranked strictly above c according to r. 
+    The non-domination Borda score of a candidate c for a ranking r is -1 times the number of candidates ranked strictly above c according to r. 
     
     See http://www.illc.uva.nl/~ulle/pubs/files/TerzopoulouEndrissJME2021.pdf for a discussion. 
 
