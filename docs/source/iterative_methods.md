@@ -132,7 +132,6 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-
 ## Tideman's Alternative
 
 ```{eval-rst}
@@ -269,7 +268,6 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
-
 ## Iterated Removal of Condorcet Loser
 
 
@@ -287,3 +285,11 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+## Knockout Voting
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.knockout
+
+
+```

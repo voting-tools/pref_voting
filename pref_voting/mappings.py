@@ -292,7 +292,7 @@ class Utility(_Mapping):
         avg_grade = self.average()
         return Grade(
             {
-                x: 1 if self.val(x) >= avg_grade else 0 for x in self.defined_domain
+                x: 1 if self.val(x) > avg_grade else 0 for x in self.defined_domain
             },
             [0, 1],
             candidates=self.domain,

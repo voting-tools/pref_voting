@@ -208,7 +208,7 @@ class UtilityProfile(object):
         """
         Returns a profile of utilities described by ``uprof_json``.
 
-        ``uprof_jsom`` must be in the format produced by the :meth:`pref_voting.UtilityProfile.as_dict` function.
+        ``uprof_json`` must be in the format produced by the :meth:`pref_voting.UtilityProfile.as_dict` function.
         """
         domain = uprof_json["domain"]
         util_maps = uprof_json["utilities"]

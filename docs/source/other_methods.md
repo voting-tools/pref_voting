@@ -92,13 +92,31 @@ Other Methods
 
 ```
 
-### Bracket Voting
+### Weighted Bucklin
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.weighted_bucklin
+
+```
+
+
+## Bracket Voting
 
 ```{eval-rst}
 
 .. autofunction:: pref_voting.other_methods.bracket_voting
 
 ```
+
+## Superior Voting
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.superior_voting
+
+```
+
 
 
 
