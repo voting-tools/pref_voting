@@ -9,7 +9,7 @@
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 import numpy as np
-from itertools import product
+from itertools import product, combinations
 
 def divide_electorate(prof):
     """Given a profile, yield all possible ways to divide the electorate into two nonempty electorates."""
@@ -205,9 +205,41 @@ reinforcement = Axiom(
     find_all_violations = find_all_reinforcement_violations, 
 )
 
-def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
+def _submultisets_of_fixed_cardinality(elements, multiplicities, cardinality):
+
+    # Yields all sub-multisets of the given multiset with fixed cardinality.
+    # For a closed-form expression for the number of sub-multisets of fixed cardinality, see https://arxiv.org/abs/1511.06142
+
+    multiplicity_dict = {element: multiplicity for element, multiplicity in zip(elements, multiplicities)}
+
+    def valid_partitions(cardinality, remaining_elements):
+        if cardinality == 0:
+            yield ()
+            return
+        if not remaining_elements:
+            return  
+        first, *rest = remaining_elements
+        max_count = min(cardinality, multiplicity_dict[first])
+        for i in range(1, max_count + 1):
+            for partition in valid_partitions(cardinality-i, rest):
+                yield (i,) + partition
+
+    for i in range(1, min(len(elements), cardinality) + 1):
+        for subset in combinations(elements, i):
+            for partition in valid_partitions(cardinality, subset):
+                if len(partition) == len(subset):
+                    yield (subset, partition)
+
+
+def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal", coalition_size = 1, uniform_coalition = True, require_resoluteness = False, require_uniquely_weighted = False):
     """
-    If violation_type = "Removal", returns True if removing some voter who ranked a losing candidate A in first place causes A to win, witnessing a violation of positive involvement.
+    If violation_type = "Removal", returns True if removing some voter (or voters if coalition_size > 1) who ranked a losing candidate A in first place causes A to win, witnessing a violation of positive involvement.
+
+    If uniform_coalition = True, then only coalitions of voters with the same ranking are considered.
+
+    If require_resoluteness = True, then only profiles with a unique winner are considered.
+
+    If require_uniquely_weighted = True, then only uniquely-weighted profiles are considered.
     
     Args:
         profile: a Profile object.
@@ -221,24 +253,95 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
     winners = vm(prof)   
     losers = [c for c in prof.candidates if c not in winners]
 
+    if require_resoluteness and len(winners) > 1:
+        return False
+
+    if require_uniquely_weighted and not prof.is_uniquely_weighted():
+        return False
+
     if violation_type == "Removal":
-        for loser in losers:
-            for r in prof._rankings: # for each type of ranking
-                if r[0] == loser:
+        if uniform_coalition:
+            for loser in losers:
+
+                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser and prof.rankings.count(tuple(r)) >= coalition_size]
+
+                for r in relevant_ranking_types:
+
                     rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+
+                    for i in range(coalition_size):
+                        rankings.remove(tuple(r)) # remove coalition_size-many tokens of the type of ranking
+
                     prof2 = Profile(rankings)
-                    if loser in vm(prof2):
+                    winners2 = vm(prof2)              
+
+                    if require_resoluteness and len(winners2) > 1:
+                        continue
+
+                    if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                        continue
+                    
+                    if loser in winners2:
+
                         if verbose:
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            if coalition_size == 1:
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {list(r)}:")
+                            else:
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {list(r)}:")
                             print("")
-                            print("Full profile")
+                            print("Full profile:")
                             prof.display()
                             print(prof.description())
                             prof.display_margin_graph()
                             vm.display(prof)
                             print("")
-                            print("Profile with voter removed")
+                            if coalition_size == 1:
+                                print(f"Profile with voter removed:")
+                            else:
+                                print(f"Profile with {coalition_size} voters removed:")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+                        return True
+        
+        if not uniform_coalition:
+            for loser in losers:
+
+                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser]
+                relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
+
+                for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
+                    
+                    rankings = prof.rankings
+                    
+                    for r_idx, r in enumerate(coalition_rankings):
+                        for i in range(coalition_rankings_counts[r_idx]):
+                            rankings.remove(r)
+                        
+                    prof2 = Profile(rankings)
+                    winners2 = vm(prof2)              
+
+                    if require_resoluteness and len(winners2) > 1:
+                        continue
+
+                    if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                        continue
+                    
+                    if loser in winners2:
+
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                            print("")
+                            print("Full profile:")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print(f"Profile with coalition removed:")
                             anonprof2 = prof2.anonymize()
                             anonprof2.display()
                             print(anonprof2.description())
@@ -247,10 +350,16 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                             print("")
                         return True
                     
-def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
+def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal", coalition_size = 1, uniform_coalition = True, require_resoluteness = False, require_uniquely_weighted = False):
     """
-    If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, witnessing a violation of positive involvement.
+    If violation_type = "Removal", returns a list of pairs (loser, rankings, counts) such that removing the indicated rankings with the indicated counts causes the loser to win, witnessing a violation of positive involvement.
     
+    If uniform_coalition = True, then only coalitions of voters with the same ranking are considered.
+
+    If require_resoluteness = True, then only profiles with a unique winner are considered.
+
+    If require_uniquely_weighted = True, then only uniquely-weighted profiles are considered.
+
     Args:
         profile: a Profile object.
         vm (VotingMethod): A voting method to test.
@@ -258,24 +367,51 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
         violation_type: default is "Removal"
         
     Returns:
-        A List of pairs (loser,ranking) witnessing violations of positive involvement."""
+        A List of triples (loser,rankings,counts) witnessing violations of positive involvement.
+        
+    .. warning::
+        This function is slow when uniform_coalition = False and the numbers of voters and candidates are too large.
+        """
 
     winners = vm(prof)   
     losers = [c for c in prof.candidates if c not in winners]
 
     witnesses = list()
 
+    if require_resoluteness and len(winners) > 1:
+        return witnesses
+    
+    if require_uniquely_weighted and not prof.is_uniquely_weighted():
+        return witnesses
+
     if violation_type == "Removal":
-        for loser in losers:
-            for r in prof._rankings: # for each type of ranking
-                if r[0] == loser:
-                    rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+        if uniform_coalition:
+            for loser in losers:
+                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser and prof.rankings.count(tuple(r)) >= coalition_size]
+
+                for r in relevant_ranking_types: # for each type of ranking
+                        
+                    rankings = prof.rankings # copy the token rankings
+                    
+                    for i in range(coalition_size):
+                        rankings.remove(tuple(r)) # remove coalition_size-many tokens of the type of ranking
+
                     prof2 = Profile(rankings)
-                    if loser in vm(prof2):
-                        witnesses.append((loser, list(r)))
+                    winners2 = vm(prof2)
+
+                    if require_resoluteness and len(winners2) > 1:
+                        continue
+
+                    if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                        continue
+
+                    if loser in winners2:
+                        witnesses.append((loser, [list(r)], [coalition_size]))
                         if verbose:
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            if coalition_size == 1:
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {list(r)}:")
+                            else:
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {list(r)}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -283,13 +419,58 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             prof.display_margin_graph()
                             vm.display(prof)
                             print("")
-                            print("Profile with voter removed")
+                            if coalition_size == 1:
+                                print(f"Profile with voter removed:")
+                            else:
+                                print(f"Profile with {coalition_size} voters removed:")
                             anonprof2 = prof2.anonymize()
                             anonprof2.display()
                             print(anonprof2.description())
                             anonprof2.display_margin_graph()
                             vm.display(anonprof2)
                             print("")
+
+        if coalition_size > 1 and not uniform_coalition:
+            for loser in losers:
+                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser]
+                relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
+
+                for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
+                
+                    rankings = prof.rankings
+                    
+                    for r_idx, r in enumerate(coalition_rankings):
+                        for i in range(coalition_rankings_counts[r_idx]):
+                            rankings.remove(r)
+                        
+                    prof2 = Profile(rankings)
+                    winners2 = vm(prof2)              
+
+                    if require_resoluteness and len(winners2) > 1:
+                        continue
+
+                    if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                        continue
+
+                    if loser in winners2:
+                        witnesses.append((loser, coalition_rankings, coalition_rankings_counts))
+                        if verbose:
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                            print("")
+                            print("Full profile")
+                            prof.display()
+                            print(prof.description())
+                            prof.display_margin_graph()
+                            vm.display(prof)
+                            print("")
+                            print(f"Profile with coalition removed:")
+                            anonprof2 = prof2.anonymize()
+                            anonprof2.display()
+                            print(anonprof2.description())
+                            anonprof2.display_margin_graph()
+                            vm.display(anonprof2)
+                            print("")
+        
     return witnesses
 
 positive_involvement = Axiom(
