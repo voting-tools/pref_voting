@@ -77,10 +77,14 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                         if verbose: 
                             print(f"One-rank monotonicity violation for {vm.name} by lifting {w}:")
                             profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
                             print(f"{vm.name} winners: ", ws)
                             print("Original ranking: ", old_ranking)
                             print(f"New ranking: {new_ranking}")
                             new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
                             print(f"{vm.name} winners in updated profile:", new_ws)
                         return True
                     
@@ -100,10 +104,14 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                             if verbose: 
                                 print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
                                 profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
                                 print(f"{vm.name} winners: ", ws)
                                 print("Original ranking: ", old_ranking)
                                 print(f"New ranking: {new_ranking}")
                                 new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
                                 print(f"{vm.name} winners in updated profile: ", new_ws)
                             return True
 
@@ -151,10 +159,14 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
                         if verbose: 
                             print(f"One-rank monotonicity violation for {vm.name} by lifting {w}:")
                             profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
                             print(f"{vm.name} winners: ", ws)
                             print("Original ranking ", old_ranking)
                             print(f"New ranking: {new_ranking}")
                             new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
                             print(f"{vm.name} winners in updated profile: ", new_ws)
 
     elif violation_type == "Drop":
@@ -174,10 +186,14 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
                             if verbose: 
                                 print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
                                 profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
                                 print(f"{vm.name} winners: ", ws)
                                 print("Original ranking: ", old_ranking)
                                 print(f"New ranking: {new_ranking}")
                                 new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
                                 print(f"{vm.name} winners in updated profile: ", new_ws)
 
     return witnesses
@@ -252,10 +268,14 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
                         if verbose: 
                             print(f"Weak positive responsiveness violation for {vm.name} by lifting {w}:")
                             profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
                             print(f"{vm.name} winners: ", ws)
                             print("Original ranking: ", old_ranking)
                             print(f"New ranking: {new_ranking}")
                             new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
                             print(f"{vm.name} winners in updated profile:", new_ws)
                         return True
                     
@@ -275,10 +295,14 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
                             if verbose: 
                                 print(f"Weak positive responsiveness violation for {vm.name} by dropping {l}:")
                                 profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
                                 print(f"{vm.name} winners: ", ws)
                                 print("Original ranking: ", old_ranking)
                                 print(f"New ranking: {new_ranking}")
                                 new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
                                 print(f"{vm.name} winners in updated profile: ", new_ws)
                             return True
 
@@ -326,10 +350,14 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
                         if verbose: 
                             print(f"Weak positive responsiveness violation for {vm.name} by lifting {w}:")
                             profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
                             print(f"{vm.name} winners: ", ws)
                             print("Original ranking ", old_ranking)
                             print(f"New ranking: {new_ranking}")
                             new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
                             print(f"{vm.name} winners in updated profile: ", new_ws)
 
     elif violation_type == "Drop":
@@ -349,10 +377,14 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
                             if verbose: 
                                 print(f"Weak positive responsiveness violation for {vm.name} by dropping {l}:")
                                 profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
                                 print(f"{vm.name} winners: ", ws)
                                 print("Original ranking: ", old_ranking)
                                 print(f"New ranking: {new_ranking}")
                                 new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
                                 print(f"{vm.name} winners in updated profile: ", new_ws)
     
     return witnesses

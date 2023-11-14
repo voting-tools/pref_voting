@@ -1,7 +1,8 @@
 """
     File: iterative_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
     Date: January 6, 2022
+    Revised: November 13, 2023
     
     Implementations of voting methods that combine multiple methods
 """
@@ -371,6 +372,92 @@ def copeland_global_borda(profile, curr_cands=None):
 
     return voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")(profile, curr_cands=curr_cands)
 
+def faceoff(vm1, vm2):
+    """If the vm1 and vm2 winners are the same, return that set of winners. Otherwise, for each choice of a vm1 winner A and vm2 winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).
+
+    Args:
+        vm1, vm2 (VotingMethod): The voting methods to faceoff.
+
+    Returns:
+        A VotingMethod that runs the faceoff of vm1 and vm2.
+
+    """
+
+    def _vm(edata, curr_cands=None):
+
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+        vm1_winners = vm1(edata, curr_cands)
+        vm2_winners = vm2(edata, curr_cands)
+
+        if vm1_winners == vm2_winners:
+            return vm1_winners
+        
+        else:
+            winners = list()
+
+            for a in vm1_winners:
+                for b in vm2_winners:
+                    if edata.margin(a,b) > 0:
+                        winners.append(a)
+                    elif edata.margin(b,a) > 0:
+                        winners.append(b)
+                    elif edata.margin(a,b) == 0:
+                        winners.append(a)
+                        winners.append(b) 
+
+            return list(set(winners))
+
+    return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name} Faceoff")
+
+def _faceoff(vm1, vm2):
+    """
+    Same as faceoff, but used to make it easier to document faceoff voting methods.
+    """
+
+    def _vm(edata, curr_cands=None):
+
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+        vm1_winners = vm1(edata, curr_cands)
+        vm2_winners = vm2(edata, curr_cands)
+
+        if vm1_winners == vm2_winners:
+            return vm1_winners
+        
+        else:
+            winners = list()
+
+            for a in vm1_winners:
+                for b in vm2_winners:
+                    if edata.margin(a,b) > 0:
+                        winners.append(a)
+                    elif edata.margin(b,a) > 0:
+                        winners.append(b)
+                    elif edata.margin(a,b) == 0:
+                        winners.append(a)
+                        winners.append(b) 
+
+            return list(set(winners))
+
+    return _vm
+
+def borda_minimax_faceoff(profile, curr_cands=None):
+    """If the Borda and Minimax winners are the same, return that set of winners. Otherwise, for each choice of a Borda winner A and Minimax winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    ..note:
+        Proposed by Edward B. Foley.
+
+    """
+
+    return _faceoff(borda, minimax)(profile, curr_cands=curr_cands)
 
 combined_vms = [
     daunou, 
@@ -383,4 +470,5 @@ combined_vms = [
     condorcet_plurality,
     copeland_local_borda,
     copeland_global_borda,
+    borda_minimax_faceoff
     ]
