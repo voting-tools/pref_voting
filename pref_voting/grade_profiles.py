@@ -1,7 +1,7 @@
 
 '''
     File: grade_profiles.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: September 24, 2023
     
     Functions to reason about profiles of grades.

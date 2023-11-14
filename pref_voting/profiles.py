@@ -1,6 +1,6 @@
 '''
     File: profiles.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
     Updated: January 5, 2022
     Updated: July 9, 2022
@@ -536,8 +536,22 @@ class Profile(object):
 
         print(tabulate([[cmap[c] for c in cs] for cs in rankings.transpose()], self._rcounts, tablefmt=style))        
 
+    def to_profile_with_ties(self): 
+        """Returns the profile as a ProfileWithTies
+        """
+        from pref_voting.profiles_with_ties import ProfileWithTies
+
+        ranks,rcounts=self.rankings_counts
+
+        return ProfileWithTies(
+            [{c:cidx for cidx,c in enumerate(list(r))} 
+             for r in ranks], 
+            rcounts=list(rcounts), 
+            candidates = self.candidates, 
+            cmap=self.cmap)
+    
     def to_latex(self, cmap = None, curr_cands = None):
-        """Returns a stringer describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).
+        """Returns a string describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).
 
         :Example: 
 

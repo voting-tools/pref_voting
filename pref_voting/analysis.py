@@ -1,6 +1,6 @@
 """
     File: analysis.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: August 9, 2022
     Updated: May 9, 2023
 

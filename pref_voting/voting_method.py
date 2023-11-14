@@ -1,6 +1,6 @@
 '''
     File: voting_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: November 6, 2021
     Update: January 15, 2023
     
@@ -68,7 +68,7 @@ class VotingMethod(object):
         self.name = new_name
 
     def __str__(self): 
-        return f"{self.name}\n{self.description}"
+        return f"{self.name}"
 
 def vm(name = None):
     """

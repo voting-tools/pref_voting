@@ -1,6 +1,6 @@
 '''
     File: scoring_rules.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 6, 2022
     
     Implementations of scoring rules. 

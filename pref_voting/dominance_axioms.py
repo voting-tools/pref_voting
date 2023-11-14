@@ -1,6 +1,6 @@
 """
     File: dominance_axioms.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: April 27, 2023
     
     Dominance axioms 

@@ -1,6 +1,6 @@
 '''
     File: mg_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 12, 2022
     Updated: October 24, 2023
     

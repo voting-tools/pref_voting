@@ -1,11 +1,9 @@
 """
     File: profiles_with_ties.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 5, 2022
-    Updated: July 13, 2022
-    Updated: December 19, 2022
 
-    Functions to reason about profiles of (truncated) strict weak orders.
+    A class that represents profiles of (truncated) strict weak orders.
 """
 
 from math import ceil
@@ -14,6 +12,7 @@ import numpy as np
 from tabulate import tabulate
 from pref_voting.profiles import Profile
 from pref_voting.rankings import Ranking
+from pref_voting.scoring_methods import symmetric_borda_scores
 from pref_voting.weighted_majority_graphs import (
     MajorityGraph,
     MarginGraph,
@@ -329,6 +328,14 @@ class ProfileWithTies(object):
         
         return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first()]) for cand in self.candidates}
 
+    def borda_scores(self, 
+                     curr_cands=None, 
+                     borda_score_fnc=symmetric_borda_scores):
+        
+        curr_cands = self.candidates if curr_cands is None else curr_cands
+        restricted_prof = self.remove_candidates([c for c in self.candidates if c not in curr_cands])
+        return borda_score_fnc(restricted_prof)
+
     def remove_empty_rankings(self): 
         """
         Remove the empty rankings from the profile. 
@@ -472,6 +479,14 @@ class ProfileWithTies(object):
         """Return a list of the cycles in the profile."""
 
         return self.margin_graph().cycles()
+
+    def is_uniquely_weighted(self): 
+        """Returns True if the profile is uniquely weighted. 
+        
+        A profile is **uniquely weighted** when there are no 0 margins and all the margins between any two candidates are unique.     
+        """
+        
+        return MarginGraph.from_profile(self).is_uniquely_weighted()
 
     def remove_candidates(self, cands_to_ignore):
         """Remove all candidates from ``cands_to_ignore`` from the profile.

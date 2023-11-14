@@ -1,6 +1,6 @@
 """
     File: profiles_with_ties.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 5, 2022
     Updated: July 13, 2022
     Updated: December 19, 2022

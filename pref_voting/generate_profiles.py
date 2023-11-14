@@ -1,6 +1,6 @@
 """
     File: gen_profiles.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
     Updated: July 14, 2022
     

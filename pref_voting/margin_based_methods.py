@@ -1,6 +1,6 @@
 '''
     File: margin_based_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu) and Wesley H. Holliday (wesholliday@berkeley.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 10, 2022
     Update: October 24, 2023
     

@@ -1,6 +1,6 @@
 '''
     File: mappings.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: September 23, 20203
     
     Classes that represent mappings of utilities/grades to candidates.

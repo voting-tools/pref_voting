@@ -1,6 +1,6 @@
 '''
     File: generate_margin_graphs.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: July 14, 2022
     Updated: December 19, 2022
     

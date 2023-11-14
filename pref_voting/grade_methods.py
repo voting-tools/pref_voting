@@ -1,6 +1,6 @@
 '''
     File: grade_methods.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: September 24, 2023
     
     Implementations of grading methods (also called evaluative methods). 
