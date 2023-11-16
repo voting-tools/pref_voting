@@ -40,7 +40,7 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
 
     If violation_type = "Drop", returns True if there is some losing candidate A and some voter v such that dropping A down one position in v's ranking causes A to win.
 
-    If checking_probabilities = True, returns True if there is some candidate whose probabilities of winning decreases after a lifting or increases after a dropping.
+    If checking_probabilities = True, returns True if there is some candidate whose probability of winning decreases after a lifting or increases after a dropping.
     
     Args:
         profile: a Profile object.
