@@ -34,11 +34,13 @@ def one_rank_drop(ranking, c):
     new_ranking[c_idx + 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx+1]
     return new_ranking
 
-def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_type="Lift"): 
+def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_type="Lift", check_probabilities = False): 
     """
     If violation_type = "Lift", returns True if there is some winning candidate A and some voter v such that lifting A up one position in v's ranking causes A to lose.
 
     If violation_type = "Drop", returns True if there is some losing candidate A and some voter v such that dropping A down one position in v's ranking causes A to win.
+
+    If checking_probabilities = True, returns True if there is some candidate whose probabilities of winning decreases after a lifting or increases after a dropping.
     
     Args:
         profile: a Profile object.
@@ -88,6 +90,21 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                             print(f"{vm.name} winners in updated profile:", new_ws)
                         return True
                     
+                    if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
+                        if verbose: 
+                            print(f"One-rank probabilistic monotonicity violation for {vm.name} by lifting {w}:")
+                            profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
+                            print(f"{vm.name} winners: ", ws)
+                            print("Original ranking: ", old_ranking)
+                            print(f"New ranking: {new_ranking}")
+                            new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
+                            print(f"{vm.name} winners in updated profile:", new_ws)
+                        return True
+                    
     elif violation_type == "Drop":
         for l in profile.candidates:
             if l not in ws:
@@ -114,14 +131,41 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                                 new_prof.display_margin_graph()
                                 print(f"{vm.name} winners in updated profile: ", new_ws)
                             return True
+                        
+            if check_probabilities and l in ws:
+                for r_idx, r in enumerate(rankings): 
+                    if r[-1] != l:
+                        old_ranking = copy.deepcopy(r)
+                        new_ranking = one_rank_drop(r, l)
+                        new_rankings = old_rankings + [new_ranking]
+                        new_rcounts  = copy.deepcopy(rcounts + [1])
+                        new_rcounts[r_idx] -= 1
+                        new_prof = Profile(new_rankings, new_rcounts)
+                        new_ws = vm(new_prof)
+                        if l in new_ws and len(new_ws) < len(ws): 
+                            if verbose: 
+                                print(f"One-rank probabilistic monotonicity violation for {vm.name} by dropping {l}:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile: ", new_ws)
+                            return True
 
     return False
 
-def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, violation_type="Lift"):
+def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, violation_type="Lift", check_probabilities = False):
     """
     If violation_type = "Lift", returns all pairs (candidate, ranking) such that the candidate wins in the original profile but loses after lifting the candidate up one position in the ranking.
 
     If violation_type = "Drop", returns all pairs (candidate, ranking) such that the candidate loses in the original profile but wins after dropping the candidate down one position in the ranking.
+
+    If checking_probabilities = True, returns all pairs (candidate, ranking) such that the candidate's probability of winning decreases after a lifting or increases after a dropping.
 
     Args:
         profile: a Profile object.
@@ -169,6 +213,21 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
                             new_prof.display_margin_graph()
                             print(f"{vm.name} winners in updated profile: ", new_ws)
 
+                    if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
+                        witnesses.append((w, old_ranking, "Lift"))
+                        if verbose: 
+                            print(f"One-rank probabilistic monotonicity violation for {vm.name} by lifting {w}:")
+                            profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
+                            print(f"{vm.name} winners: ", ws)
+                            print("Original ranking: ", old_ranking)
+                            print(f"New ranking: {new_ranking}")
+                            new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
+                            print(f"{vm.name} winners in updated profile:", new_ws)
+
     elif violation_type == "Drop":
         for l in profile.candidates:
             if l not in ws:
@@ -185,6 +244,31 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
                             witnesses.append((l, old_ranking, "Drop"))
                             if verbose: 
                                 print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile: ", new_ws)
+
+            if check_probabilities and l in ws:
+                for r_idx, r in enumerate(rankings): 
+                    if r[-1] != l:
+                        old_ranking = copy.deepcopy(r)
+                        new_ranking = one_rank_drop(r, l)
+                        new_rankings = old_rankings + [new_ranking]
+                        new_rcounts  = copy.deepcopy(rcounts + [1])
+                        new_rcounts[r_idx] -= 1
+                        new_prof = Profile(new_rankings, new_rcounts)
+                        new_ws = vm(new_prof)
+                        if l in new_ws and len(new_ws) < len(ws): 
+                            witnesses.append((l, old_ranking, "Drop"))
+                            if verbose: 
+                                print(f"One-rank probabilistic monotonicity violation for {vm.name} by dropping {l}:")
                                 profile.display()
                                 print(profile.description())
                                 profile.display_margin_graph()
