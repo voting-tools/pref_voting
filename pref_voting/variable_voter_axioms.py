@@ -689,9 +689,129 @@ tolerant_positive_involvement = Axiom(
     find_all_violations = find_all_tolerant_positive_involvement_violations, 
 )
 
+def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coalition_size = 1, uniform_coalition = True, require_resoluteness = False, require_uniquely_weighted = False):
+    """
+    Returns True if it is possible to cause a winner A to lose by adding coalition_size-many new voters who bullet vote for A.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise."""
+
+    if require_uniquely_weighted == True and not  prof.is_uniquely_weighted():
+        return False 
+
+    ws = vm(prof)
+
+    if require_resoluteness == True and len(ws) > 1:
+        return False
+    
+    for w in ws:
+        new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+        new_prof.use_extended_strict_preference()
+        new_mg = new_prof.margin_graph()
+
+        if require_uniquely_weighted == True and not new_mg.is_uniquely_weighted(): 
+            continue
+        
+        new_ws = vm(new_prof)
+
+        if require_resoluteness == True and len(new_ws) > 1:
+            continue
+
+        if w not in new_ws:
+            if verbose:
+
+                print(f"Violation of Bullet Vote Positive Involvement for {vm.name}")
+                print("Original profile:")
+                prof.display()
+                print(prof.description())
+                prof.display_margin_graph()
+                vm.display(prof)
+
+                print("New profile:")
+                new_prof.display()
+                print(new_prof.description())
+                new_prof.display_margin_graph()
+                vm.display(new_prof)
+                print("")
+
+            return True
+        
+    return False
+
+def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False, coalition_size = 1, require_resoluteness = False, require_uniquely_weighted = False):
+    """
+    Returns a list of candidates who win in the given profile but lose after adding coalition_size-many new voters who bullet vote for them.
+
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+
+    Returns:
+        A List of candidates who win in the given profile but lose after adding coalition_size-many new voters who bullet vote for them.
+    
+    """
+
+    if require_uniquely_weighted == True and not prof.is_uniquely_weighted():
+        return False 
+
+    ws = vm(prof)
+
+    if require_resoluteness == True and len(ws) > 1:
+        return False
+    
+    violations = list()
+
+    for w in ws:
+        new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+        new_prof.use_extended_strict_preference()
+        new_mg = new_prof.margin_graph()
+
+        if require_uniquely_weighted == True and not new_mg.is_uniquely_weighted(): 
+            continue
+        
+        new_ws = vm(new_prof)
+
+        if require_resoluteness == True and len(new_ws) > 1:
+            continue
+
+        if w not in new_ws:
+            if verbose:
+                
+                print(f"Violation of Bullet Vote Positive Involvement for {vm.name}")
+                print("Original profile:")
+                prof.display()
+                print(prof.description())
+                prof.display_margin_graph()
+                vm.display(prof)
+
+                print("New profile:")
+                new_prof.display()
+                print(new_prof.description())
+                new_prof.display_margin_graph()
+                vm.display(new_prof)
+                print("")
+
+            violations.append(w)
+        
+    return violations
+
+bullet_vote_positive_involvement = Axiom(
+    "Bullet Vote Positive Involvement",
+    has_violation = has_bullet_vote_positive_involvement_violation,
+    find_all_violations = find_all_bullet_vote_positive_involvement_violations, 
+)
+
 variable_voter_axioms = [
     reinforcement,
     positive_involvement,
     negative_involvement,
-    tolerant_positive_involvement
+    tolerant_positive_involvement,
+    bullet_vote_positive_involvement
 ]
