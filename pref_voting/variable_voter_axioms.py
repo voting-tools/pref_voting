@@ -963,15 +963,6 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
     If require_uniquely_weighted = True, then only uniquely-weighted profiles are considered.
 
     If check_probabilities = True, then the function also checks whether adding coalition_size-many new voters who bullet vote for A causes A's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
-    
-    Args:
-        profile: a Profile object.
-        vm (VotingMethod): A voting method to test.
-        verbose (bool, default=False): If a violation is found, display the violation.
-        violation_type: default is "Removal"
-        
-    Returns:
-        Result of the test (bool): Returns True if there is a violation and False otherwise."""
 
     Args:
         profile: a Profile object.
