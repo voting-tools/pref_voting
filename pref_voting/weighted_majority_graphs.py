@@ -12,7 +12,9 @@ import networkx as nx
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 import string
-from itertools import combinations
+from itertools import combinations, permutations
+from ortools.linear_solver import pywraplp
+
 import numpy as np
 
 class MajorityGraph(object):
@@ -581,6 +583,63 @@ class MarginGraph(MajorityGraph):
 
         return g
 
+    def minimal_profile(self): 
+        """
+        Use an integer linear program to find a minimal profile generating the margin graph. 
+        """
+        from pref_voting.profiles import Profile
+
+        solver = pywraplp.Solver.CreateSolver("SAT")
+
+        num_cands = len(self.candidates)
+        rankings = list(permutations(range(num_cands)))
+        
+        ranking_to_var = dict()
+        infinity = solver.infinity()
+        for ridx, r in enumerate(rankings): 
+            _v = solver.IntVar(0.0, infinity, f"x{ridx}")
+            ranking_to_var[r] = _v
+
+        nv = solver.IntVar(0.0, infinity, "nv")
+        equations = list()
+        for c1 in self.candidates: 
+            for c2 in self.candidates: 
+                if c1 != c2: 
+                    margin = self.margin(c1, c2)
+                    if margin >= 0: 
+                        rankings_c1_over_c2 = [ranking_to_var[r] for r in rankings if r.index(c1) < r.index(c2)]
+                        rankings_c2_over_c1 = [ranking_to_var[r] for r in rankings if r.index(c2) < r.index(c1)]
+                        equations.append(sum(rankings_c1_over_c2) == margin + sum(rankings_c2_over_c1))
+                        
+        equations.append(nv == sum(list(ranking_to_var.values())))
+
+        for eq in equations: 
+            solver.Add(eq)
+
+        solver.Minimize(nv)
+
+        status = solver.Solve()
+
+        if status == pywraplp.Solver.INFEASIBLE:
+            print("Error: Did not find a solution.")
+            return None
+        
+        if status != pywraplp.Solver.OPTIMAL: 
+            print("Warning: Did not find an optimal solution.")
+
+        _ranks = list()
+        _rcounts = list()
+
+        for r,v in ranking_to_var.items(): 
+
+            if v.solution_value() > 0: 
+                _ranks.append(r)
+                _rcounts.append(int(v.solution_value()))
+                if not v.solution_value().is_integer(): 
+                    print("ERROR: Found non integer, ", v.solution_value())
+                    return None
+        return Profile(_ranks, rcounts = _rcounts)
+
     def normalize_ordered_weights(self):
         """
         Returns a MarginGraph with the same order of the edges, except that the weights are 2, 4, 6,...
@@ -1018,6 +1077,7 @@ class SupportGraph(MajorityGraph):
         new_cmap = {c: cname for c, cname in self.cmap.items() if c in new_cands}
 
         return SupportGraph(new_cands, new_edges, cmap=new_cmap)
+
 
     def display(self, curr_cands=None, cmap=None):
         """Display a support graph (restricted to ``curr_cands``) using networkx.draw.

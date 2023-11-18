@@ -6,9 +6,9 @@
 Introduction
 =======================================
 
-Preferential Voting Tools (``pref_voting``) is a Python library that can be used to study different preferential voting methods.  In a preferential voting election, each voter submits a *ranking* of the candidates, and the winners are determined based on the submitted rankings.  The rankings may include ties between candidates, and some candidates may be left off the ranking. 
-
-The main objective is to create a set of tools that can be used by teachers and researchers to study voting methods. Use the following website to run an election using the preferential voting method Stable Voting: https://stablevoting.org/ 
+Preferential Voting Tools (``pref_voting``) is a Python library that can be used to study and run elections with different preferential voting methods (graded voting methods and cardinal voting methods are also included for comparison).  In a preferential voting election, each voter submits a *ranking* of the candidates, and the winners are determined based on the submitted rankings.  The rankings may include ties between candidates, and some candidates may be left off the ranking. 
+ 
+The main objective is to create a set of tools that can be used by researchers to study voting methods, teachers to present topics in voting theory, and election administrators to run elections. Use the following website to run an election using the preferential voting method Stable Voting: https://stablevoting.org/ 
 
 The library is developed by Wes Holliday (http://wesholliday.net) and Eric Pacuit (https://pacuit.org). 
 
