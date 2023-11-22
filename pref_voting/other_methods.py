@@ -53,7 +53,7 @@ def majority(profile, curr_cands = None):
     return sorted(maj_winner)
 
 @vm(name = "Pareto")
-def pareto(prof, curr_cands = None, strong_Pareto = False):
+def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_preferences = True):
     """Returns the set of candidates who are not Pareto dominated.
 
     For ProfilesWithTies, if strong_Pareto == True, then a dominates b if some voter strictly prefers a to b and no voter strictly prefers b to a.
@@ -66,6 +66,9 @@ def pareto(prof, curr_cands = None, strong_Pareto = False):
         A sorted list of candidates
 
     """
+    if use_extended_strict_preferences:
+        prof.use_extended_strict_preference()
+        
     Pareto_dominated = set()
     candidates = prof.candidates if curr_cands is None else curr_cands
     for a in candidates:
