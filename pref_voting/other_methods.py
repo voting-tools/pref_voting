@@ -52,6 +52,31 @@ def majority(profile, curr_cands = None):
 
     return sorted(maj_winner)
 
+@vm(name = "Pareto")
+def pareto(prof, curr_cands = None, strong_Pareto = False):
+    """Returns the set of candidates who are not Pareto dominated.
+
+    For ProfilesWithTies, if strong_Pareto == True, then a dominates b if some voter strictly prefers a to b and no voter strictly prefers b to a.
+
+    Args:
+        prof (Profile, ProfileWithTies): An anonymous profile of linear (or strict weak) orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    """
+    Pareto_dominated = set()
+    candidates = prof.candidates if curr_cands is None else curr_cands
+    for a in candidates:
+        for b in candidates:
+            if not strong_Pareto and prof.support(a,b) == prof.num_voters:
+                Pareto_dominated.add(b)
+
+            if strong_Pareto and prof.support(a,b) > 0 and prof.support(b,a) == 0:
+                Pareto_dominated.add(b)     
+
+    return list(set(candidates) - Pareto_dominated)
     
 ## Banks
 #
