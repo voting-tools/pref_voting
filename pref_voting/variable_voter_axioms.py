@@ -215,8 +215,6 @@ def _submultisets_of_fixed_cardinality(elements, multiplicities, cardinality):
     # Yields all sub-multisets of the given multiset with fixed cardinality.
     # For a closed-form expression for the number of sub-multisets of fixed cardinality, see https://arxiv.org/abs/1511.06142
 
-    multiplicity_dict = {element: multiplicity for element, multiplicity in zip(elements, multiplicities)}
-
     def valid_partitions(cardinality, remaining_elements):
         if cardinality == 0:
             yield ()
@@ -224,7 +222,8 @@ def _submultisets_of_fixed_cardinality(elements, multiplicities, cardinality):
         if not remaining_elements:
             return  
         first, *rest = remaining_elements
-        max_count = min(cardinality, multiplicity_dict[first])
+        first_idx = elements.index(first)
+        max_count = min(cardinality, multiplicities[first_idx])
         for i in range(1, max_count + 1):
             for partition in valid_partitions(cardinality-i, rest):
                 yield (i,) + partition
