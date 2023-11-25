@@ -296,9 +296,9 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                         if verbose:
                             if coalition_size == 1:
-                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {list(r)}:")
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {str(r)}:")
                             else:
-                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {list(r)}:")
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {str(r)}:")
                             print("")
                             print("Full profile:")
                             prof.display()
@@ -348,9 +348,9 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                             if verbose:
                                 if coalition_size == 1:
-                                    print(f"{winner} has a higher probability of winning after removing voter with the ranking {list(r)}:")
+                                    print(f"{winner} has a higher probability of winning after removing voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{winner} has a higher probability of winning after removing removing {coalition_size} voters with the ranking {list(r)}:")
+                                    print(f"{winner} has a higher probability of winning after removing removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile:")
                                 prof.display()
@@ -532,12 +532,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         continue
 
                     if loser in winners2:
-                        witnesses.append((loser, [list(r)], [coalition_size]))
+                        witnesses.append((loser, [r], [coalition_size]))
                         if verbose:
                             if coalition_size == 1:
-                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {list(r)}:")
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {str(r)}:")
                             else:
-                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {list(r)}:")
+                                print(f"{loser} loses in the full profile, but {loser} is a winner after removing {coalition_size} voters with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -582,12 +582,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             continue
 
                         if winner in winners2 and len(winners) > len(winners2):
-                            witnesses.append((winner, [list(r)], [coalition_size]))
+                            witnesses.append((winner, [r], [coalition_size]))
                             if verbose:
                                 if coalition_size == 1:
-                                    print(f"{winner} has a higher probability of winning after removing voter with the ranking {list(r)}:")
+                                    print(f"{winner} has a higher probability of winning after removing voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{winner} has a higher probability of winning after removing {coalition_size} voters with the ranking {list(r)}:")
+                                    print(f"{winner} has a higher probability of winning after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -736,7 +736,7 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
 
                     if winner not in vm(prof2):
                         if verbose:
-                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {list(r)}:")
+                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -784,9 +784,9 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
                         prof2 = ProfileWithTies(rankings)
 
                     if winner not in vm(prof2):
-                        witnesses.append((winner, list(r)))
+                        witnesses.append((winner, r))
                         if verbose:
-                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {list(r)}:")
+                            print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -847,11 +847,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
                     
-                    if isinstance(prof,Profile):
-                        prof2 = Profile(rankings)
-
-                    if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                    prof2 = Profile(rankings)
 
                     if loser in vm(prof2):
                         if verbose:
@@ -916,9 +912,9 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
                         prof2 = ProfileWithTies(rankings)
 
                     if loser in vm(prof2):
-                        witnesses.append((loser, list(r)))
+                        witnesses.append((loser, r))
                         if verbose:
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {list(r)}:")
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
                             prof.display()
