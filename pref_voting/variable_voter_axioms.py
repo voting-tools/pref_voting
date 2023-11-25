@@ -265,14 +265,14 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
         if uniform_coalition:
             for loser in losers:
 
-                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser and prof.rankings.count(tuple(r)) >= coalition_size]
+                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and prof.rankings.count(r) >= coalition_size]
 
                 for r in relevant_ranking_types:
 
                     rankings = prof.rankings
 
                     for i in range(coalition_size):
-                        rankings.remove(tuple(r)) # remove coalition_size-many tokens of the type of ranking
+                        rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
                     prof2 = Profile(rankings)
                     winners2 = vm(prof2)              
@@ -312,14 +312,14 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
             if check_probabilities:
                 for winner in winners:
 
-                    relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == winner and prof.rankings.count(tuple(r)) >= coalition_size]
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == winner and prof.rankings.count(r) >= coalition_size]
 
                     for r in relevant_ranking_types:
 
                         rankings = prof.rankings
 
                         for i in range(coalition_size):
-                            rankings.remove(tuple(r)) # remove coalition_size-many tokens of the type of ranking
+                            rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
                         prof2 = Profile(rankings)
                         winners2 = vm(prof2)              
@@ -360,7 +360,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
         if not uniform_coalition:
             for loser in losers:
 
-                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser]
+                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser]
                 relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                 for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
@@ -403,7 +403,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
             if check_probabilities:
                 for winner in winners:
 
-                    relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == winner]
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == winner]
                     relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                     for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
@@ -484,14 +484,14 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
     if violation_type == "Removal":
         if uniform_coalition:
             for loser in losers:
-                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser and prof.rankings.count(tuple(r)) >= coalition_size]
+                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and prof.rankings.count(r) >= coalition_size]
 
                 for r in relevant_ranking_types: # for each type of ranking
                         
                     rankings = prof.rankings # copy the token rankings
                     
                     for i in range(coalition_size):
-                        rankings.remove(tuple(r)) # remove coalition_size-many tokens of the type of ranking
+                        rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
                     prof2 = Profile(rankings)
                     winners2 = vm(prof2)
@@ -529,14 +529,14 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
             
             if check_probabilities:
                 for winner in winners:
-                    relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == winner and prof.rankings.count(tuple(r)) >= coalition_size]
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == winner and prof.rankings.count(r) >= coalition_size]
 
                     for r in relevant_ranking_types:
                         
                         rankings = prof.rankings
                         
                         for i in range(coalition_size):
-                            rankings.remove(tuple(r))
+                            rankings.remove(r)
 
                         prof2 = Profile(rankings)
                         winners2 = vm(prof2)
@@ -575,7 +575,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
         if not uniform_coalition:
             for loser in losers:
-                relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == loser]
+                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser]
                 relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                 for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
@@ -616,7 +616,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
             if check_probabilities:
                 for winner in winners:
-                    relevant_ranking_types = [tuple(r) for r in prof._rankings if r[0] == winner]
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == winner]
                     relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                     for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types,relevant_ranking_types_counts,coalition_size):
@@ -679,10 +679,10 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
     
     if violation_type == "Removal":
         for winner in winners:
-            for r in prof._rankings: # for each type of ranking
+            for r in prof.ranking_types: # for each type of ranking
                 if r[-1] == winner:
                     rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    rankings.remove(r) # remove the first token of the type of ranking
                     prof2 = Profile(rankings)
                     if winner not in vm(prof2):
                         if verbose:
@@ -722,10 +722,10 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
     
     if violation_type == "Removal":
         for winner in winners:
-            for r in prof._rankings: # for each type of ranking
+            for r in prof.ranking_types: # for each type of ranking
                 if r[-1] == winner:
                     rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    rankings.remove(r) # remove the first token of the type of ranking
                     prof2 = Profile(rankings)
                     if winner not in vm(prof2):
                         witnesses.append((winner, list(r)))
@@ -774,7 +774,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
 
     if violation_type == "Removal":
         for loser in losers:
-            for r in prof._rankings: # for each type of ranking
+            for r in prof.rankings_types: # for each type of ranking
                 
                 rl = list(r)
                 tolerant_ballot = True
@@ -789,7 +789,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
                 if tolerant_ballot:
 
                     rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    rankings.remove(r) # remove the first token of the type of ranking
                     prof2 = Profile(rankings)
                     if loser in vm(prof2):
                         if verbose:
@@ -830,7 +830,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
 
     if violation_type == "Removal":
         for loser in losers:
-            for r in prof._rankings: # for each type of ranking
+            for r in prof.ranking_types: # for each type of ranking
 
                 rl = list(r)
                 tolerant_ballot = True
@@ -845,7 +845,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
                 if tolerant_ballot:
 
                     rankings = prof.rankings
-                    rankings.remove(tuple(r)) # remove the first token of the type of ranking
+                    rankings.remove(r) # remove the first token of the type of ranking
                     prof2 = Profile(rankings)
                     if loser in vm(prof2):
                         witnesses.append((loser, list(r)))
