@@ -12,7 +12,7 @@ import numpy as np
 from itertools import product, combinations
 
 def divide_electorate(prof):
-    """Given a profile, yield all possible ways to divide the electorate into two nonempty electorates."""
+    """Given a Profile or ProfileWithTies object, yield all possible ways to divide the electorate into two nonempty electorates."""
 
     R, C = prof.rankings_counts
 
@@ -37,8 +37,13 @@ def divide_electorate(prof):
 
             if rankings1 <= rankings2: # This prevents yielding both prof1, prof2 and later on prof2, prof1, unless they are equal
 
-                prof1 = Profile(rankings1, rcounts = counts1)
-                prof2 = Profile(rankings2, rcounts = counts2)
+                if isinstance(prof,Profile):
+                    prof1 = Profile(rankings1, rcounts = counts1)
+                    prof2 = Profile(rankings2, rcounts = counts2)
+                
+                if isinstance(prof,ProfileWithTies):
+                    prof1 = ProfileWithTies(rankings1, rcounts = counts1)
+                    prof2 = ProfileWithTies(rankings2, rcounts = counts2)
             
                 yield prof1, prof2
 
@@ -113,7 +118,7 @@ def has_reinforcement_violation(prof, vm, verbose=False):
     Returns True if there is a binary partition of the electorate such that (i) at least one candidate wins in both subelections and either (ii) some candidate who wins in both subelections does not win in the full election or (iii) some candidate who wins in the full election does not win both subelections.
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
@@ -134,7 +139,7 @@ def find_all_reinforcement_violations(prof, vm, verbose=False):
     Returns all violations of reinforcement for a given profile and voting method.
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
@@ -244,7 +249,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
     If check_probabilities = True, the function also checks whether removing the voters who ranked A in first-place causes A's probability of winning to increase (in the case of a tie broken by even-chance tiebreaking).
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -274,7 +279,12 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     for i in range(coalition_size):
                         rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
-                    prof2 = Profile(rankings)
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     winners2 = vm(prof2)              
 
                     if require_resoluteness and len(winners2) > 1:
@@ -321,7 +331,12 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         for i in range(coalition_size):
                             rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
-                        prof2 = Profile(rankings)
+                        if isinstance(prof,Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof,ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings)
+
                         winners2 = vm(prof2)              
 
                         if require_resoluteness and len(winners2) > 1:
@@ -371,7 +386,12 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         for i in range(coalition_rankings_counts[r_idx]):
                             rankings.remove(r)
                         
-                    prof2 = Profile(rankings)
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     winners2 = vm(prof2)              
 
                     if require_resoluteness and len(winners2) > 1:
@@ -414,7 +434,12 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                             for i in range(coalition_rankings_counts[r_idx]):
                                 rankings.remove(r)
                             
-                        prof2 = Profile(rankings)
+                        if isinstance(prof,Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof,ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings)
+
                         winners2 = vm(prof2)              
 
                         if require_resoluteness and len(winners2) > 1:
@@ -458,7 +483,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
     If check_probabilities = True, the function also checks whether removing the voters who ranked A in first-place causes A's probability of winning to increase (in the case of a tie broken by even-chance tiebreaking).
 
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -493,7 +518,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                     for i in range(coalition_size):
                         rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
 
-                    prof2 = Profile(rankings)
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     winners2 = vm(prof2)
 
                     if require_resoluteness and len(winners2) > 1:
@@ -538,7 +568,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         for i in range(coalition_size):
                             rankings.remove(r)
 
-                        prof2 = Profile(rankings)
+                        if isinstance(prof,Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof,ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings)
+
                         winners2 = vm(prof2)
 
                         if require_resoluteness and len(winners2) > 1:
@@ -586,7 +621,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         for i in range(coalition_rankings_counts[r_idx]):
                             rankings.remove(r)
                         
-                    prof2 = Profile(rankings)
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     winners2 = vm(prof2)              
 
                     if require_resoluteness and len(winners2) > 1:
@@ -627,7 +667,12 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             for i in range(coalition_rankings_counts[r_idx]):
                                 rankings.remove(r)
                             
-                        prof2 = Profile(rankings)
+                        if isinstance(prof,Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof,ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings)
+
                         winners2 = vm(prof2)              
 
                         if require_resoluteness and len(winners2) > 1:
@@ -667,7 +712,7 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
     """
     If violation_type = "Removal", returns True if removing some voter who ranked a winning candidate A in last place causes A to lose, witnessing a violation of negative involvement 
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -683,7 +728,13 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
                 if r[-1] == winner:
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
-                    prof2 = Profile(rankings)
+
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     if winner not in vm(prof2):
                         if verbose:
                             print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {list(r)}:")
@@ -708,7 +759,7 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
     If violation_type = "Removal", returns a list of pairs (winner,ranking) such that removing a voter with the given ranking causes the winner to lose, witnessing a violation of negative involvement.
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -726,7 +777,13 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
                 if r[-1] == winner:
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
-                    prof2 = Profile(rankings)
+                    
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     if winner not in vm(prof2):
                         witnesses.append((winner, list(r)))
                         if verbose:
@@ -761,7 +818,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
         A strengthening of positive involvement, introduced in https://arxiv.org/abs/2210.12503
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -790,7 +847,13 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
 
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
-                    prof2 = Profile(rankings)
+                    
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     if loser in vm(prof2):
                         if verbose:
                             print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {rl}:")
@@ -815,7 +878,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
     If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, witnessing a violation of tolerant positive involvement.
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -846,7 +909,13 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
 
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
-                    prof2 = Profile(rankings)
+                    
+                    if isinstance(prof,Profile):
+                        prof2 = Profile(rankings)
+
+                    if isinstance(prof,ProfileWithTies):
+                        prof2 = ProfileWithTies(rankings)
+
                     if loser in vm(prof2):
                         witnesses.append((loser, list(r)))
                         if verbose:
@@ -884,7 +953,7 @@ def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coal
     If check_probabilities = True, then the function also checks whether adding coalition_size-many new voters who bullet vote for A causes A's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
     
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         violation_type: default is "Removal"
@@ -965,7 +1034,7 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
     If check_probabilities = True, then the function also checks whether adding coalition_size-many new voters who bullet vote for A causes A's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
 
     Args:
-        profile: a Profile object.
+        prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
 
