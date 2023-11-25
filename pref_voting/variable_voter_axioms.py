@@ -44,6 +44,10 @@ def divide_electorate(prof):
                 if isinstance(prof,ProfileWithTies):
                     prof1 = ProfileWithTies(rankings1, rcounts = counts1)
                     prof2 = ProfileWithTies(rankings2, rcounts = counts2)
+
+                    if prof.using_extended_strict_preference:
+                        prof1.use_extended_strict_preference()
+                        prof2.use_extended_strict_preference()
             
                 yield prof1, prof2
 
@@ -283,6 +287,8 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     winners2 = vm(prof2)              
 
@@ -335,6 +341,8 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                         if isinstance(prof,ProfileWithTies):
                             prof2 = ProfileWithTies(rankings)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
 
                         winners2 = vm(prof2)              
 
@@ -390,6 +398,8 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     winners2 = vm(prof2)              
 
@@ -438,6 +448,8 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
 
                         if isinstance(prof,ProfileWithTies):
                             prof2 = ProfileWithTies(rankings)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
 
                         winners2 = vm(prof2)              
 
@@ -522,6 +534,8 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     winners2 = vm(prof2)
 
@@ -572,6 +586,8 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
                         if isinstance(prof,ProfileWithTies):
                             prof2 = ProfileWithTies(rankings)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
 
                         winners2 = vm(prof2)
 
@@ -625,6 +641,8 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     winners2 = vm(prof2)              
 
@@ -671,6 +689,8 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
 
                         if isinstance(prof,ProfileWithTies):
                             prof2 = ProfileWithTies(rankings)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
 
                         winners2 = vm(prof2)              
 
@@ -733,6 +753,8 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     if winner not in vm(prof2):
                         if verbose:
@@ -782,6 +804,8 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
 
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
+                        if prof.using_extended_strict_preference:
+                            prof2.use_extended_strict_preference()
 
                     if winner not in vm(prof2):
                         witnesses.append((winner, r))
@@ -905,11 +929,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
                     rankings = prof.rankings
                     rankings.remove(r) # remove the first token of the type of ranking
                     
-                    if isinstance(prof,Profile):
-                        prof2 = Profile(rankings)
-
-                    if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                    prof2 = Profile(rankings)
 
                     if loser in vm(prof2):
                         witnesses.append((loser, r))
