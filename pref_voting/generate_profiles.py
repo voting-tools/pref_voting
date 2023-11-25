@@ -489,7 +489,7 @@ def strict_weak_orders(A):
 
 def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="IC"):
     """Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  
-    The ballots will be truncated linear orders of the candidates.
+    The ballots will be truncated linear orders of the candidates.  Returns a :class:`ProfileWithTies` that uses extended strict preference (so all ranked candidates are strictly preferred to any candidate that is not ranked).
 
     Args:
         num_cands (int): The number of candidates to include in the profile. 
@@ -550,8 +550,10 @@ def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="
 
         rmaps.append(rmap)
 
-    return ProfileWithTies(
+    prof = ProfileWithTies(
         rmaps,
         cmap=lprof.cmap,
         candidates=lprof.candidates
     )
+    prof.use_extended_strict_preference()
+    return prof

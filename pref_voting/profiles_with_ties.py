@@ -589,6 +589,26 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         for r,c in rs.items(): 
             print(f"{r} {c}")
 
+
+    def anonymize(self): 
+        """
+        Return a profile which is the anonymized version of this profile. 
+        """
+
+        rankings = list()
+        rcounts = list()
+        for r in self.rankings:
+            found_it = False
+            for _ridx, _r in enumerate(rankings): 
+                if r == _r: 
+                    rcounts[_ridx] += 1
+                    found_it = True
+                    break
+            if not found_it: 
+                rankings.append(r)
+                rcounts.append(1)
+        return ProfileWithTies(rankings, rcounts=rcounts, cmap=self.cmap)
+
     def description(self): 
         return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
 
