@@ -402,7 +402,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     if loser in winners2:
 
                         if verbose:
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                             print("")
                             print("Full profile:")
                             prof.display()
@@ -450,7 +450,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         if winner in winners2 and len(winners) > len(winners2):
 
                             if verbose:
-                                print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                                print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile:")
                                 prof.display()
@@ -637,7 +637,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                     if loser in winners2:
                         witnesses.append((loser, coalition_rankings, coalition_rankings_counts))
                         if verbose:
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -683,7 +683,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         if winner in winners2 and len(winners) > len(winners2):
                             witnesses.append((winner, coalition_rankings, coalition_rankings_counts))
                             if verbose:
-                                print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {coalition_rankings} and counts {coalition_rankings_counts}:")
+                                print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
