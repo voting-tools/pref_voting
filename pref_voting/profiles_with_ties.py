@@ -64,7 +64,7 @@ class ProfileWithTies(object):
         self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
         """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
 
-        self.rankings = [
+        self._rankings = [
             Ranking(r, cmap=self.cmap)
             if type(r) == dict
             else Ranking(r.rmap, cmap=self.cmap)
@@ -82,7 +82,6 @@ class ProfileWithTies(object):
         self._cindex_to_cand = {i: c for i, c in enumerate(self.candidates)}
         self.cindex_to_cand = lambda i: self._cindex_to_cand[i]
         """Maps candidates to their index in the list of candidates and vice versa. """
-
     
         self.rcounts = [1] * len(rankings) if rcounts is None else list(rcounts)
 
@@ -97,7 +96,7 @@ class ProfileWithTies(object):
             c1: {
                 c2: sum(
                     n
-                    for r, n in zip(self.rankings, self.rcounts)
+                    for r, n in zip(self._rankings, self.rcounts)
                     if r.strict_pref(c1, c2)
                 )
                 for c2 in self.candidates
@@ -113,7 +112,7 @@ class ProfileWithTies(object):
             c1: {
                 c2: sum(
                     n
-                    for r, n in zip(self.rankings, self.rcounts)
+                    for r, n in zip(self._rankings, self.rcounts)
                     if r.extended_strict_pref(c1, c2)
                 )
                 for c2 in self.candidates
@@ -129,25 +128,40 @@ class ProfileWithTies(object):
             c1: {
                 c2: sum(
                     n
-                    for r, n in zip(self.rankings, self.rcounts)
+                    for r, n in zip(self._rankings, self.rcounts)
                     if r.strict_pref(c1, c2)
                 )
                 for c2 in self.candidates
             }
             for c1 in self.candidates
         }
+    @property 
+    def rankings(self): 
+        """Return a list of all individual rankings in the profile. """
+        
+        return [r for ridx,r in enumerate(self._rankings) for _ in range(self.rcounts[ridx])]
 
+    @property 
+    def ranking_types(self): 
+        """Return a list of the types of rankings in the profile. """
+        
+        unique_rankings = []
+        for r in self._rankings: 
+            if r not in unique_rankings: 
+                unique_rankings.append(r)
+        return unique_rankings
+    
     @property
     def rankings_counts(self):
         """Returns the rankings and the counts of each ranking."""
 
-        return self.rankings, self.rcounts
+        return self._rankings, self.rcounts
 
     @property
     def rankings_as_dicts_counts(self):
         """Returns the rankings represented as dictionaries and the counts of each ranking."""
 
-        return [r.rmap for r in self.rankings], self.rcounts
+        return [r.rmap for r in self._rankings], self.rcounts
 
     def support(self, c1, c2, use_extended_preferences=False):
         """Returns the support of candidate ``c1`` over candidate ``c2``, where the support is the number of voters that rank ``c1`` strictly above ``c2``."""
@@ -311,7 +325,7 @@ class ProfileWithTies(object):
         
         curr_cands = curr_cands if curr_cands is not None else self.candidates
         
-        if any([len(r.first(cs=curr_cands)) > 1 for r in self.rankings]): 
+        if any([len(r.first(cs=curr_cands)) > 1 for r in self._rankings]): 
             print("Error: Cannot find the plurality scores unless all voters rank a unique candidate in first place.")
             return {}
         
@@ -349,7 +363,7 @@ class ProfileWithTies(object):
                 new_rankings.append(r)
                 new_rcounts.append(c)
 
-        self.rankings = new_rankings
+        self._rankings = new_rankings
         self.rcounts = new_rcounts
         
         # update the number of voters
@@ -388,7 +402,7 @@ class ProfileWithTies(object):
         ranks = list()
         rcounts = list()
 
-        for r in self.rankings: 
+        for r in self._rankings: 
             min_rank = max(r.ranks) if len(r.ranks) > 0 else 1   
             new_r ={c:r for c, r in  r.rmap.items()}
             for c in cands: 
@@ -421,7 +435,7 @@ class ProfileWithTies(object):
         """Return to the list of unique rankings in the profile. 
         """
         
-        return (list(set([str(r) for r in self.rankings])))
+        return (list(set([str(r) for r in self._rankings])))
                 
     def margin_graph(self):
         """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
@@ -509,7 +523,7 @@ class ProfileWithTies(object):
 
         updated_rankings = [
             {c: r for c, r in rank.rmap.items() if c not in cands_to_ignore}
-            for rank in self.rankings
+            for rank in self._rankings
         ]
         new_candidates = [c for c in self.candidates if c not in cands_to_ignore]
         restricted_prof = ProfileWithTies(
@@ -576,7 +590,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
             print(f"{r} {c}")
 
     def description(self): 
-        return f"ProfileWithTies({[r.rmap for r in self.rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
+        return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
         """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
@@ -600,7 +614,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
 
         """
 
-        _rankings = copy.deepcopy(self.rankings)
+        _rankings = copy.deepcopy(self._rankings)
         _rankings = [r.normalize_ranks() or r for r in _rankings]
         curr_cands = curr_cands if curr_cands is not None else self.candidates
         cmap = cmap if cmap is not None else self.cmap

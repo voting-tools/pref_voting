@@ -209,10 +209,17 @@ class Profile(object):
 
         return self._rankings, self._rcounts
     
+    @property 
+    def ranking_types(self): 
+        """
+        Returns a list of all the type of rankings in the profile as a list of tuples.
+        """
+        return list(set([tuple(r) for r in self._rankings]))
+
     @property
     def rankings(self): 
         """
-        Returns a list of all the rankings in the profile .   The type is a list of tuples of integers. 
+        Return a list of all individual rankings in the profile.  The type is a list of tuples of integers. 
         """
         
         return [tuple(r) for ridx,r in enumerate(self._rankings) for n in range(self._rcounts[ridx])]

@@ -318,6 +318,17 @@ class Ranking(object):
                 r_str += "( " + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank)) + ") "
         return r_str
 
+    def __getitem__(self, r):
+        """Returns the item at rank r + 1 if it is unique, otherwise return the list of items at rank r+1.  Raises an exception if there is no item at rank r+1."""
+
+        normalized_ranks = {c: self.ranks.index(r) + 1 for c, r in self.rmap.items()}
+
+        ranks = sorted(list(set(normalized_ranks.values())))
+
+        cands_at_rank = [c for c,crank in normalized_ranks.items() if crank == ranks[r]]
+
+        return cands_at_rank[0] if len(cands_at_rank) == 1 else cands_at_rank
+    
     def __eq__(self, other): 
         
         """
