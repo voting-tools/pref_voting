@@ -607,7 +607,13 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
             if not found_it: 
                 rankings.append(r)
                 rcounts.append(1)
-        return ProfileWithTies(rankings, rcounts=rcounts, cmap=self.cmap)
+                
+        prof = ProfileWithTies(rankings, rcounts=rcounts, cmap=self.cmap)
+
+        if self.using_extended_strict_preference: 
+            prof.use_extended_strict_preference()
+
+        return prof
 
     def description(self): 
         return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
