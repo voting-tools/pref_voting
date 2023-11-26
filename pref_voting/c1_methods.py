@@ -682,7 +682,7 @@ def banks(edata, curr_cands = None):
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.other_methods import banks
+        from pref_voting.c1_methods import banks
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 2), (0, 3, 6), (1, 0, 8), (2, 3, 4), (2, 1, 10), (3, 1, 12)])
 
