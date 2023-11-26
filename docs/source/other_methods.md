@@ -9,38 +9,6 @@ Other Methods
 
 ```
 
-## Banks
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.other_methods.banks
-
-```
-
-### Banks with Explanation
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.other_methods.banks_with_explanation
-
-```
-
-
-## Slater
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.other_methods.slater
-
-```
-
-### Slater Rankings
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.other_methods.slater_rankings
-
-```
 
 
 ## Kemeny-Young
