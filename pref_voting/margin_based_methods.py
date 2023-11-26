@@ -1509,8 +1509,8 @@ def loss_trimmer(edata, curr_cands = None):
 mg_vms = [
     minimax, 
     split_cycle,
-    split_cycle_Floyd_Warshall,
-    beat_path,
+    #split_cycle_Floyd_Warshall,
+    #beat_path,
     beat_path_Floyd_Warshall,
     #ranked_pairs,
     #ranked_pairs_with_test,
@@ -1519,9 +1519,9 @@ mg_vms = [
     #river,
     #river_with_test, 
     simple_stable_voting,
-    simple_stable_voting_faster,
+    #simple_stable_voting_faster,
     stable_voting,
-    stable_voting_faster,
+    #stable_voting_faster,
     loss_trimmer
 ]
 

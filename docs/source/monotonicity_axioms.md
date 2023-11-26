@@ -6,9 +6,9 @@ Monotonicity Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_one_rank_monotonicity_violation
+.. autofunction:: pref_voting.monotonicity_axioms.has_one_rank_monotonicity_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_one_rank_monotonicity_violations
+.. autofunction:: pref_voting.monotonicity_axioms.find_all_one_rank_monotonicity_violations
 
 ```
 
@@ -16,8 +16,8 @@ Monotonicity Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_weak_positive_responsiveness_violation
+.. autofunction:: pref_voting.monotonicity_axioms.has_weak_positive_responsiveness_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_weak_positive_responsiveness_violations
+.. autofunction:: pref_voting.monotonicity_axioms.find_all_weak_positive_responsiveness_violations
 
 ```
