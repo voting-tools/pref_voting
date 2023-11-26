@@ -11,7 +11,7 @@ from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
 from pref_voting.helper import get_mg
-from itertools import combinations, permutations, chain
+from itertools import combinations, permutations
 import networkx as nx
 
 

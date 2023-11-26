@@ -12,7 +12,7 @@ from pref_voting.helper import get_mg, get_weak_mg
 from pref_voting.probabilistic_methods import c1_maximal_lottery
 import copy
 import math
-from itertools import product, permutations
+from itertools import product, permutations, combinations, chain
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -673,7 +673,7 @@ def banks(edata, curr_cands = None):
 
     .. code-block:: 
 
-        from pref_voting.other_methods import banks
+        from pref_voting.c1_methods import banks
 
         banks.display(prof)
 
@@ -732,7 +732,7 @@ def banks_with_explanation(edata, curr_cands = None):
 
     .. code-block:: 
 
-        from pref_voting.other_methods import banks_with_explanation
+        from pref_voting.c1_methods import banks_with_explanation
 
         bws, maximal_chains = banks_with_explanation(mg)
 
@@ -745,7 +745,7 @@ def banks_with_explanation(edata, curr_cands = None):
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.other_methods import banks_with_explanation
+        from pref_voting.c1_methods import banks_with_explanation
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 2), (0, 3, 6), (1, 0, 8), (2, 3, 4), (2, 1, 10), (3, 1, 12)])
 
@@ -830,7 +830,7 @@ def slater_rankings(edata, curr_cands = None):
     .. exec_code::
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.other_methods import slater_rankings
+        from pref_voting.c1_methods import slater_rankings
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 2), (0, 3, 6), (1, 0, 8), (2, 3, 4), (2, 1, 10), (3, 1, 12)])
 
@@ -876,7 +876,7 @@ def slater(edata, curr_cands = None):
 
     .. code-block:: 
 
-        from pref_voting.other_methods import slater
+        from pref_voting.c1_methods import slater
 
         slater.display(prof)
 
@@ -885,7 +885,7 @@ def slater(edata, curr_cands = None):
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.other_methods import slater
+        from pref_voting.c1_methods import slater
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 2), (0, 3, 6), (1, 0, 8), (2, 3, 4), (2, 1, 10), (3, 1, 12)])
 
