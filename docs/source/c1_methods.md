@@ -104,3 +104,37 @@ A voting method $F$ is **C1** if it satisfies the following invariance property:
 .. autofunction:: pref_voting.c1_methods.gocha
 
 ```
+
+
+## Banks
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.c1_methods.banks
+
+```
+
+### Banks with Explanation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.c1_methods.banks_with_explanation
+
+```
+
+
+## Slater
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.c1_methods.slater
+
+```
+
+### Slater Rankings
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.c1_methods.slater_rankings
+
+```
