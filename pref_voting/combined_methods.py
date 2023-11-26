@@ -442,6 +442,7 @@ def _faceoff(vm1, vm2):
 
     return _vm
 
+@vm(name="Borda-Minimax Faceoff")
 def borda_minimax_faceoff(profile, curr_cands=None):
     """If the Borda and Minimax winners are the same, return that set of winners. Otherwise, for each choice of a Borda winner A and Minimax winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).
 
