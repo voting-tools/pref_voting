@@ -2,6 +2,7 @@
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MajorityGraph
+from pref_voting.rankings import Ranking
 import networkx as nx
 
 def get_mg(edata, curr_cands = None): 
@@ -40,3 +41,29 @@ def get_weak_mg(edata, curr_cands = None):
             wmg.remove_nodes_from([c for c in edata.candidates if c not in curr_cands])
             wmg.add_edges_from([(c1, c2) for c1 in curr_cands for c2 in curr_cands if c1 != c2 and edata.is_tied(c1, c2)])
     return wmg
+
+
+def create_election(ranking_list, 
+                    using_extended_strict_preference=None, 
+                    candidates=None):
+    """Creates an election from a list of rankings.
+    
+    Args:
+        ranking_list (list): A list of rankings, which may be a list of tuples of candidates, a list of dictionaries or a list of Ranking objects.
+    
+    Returns:
+        Profile or ProfileWithTies: The election profile.
+    """
+
+    if len(ranking_list) > 0 and (type(ranking_list[0]) == tuple or type(ranking_list[0]) == list):
+        return Profile(ranking_list)
+    elif len(ranking_list) > 0 and (type(ranking_list[0]) == dict or type(ranking_list[0]) == Ranking):
+        if candidates is not None:
+            prof = ProfileWithTies(ranking_list, candidates=candidates)
+        else:
+            prof = ProfileWithTies(ranking_list)       
+        if using_extended_strict_preference:
+            prof.use_extended_strict_preference()
+        return prof
+    else: # ranking_list is empty
+        return Profile(ranking_list)
