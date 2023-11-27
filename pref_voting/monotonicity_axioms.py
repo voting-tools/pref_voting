@@ -8,6 +8,7 @@
 
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
+from pref_voting.rankings import Ranking
 import numpy as np
 from itertools import product
 import copy
@@ -16,22 +17,34 @@ def one_rank_lift(ranking, c):
     """
     Return a ranking in which ``c`` is moved up one position in ``ranking``.
     """
-    assert c != ranking[0], "can't lift a candidate already in first place"
+    if isinstance(ranking, tuple):
+        assert c != ranking[0], "can't lift a candidate already in first place"
+        new_ranking = copy.deepcopy(ranking)
+        c_idx = new_ranking.index(c)
+        new_ranking[c_idx - 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx-1]
     
-    new_ranking = copy.deepcopy(ranking)
-    c_idx = new_ranking.index(c)
-    new_ranking[c_idx - 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx-1]
+    if isinstance(ranking, Ranking):
+        assert not ranking.first() == [c], "can't lift a candidate already uniquely in first place"
+        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]-1 for a in ranking.cands})
+        new_ranking.normalize_ranks()
+
     return new_ranking
 
 def one_rank_drop(ranking, c):
     """
     Return a ranking in which ``c`` is moved down one position in ``ranking``.
     """
-    assert c != ranking[-1], "can't drop a candidate already in last place"
-    
-    new_ranking = copy.deepcopy(ranking)
-    c_idx = new_ranking.index(c)
-    new_ranking[c_idx + 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx+1]
+
+    if isinstance(ranking, tuple):
+        assert c != ranking[-1], "can't drop a candidate already in last place"
+        new_ranking = copy.deepcopy(ranking)
+        c_idx = new_ranking.index(c)
+        new_ranking[c_idx + 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx+1]
+
+    if isinstance(ranking, Ranking):
+        assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
+        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]+1 for a in ranking.cands})
+
     return new_ranking
 
 def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_type="Lift", check_probabilities = False): 
@@ -58,7 +71,12 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
     
     _rankings, _rcounts = profile.rankings_counts
 
-    rankings = [list(r) for r in list(_rankings)]
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
     rcounts = list(_rcounts)
     old_rankings = copy.deepcopy(rankings)
 
@@ -67,14 +85,26 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
     if violation_type == "Lift":
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
                 if r[0] != w:
                     old_ranking = copy.deepcopy(r)
                     new_ranking = one_rank_lift(r, w)
                     new_rankings = old_rankings + [new_ranking]
                     new_rcounts  = copy.deepcopy(rcounts + [1])
                     new_rcounts[r_idx] -= 1
-                    new_prof = Profile(new_rankings, new_rcounts)
+
+                    if isinstance(profile, Profile):
+                        new_prof = Profile(new_rankings, new_rcounts)
+                    if isinstance(profile, ProfileWithTies):
+                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                        if profile.using_extended_strict_preference:
+                            new_prof.use_extended_strict_preference()
+
                     new_ws = vm(new_prof)
+                    
                     if w not in new_ws: 
                         if verbose: 
                             print(f"One-rank monotonicity violation for {vm.name} by lifting {w}:")
@@ -109,14 +139,26 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
         for l in profile.candidates:
             if l not in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = one_rank_drop(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
+
                         if l in new_ws: 
                             if verbose: 
                                 print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
@@ -134,13 +176,24 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                         
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = one_rank_drop(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
                         if l in new_ws and len(new_ws) < len(ws): 
                             if verbose: 
@@ -180,7 +233,12 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
 
     _rankings, _rcounts = profile.rankings_counts
 
-    rankings = [list(r) for r in list(_rankings)]
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
     rcounts = list(_rcounts)
     old_rankings = copy.deepcopy(rankings)
 
@@ -190,14 +248,26 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
     if violation_type == "Lift":
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+                    
                 if r[0] != w:
                     old_ranking = copy.deepcopy(r)
                     new_ranking = one_rank_lift(r, w)
                     new_rankings = old_rankings + [new_ranking]
                     new_rcounts  = copy.deepcopy(rcounts + [1])
                     new_rcounts[r_idx] -= 1
-                    new_prof = Profile(new_rankings, new_rcounts)
+
+                    if isinstance(profile, Profile):
+                        new_prof = Profile(new_rankings, new_rcounts)
+                    if isinstance(profile, ProfileWithTies):
+                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                        if profile.using_extended_strict_preference:
+                            new_prof.use_extended_strict_preference()
+
                     new_ws = vm(new_prof)
+
                     if w not in new_ws: 
                         witnesses.append((w, old_ranking, "Lift"))
                         if verbose: 
@@ -232,14 +302,26 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
         for l in profile.candidates:
             if l not in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = one_rank_drop(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
+
                         if l in new_ws: 
                             witnesses.append((l, old_ranking, "Drop"))
                             if verbose: 
@@ -257,14 +339,26 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
 
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = one_rank_drop(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
+
                         if l in new_ws and len(new_ws) < len(ws): 
                             witnesses.append((l, old_ranking, "Drop"))
                             if verbose: 
@@ -292,11 +386,17 @@ def lift_to_first(ranking, c):
     """
     Return a ranking in which ``c`` is moved to first position in ``ranking``.
     """
-    assert c != ranking[0], "can't lift a candidate already in first place"
-    
-    new_ranking = copy.deepcopy(ranking)
-    c_idx = new_ranking.index(c)
-    new_ranking = [c] + new_ranking[:c_idx] + new_ranking[c_idx+1:]
+
+    if isinstance(ranking, tuple):
+        assert c != ranking[0], "can't lift a candidate already in first place"
+        new_ranking = copy.deepcopy(ranking)
+        c_idx = new_ranking.index(c)
+        new_ranking = [c] + new_ranking[:c_idx] + new_ranking[c_idx+1:]
+
+    if isinstance(ranking, Ranking):
+        assert not ranking.first() == [c], "can't lift a candidate already uniquely in first place"
+        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else min(ranking.ranks) - 1 for a in ranking.cands})
+        new_ranking.normalize_ranks()
 
     return new_ranking
 
@@ -304,11 +404,17 @@ def drop_to_last(ranking, c):
     """
     Return a ranking in which ``c`` is moved to last position in ``ranking``.
     """
-    assert c != ranking[-1], "can't drop a candidate already in last place"
-    
-    new_ranking = copy.deepcopy(ranking)
-    c_idx = new_ranking.index(c)
-    new_ranking = new_ranking[:c_idx] + new_ranking[c_idx+1:] + [c]
+
+    if isinstance(ranking, tuple):
+        assert c != ranking[-1], "can't drop a candidate already in last place"
+        new_ranking = copy.deepcopy(ranking)
+        c_idx = new_ranking.index(c)
+        new_ranking = new_ranking[:c_idx] + new_ranking[c_idx+1:] + [c]
+
+    if isinstance(ranking, Ranking):
+        assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
+        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else max(ranking.ranks) + 1 for a in ranking.cands})
+        new_ranking.normalize_ranks()
 
     return new_ranking
 
@@ -331,7 +437,12 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
     
     _rankings, _rcounts = profile.rankings_counts
 
-    rankings = [list(r) for r in list(_rankings)]
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+    
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
     rcounts = list(_rcounts)
     old_rankings = copy.deepcopy(rankings)
 
@@ -340,14 +451,27 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
     if violation_type == "Lift":
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
-                if r[-1] == w:
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                if r[-1] == w and not r[0] == w:
                     old_ranking = copy.deepcopy(r)
                     new_ranking = lift_to_first(r, w)
                     new_rankings = old_rankings + [new_ranking]
                     new_rcounts  = copy.deepcopy(rcounts + [1])
                     new_rcounts[r_idx] -= 1
-                    new_prof = Profile(new_rankings, new_rcounts)
+
+                    if isinstance(profile, Profile):
+                        new_prof = Profile(new_rankings, new_rcounts)
+                    
+                    if isinstance(profile, ProfileWithTies):
+                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                        if profile.using_extended_strict_preference:
+                            new_prof.use_extended_strict_preference()
+
                     new_ws = vm(new_prof)
+
                     if len(new_ws) > 1 or (len(new_ws) == 1 and new_ws[0] != w):
                         if verbose: 
                             print(f"Weak positive responsiveness violation for {vm.name} by lifting {w}:")
@@ -367,14 +491,26 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
         for l in profile.candidates:
             if l not in ws or (l in ws and len(ws) > 1):
                 for r_idx, r in enumerate(rankings): 
-                    if r[0] == l:
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                    if r[0] == l and not r[-1] == l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = drop_to_last(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
+
                         if l in new_ws: 
                             if verbose: 
                                 print(f"Weak positive responsiveness violation for {vm.name} by dropping {l}:")
@@ -411,7 +547,12 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
 
     _rankings, _rcounts = profile.rankings_counts
 
-    rankings = [list(r) for r in list(_rankings)]
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
     rcounts = list(_rcounts)
     old_rankings = copy.deepcopy(rankings)
 
@@ -421,14 +562,26 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
     if violation_type == "Lift":
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
-                if r[-1] == w:
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                if r[-1] == w and not r[0] == w:
                     old_ranking = copy.deepcopy(r)
                     new_ranking = lift_to_first(r, w)
                     new_rankings = old_rankings + [new_ranking]
                     new_rcounts  = copy.deepcopy(rcounts + [1])
                     new_rcounts[r_idx] -= 1
-                    new_prof = Profile(new_rankings, new_rcounts)
+
+                    if isinstance(profile, Profile):
+                        new_prof = Profile(new_rankings, new_rcounts)
+                    if isinstance(profile, ProfileWithTies):
+                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                        if profile.using_extended_strict_preference:
+                            new_prof.use_extended_strict_preference()
+
                     new_ws = vm(new_prof)
+
                     if len(new_ws) > 1 or (len(new_ws) == 1 and new_ws[0] != w):
                         witnesses.append((w, old_ranking, "Lift"))
                         if verbose: 
@@ -448,14 +601,27 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
         for l in profile.candidates:
             if l not in ws or (l in ws and len(ws) > 1):
                 for r_idx, r in enumerate(rankings): 
-                    if r[0] == l:
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                    if r[0] == l and not r[-1] == l:
                         old_ranking = copy.deepcopy(r)
                         new_ranking = drop_to_last(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
-                        new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
                         new_ws = vm(new_prof)
+
                         if l in new_ws: 
                             witnesses.append((l, old_ranking, "Drop"))
                             if verbose: 
