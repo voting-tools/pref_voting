@@ -399,7 +399,6 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     if isinstance(prof,ProfileWithTies):
                         prof2 = ProfileWithTies(rankings)
                         if prof.using_extended_strict_preference:
-                            print("Using extended strict preference")
                             prof2.use_extended_strict_preference()
 
                     winners2 = vm(prof2)              
