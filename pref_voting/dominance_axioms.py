@@ -11,9 +11,11 @@ from pref_voting.c1_methods import smith_set, schwartz_set
 from pref_voting.axiom_helpers import *
 
 
-def has_pareto_violation(edata, vm, verbose=False):
+def has_pareto_violation(edata, vm, verbose=False, strong_Pareto = False):
     """
     Returns True if some winner according to vm is Pareto dominated (there is a candidate that is unanimously preferred to the winner).
+
+    If strong_Pareto is True, then a candidate A is dominated if there is a candidate B such that some voter prefers B to A and no voter prefers A to B.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
@@ -28,7 +30,7 @@ def has_pareto_violation(edata, vm, verbose=False):
     ws = vm(edata)
     for w in ws: 
         for c in edata.candidates: 
-            if edata.margin(c,w)==edata.num_voters:
+            if (strong_Pareto == False and edata.support(c,w)==edata.num_voters) or (strong_Pareto == True and edata.support(c,w)> 0 and edata.support(w,c)==0):
                 if verbose:  
                     edata.display()
                     print(edata.description())
@@ -38,9 +40,11 @@ def has_pareto_violation(edata, vm, verbose=False):
                 return True
     return False
 
-def find_all_pareto_violations(edata, vm, verbose=False):
+def find_all_pareto_violations(edata, vm, verbose=False, strong_Pareto = False):
     """
-    Return all Pareto dominated candidates.
+    Returns all Pareto-dominated winners.
+
+    If strong_Pareto is True, then a candidate A is dominated if there is a candidate B such that some voter prefers B to A and no voter prefers A to B.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
@@ -56,7 +60,7 @@ def find_all_pareto_violations(edata, vm, verbose=False):
     pareto_dominated_winners = list()
     for w in ws: 
         for c in edata.candidates: 
-            if edata.margin(c,w)==edata.num_voters:
+            if (strong_Pareto == False and edata.support(c,w)==edata.num_voters) or (strong_Pareto == True and edata.support(c,w)> 0 and edata.support(w,c)==0):
                 pareto_dominated_winners.append((w, c))
     
     if len(pareto_dominated_winners) > 0 and verbose: 
