@@ -60,7 +60,7 @@ def minimax(edata, curr_cands = None, strength_function = None):
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function
 
-    scores = {c: max([strength_function(_c, c) for _c in edata.dominators(c)]) if len(edata.dominators(c)) > 0 else 0 
+    scores = {c: max([strength_function(_c, c) for _c in edata.dominators(c) if _c in candidates]) if any([_c for _c in edata.dominators(c) if _c in candidates]) else 0 
               for c in candidates}
     min_score = min(scores.values())
     return sorted([c for c in candidates if scores[c] == min_score])
