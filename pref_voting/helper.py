@@ -44,26 +44,30 @@ def get_weak_mg(edata, curr_cands = None):
 
 
 def create_election(ranking_list, 
+                    rcounts = None,
                     using_extended_strict_preference=None, 
                     candidates=None):
     """Creates an election from a list of rankings.
     
     Args:
         ranking_list (list): A list of rankings, which may be a list of tuples of candidates, a list of dictionaries or a list of Ranking objects.
+        using_extended_strict_preference (bool, optional): Whether to use extended strict preference after creating a ProfileWithTies. Defaults to None.
+        candidates (list, optional): A list of candidates.  Only used for creating a ProfileWithTies. Defaults to None (by default the candidates are all the candidates that are ranked by at least on voter).
     
     Returns:
         Profile or ProfileWithTies: The election profile.
     """
 
     if len(ranking_list) > 0 and (type(ranking_list[0]) == tuple or type(ranking_list[0]) == list):
-        return Profile(ranking_list)
+        return Profile(ranking_list, rcounts=rcounts)
     elif len(ranking_list) > 0 and (type(ranking_list[0]) == dict or type(ranking_list[0]) == Ranking):
         if candidates is not None:
-            prof = ProfileWithTies(ranking_list, candidates=candidates)
+            prof = ProfileWithTies(ranking_list, candidates=candidates, rcounts=rcounts)
         else:
-            prof = ProfileWithTies(ranking_list)       
+            prof = ProfileWithTies(ranking_list, rcounts=rcounts)       
         if using_extended_strict_preference:
             prof.use_extended_strict_preference()
         return prof
     else: # ranking_list is empty
+        print("Warning: list of rankings is empty.")
         return Profile(ranking_list)

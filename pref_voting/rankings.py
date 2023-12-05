@@ -141,7 +141,7 @@ class Ranking(object):
 
         _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs if c in self.rmap.keys()]
         _cands = list(self.rmap.keys()) if cs is None else cs
-        max_rank = max(_ranks)
+        max_rank = max(_ranks) if len(_ranks) > 0 else None
         return sorted([c for c in _cands if c in self.rmap.keys() and self.rmap[c] == max_rank])
 
     def is_empty(self): 
@@ -166,7 +166,7 @@ class Ranking(object):
         if self.has_tie():
             return None
         else:   
-            return [c for c, r in sorted(self.rmap.items(), key=lambda x: x[1])]
+            return tuple([c for c, r in sorted(self.rmap.items(), key=lambda x: x[1])])
         
     def is_truncated_linear(self, num_cands): 
         """Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates. 
@@ -175,7 +175,8 @@ class Ranking(object):
     
     def has_skipped_rank(self): 
         """Returns True when a rank is skipped."""
-        return len(self.ranks) != 0 and len(list(set(self.rmap.values()))) != max(list(self.rmap.values()))
+
+        return len(self.ranks) != 0 and self.ranks != list(range(1, len(self.ranks) + 1))
 
     def has_overvote(self): 
         """
@@ -183,7 +184,6 @@ class Ranking(object):
         """
         return self.has_tie()
     
-
     def truncate_overvote(self):
         """
         Truncate the ranking at an overvote.  
