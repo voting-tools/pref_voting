@@ -48,7 +48,7 @@ def pr_borda(profile, curr_cands=None):
 def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x: x):
     '''Implementation of maximal lotteries.   See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
     
-    Returns a list of all maximal lotteries (there may be more than 1)
+    Returns a randomly chosen maximal lottery.
     '''
     
     A = np.array([[margin_transformation(m) for m in row] 
@@ -66,13 +66,34 @@ def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x:
 
 @vm(name="C1 Maximal Lottery")
 def c1_maximal_lottery(edata, curr_cands=None): 
+
+    '''Returns the C1 maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
+    
+    Args:   
+        edata (Profile, MarginGraph): A Profile object.
+        curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
+    
+    Returns:
+        dict: A dictionary mapping candidates to probabilities.
+    '''
+
     return _maximal_lottery(edata, 
                             curr_cands=curr_cands, 
                             margin_transformation = np.sign)
 
 @vm(name="Maximal Lottery")
-def maximal_lottery(edata, curr_cands=None, return_one_lottery = False): 
+def maximal_lottery(edata, curr_cands=None): 
+    '''Returns the maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
     
+    Args:   
+        edata (Profile, MarginGraph): A Profile object.
+        curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
+
+
+    Returns:
+        dict: A dictionary mapping candidates to probabilities.
+    
+    '''
     return _maximal_lottery(edata, 
                             curr_cands=curr_cands, 
                             margin_transformation = lambda x: x)

@@ -73,6 +73,7 @@ Contents
    margin_based_methods
    combined_methods
    other_methods
+   probabilistic_methods
    utility_methods
    grade_methods
 
