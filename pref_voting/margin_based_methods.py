@@ -18,7 +18,7 @@ import networkx as nx
 @vm(name = "Minimax")
 def minimax(edata, curr_cands = None, strength_function = None):   
     """
-    The Minimax winners are the candidates with the smallest maximum pairwise defeat.  That is, for each candidate :math:`a` find the biggest margin of a candidate :math:`b` over :math:`a`, then elect the candidate(s) with the smallest such loss. Also known as the Simpson-Kramer Rule.
+    The Minimax winners are the candidates with the smallest maximum pairwise loss.  That is, for each candidate :math:`a`, find the biggest margin of a candidate :math:`b` over :math:`a`, then elect the candidate(s) with the smallest such loss. Also known as the Simpson-Kramer Rule.
     
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
