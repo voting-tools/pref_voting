@@ -21,7 +21,7 @@ def one_rank_lift(ranking, c):
         assert c != ranking[0], "can't lift a candidate already in first place"
         new_ranking = copy.deepcopy(ranking)
         c_idx = new_ranking.index(c)
-        new_ranking[c_idx - 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx-1]
+        new_ranking = new_ranking[:c_idx-1] + (new_ranking[c_idx],) + (new_ranking[c_idx-1],) + new_ranking[c_idx+1:]
     
     if isinstance(ranking, Ranking):
         assert not ranking.first() == [c], "can't lift a candidate already uniquely in first place"
@@ -39,7 +39,7 @@ def one_rank_drop(ranking, c):
         assert c != ranking[-1], "can't drop a candidate already in last place"
         new_ranking = copy.deepcopy(ranking)
         c_idx = new_ranking.index(c)
-        new_ranking[c_idx + 1], new_ranking[c_idx] = new_ranking[c_idx], new_ranking[c_idx+1]
+        new_ranking = new_ranking[:c_idx] + (new_ranking[c_idx+1],) + (new_ranking[c_idx],) + new_ranking[c_idx+2:]   
 
     if isinstance(ranking, Ranking):
         assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
@@ -391,7 +391,7 @@ def lift_to_first(ranking, c):
         assert c != ranking[0], "can't lift a candidate already in first place"
         new_ranking = copy.deepcopy(ranking)
         c_idx = new_ranking.index(c)
-        new_ranking = [c] + new_ranking[:c_idx] + new_ranking[c_idx+1:]
+        new_ranking = (c,) + new_ranking[:c_idx] + new_ranking[c_idx+1:]
 
     if isinstance(ranking, Ranking):
         assert not ranking.first() == [c], "can't lift a candidate already uniquely in first place"
@@ -409,7 +409,7 @@ def drop_to_last(ranking, c):
         assert c != ranking[-1], "can't drop a candidate already in last place"
         new_ranking = copy.deepcopy(ranking)
         c_idx = new_ranking.index(c)
-        new_ranking = new_ranking[:c_idx] + new_ranking[c_idx+1:] + [c]
+        new_ranking = new_ranking[:c_idx] + new_ranking[c_idx+1:] + (c,)
 
     if isinstance(ranking, Ranking):
         assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
