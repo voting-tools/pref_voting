@@ -29,6 +29,8 @@ class VotingMethod(object):
 
     def __call__(self, edata, curr_cands = None, **kwargs):
         
+        if len(curr_cands) == 0 or len(edata.candidates) == 0: 
+            return []
         return self.vm(edata, curr_cands = curr_cands, **kwargs)
     
     def choose(self, edata, curr_cands = None): 
