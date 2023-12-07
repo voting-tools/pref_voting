@@ -26,9 +26,9 @@ Variable Candidate Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_ISDA_violation
+.. autofunction:: pref_voting.variable_candidate_axioms.has_ISDA_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_ISDA_violations
+.. autofunction:: pref_voting.variable_candidate_axioms.find_all_ISDA_violations
 
 ```
 
@@ -36,8 +36,8 @@ Variable Candidate Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_IPDA_violation
+.. autofunction:: pref_voting.variable_candidate_axioms.has_IPDA_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_IPDA_violations
+.. autofunction:: pref_voting.variable_candidate_axioms.find_all_IPDA_violations
 
 ```
