@@ -28,8 +28,8 @@ class VotingMethod(object):
         functools.update_wrapper(self, vm)   
 
     def __call__(self, edata, curr_cands = None, **kwargs):
-        
-        if len(curr_cands) == 0 or len(edata.candidates) == 0: 
+
+        if (curr_cands is not None and len(curr_cands) == 0) or len(edata.candidates) == 0: 
             return []
         return self.vm(edata, curr_cands = curr_cands, **kwargs)
     

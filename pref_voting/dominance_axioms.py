@@ -231,7 +231,10 @@ def has_smith_violation(edata, vm, verbose=False):
     winners_not_in_smith = [w not in s_set for w in ws]
     if len(winners_not_in_smith) > 0: 
         if verbose:
-            display_mg(edata.display)
+            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display_margin_graph()
+            else: 
+                edata.display()
             print(f"The winners that are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}.")
             vm.display(edata)
         return True 
@@ -257,7 +260,10 @@ def find_all_smith_violations(edata, vm, verbose=False):
     winners_not_in_smith = [w not in s_set for w in ws]
     if len(winners_not_in_smith) > 0: 
         if verbose:
-            display_mg(edata.display)
+            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display_margin_graph()
+            else: 
+                edata.display()
             print(f"The winners that are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}.")
             vm.display(edata)
         return winners_not_in_smith 
@@ -289,7 +295,10 @@ def has_schwartz_violation(edata, vm, verbose=False):
     winners_not_in_schwartz = [w not in s_set for w in ws]
     if len(winners_not_in_schwartz) > 0: 
         if verbose:
-            display_mg(edata.display)
+            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display_margin_graph()
+            else: 
+                edata.display()
             print(f"The winners that are not in the Schwartz set: {list_to_string(winners_not_in_schwartz, edata.cmap)}.")
             vm.display(edata)
         return True 
@@ -315,7 +324,10 @@ def find_all_schwartz_violations(edata, vm, verbose=False):
     winners_not_in_schwartz = [w not in s_set for w in ws]
     if len(winners_not_in_schwartz) > 0: 
         if verbose:
-            display_mg(edata.display)
+            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display_margin_graph()
+            else: 
+                edata.display()
             print(f"The winners that are not in the Schwartz set: {list_to_string(winners_not_in_schwartz, edata.cmap)}.")
             vm.display(edata)
         return winners_not_in_schwartz 
