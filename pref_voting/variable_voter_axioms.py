@@ -286,7 +286,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
@@ -340,7 +340,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                             prof2 = Profile(rankings)
 
                         if isinstance(prof,ProfileWithTies):
-                            prof2 = ProfileWithTies(rankings)
+                            prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                             if prof.using_extended_strict_preference:
                                 prof2.use_extended_strict_preference()
 
@@ -397,7 +397,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
@@ -533,7 +533,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
@@ -585,7 +585,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             prof2 = Profile(rankings)
 
                         if isinstance(prof,ProfileWithTies):
-                            prof2 = ProfileWithTies(rankings)
+                            prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                             if prof.using_extended_strict_preference:
                                 prof2.use_extended_strict_preference()
 
@@ -640,7 +640,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
@@ -688,7 +688,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             prof2 = Profile(rankings)
 
                         if isinstance(prof,ProfileWithTies):
-                            prof2 = ProfileWithTies(rankings)
+                            prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                             if prof.using_extended_strict_preference:
                                 prof2.use_extended_strict_preference()
 
@@ -752,7 +752,7 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
@@ -803,7 +803,7 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
                         prof2 = Profile(rankings)
 
                     if isinstance(prof,ProfileWithTies):
-                        prof2 = ProfileWithTies(rankings)
+                        prof2 = ProfileWithTies(rankings, candidates = prof.candidates)
                         if prof.using_extended_strict_preference:
                             prof2.use_extended_strict_preference()
 
