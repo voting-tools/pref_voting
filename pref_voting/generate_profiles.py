@@ -2,9 +2,9 @@
     File: gen_profiles.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
-    Updated: July 14, 2022
+    Updated: December 31, 2023
     
-    Functions to generate profile
+    Functions to generate profiles
 
 """
 
@@ -18,6 +18,8 @@ import random
 from scipy.stats import gamma
 
 from pref_voting.profiles_with_ties import ProfileWithTies
+
+from ortools.linear_solver import pywraplp
 
 # ############
 # wrapper functions to interface with preflib tools for generating profiles
@@ -557,3 +559,77 @@ def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="
     )
     prof.use_extended_strict_preference()
     return prof
+
+####
+# Generating Profile from qualitative margin graph
+####
+
+def minimal_profile_from_edge_order(cands, edge_order):
+    """Given a list of candidates and a list of edges in order of descending strength, find a minimal profile whose qualitative margin graph has that edge order.
+
+    Args: 
+        cands (list): list of candidates
+        edge_order (list): list of edges in order of descending strength
+
+    Returns:
+        Profile: a profile whose qualitative margin graph has the given edge order
+    """
+
+    solver = pywraplp.Solver.CreateSolver("SAT")
+
+    num_cands = len(cands)
+    rankings = list(permutations(range(num_cands)))
+
+    ranking_to_var = dict()
+    infinity = solver.infinity()
+    for ridx, r in enumerate(rankings): 
+        _v = solver.IntVar(0.0, infinity, f"x{ridx}")
+        ranking_to_var[r] = _v
+
+    nv = solver.IntVar(0.0, infinity, "nv")
+    equations = list()
+    for c1 in cands: 
+        for c2 in cands: 
+            if c1 != c2: 
+                if (c1,c2) in edge_order:
+                    rankings_c1_over_c2 = [ranking_to_var[r] for r in rankings if r.index(c1) < r.index(c2)]
+                    rankings_c2_over_c1 = [ranking_to_var[r] for r in rankings if r.index(c2) < r.index(c1)]
+                    equations.append(sum(rankings_c1_over_c2) - sum(rankings_c2_over_c1) >= 1)
+
+                for c3 in cands:
+                    for c4 in cands:
+                        if c3 != c4:
+                            if (c1,c2) in edge_order and (c3,c4) in edge_order and edge_order.index((c1,c2)) < edge_order.index((c3,c4)):
+                                rankings_c3_over_c4 = [ranking_to_var[r] for r in rankings if r.index(c3) < r.index(c4)]
+                                rankings_c4_over_c3 = [ranking_to_var[r] for r in rankings if r.index(c4) < r.index(c3)]
+                                equations.append(sum(rankings_c1_over_c2) - sum(rankings_c2_over_c1) >= sum(rankings_c3_over_c4) - sum(rankings_c4_over_c3) + 1)
+                    
+    equations.append(nv == sum(list(ranking_to_var.values())))
+
+    for eq in equations: 
+        solver.Add(eq)
+
+    solver.Minimize(nv)
+
+    status = solver.Solve()
+
+    if status == pywraplp.Solver.INFEASIBLE:
+        print("Error: Did not find a solution.")
+        return None
+
+    if status != pywraplp.Solver.OPTIMAL: 
+        print("Warning: Did not find an optimal solution.")
+
+    _ranks = list()
+    _rcounts = list()
+
+    for r,v in ranking_to_var.items(): 
+
+        if v.solution_value() > 0: 
+            _ranks.append(r)
+            _rcounts.append(int(v.solution_value()))
+            if not v.solution_value().is_integer(): 
+                print("ERROR: Found non integer, ", v.solution_value())
+                return None
+
+    return Profile(_ranks, rcounts = _rcounts)
