@@ -565,7 +565,7 @@ def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="
 ####
 
 def minimal_profile_from_edge_order(cands, edge_order):
-    """Given a list of candidates and a list of edges in order of descending strength, find a minimal profile whose qualitative margin graph has that edge order.
+    """Given a list of candidates and a list of edges (positive margin edges only) in order of descending strength, find a minimal profile whose qualitative margin graph has that edge order.
 
     Args: 
         cands (list): list of candidates
