@@ -62,4 +62,9 @@ compass on the map of elections," IJCAI-21), for each generated profile, we chos
 
 ```
 
+## Generate a Profile for a given qualitative margin graph
 
+```{eval-rst}
+.. autofunction:: pref_voting.generate_profiles.minimal_profile_from_edge_order
+
+```
