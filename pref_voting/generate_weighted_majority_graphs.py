@@ -86,6 +86,48 @@ def generate_margin_graph(num_cands, weight_domain = None, parity = 'even'):
 
     return MarginGraph(candidates, edges)
 
+def generate_margin_graph_bradley_terry(num_cands, num_voters, score_prob_mod = lambda c: np.random.uniform(0,1)):
+    """Generates a margin graph for num_cands candidates by first sampling candidate scores from score_prob_mod and then sampling votes from the Bradley-Terry model using the sampled scores.
+
+    Args:
+        num_cands (int): Number of candidates
+        num_voters (int): Number of voters
+        score_prob_mod (function, optional): A function that takes a candidate and returns a score. Defaults to lambda c: np.random.uniform(0,1).
+
+    Returns:
+        MarginGraph: A margin graph
+    """
+
+    candidates = list(range(num_cands))
+    pairs_of_cands = list(combinations(candidates, 2))
+
+    cand_score = dict()
+    for c in candidates:
+        cand_score[c] = score_prob_mod(c)
+
+    edges = list()
+    
+    for c1, c2 in pairs_of_cands:
+
+        support_c1_c2 = 0
+        support_c2_c1 = 0
+
+        for n in range(num_voters):
+            vote = np.random.choice([1,0], p = [cand_score[c1] / (cand_score[c1] + cand_score[c2]), cand_score[c2] / (cand_score[c1] + cand_score[c2])])
+
+            if vote == 1:
+                support_c1_c2 += 1
+            else:
+                support_c2_c1 += 1
+        
+        if support_c1_c2 > support_c2_c1:
+            edges.append((c1,c2, support_c1_c2 - support_c2_c1))
+
+        if support_c2_c1 > support_c1_c2:
+            edges.append((c2,c1, support_c2_c1 - support_c1_c2))
+
+    return MarginGraph(candidates, edges)
+
 ### 
 
 # Turn a code into a pair
