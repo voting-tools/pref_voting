@@ -25,6 +25,11 @@ Generate Weighted Majority Graphs
 
 ```
 
+```{eval-rst}
+.. autofunction:: pref_voting.generate_weighted_majority_graphs.generate_margin_graph_bradley_terry
+
+```
+
 ## Enumerate Canonical Objects
 
 ```{eval-rst}
