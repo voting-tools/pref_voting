@@ -31,9 +31,7 @@ def one_rank_lift(ranking, c):
         if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
             new_ranking_dict = dict()
             for d in ranking.cands:
-                if d == c:
-                    new_ranking_dict[d] = ranking.rmap[d]
-                elif ranking.rmap[d] < ranking.rmap[c]:
+                if ranking.rmap[d] < ranking.rmap[c] or d == c:
                     new_ranking_dict[d] = ranking.rmap[d]
                 elif ranking.rmap[d] >= ranking.rmap[c]:
                     new_ranking_dict[d] = ranking.rmap[d] + 1
@@ -66,9 +64,7 @@ def one_rank_drop(ranking, c):
         if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
             new_ranking_dict = dict()
             for d in ranking.cands:
-                if d == c:
-                    new_ranking_dict[d] = ranking.rmap[d]
-                elif ranking.rmap[d] > ranking.rmap[c]:
+                if d == c or ranking.rmap[d] > ranking.rmap[c]:
                     new_ranking_dict[d] = ranking.rmap[d]
                 elif ranking.rmap[d] <= ranking.rmap[c]:
                     new_ranking_dict[d] = ranking.rmap[d] - 1
