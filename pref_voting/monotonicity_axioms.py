@@ -24,8 +24,23 @@ def one_rank_lift(ranking, c):
         new_ranking = new_ranking[:c_idx-1] + (new_ranking[c_idx],) + (new_ranking[c_idx-1],) + new_ranking[c_idx+1:]
     
     if isinstance(ranking, Ranking):
-        assert not ranking.first() == [c], "can't lift a candidate already uniquely in first place"
-        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]-1 for a in ranking.cands})
+        assert [c] != ranking.first(), "can't lift a candidate already uniquely in first place"
+
+        ranking.normalize_ranks()
+
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
+            new_ranking_dict = dict()
+            for d in ranking.cands:
+                if ranking.rmap[d] < ranking.rmap[c] or d == c:
+                    new_ranking_dict[d] = ranking.rmap[d]
+                elif ranking.rmap[d] >= ranking.rmap[c]:
+                    new_ranking_dict[d] = ranking.rmap[d] + 1
+
+            new_ranking = Ranking(new_ranking_dict)
+
+        else:
+            new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]-1 for a in ranking.cands})
+
         new_ranking.normalize_ranks()
 
     return new_ranking
@@ -43,7 +58,23 @@ def one_rank_drop(ranking, c):
 
     if isinstance(ranking, Ranking):
         assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
-        new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]+1 for a in ranking.cands})
+        
+        ranking.normalize_ranks()
+
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
+            new_ranking_dict = dict()
+            for d in ranking.cands:
+                if d == c or ranking.rmap[d] > ranking.rmap[c]:
+                    new_ranking_dict[d] = ranking.rmap[d]
+                elif ranking.rmap[d] <= ranking.rmap[c]:
+                    new_ranking_dict[d] = ranking.rmap[d] - 1
+
+            new_ranking = Ranking(new_ranking_dict)
+
+        else:
+            new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]+1 for a in ranking.cands})
+
+        new_ranking.normalize_ranks()
 
     return new_ranking
 
