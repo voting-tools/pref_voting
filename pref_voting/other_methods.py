@@ -116,9 +116,9 @@ def kemeny_young_rankings(profile, curr_cands = None):
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
 
     Returns: 
-        rankings: A list of Slater rankings.
+        rankings: A list of Kemeny-Young rankings.
         
-        dist: The minimum distance of the Slater rankings.
+        dist: The minimum distance of the Kemeny-Young rankings.
 
 
     :Example:
