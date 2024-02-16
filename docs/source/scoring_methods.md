@@ -92,6 +92,9 @@ One problem with the above code is that the name of the scoring rule is "Scoring
 
 .. autofunction:: pref_voting.scoring_methods.plurality
 
+
+.. autofunction:: pref_voting.scoring_methods.plurality_ranking
+
 ```
 
 ## Borda
@@ -99,6 +102,9 @@ One problem with the above code is that the name of the scoring rule is "Scoring
 ```{eval-rst}
 
 .. autofunction:: pref_voting.scoring_methods.borda
+
+
+.. autofunction:: pref_voting.scoring_methods.borda_ranking
 
 ```
 

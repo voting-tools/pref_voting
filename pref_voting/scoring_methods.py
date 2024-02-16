@@ -6,7 +6,9 @@
     Implementations of scoring rules. 
 '''
 from pref_voting.voting_method import  *
+from pref_voting.social_welfare_function import  *
 from pref_voting.profiles import Profile
+from pref_voting.rankings import Ranking
 from pref_voting.voting_method import _num_rank_last 
 from pref_voting.profiles import _find_updated_profile, _num_rank
 
@@ -52,6 +54,24 @@ def plurality(profile, curr_cands = None):
 
     return sorted([c for c in curr_cands if plurality_scores[c] == max_plurality_score])
 
+@swf(name="Plurality Ranking")
+def plurality_ranking(profile, curr_cands = None):
+    """The **Plurality score** of a candidate :math:`c` is the number of voters that rank :math:`c` in first place. Return the ranking of the ``curr_cands`` according to the Plurality scores.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A Ranking of the candidates
+
+    .. seealso::
+
+        The method :meth:`pref_voting.profiles.Profile.plurality_scores` returns a dictionary assigning the plurality score to each candidate. 
+    """
+
+    plurality_scores = profile.plurality_scores(curr_cands = curr_cands)
+    return Ranking(plurality_scores)
 
 @vm(name = "Borda")
 def borda(profile, curr_cands = None):
@@ -95,6 +115,25 @@ def borda(profile, curr_cands = None):
     max_borda_score = max(borda_scores.values())
     
     return sorted([c for c in curr_cands if borda_scores[c] == max_borda_score])
+
+@swf(name="Borda Ranking")
+def borda_ranking(profile, curr_cands = None):
+    """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. Return the ranking of ``curr_cands`` according to the Borda scores. 
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A ranking of the candidates
+
+    .. seealso::
+
+        The method :meth:`pref_voting.profiles.Profile.borda_scores` returns a dictionary assigning the Borda score to each candidate. 
+    """
+    
+    borda_scores = profile.borda_scores(curr_cands = curr_cands)
+    return Ranking(borda_scores)
 
 @vm(name = "Anti-Plurality")
 def anti_plurality(profile, curr_cands = None):
@@ -265,6 +304,11 @@ def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symme
     
     return sorted([c for c in restricted_prof.candidates if b_scores[c] == max_borda_score])
 
+
+scoring_swfs = [
+    plurality_ranking,
+    borda_ranking
+]
 
 scoring_vms = [
     plurality, 

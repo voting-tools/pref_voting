@@ -87,7 +87,7 @@ A :class:`~pref_voting.weighted_majority_graphs.MarginGraph` has a number of met
 
 ```{eval-rst}
 
-Both :class:~pref_voting.weighted_margin_graph.MarginGraph` and :class:~pref_voting.weighted_margin_graph.MajorityGraph` can be generated from a profile.
+Both :class:~pref_voting.weighted_majority_graphs.MarginGraph` and :class:~pref_voting.weighted_majority_graphs.MajorityGraph` can be generated from a profile.
 
 .. exec_code::
 

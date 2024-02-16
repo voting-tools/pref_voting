@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from mpl_toolkits.mplot3d import Axes3D
 from pref_voting.utility_functions import *
 from pref_voting.utility_profiles import UtilityProfile
 

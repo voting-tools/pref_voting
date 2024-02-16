@@ -35,7 +35,6 @@ Grade Methods
 ```
 
 
-
 ## Greatest Median
 
 

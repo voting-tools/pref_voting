@@ -1,7 +1,7 @@
 Grade Profiles
 =======================================
 
-Profiles voters that assign grades from a fixed set to each candidate. The ballots for GradeProfile are in the [ballots page](ballots).
+Profiles of voters that assign grades from a fixed set to each candidate. The ballots for a GradeProfile are in the [ballots page](ballots.md#grade-class).
 
 ## GradeProfile Class
 

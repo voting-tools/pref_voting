@@ -7,16 +7,13 @@
 '''
 
 import functools
-import numpy as np
-from numba import jit # Remove until numba supports python 3.11
-import random
 
-class SWF(object): 
+class SocialWelfareFunction(object): 
     """
     A class to add functionality to social welfare functions 
 
     Args:
-        swf (function): An implementation of a voting method. The function should accept a Profile, ProfileWithTies, MajorityGraph, and/or MarginGraph, and a keyword parameter ``curr_cands`` to find the winner after restricting to ``curr_cands``. 
+        swf (function): An implementation of a voting method. The function should accept any type of profile, and a keyword parameter ``curr_cands`` to find the winner after restricting to ``curr_cands``. 
         name (string): The Human-readable name of the social welfare function.
 
     """
@@ -30,7 +27,7 @@ class SWF(object):
 
         if (curr_cands is not None and len(curr_cands) == 0) or len(edata.candidates) == 0: 
             return []
-        return self.vm(edata, curr_cands = curr_cands, **kwargs)
+        return self.swf(edata, curr_cands = curr_cands, **kwargs)
         
     def set_name(self, new_name):
         """Set the name of the social welfare function."""
@@ -45,15 +42,5 @@ def swf(name = None):
     A decorator used when creating a social welfare function. 
     """
     def wrapper(f):
-        return SWF(f, name=name)
+        return SocialWelfareFunction(f, name=name)
     return wrapper
-
-@jit(nopython=True, fastmath=True)
-def isin(arr, val):
-    """compiled function testing if the value val is in the array arr
-    """
-    
-    for i in range(arr.shape[0]):
-        if (arr[i]==val):
-            return True
-    return False

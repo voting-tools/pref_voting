@@ -5,11 +5,13 @@
     
     Implementations of utility methods. 
 '''
-from pref_voting.voting_method import  *
+from pref_voting.voting_method import vm
+from pref_voting.social_welfare_function import swf
 from pref_voting.rankings import  Ranking
+import numpy as np  
 
-
-def sum_utilitarian(uprof, curr_cands = None): 
+@swf(name="Sum Utilitarian")
+def sum_utilitarian_ranking(uprof, curr_cands = None): 
     """Rank the alternatives according to the sum of the utilities. 
     Args:
         uprof (Profile): A Profile object.
@@ -20,20 +22,21 @@ def sum_utilitarian(uprof, curr_cands = None):
 
     curr_cands = curr_cands if curr_cands is not None else uprof.domain
 
-    sums = {x:uprof.util_sum(x) for x in curr_cands}
+    sums = {c:uprof.util_sum(c) for c in curr_cands}
     sorted_sums = sorted(list(set(sums.values())), reverse=True)
     return Ranking({x: uidx+1 for uidx, u in enumerate(sorted_sums) 
                     for x in curr_cands if sums[x] == u})
 
-@vm(name="Sum Utilitarianism")
-def sum_utilitarian_ws(uprof, curr_cands=None): 
+@vm(name="Sum Utilitarian")
+def sum_utilitarian(uprof, curr_cands=None): 
     """
     Return the winning set of candidates according to sum of the utilities.
     """
-    return sorted(sum_utilitarian(uprof, curr_cands=curr_cands).first())
+    return sorted(sum_utilitarian_ranking(uprof, curr_cands=curr_cands).first())
 
 
-def relative_utilitarian(uprof, curr_cands=None): 
+@swf(name="Relative Utilitarian")
+def relative_utilitarian_ranking(uprof, curr_cands=None): 
     """
     Rank the alternatives according to sum of the normalized utilities. 
 
@@ -45,26 +48,26 @@ def relative_utilitarian(uprof, curr_cands=None):
 
     .. note::
         Before restricting to curr_cands, we normalize with respect to *all* alternatives in the domain. 
-
     """
-    
+
     curr_cands = curr_cands if curr_cands is not None else uprof.domain
 
     rel_utils = [u.normalize_by_range() for u in uprof.utilities]
-    sums = {x:np.sum([u(x) for u in rel_utils if u(x) is not None]) for x in curr_cands}
+    sums = {c:np.sum([u(c) for u in rel_utils if u(c) is not None]) for c in curr_cands}
     sorted_sums = sorted(list(set(sums.values())), reverse=True)
     return Ranking({x: uidx+1 for uidx, u in enumerate(sorted_sums) 
                     for x in curr_cands if sums[x] == u})
 
-@vm(name="Relative Utilitarianism")
-def relative_utilitarian_ws(uprof, curr_cands=None): 
+@vm(name="Relative Utilitarian")
+def relative_utilitarian(uprof, curr_cands=None): 
     """
     Return the winning set of candidates according to sum of the normalized utilities.
     """
-    return sorted(relative_utilitarian(uprof, curr_cands=curr_cands).first())
+    return sorted(relative_utilitarian_ranking(uprof, curr_cands=curr_cands).first())
 
 
-def maximin(uprof, curr_cands=None): 
+@swf(name="Maximin")
+def maximin_ranking(uprof, curr_cands=None): 
     """
     Rank the alternatives according to the minimum utility.
 
@@ -84,14 +87,15 @@ def maximin(uprof, curr_cands=None):
                     for x in min_utils.keys() if min_utils[x] == m})
 
 @vm(name="Maximin")
-def maximin_ws(uprof, curr_cands=None):
+def maximin(uprof, curr_cands=None):
     """
     Return the winning set of candidates according to minimum utility.
     """
-    return sorted(maximin(uprof, curr_cands=curr_cands).first())
+    return sorted(maximin_ranking(uprof, curr_cands=curr_cands).first())
 
 
-def lexicographic_maximin(uprof, curr_cands=None): 
+@swf(name="Lexicographic Maximin")
+def lexicographic_maximin_ranking(uprof, curr_cands=None): 
     """
     Rank the alternatives according to the lexicographic maximin ranking. The lexicographic maximin ranking is the ranking that ranks alternatives according to the minimum utility, and then breaks ties by ranking alternatives according to the second minimum utility, and so on.
 
@@ -100,8 +104,6 @@ def lexicographic_maximin(uprof, curr_cands=None):
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
     Returns:
         Ranking: A ranking of the candidates in ``curr_cands`` according to lexicographic maximin ranking.
-
-        
     """
 
     curr_cands = curr_cands if curr_cands is not None else uprof.domain
@@ -114,14 +116,15 @@ def lexicographic_maximin(uprof, curr_cands=None):
                     for x in utils.keys() if utils[x] == us})
 
 @vm(name="Lexicographic Maximin")
-def lexicographic_maximin_ws(uprof, curr_cands=None):
+def lexicographic_maximin(uprof, curr_cands=None):
     """
     Return the winning set of candidates according to lexicographic maximin ranking.
     """
-    return sorted(lexicographic_maximin(uprof, curr_cands=curr_cands).first())
+    return sorted(lexicographic_maximin_ranking(uprof, curr_cands=curr_cands).first())
 
 
-def nash_bargaining(uprof, sq=None, curr_cands=None): 
+@swf(name="Nash")
+def nash_ranking(uprof, sq=None, curr_cands=None): 
     """
     Rank the alternatives according to the Nash product ranking. Given the status quo ``sq``, the Nash product ranking ranks alternatives according to the product of the utilities of the alternatives minus the utility of the status quo.
     
@@ -150,8 +153,24 @@ def nash_bargaining(uprof, sq=None, curr_cands=None):
                     for x in nash_utils.keys() if nash_utils[x] == n})
 
 @vm(name="Nash")
-def nash_ws(uprof, sq=None, curr_cands=None):
+def nash(uprof, sq=None, curr_cands=None):
     """
     Return the winning set of candidates according to Nash product ranking.
     """
-    return sorted(nash_bargaining(uprof, sq=sq, curr_cands=curr_cands).first())
+    return sorted(nash_ranking(uprof, sq=sq, curr_cands=curr_cands).first())
+
+utilitarian_vms = [
+    sum_utilitarian,
+    relative_utilitarian,
+    maximin,
+    lexicographic_maximin,
+    nash
+]
+
+utilitarian_swfs = [
+    sum_utilitarian_ranking,
+    relative_utilitarian_ranking,
+    maximin_ranking,
+    lexicographic_maximin_ranking,
+    nash_ranking
+]

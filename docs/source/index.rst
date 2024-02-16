@@ -51,7 +51,7 @@ Contents
    grade_profiles
    utility_profiles
    spatial_profiles
-   margin_graphs
+   weighted_majority_graphs
    
 .. toctree::
    :maxdepth: 2
@@ -64,9 +64,9 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Voting Methods
+   :caption: Aggregation Methods
 
-   vms_overview
+   aggregation_methods_overview
    scoring_methods
    iterative_methods
    c1_methods
@@ -76,6 +76,7 @@ Contents
    probabilistic_methods
    utility_methods
    grade_methods
+   
 
 .. toctree::
    :maxdepth: 2

@@ -3,6 +3,10 @@ from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MajorityGraph
 from pref_voting.rankings import Ranking
+from pref_voting.social_welfare_function import *
+from pref_voting.voting_method import *
+import random
+
 import networkx as nx
 
 def get_mg(edata, curr_cands = None): 
@@ -41,6 +45,74 @@ def get_weak_mg(edata, curr_cands = None):
             wmg.remove_nodes_from([c for c in edata.candidates if c not in curr_cands])
             wmg.add_edges_from([(c1, c2) for c1 in curr_cands for c2 in curr_cands if c1 != c2 and edata.is_tied(c1, c2)])
     return wmg
+
+
+def swf_from_vm(vm, tie_breaker = None):
+    """
+    Given a voting method, returns a social welfare function that uses the voting method to rank the candidates (winners are ranked first; then they are excluded from curr_cands and the new winners are ranked second; etc.).
+
+    Args:
+        vm (function): A voting method.
+        tie_breaker (str): The tie-breaking method to use. Options are "alphabetic", "random", and None. Default is None.
+
+    Returns:
+        function: A social welfare function that uses the voting method to rank the candidates.
+    """
+    
+    def f(prof, curr_cands = None):
+
+        cands = prof.candidates if curr_cands == None else curr_cands
+
+        ranked_cands = list()
+        ranking_dict = dict()
+
+        n=0
+
+        while n < len(cands):
+
+            if len(ranked_cands) == len(cands):
+                break
+
+            ws = vm(prof, curr_cands = [c for c in cands if c not in ranked_cands])
+            ranked_cands = ranked_cands + ws
+
+            if tie_breaker is None:
+                for c in ws:
+                    ranking_dict[c] = n
+                n += 1
+
+            if tie_breaker == "alphabetic":
+                sorted_ws = sorted(ws)
+                for c in sorted_ws:
+                    ranking_dict[c] = n
+                    n += 1
+
+            if tie_breaker == "random":
+                random.shuffle(ws)
+                for c in ws:
+                    ranking_dict[c] = n
+                    n += 1            
+
+        return Ranking(ranking_dict)
+        
+    return SocialWelfareFunction(f, name = f"SWF from {vm.name}")
+
+
+def vm_from_swf(swf):
+    """
+    Given a social welfare function, returns a voting method that selects all the candidates ranked first according to the swf.
+
+    Args:
+        swf (function): A social welfare function.
+
+    Returns:
+        function: A voting method that uses the swf to find the winning set.
+    """
+    
+    def f(edata, curr_cands = None):
+        return sorted(swf(edata, curr_cands = curr_cands).first())
+        
+    return VotingMethod(f, name = f"VM from {swf.name}")
 
 
 def create_election(ranking_list, 

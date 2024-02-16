@@ -83,6 +83,11 @@ class UtilityProfile(object):
         """The number of voters in the profile. """
 
     @property
+    def candidates(self): 
+        """Return the candidates in the profile."""
+        return self.domain
+    
+    @property
     def utilities_counts(self):
         """Returns the utilities and the counts of each utility."""
 
@@ -258,6 +263,27 @@ class UtilityProfile(object):
             tbl ={"Voter" : [vmap[v] for v in voters]}
             tbl.update({str(x): [utilities[v](x) for v in voters] for x in self.domain})
         print( tabulate(tbl, headers="keys"))
+
+    def __getstate__(self):
+        # Serialize only the essential data
+        state = {
+            'utilities': [u.as_dict() for u in self._utilities],
+            'ucounts': self.ucounts,
+            'domain': self.domain,
+            'cmap': self.cmap
+        }
+        return state
+
+    def __setstate__(self, state):
+        # Restore essential data
+        self.domain = state['domain']
+        self.cmap = state['cmap']
+        self.ucounts = state['ucounts']
+
+        self._utilities = [Utility(u_dict, domain=self.domain, cmap=self.cmap) 
+                           for u_dict in state['utilities']]
+
+        self.num_voters = sum(self.ucounts)
 
 def write_utility_profiles_to_json(uprofs, filename):
     """Write a list of utility profiles to a json file."""

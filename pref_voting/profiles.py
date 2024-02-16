@@ -187,8 +187,8 @@ class Profile(object):
         # for number of each ranking
         self._rcounts = np.array([1]*len(rankings)) if rcounts is None else np.array(rcounts) 
         
-        # for each voter, the rankings of each candidate
-        self._ranks = np.array([[_r.index(c) + 1 for c in self.candidates] for  _r in rankings])
+        # for each voter, the ranks of each candidate
+        self._ranks = np.array([[np.where(_r == c)[0][0] + 1 for c in self.candidates] for  _r in self._rankings])
         
         # 2d array where the c,d entry is the support of c over d
         self._tally = np.array([[_support(self._ranks, self._rcounts, c1, c2) 

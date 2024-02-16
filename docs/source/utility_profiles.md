@@ -1,14 +1,9 @@
 Utility Profiles
 =======================================
 
-Profiles of utility values for candidates.  
+Profiles of voters that assign utilities to a set of candidates.   The ballots for a UtilityProfile are in the [ballots page](ballots.md#utility-class).
 
-## Utility Class
 
-```{eval-rst}
-.. autoclass:: pref_voting.mappings.Utility
-    :members: 
-```
 
 ## UtilityProfile Class
 

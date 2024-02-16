@@ -11,7 +11,7 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.sum_utilitarian_ws
+.. autofunction:: pref_voting.utility_methods.sum_utilitarian_ranking
 
 ```
 
@@ -26,7 +26,7 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.relative_utilitarian_ws
+.. autofunction:: pref_voting.utility_methods.relative_utilitarian_ranking
 
 ```
 
@@ -40,7 +40,7 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.maximin_ws
+.. autofunction:: pref_voting.utility_methods.maximin_ranking
 
 ```
 
@@ -54,7 +54,7 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.lexicographic_maximin_ws
+.. autofunction:: pref_voting.utility_methods.lexicographic_maximin_ranking
 
 ```
 
@@ -63,13 +63,13 @@ Utility Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.nash_bargaining
+.. autofunction:: pref_voting.utility_methods.nash
 
 ```
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.utility_methods.nash_ws
+.. autofunction:: pref_voting.utility_methods.nash_ranking
 
 ```
 
