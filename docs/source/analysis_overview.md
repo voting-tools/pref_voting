@@ -26,12 +26,9 @@ Functions that can be used to compare and contrast voting methods.
 
 ```
 
-
 ## Axiom Violations  
 
-
 ```{eval-rst}
-
 
 .. autofunction:: pref_voting.analysis.axiom_violations_data
 

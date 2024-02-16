@@ -25,7 +25,7 @@ We further categorize aggregation methods based on the input from the voters:
       * [Grade Methods](grade_methods.md)
 
 
-# VotingMethod Class and Decorator
+## VotingMethod Class and Decorator
 
 ```{eval-rst} 
 
@@ -36,7 +36,7 @@ We further categorize aggregation methods based on the input from the voters:
 
 ```
 
-# SocialWelfareFunction Class and Decorator
+## SocialWelfareFunction Class and Decorator
 
 ```{eval-rst} 
 
@@ -48,7 +48,7 @@ We further categorize aggregation methods based on the input from the voters:
 ```
 
 
-# Helper Functions: Converting between Voting Methods and Social Welfare Functions
+## Helper Functions: Converting between Voting Methods and Social Welfare Functions
 
 ```{eval-rst} 
 

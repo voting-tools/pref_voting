@@ -15,7 +15,7 @@ In addition, there are a number of classes that represent different types of (we
 2. ``MarginGraph``: a directed asymmetric graph in which the nodes are the candidates, an edge from $a$ to $b$ means that $a$ is majority preferred to $b$, and the weight of the edge is the margin of $a$ over $b$ (i.e., the number of voters who rank $a$ strictly above $b$ minus the number of voters who rank $b$ strictly above $a$).
 3. ``SupportGraph``: a directed asymmetric graph in which the nodes are the candidates, an edge from $a$ to $b$ means that $a$ is majority preferred to $b$, and the weight of the edge is the number of voters who rank $a$ strictly above $b$.
 
-# Helper Function: Creating Elections
+## Helper Function: Creating Elections
 
 ```{eval-rst}
 
