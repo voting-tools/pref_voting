@@ -2,7 +2,7 @@
     File: gen_profiles.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
-    Updated: December 31, 2023
+    Updated: February 16, 2024
     
     Functions to generate profiles
 
@@ -12,269 +12,43 @@ from itertools import combinations
 from pref_voting.profiles import Profile
 from pref_voting.generate_spatial_profiles import generate_spatial_profile
 from pref_voting.generate_utility_profiles import linear_utility
-import numpy as np  # for the SPATIAL model
+import numpy as np 
 import math
 import random
 from scipy.stats import gamma
+from itertools import permutations
 
 from pref_voting.profiles_with_ties import ProfileWithTies
-
 from ortools.linear_solver import pywraplp
+from prefsampling.ordinal import impartial, impartial_anonymous, urn, plackett_luce, didi, stratification, single_peaked_conitzer, single_peaked_walsh, single_peaked_circle, single_crossing, euclidean, mallows
+
+from prefsampling.core.euclidean import EuclideanSpace
+from collections import Counter
 
 # ############
 # wrapper functions to interface with preflib tools for generating profiles
 # ############
 
-# ## URN model ###
 
-# Generate votes based on the URN Model.
-# we need num_cands and num_voters  with replace replacements.
-# This function is a small modification of the same function used
-# in preflib.org to generate profiles
-def gen_urn(num_cands, num_voters, replace):
-
-    voteMap = {}
-    ReplaceVotes = {}
-
-    ICsize = math.factorial(num_cands)
-    ReplaceSize = 0
-
-    for x in range(num_voters):
-        flip = random.randint(1, ICsize + ReplaceSize)
-        if flip <= ICsize:
-            # generate an IC vote and make a suitable number of replacements...
-            tvote = tuple(np.random.permutation(num_cands))  # gen_ic_vote(alts)
-            voteMap[tvote] = voteMap.get(tvote, 0) + 1
-            ReplaceVotes[tvote] = ReplaceVotes.get(tvote, 0) + replace
-            ReplaceSize += replace
-        else:
-            # iterate over replacement hash and select proper vote.
-            flip = flip - ICsize
-            for vote in ReplaceVotes.keys():
-                flip = flip - ReplaceVotes[vote]
-                if flip <= 0:
-                    voteMap[vote] = voteMap.get(vote, 0) + 1
-                    ReplaceVotes[vote] = ReplaceVotes.get(vote, 0) + replace
-                    ReplaceSize += replace
-                    break
-            else:
-                print("We have a problem... replace fell through....")
-                exit()
-    return voteMap
-
-
-def create_rankings_urn(num_cands, num_voters, replace):
-    """create a list of rankings using the urn model"""
-    vote_map = gen_urn(num_cands, num_voters, replace)
-    return [vc[0] for vc in vote_map.items()], [vc[1] for vc in vote_map.items()]
-
-
-# ### Mallows Model ####
-
-# For Phi and a given number of candidates, compute the
-# insertion probability vectors.
-def compute_mallows_insertvec_dist(ncand, phi):
-    # Compute the Various Mallows Probability Distros
-    vec_dist = {}
-    for i in range(1, ncand + 1):
-        # Start with an empty distro of length i
-        dist = [0] * i
-        # compute the denom = phi^0 + phi^1 + ... phi^(i-1)
-        denom = sum([pow(phi, k) for k in range(i)])
-        # Fill each element of the distro with phi^i-j / denom
-        for j in range(1, i + 1):
-            dist[j - 1] = pow(phi, i - j) / denom
-        # print(str(dist) + "total: " + str(sum(dist)))
-        vec_dist[i] = dist
-    return vec_dist
-
-
-# Return a value drawn from a particular distribution.
-def draw(values, distro):
-    # Return a value randomly from a given discrete distribution.
-    # This is a bit hacked together -- only need that the distribution
-    # sums to 1.0 within 5 digits of rounding.
-    if round(sum(distro), 5) != 1.0:
-        print("Input Distro is not a Distro...")
-        print(str(distro) + "  Sum: " + str(sum(distro)))
-        exit()
-    if len(distro) != len(values):
-        print("Values and Distro have different length")
-
-    cv = 0
-    draw = random.random() - distro[cv]
-    while draw > 0.0:
-        cv += 1
-        draw -= distro[cv]
-    return values[cv]
-
-
-# Generate a Mallows model with the various mixing parameters passed in
-# nvoters is the number of votes we need
-# candmap is a candidate map
-# mix is an array such that sum(mix) == 1 and describes the distro over the models
-# phis is an array len(phis) = len(mix) = len(refs) that is the phi for the particular model
-# refs is an array of dicts that describe the reference ranking for the set.
-def gen_mallows(num_cands, num_voters, mix, phis, refs):
-
-    if len(mix) != len(phis) or len(phis) != len(refs):
-        print("Mix != Phis != Refs")
-        exit()
-
-    # Precompute the distros for each Phi and Ref.
-    # Turn each ref into an order for ease of use...
-    m_insert_dists = []
-    for i in range(len(mix)):
-        m_insert_dists.append(compute_mallows_insertvec_dist(num_cands, phis[i]))
-    # Now, generate votes...
-    votemap = {}
-    for cvoter in range(num_voters):
-        cmodel = draw(list(range(len(mix))), mix)
-        # print("cmodel is ", cmodel)
-        # Generate a vote for the selected model
-        insvec = [0] * num_cands
-        for i in range(1, len(insvec) + 1):
-            # options are 1...max
-            insvec[i - 1] = draw(list(range(1, i + 1)), m_insert_dists[cmodel][i])
-        vote = []
-        for i in range(len(refs[cmodel])):
-            # print("building vote insvec[i] - 1", insvec[i]-1)
-            vote.insert(insvec[i] - 1, refs[cmodel][i])
-        tvote = tuple(vote)
-
-        votemap[tuple(vote)] = votemap.get(tuple(vote), 0) + 1
-    return votemap
-
-
-def create_rankings_mallows(num_cands, num_voters, phi, ref=None):
-
-    ref = tuple(np.random.permutation(num_cands))
-
-    vote_map = gen_mallows(num_cands, num_voters, [1.0], [phi], [ref])
-
-    return [vc[0] for vc in vote_map.items()], [vc[1] for vc in vote_map.items()]
-
-
-def create_rankings_mallows_two_rankings(num_cands, num_voters, phi, ref=None):
-    """create a profile using a Mallows model with dispersion param phi
-    ref is two linear orders that are reverses of each other
-
-    wrapper function to call the preflib function gen_mallows with 2 reference rankings
-
-    """
-
-    ref = np.random.permutation(range(num_cands))
-    ref2 = ref[::-1]
-
-    vote_map = gen_mallows(num_cands, num_voters, [0.5, 0.5], [phi, phi], [ref, ref2])
-
-    return [vc[0] for vc in vote_map.items()], [vc[1] for vc in vote_map.items()]
-
-
-# #####
-# SinglePeaked
-# #####
-
-# Return a Tuple for a IC-Single Peaked... with alternatives in range 1....range.
-def gen_icsp_single_vote(alts):
-    a = 0
-    b = len(alts) - 1
-    temp = []
-    while a != b:
-        if random.randint(0, 1) == 1:
-            temp.append(alts[a])
-            a += 1
-        else:
-            temp.append(alts[b])
-            b -= 1
-    temp.append(alts[a])
-    return tuple(temp[::-1])  # reverse
-
-
-def gen_single_peaked_impartial_culture_strict(nvotes, alts):
-    voteset = {}
-    for i in range(nvotes):
-        tvote = gen_icsp_single_vote(alts)
-        voteset[tvote] = voteset.get(tvote, 0) + 1
-    return voteset
-
-
-def create_rankings_single_peaked(num_cands, num_voters, param):
-    """create a single-peaked list of rankings
-
-    wrapper function to call the preflib function gen_single_peaked_impartial_culture_strict
-    """
-
-    vote_map = gen_single_peaked_impartial_culture_strict(
-        num_voters, list(range(num_cands))
-    )
-    return [vc[0] for vc in vote_map.items()], [vc[1] for vc in vote_map.items()]
-
-
-# ##########
-# generate profile using the spatial model
-# #########
-# # TODO: Needs updated
-
-
-def voter_utility(v_pos, c_pos, beta):
-    """Based on the Rabinowitz and Macdonald (1989) mixed model
-    described in Section 3, pp. 745 - 747 of
-    "Voting behavior under the directional spatial model of electoral competition" by S. Merrill III
-
-    beta = 1 is the proximity model
-    beta = 0 is the directional model
-    """
-    return 2 * np.dot(v_pos, c_pos) - beta * (
-        np.linalg.norm(v_pos) ** 2 + np.linalg.norm(c_pos) ** 2
-    )
-
-def create_prof_spatial_model(num_voters, cmap, params):
-    num_dim = params[
-        0
-    ]  # the first component of the parameter is the number of dimensions
-    beta = params[
-        1
-    ]  # used to define the mixed model: beta = 1 is proximity model (i.e., Euclidean distance)
-    num_cands = len(cmap.keys())
-    mean = [0] * num_dim  # mean is 0 for each dimension
-    cov = np.diag([1] * num_dim)  # diagonal covariance
-
-    # sample candidate/voter positions using a multivariate normal distribution
-    cand_positions = np.random.multivariate_normal(np.array(mean), cov, num_cands)
-    voter_positions = np.random.multivariate_normal(np.array(mean), cov, num_voters)
-
-    # generate the rankings and counts for each ranking
-    ranking_counts = dict()
-    for v, v_pos in enumerate(voter_positions):
-        v_utils = {
-            voter_utility(v_pos, c_pos, beta): c
-            for c, c_pos in enumerate(cand_positions)
-        }
-        ranking = tuple([v_utils[_u] for _u in sorted(v_utils.keys(), reverse=True)])
-        if ranking in ranking_counts.keys():
-            ranking_counts[ranking] += 1
-        else:
-            ranking_counts.update({ranking: 1})
-
-    # list of tuples where first component is a ranking and the second is the count
-    prof_counts = ranking_counts.items()
-
-    return [rc[0] for rc in prof_counts], [rc[1] for rc in prof_counts]
-
-
-# Given the number m of candidates and a phi\in [0,1] function computes the expected number of swaps in a vote sampled from Mallows model
-def calculateExpectedNumberSwaps(num_candidates, phi):
+# Given the number m of candidates and a phi in [0,1], 
+# compute the expected number of swaps in a vote sampled 
+# from the Mallows model
+def find_expected_number_of_swaps(num_candidates, phi):
     res = phi * num_candidates / (1 - phi)
     for j in range(1, num_candidates + 1):
         res = res + (j * (phi**j)) / ((phi**j) - 1)
     return res
 
 
-# Given the number m of candidates and a absolute number of expected swaps exp_abs, this function returns a value of phi such that in a vote sampled from Mallows model with this parameter the expected number of swaps is exp_abs
-def phi_from_relphi(num_candidates, relphi=None):
+# Given the number m of candidates and a absolute number of 
+# expected swaps exp_abs, this function returns a value of 
+# phi such that in a vote sampled from Mallows model with 
+# this parameter the expected number of swaps is exp_abs
+def phi_from_relphi(num_candidates, relphi=None, seed=None):
+
+    rng = np.random.default_rng(seed)
     if relphi is None:
-        relphi = random.uniform(0.001, 0.999)
+        relphi = rng.uniform(0.001, 0.999)
     if relphi == 1:
         return 1
     exp_abs = relphi * (num_candidates * (num_candidates - 1)) / 4
@@ -282,7 +56,7 @@ def phi_from_relphi(num_candidates, relphi=None):
     high = 1
     while low <= high:
         mid = (high + low) / 2
-        cur = calculateExpectedNumberSwaps(num_candidates, mid)
+        cur = find_expected_number_of_swaps(num_candidates, mid)
         if abs(cur - exp_abs) < 1e-5:
             return mid
         # If x is greater, ignore left half
@@ -296,182 +70,438 @@ def phi_from_relphi(num_candidates, relphi=None):
     # If we reach here, then the element was not present
     return -1
 
+# Return a list of phis from the relphi value
+def phis_from_relphi(num_candidates, num, relphi=None, seed=None):
 
-# #########
-# functions to generate profiles
-# #########
-
-prob_models = {
-    "IC": {
-        "func": create_rankings_urn,
-        "param": 0,
-    },  # IC model is the Urn model with alpha=0
-    "IAC": {"func": create_rankings_urn, "param": 1},  # IAC model is urn with alpha=1
-    "MALLOWS-0.8": {"func": create_rankings_mallows, "param": 0.8},
-    "MALLOWS-0.2": {"func": create_rankings_mallows, "param": 0.2},
-    "MALLOWS-R": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: random.uniform(0.001, 0.999),
-    },
-    "MALLOWS-RELPHI-0.4": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, 0.4),
-    },
-    "MALLOWS-RELPHI-0.375": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, 0.375),
-    },
-    "MALLOWS-RELPHI-0": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, 0),
-    },
-    "MALLOWS-RELPHI-1": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, 1),
-    },
-    "MALLOWS-RELPHI-R": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc),
-    },
-    "MALLOWS-RELPHI-R2": {
-        "func": create_rankings_mallows,
-        "param": lambda nc: phi_from_relphi(nc, random.uniform(0.001, 0.5)),
-    },
-    "MALLOWS_2REF-0.8": {"func": create_rankings_mallows_two_rankings, "param": 0.8},
-    "MALLOWS_2REF-RELPHI-R": {
-        "func": create_rankings_mallows_two_rankings,
-        "param": lambda nc: phi_from_relphi(nc),
-    },
-    "MALLOWS_2REF-RELPHI-R2": {
-        "func": create_rankings_mallows_two_rankings,
-        "param": lambda nc: phi_from_relphi(nc, random.uniform(0.001, 0.5)),
-    },
-    "URN-10": {"func": create_rankings_urn, "param": 10},
-    "URN-0.1": {
-        "func": create_rankings_urn,
-        "param": lambda nc: round(math.factorial(nc) * 0.1),
-    },
-    "URN-0.3": {
-        "func": create_rankings_urn,
-        "param": lambda nc: round(math.factorial(nc) * 0.3),
-    },
-    "URN-R": {
-        "func": create_rankings_urn,
-        "param": lambda nc: round(math.factorial(nc) * gamma.rvs(0.8)),
-    },
-    "SinglePeaked": {"func": create_rankings_single_peaked, "param": None},
-}
+    rng = np.random.default_rng(seed)
+    if relphi is None:
+        relphis = rng.uniform(0.001, 0.999, size=num)
+    else: 
+        relphis = [relphi] * num
+    
+    return [phi_from_relphi(num_candidates, relphi=relphis[n]) for n in range(num)]
 
 
-def get_replacement(num_cands, param):
-    return int(num_cands * param)
+def get_rankings(num_candidates, num_voters, **kwargs): 
+    """
+    Get the rankings for a given number of candidates and voters using
+    the [prefsampling library](https://comsoc-community.github.io/prefsampling/index.html). 
 
-
-def generate_profile(num_cands, num_voters, probmod="IC", probmod_param=None):
-    """Generate a :class:`Profile` with ``num_cands`` candidates and ``num_voters`` voters using the  probabilistic model ``probmod`` (with parameter ``probmod_param``).
-
-    :param num_cands: the number of candidates in the profile
-    :type num_cands: int
-    :param num_voters: the number of voters in the profile
-    :type num_voters: int
-    :param probmod: the probability model used to generate the :class:`Profile`
-    :type probmod: str, optional (default "IC")
-    :param probmod_param: a parameter to the probability model
-    :type probmod_param: number or function, optional
-    :returns: A profile of strict linear orders
-    :rtype: Profile
-
-
-    :Example:
-
-    .. exec_code::
-
-        from pref_voting.generate_profiles import generate_profile
-        prof = generate_profile(4, 10) # default is probmod is IC
-        prof.display()
-        prof = generate_profile(4, 10, probmod="IAC")
-        prof.display()
-        prof = generate_profile(4, 10, probmod="URN-0.3")
-        prof.display()
-        prof = generate_profile(4, 10, probmod="MALLOWS-R")
-        prof.display()
-        prof = generate_profile(4, 10, probmod="MALLOWS-RELPHI-0.375")
-        prof.display()
-        prof = generate_profile(4, 10, probmod="SinglePeaked")
-        prof.display()
-
-    :Possible Values of probmod:
-
-    - "IC" (Impartial Culture);
-    - "IAC" (Impartial Anonymous Culture);
-    - "URN-10" (URN model with :math:`\\alpha=10`), "URN-0.1"  (URN model with :math:`\\alpha=0.1*num\_cands!`), "URN-0.3" (URN model with :math:`\\alpha=0.3*num\_cands!`), "URN-R" (URN model with randomly chosen :math:`\\alpha`);
-    - "MALLOWS-0.8" (Mallows model with :math:`\\phi=0.8`), "MALLOWS-0.2" (Mallows model with :math:`\\phi=0.2`), "MALLOWS-R" (Mallows model with :math:`\\phi` randomly chosen between 0 and 1);
-    - "MALLOWS-RELPHI-0.4" (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value of 0.4), "MALLOWS-RELPHI-0.375" (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value of 0.375), "MALLOWS-RELPHI-0" (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value of 0),  "MALLOWS-RELPHI-1" (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value of 1), (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value randomly chosen based on the number of candidates), "MALLOWS-RELPHI-R2" (Mallows model with :math:`\\phi` defined from ``num_cands`` and the relphi value randomly chosen), "MALLOWS_2REF-0.8" (Mallows model with 2 reference rankings and :math:`\\phi = 0.8`),
-    - "MALLOWS_2REF-RELPHI-R": (Mallows model with 2 reference rankings and :math:`\\phi` defined from ``num_cands`` and a randomly chosen relphi value based on the number of candidates), "MALLOWS_2REF-RELPHI-R2"(Mallows model with 2 reference rankings and :math:`\\phi` defined from ``num_cands`` and a randomly chosen relphi value); and
-    - "SinglePeaked" (Single Peaked)
-
-    In addition, you can customize the probability model used to generate a profile as follows:
-
-    - ``probmod`` is "URN" and ``probmod_param`` is either a number or a function :math:`f` and the parameter is defined by applying :math:`f` to the number of candidates.
-
-    - ``probmod`` is "MALLOWS" and ``probmod_param`` is either a number or a function :math:`f` and the parameter is defined by applying :math:`f` to the number of candidates.
-
-    - ``probmod`` is "MALLOWS_2REF" and ``probmod_param`` is either a number or a function :math:`f` and the parameter is defined by applying :math:`f` to the number of candidates.
-
-    :Example:
-
-    .. exec_code::
-
-        import math
-        from pref_voting.generate_profiles import generate_profile
-        prof = generate_profile(4, 10, probmod="URN", probmod_param=5)
-        prof.display()
-        prof = generate_profile(4, 10, probmod="MALLOWS", probmod_param=0.5)
-        prof.display()
-        prof = generate_profile(4, 10, probmod="MALLOWS_2REF", probmod_param=0.5)
-        prof.display()
-        prof = generate_profile(4, 10, probmod="URN", probmod_param=lambda nc: math.factorial(nc) * 0.5)
+    Args:
+        num_candidates (int): The number of candidates.
+        num_voters (int): The number of voters.
+        kwargs (dict): Any parameters for the probability model.
+    
+    Returns:
+        list: A list of rankings.
     """
 
-    if probmod in prob_models.keys():
+    if 'probmodel' in kwargs:
+        probmodel = kwargs['probmodel']
+    elif 'probmod' in kwargs: # for backwards compatibility
+        probmodel = kwargs['probmod']
+    else: 
+        probmodel = "impartial"
 
-        create_rankings = prob_models[probmod]["func"]
-        _probmod_param = prob_models[probmod]["param"]
+    if 'seed' in kwargs:
+        seed = kwargs['seed']
+    else: 
+        seed = None
 
-    elif probmod == "Spatial":
+    if probmodel == "IC" or probmodel == 'impartial': 
+        
+        rankings = impartial(num_voters, 
+                             num_candidates, 
+                             seed=seed) 
+    
+    elif probmodel == "IAC" or probmodel == 'impartial_anonymous': 
+        
+        rankings = impartial_anonymous(num_voters, 
+                                       num_candidates, 
+                                       seed=seed)
+    elif probmodel == "MALLOWS" or probmodel == 'mallows':
 
-        num_dims = probmod_param[0] if probmod_param is not None else 2
-        voter_utility = probmod_param[1] if probmod_param is not None else linear_utility
+        impartial_central_vote = True
+        if 'phi' in kwargs: 
+            phi = kwargs['phi']
+        else:
+            phi = 1.0
+            
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
 
-        sprof = generate_spatial_profile(num_cands, num_voters, num_dims=num_dims)
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
 
-        return sprof.to_utility_profile(utility_function=voter_utility).to_ranking_profile()
-    elif probmod == "URN":
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
 
-        create_rankings = create_rankings_urn
-        _probmod_param = probmod_param if probmod_param is not None else 0
 
-    elif probmod == "MALLOWS":
+    elif probmodel == "MALLOWS-0.8":
 
-        create_rankings = create_rankings_mallows
-        _probmod_param = probmod_param if probmod_param is not None else 1
+        phi = 0.8
+        impartial_central_vote = True           
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
 
-    elif probmod == "MALLOWS_2REF":
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
 
-        create_rankings = create_rankings_mallows_two_rankings
-        _probmod_param = probmod_param if probmod_param is not None else 1
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
+        
+    elif probmodel == "MALLOWS-0.2":
 
-    else:
-        print(f"{probmod}: Probability model not implemented, no profile generated.")
-        return None
+        phi = 0.2
+        impartial_central_vote = True           
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
 
-    probmod_param = (
-        _probmod_param(num_cands) if callable(_probmod_param) else _probmod_param
-    )
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
 
-    rankings, rcounts = create_rankings(num_cands, num_voters, probmod_param)
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
 
-    return Profile(rankings, rcounts=rcounts)
+    elif probmodel == "MALLOWS-R":
+
+        rng = np.random.default_rng(seed)
+        phi = rng.uniform(0.001, 0.999)
+        impartial_central_vote = True
+            
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
+
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
+
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
+
+    elif probmodel == "MALLOWS-RELPHI":
+
+        impartial_central_vote = True
+        if 'relphi' in kwargs: 
+            relphi = kwargs['relphi']
+        else:
+            relphi = None
+            
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
+
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
+
+        phi = phi_from_relphi(num_candidates, relphi=relphi, seed=seed)
+
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
+
+    elif probmodel == "MALLOWS-RELPHI-0.375":
+        
+        relphi = 0.375
+        impartial_central_vote = True
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
+
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
+
+        phi = phi_from_relphi(num_candidates, relphi=relphi, seed=seed)
+
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
+
+
+    elif probmodel == "MALLOWS-RELPHI-R":
+            
+        impartial_central_vote = True
+        if 'normalise_phi' in kwargs: 
+            normalise_phi = kwargs['normalise_phi']
+        else:
+            normalise_phi = False
+
+        if 'central_vote' in kwargs: 
+            central_vote = kwargs['central_vote']
+            impartial_central_vote = False
+        else:
+            central_vote = None
+
+        phi = phi_from_relphi(num_candidates, relphi=None, seed=seed)
+
+        rankings = mallows(num_voters,
+                           num_candidates, 
+                           phi,
+                           normalise_phi=normalise_phi,
+                           central_vote=central_vote,
+                           impartial_central_vote=impartial_central_vote,
+                           seed=seed)
+
+
+    elif probmodel == "URN" or probmodel == 'urn': 
+
+        if 'alpha' in kwargs: 
+            alpha = kwargs['alpha']
+        else:
+            alpha = 0.0
+            
+        rankings = urn(num_voters,
+                       num_candidates, 
+                       alpha,
+                       seed=seed)
+
+    elif probmodel == "URN-10":
+        
+        alpha = 10
+        rankings = urn(num_voters,
+                       num_candidates, 
+                       alpha,
+                       seed=seed)
+    
+    elif probmodel == "URN-0.3":
+        
+        alpha = round(math.factorial(num_candidates) * 0.3)
+        rankings = urn(num_voters,
+                       num_candidates, 
+                       alpha,
+                       seed=seed)
+        
+    elif probmodel == "URN-R":
+        
+        rng = np.random.default_rng(seed)
+        alpha = round(math.factorial(num_candidates) * gamma.rvs(0.8, random_state=rng))
+        rankings = urn(num_voters,
+                       num_candidates,
+                       alpha,
+                       seed=seed)
+        
+    elif probmodel == "plackett_luce":
+        
+        if 'alphas' not in kwargs:
+            raise ValueError("Error: alphas parameter missing.  A value must be specified for each candidate indicating their relative quality.")
+            #RaiseValueError()
+        else:
+            alphas = kwargs['alphas']
+
+        rankings = plackett_luce(num_voters,
+                                       num_candidates, 
+                                       alphas,
+                                       seed=seed)
+        
+    elif probmodel == "didi":
+        
+        if 'alphas' not in kwargs:
+            raise ValueError("Error: alphas parameter missing.  A value must be specified for each candidate indicating each candidate's quality.")
+        else:
+            alphas = kwargs['alphas']
+
+        rankings = didi(num_voters,
+                        num_candidates, 
+                        alphas,
+                        seed=seed)
+        
+    elif probmodel == "stratification":
+        
+        if 'weight' not in kwargs:
+            raise ValueError("Error: weight parameter missing.  The weight parameter specifies the size of the upper class of candidates.")
+        else:
+            weight = kwargs['weight']
+
+        rankings = stratification(num_voters,
+                                  num_candidates, 
+                                  weight,
+                                  seed=seed) 
+    
+    elif probmodel == "single_peaked_conitzer":
+        
+        rankings = single_peaked_conitzer(num_voters,
+                                          num_candidates, 
+                                          seed=seed) 
+    
+    elif probmodel == "SinglePeaked" or probmodel == "single_peaked_walsh":
+        
+        rankings = single_peaked_walsh(num_voters,
+                                       num_candidates, 
+                                       seed=seed) 
+
+    elif probmodel == "single_peaked_circle":
+        
+        rankings = single_peaked_circle(num_voters,
+                                        num_candidates, 
+                                        seed=seed)       
+
+    elif probmodel == "single_crossing":
+        
+        rankings = single_crossing(num_voters,
+                                   num_candidates, 
+                                   seed=seed) 
+        
+    elif probmodel == "euclidean":
+        
+        euclidean_spaces = {
+            "uniform": EuclideanSpace.UNIFORM,
+            "ball": EuclideanSpace.BALL,
+            "gaussian": EuclideanSpace.GAUSSIAN,
+            "sphere": EuclideanSpace.SPHERE,
+        }
+
+        if 'space' in kwargs:
+            space = kwargs['space']
+        else:
+            space = "uniform"
+
+        if 'dimension' in kwargs:
+            dimension = kwargs['dimension']
+        else:
+            dimension = 2
+
+        rankings = euclidean(num_voters,
+                             num_candidates, 
+                             space=euclidean_spaces[space],
+                             dimension=dimension, 
+                             seed=seed) 
+    
+    else: 
+        raise ValueError("Error: The probability model is not recognized.")
+        
+    return rankings
+
+def generate_profile(num_candidates, 
+                     num_voters, 
+                     anonymize=False,
+                     num_profiles=1,
+                     **kwargs): 
+    """
+    Generate profiles using the prefsampling library.
+
+    Args:
+        num_candidates (int): The number of candidates.
+        num_voters (int): The number of voters.
+        anonymize (bool): If True, anonymize the profiles.
+        num_profiles (int): The number of profiles to generate.
+        kwargs (dict): Any parameters for the probability model.
+
+    Returns:
+        list: A list of profiles or a single profile if num_profiles is 1.  
+    """
+            
+    profs = [Profile(get_rankings(num_candidates,
+                                  num_voters, 
+                                  **kwargs))  
+                                  for _ in range(num_profiles)]
+    
+    if anonymize: 
+        profs = [prof.anonymize() for prof in profs]
+        
+    return profs[0] if num_profiles == 1 else profs
+
+def generate_profile_with_groups(
+        num_candidates, 
+        num_voters, 
+        probmodels, 
+        weights=None,
+        seed=None, 
+        num_profiles=1, 
+        anonymize=False):
+    
+    """
+    Generate profiles with groups of voters generated from different probability models.
+    The probability of selecting a probability model is proportional its weight in the list weight.
+
+    Args:
+        num_candidates (int): The number of candidates.
+        num_voters (int): The number of voters.
+        probmodels (list): A list of dictionaries specifying a probability model.
+        weights (list): A list of weights for each probability model.
+        seed (int): The random seed.
+        num_profiles (int): The number of profiles to generate.
+        anonymize (bool): If True, anonymize the profiles.
+    """
+    if weights is None:
+        weights = [1] * len(probmodels)
+    
+    assert len(weights)==len(probmodels), "The number of weights must be equal to the number of probmodels"
+
+    probs = [w / sum(weights) for w in weights]
+    
+    rng = np.random.default_rng(seed)
+
+    profs = list()
+    for _ in range(num_profiles):
+        selected_probmodels = rng.choice(probmodels, num_voters, p=probs)
+
+        selected_probmodels_num = Counter([tuple((k,v) if type(v) != list else (k, tuple(v)) for k,v in pm.items()) for pm in selected_probmodels])
+
+        rankings = list()
+        for pm_data, nv in selected_probmodels_num.items():
+            rankings = rankings + list(get_rankings(num_candidates, nv, **dict(pm_data)))
+
+        prof = Profile(rankings)
+        if anonymize: 
+            prof = prof.anonymize()
+        profs.append(prof)
+
+    return profs[0] if num_profiles == 1 else profs
 
 
 ####
@@ -489,7 +519,12 @@ def strict_weak_orders(A):
                 yield [B] + order
 
 
-def generate_truncated_profile(num_cands, num_voters, max_num_ranked=3,probmod="IC"):
+def generate_truncated_profile(
+        num_cands, 
+        num_voters, 
+        max_num_ranked=3,
+        probmod="IC"):
+    
     """Generate a :class:`ProfileWithTies` with ``num_cands`` candidates and ``num_voters``.  
     The ballots will be truncated linear orders of the candidates.  Returns a :class:`ProfileWithTies` that uses extended strict preference (so all ranked candidates are strictly preferred to any candidate that is not ranked).
 
