@@ -23,6 +23,8 @@ Related resources
 
 - abcvoting (https://abcvoting.readthedocs.io/) - Python library of approval based committee voting rules.
 
+- prefsampling (https://comsoc-community.github.io/prefsampling/) - A Python library for sampling from preference profiles with respect to different probability models.
+
 - PrefLib (https://www.preflib.org/) - A database of election data. 
 
 - Mapel (https://github.com/szufix/mapel) - Mapel (Map of Elections) is a Python package that can be used to simulate elections.  

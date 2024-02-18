@@ -43,6 +43,7 @@ We further categorize aggregation methods based on the input from the voters:
 .. autoclass:: pref_voting.social_welfare_function.SocialWelfareFunction
     :members: 
 
+
 .. autofunction:: pref_voting.social_welfare_function.swf
 
 ```
@@ -51,6 +52,7 @@ We further categorize aggregation methods based on the input from the voters:
 ## Helper Functions: Converting between Voting Methods and Social Welfare Functions
 
 ```{eval-rst} 
+
 
 .. autofunction:: pref_voting.helper.swf_from_vm
 
