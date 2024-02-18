@@ -86,12 +86,12 @@ def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_p
 ## Kemeny-Young Method 
 #
 def kendalltau_dist(rank_a, rank_b):
-    rank_a = tuple(rank_a)
-    rank_b = tuple(rank_b)
+    index_b = {c: i for i, c in enumerate(rank_b)}
     tau = 0
-    candidates = sorted(rank_a)
-    for i, j in combinations(candidates, 2):
-        tau += (np.sign(rank_a.index(i) - rank_a.index(j)) == -np.sign(rank_b.index(i) - rank_b.index(j)))
+    for i, j in combinations(rank_a, 2):
+        # by definition of itertools.combinations, index_a[i] < index_a[j]
+        if index_b[i] > index_b[j]:
+            tau += 1
     return tau
 
 
