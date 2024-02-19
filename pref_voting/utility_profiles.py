@@ -173,18 +173,43 @@ class UtilityProfile(object):
             cmap = self.cmap
         )
     
-    def to_approval_profile(self):
+    def to_approval_profile(self, prob_to_cont_approving=1.0, decay_rate=0.0):
         """
         Return a GradeProfile with each utility transformed to an approval ballot.
+
+        See :meth:`pref_voting.Utility.to_approval_ballot` for more details.
         """
 
         return GradeProfile(
-            [u.to_approval_ballot() for u in self._utilities],
+            [u.to_approval_ballot(
+                prob_to_cont_approving=prob_to_cont_approving, 
+                decay_rate=decay_rate) 
+                for u in self._utilities],
             [0, 1],
             gcounts = self.ucounts,
             candidates = self.domain,
             cmap = self.cmap
         )
+    
+    def to_k_approval_profile(self, k, prob_to_cont_approving=1.0, decay_rate=0.0):
+        """
+        Return a GradeProfile with each utility transformed to a k-approval ballot.
+
+        See :meth:`pref_voting.Utility.to_approval_ballot` for more details.
+        """
+
+        return GradeProfile(
+            [u.to_approval_ballot(
+                k,
+                prob_to_cont_approving=prob_to_cont_approving, 
+                decay_rate=decay_rate) 
+                for u in self._utilities],
+            [0, 1],
+            gcounts = self.ucounts,
+            candidates = self.domain,
+            cmap = self.cmap
+        )
+
         
     def write(self):
         """Write the profile to a string."""

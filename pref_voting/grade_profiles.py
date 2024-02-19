@@ -256,7 +256,16 @@ class GradeProfile(object):
                 num_with_lower_grade += num
         return num_with_lower_grade / self.num_voters
 
+    def approval_scores(self): 
+        """
+        Return a dictionary representing the approval scores of the candidates in the profile.
+        """
 
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+        assert sorted(self.grades) == [0,1], "The grades in the profile must be 0 and 1."
+
+        return {c: self.sum(c) for c in self.candidates}
+    
     def to_ranking_profile(self): 
         """Return a ranking profile (a :class:ProfileWithTies) corresponding to the profile."""
 
