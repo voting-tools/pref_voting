@@ -199,7 +199,7 @@ class UtilityProfile(object):
         """
 
         return GradeProfile(
-            [u.to_approval_ballot(
+            [u.to_k_approval_ballot(
                 k,
                 prob_to_cont_approving=prob_to_cont_approving, 
                 decay_rate=decay_rate) 
