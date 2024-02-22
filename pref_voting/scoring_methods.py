@@ -63,7 +63,7 @@ def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
         local (bool, optional): If True, then the plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the plurality scores are computed with respect to the entire profile.
-        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetical", then the tie-breaking is done alphabetically.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
 
     Returns:
         A Ranking object
@@ -84,7 +84,7 @@ def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
     p_ranking = Ranking(plurality_scores_dict)
     p_ranking.normalize_ranks()
 
-    if tie_breaking == "alphabetical":
+    if tie_breaking == "alphabetic":
         p_ranking = break_ties_alphabetically(p_ranking)
 
     return p_ranking
@@ -140,7 +140,7 @@ def borda_swf(profile, curr_cands=None, local=True, tie_breaking=None):
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
         local (bool, optional): If True, then the Borda scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Borda scores are computed with respect to the entire profile.
-        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetical", then the tie-breaking is done alphabetically.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
 
     Returns:
         A Ranking object
@@ -161,7 +161,7 @@ def borda_swf(profile, curr_cands=None, local=True, tie_breaking=None):
     b_ranking = Ranking(borda_scores_dict)
     b_ranking.normalize_ranks()
 
-    if tie_breaking == "alphabetical":
+    if tie_breaking == "alphabetic":
         b_ranking = break_ties_alphabetically(b_ranking)
 
     return b_ranking
