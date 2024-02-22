@@ -359,3 +359,28 @@ class Ranking(object):
             if set(self.cands_at_rank(self_rank)) != set(other.cands_at_rank(other_rank)): 
                 return False
         return True
+
+def break_ties_alphabetically(ranking):
+    """Break ties in the ranking alphabetically.
+
+    Args:
+        ranking (Ranking): A ranking object
+
+    Returns:
+        A ranking object
+    """
+    candidates = ranking.cands
+
+    new_ranking_dict = {}
+
+    n = 0
+    level = 0
+
+    while n < len(candidates):
+        sorted_cands_at_rank = ranking.cands_at_rank(level)
+        for c in sorted_cands_at_rank:
+            new_ranking_dict[c] = n
+            n += 1
+        level += 1
+
+    return Ranking(new_ranking_dict)
