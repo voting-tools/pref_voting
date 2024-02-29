@@ -1467,6 +1467,45 @@ def essential(edata, curr_cands=None, threshold = 0.0000001):
 
     return sorted([c for c in ml.keys() if ml[c] > threshold])
 
+@vm(name="Weighted Covering")
+def weighted_covering(edata, curr_cands=None): 
+    """According to Weighted Covering, x defeats y if the margin of x over y is positive and for every other z, the margin of x over z is greater than or equal to the margin of y over z. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+
+    .. note::
+        See, e.g., Bhaskar Dutta and Jean-Francois Laslier, "Comparison functions and choice correspondences," Social Choice and Welfare, 16:513–532, 1999, doi:10.1007/s003550050158, and Raúl Pérez-Fernández and Bernard De Baets, "The supercovering relation, the pairwise winner, and more missing links between Borda and Condorcet," Social Choice and Welfare, 50:329–352, 2018, doi:10.1007/s00355-017-1086-0.
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands
+
+    dom = {c: set(edata.dominators(c, curr_cands = curr_cands)) for c in candidates}
+    uc_set = list()
+
+    for y in candidates:
+        is_in_ucs = True
+        for x in edata.dominators(y, curr_cands = curr_cands):
+            # check if y covers x, i.e., for every z, margin(x, z) >= margin(y, z)
+            covers = True
+            for z in candidates:
+                if edata.margin(x, z) < edata.margin(y, z):
+                    covers = False
+                    break
+          
+            if covers:
+                is_in_ucs = False
+                break
+                
+        if is_in_ucs:
+            uc_set.append(y)
+
+    return sorted(uc_set)
+
 @vm(name = "Loss-Trimmer Voting")
 def loss_trimmer(edata, curr_cands = None):
     """Iteratively eliminate the candidate with the largest sum of margins of loss until a Condorcet winner is found. In this version of the method, parallel-universe tiebreaking is used if there are multiple candidates with the largest sum of margins of loss.
@@ -1522,6 +1561,8 @@ mg_vms = [
     #simple_stable_voting_faster,
     stable_voting,
     #stable_voting_faster,
+    essential,
+    weighted_covering,
     loss_trimmer
 ]
 
@@ -1543,5 +1584,6 @@ mg_vms_all = [
     stable_voting,
     stable_voting_faster,
     essential,
+    weighted_covering,
     loss_trimmer
 ]
