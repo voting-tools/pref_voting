@@ -340,6 +340,56 @@ def has_strong_path(A, source, target, k):
 
     return dfs(source)
 
+
+@vm(name="Cloneproof Beat Flow (CBF)")
+def CBF(edata, curr_cands = None):   
+    """As in Beat Path, except that the strength of a path from c1 to c2 is measured as the effective conductance
+    of the defeat graph seen as a directed electric circuit in which each defeat x --> y has a conductance 
+    that is proportional to the product of the respective margin of defeat, the number of first-rank votes for x,
+    and the number of first-rank votes for y, towards a unit potential difference applied between c1 and c2.  
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates. 
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    weights = edata.plurality_scores(curr_cands = curr_cands)
+
+    def line_conductance(x, y):
+        return edata.margin(x, y) * weights[x] * weights[y] 
+
+    effective_conductance = {c: {c2:0 for c2 in candidates if c2 != c} for c in candidates}
+    # Now we compute path weights as effective conductances. 
+    # According to https://www.universiteitleiden.nl/binaries/content/assets/science/mi/scripties/master/vos_vaya_master.pdf ,
+    # the effective resistance (inverse conductance) from node i to j is
+    # M(i,i) - 2 M(i,j) + M(j,j) where M is the pseudo-inverse of the Laplacian matrix L of the conductance graph.
+    # So we first compute the Laplacian L:
+    L = np.zeros((len(candidates), len(candidates)))
+    for i, c1 in enumerate(candidates):
+        for j, c2 in enumerate(candidates):
+            if c1 != c2:
+                L[i, j] = -line_conductance(c1, c2)
+                L[i, i] += line_conductance(c1, c2)
+    # Now we compute the pseudo-inverse of L:
+    M = np.linalg.pinv(L)
+    # Now we compute the effective conductance from c1 to c2 for all pairs c1, c2:
+    for i, c1 in enumerate(candidates):
+        for j, c2 in enumerate(candidates):
+            if c1 != c2:
+                effective_conductance[c1][c2] = 1 / (M[i, i] - 2 * M[i, j] + M[j, j])
+    # TODO: verify that this is the right direction and not the other way around, with c1 and c2 swapped.
+
+    winners = list()
+    for c in candidates: 
+        if all([effective_conductance[c][c2] >= effective_conductance[c2][c] for c2 in candidates  if c2 != c]):
+            winners.append(c)
+    return sorted(list(winners))
+
+
 @vm(name="Split Cycle")
 def split_cycle(edata, curr_cands = None, strength_function = None):
 
