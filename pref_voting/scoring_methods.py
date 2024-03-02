@@ -8,7 +8,7 @@
 from pref_voting.voting_method import  *
 from pref_voting.social_welfare_function import  *
 from pref_voting.profiles import Profile
-from pref_voting.rankings import Ranking
+from pref_voting.rankings import Ranking, break_ties_alphabetically
 from pref_voting.voting_method import _num_rank_last 
 from pref_voting.profiles import _find_updated_profile, _num_rank
 
@@ -54,24 +54,40 @@ def plurality(profile, curr_cands = None):
 
     return sorted([c for c in curr_cands if plurality_scores[c] == max_plurality_score])
 
-@swf(name="Plurality Ranking")
-def plurality_ranking(profile, curr_cands = None):
-    """The **Plurality score** of a candidate :math:`c` is the number of voters that rank :math:`c` in first place. Return the ranking of the ``curr_cands`` according to the Plurality scores.
+
+@swf(name="Plurality ranking")
+def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
+    """The SWF that ranks the candidates in curr_cands according to their plurality scores. If local is True, then the plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the plurality scores are computed with respect to the entire profile.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
+        local (bool, optional): If True, then the plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the plurality scores are computed with respect to the entire profile.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
 
-    Returns: 
-        A Ranking of the candidates
-
-    .. seealso::
-
-        The method :meth:`pref_voting.profiles.Profile.plurality_scores` returns a dictionary assigning the plurality score to each candidate. 
+    Returns:
+        A Ranking object
     """
 
-    plurality_scores = profile.plurality_scores(curr_cands = curr_cands)
-    return Ranking(plurality_scores)
+    cands = profile.candidates if curr_cands is None else curr_cands
+
+    if local:
+        plurality_scores_dict = profile.plurality_scores(curr_cands = curr_cands)
+
+    else:
+        plurality_scores_dict = profile.plurality_scores()
+        plurality_scores_dict = {k: v for k, v in plurality_scores_dict.items() if k in cands}
+
+    for cand in cands:
+        plurality_scores_dict[cand] = -plurality_scores_dict[cand]
+
+    p_ranking = Ranking(plurality_scores_dict)
+    p_ranking.normalize_ranks()
+
+    if tie_breaking == "alphabetic":
+        p_ranking = break_ties_alphabetically(p_ranking)
+
+    return p_ranking
 
 @vm(name = "Borda")
 def borda(profile, curr_cands = None):
@@ -116,24 +132,39 @@ def borda(profile, curr_cands = None):
     
     return sorted([c for c in curr_cands if borda_scores[c] == max_borda_score])
 
-@swf(name="Borda Ranking")
-def borda_ranking(profile, curr_cands = None):
-    """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. Return the ranking of ``curr_cands`` according to the Borda scores. 
+@swf(name="Borda ranking")
+def borda_swf(profile, curr_cands=None, local=True, tie_breaking=None):
+    """The SWF that ranks the candidates in curr_cands according to their Borda scores. If local is True, then the Borda scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Borda scores are computed with respect to the entire profile.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
+        local (bool, optional): If True, then the Borda scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Borda scores are computed with respect to the entire profile.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
 
-    Returns: 
-        A ranking of the candidates
-
-    .. seealso::
-
-        The method :meth:`pref_voting.profiles.Profile.borda_scores` returns a dictionary assigning the Borda score to each candidate. 
+    Returns:
+        A Ranking object
     """
-    
-    borda_scores = profile.borda_scores(curr_cands = curr_cands)
-    return Ranking(borda_scores)
+
+    cands = profile.candidates if curr_cands is None else curr_cands
+
+    if local:
+        borda_scores_dict = profile.borda_scores(curr_cands = curr_cands)
+
+    else:
+        borda_scores_dict = profile.borda_scores()
+        borda_scores_dict = {k: v for k, v in borda_scores_dict.items() if k in cands}
+
+    for cand in cands:
+        borda_scores_dict[cand] = -borda_scores_dict[cand]
+
+    b_ranking = Ranking(borda_scores_dict)
+    b_ranking.normalize_ranks()
+
+    if tie_breaking == "alphabetic":
+        b_ranking = break_ties_alphabetically(b_ranking)
+
+    return b_ranking
 
 @vm(name = "Anti-Plurality")
 def anti_plurality(profile, curr_cands = None):
