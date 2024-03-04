@@ -262,6 +262,28 @@ def scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank : 1 
 
     return sorted([c for c in candidates if cand_scores[c] == max_score])
 
+def create_scoring_method(score, name):
+    """Create a scoring method using a given score function and name."""
+
+    def _vm(profile, curr_cands = None):
+        return scoring_rule(profile = profile, curr_cands = curr_cands, score = score)
+
+    return VotingMethod(_vm, name = name)
+
+@vm(name = "Dowdall")
+def dowdall(profile, curr_cands = None):
+    """The first-ranked candidate gets 1 point, the second-ranked candidate gets 1/2 point, the third-ranked candidate gets 1/3 point, and so on.  The Dowdall winners are the candidates with the greatest overall score in the profile restricted to ``curr_cands``.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``.
+
+    Returns:
+        A sorted list of candidates
+    
+    """
+
+    return scoring_rule(profile, curr_cands = curr_cands, score = lambda num_cands, rank: 1 / rank)
 
 ## Borda for ProfilesWithTies
 
@@ -342,9 +364,10 @@ scoring_swfs = [
 ]
 
 scoring_vms = [
+    anti_plurality,
     plurality, 
     borda, 
     borda_for_profile_with_ties,
-    anti_plurality,
+    dowdall,
     scoring_rule
 ]
