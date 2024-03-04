@@ -280,6 +280,9 @@ def dowdall(profile, curr_cands = None):
 
     Returns:
         A sorted list of candidates
+
+    .. note::
+        This system is used in Nauru. See, e.g., Jon Fraenkel & Bernard Grofman (2014), "The Borda Count and its real-world alternatives: Comparing scoring rules in Nauru and Slovenia," Australian Journal of Political Science, 49:2, 186-205, DOI: 10.1080/10361146.2014.900530.
     
     """
 
