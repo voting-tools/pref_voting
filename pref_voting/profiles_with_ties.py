@@ -18,7 +18,8 @@ from pref_voting.weighted_majority_graphs import (
     MarginGraph,
     SupportGraph,
 )
-
+import os
+import pandas as pd
 
 class ProfileWithTies(object):
     """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates. 
@@ -105,7 +106,9 @@ class ProfileWithTies(object):
         }
 
     def use_extended_strict_preference(self):
-        """Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates."""
+        """
+        Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates.
+        """
 
         self.using_extended_strict_preference = True
         self._supports = {
@@ -121,7 +124,9 @@ class ProfileWithTies(object):
         }
 
     def use_strict_preference(self):
-        """Redefine the supports so that strict preferences are used. Using extended strict preference may change the margins between candidates."""
+        """
+        Redefine the supports so that strict preferences are used. Using strict preference may change the margins between candidates.
+        """
 
         self.using_extended_strict_preference = False
         self._supports = {
@@ -137,13 +142,18 @@ class ProfileWithTies(object):
         }
     @property 
     def rankings(self): 
-        """Return a list of all individual rankings in the profile. """
+        """
+        Return a list of all individual rankings in the profile. 
+        """
         
-        return [r for ridx,r in enumerate(self._rankings) for _ in range(self.rcounts[ridx])]
+        return [r for ridx,r in enumerate(self._rankings) 
+                for _ in range(self.rcounts[ridx])]
 
     @property 
     def ranking_types(self): 
-        """Return a list of the types of rankings in the profile. """
+        """
+        Return a list of the types of rankings in the profile. 
+        """
         
         unique_rankings = []
         for r in self._rankings: 
@@ -153,23 +163,31 @@ class ProfileWithTies(object):
     
     @property
     def rankings_counts(self):
-        """Returns the rankings and the counts of each ranking."""
+        """
+        Returns the rankings and the counts of each ranking.
+        """
 
         return self._rankings, self.rcounts
 
     @property
     def rankings_as_dicts_counts(self):
-        """Returns the rankings represented as dictionaries and the counts of each ranking."""
+        """
+        Returns the rankings represented as dictionaries and the counts of each ranking.
+        """
 
         return [r.rmap for r in self._rankings], self.rcounts
 
-    def support(self, c1, c2, use_extended_preferences=False):
-        """Returns the support of candidate ``c1`` over candidate ``c2``, where the support is the number of voters that rank ``c1`` strictly above ``c2``."""
+    def support(self, c1, c2):
+        """
+        Returns the support of candidate ``c1`` over candidate ``c2``, where the support is the number of voters that rank ``c1`` strictly above ``c2``.
+        """
 
         return self._supports[c1][c2]
 
     def margin(self, c1, c2):
-        """Returns the margin of candidate ``c1`` over candidate ``c2``, where the margin is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``."""
+        """
+        Returns the margin of candidate ``c1`` over candidate ``c2``, where the margin is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``.
+        """
 
         return self._supports[c1][c2] - self._supports[c2][c1]
 
@@ -187,19 +205,25 @@ class ProfileWithTies(object):
         return self.margin(c1, c2) == 0
 
     def dominators(self, cand, curr_cands=None):
-        """Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``."""
+        """
+        Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``.
+        """
         candidates = self.candidates if curr_cands is None else curr_cands
 
         return [c for c in candidates if self.majority_prefers(c, cand)]
 
     def dominates(self, cand, curr_cands=None):
-        """Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``."""
+        """
+        Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.
+        """
         candidates = self.candidates if curr_cands is None else curr_cands
 
         return [c for c in candidates if self.majority_prefers(cand, c)]
 
     def ratio(self, c1, c2):
-        """Returns the ratio of the support of ``c1`` over ``c2`` to the support ``c2`` over ``c1``."""
+        """
+        Returns the ratio of the support of ``c1`` over ``c2`` to the support ``c2`` over ``c1``.
+        """
 
         if self.support(c1, c2) > 0 and self.support(c2, c1) > 0:
             return self.support(c1, c2) / self.support(c2, c1)
@@ -334,13 +358,16 @@ class ProfileWithTies(object):
         return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first(cs=curr_cands)]) 
                 for cand in curr_cands}
 
-    def plurality_scores_ignoring_overvotes(self): 
+    def plurality_scores_ignoring_overvotes(self, curr_cands=None): 
         """
         Return the Plurality scores ignoring empty rankings and overvotes.
         """
+
+        curr_cands = curr_cands if curr_cands is not None else self.candidates
+        
         rankings, rcounts = self.rankings_counts
         
-        return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first()]) for cand in self.candidates}
+        return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first(cs=curr_cands)]) for cand in curr_cands}
 
     def borda_scores(self, 
                      curr_cands=None, 
@@ -396,7 +423,7 @@ class ProfileWithTies(object):
 
     def add_unranked_candidates(self): 
         """
-        Return a profile in which for each voter, any  unranked candidate is added to the bottom of their ranking. 
+        Return a profile in which for each voter, any unranked candidate is added to the bottom of their ranking. 
         """
         cands = self.candidates
         ranks = list()
@@ -421,6 +448,12 @@ class ProfileWithTies(object):
 
         return ProfileWithTies([r.rmap for r in ranks], rcounts=rcounts, cmap=self.cmap)
 
+    def is_truncated_linear(self):
+        """
+        Return True if the profile only contains (truncated) linear orders.
+        """
+        return all([r.is_truncated_linear(len(self.candidates)) or r.is_linear(len(self.candidates)) for r in self._rankings])
+    
     def to_linear_profile(self):
         """Return a linear profile from the profile with ties. """
         
@@ -430,12 +463,6 @@ class ProfileWithTies(object):
             print("Error: Cannot convert to linear profile.")
             return None
         return Profile(new_rankings, rcounts=rcounts, cmap=self.cmap)
-
-    def unique_rankings(self): 
-        """Return to the list of unique rankings in the profile. 
-        """
-        
-        return (list(set([str(r) for r in self._rankings])))
                 
     def margin_graph(self):
         """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
@@ -587,7 +614,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
                 rs[str(r)] = c
                 
         for r,c in rs.items(): 
-            print(f"{r} {c}")
+            print(f"{r}: {c}")
 
 
     def anonymize(self): 
@@ -616,6 +643,9 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         return prof
 
     def description(self): 
+        """
+        Return the Python code needed to create the profile.
+        """
         return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
@@ -680,3 +710,230 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
 
         cmap = cmap if cmap is not None else self.cmap
         SupportGraph.from_profile(self, cmap=cmap).display(curr_cands=curr_cands)
+
+    def to_preflib_instance(self):
+        """
+        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).  
+        
+        """
+        from preflibtools.instances import OrdinalInstance
+
+        instance = OrdinalInstance()
+        vote_map = dict()
+        for r,c in zip(*self.rankings_counts):
+            ranking = r.to_indiff_list()
+            if ranking in vote_map.keys():
+                vote_map[ranking] += c
+            else:
+                vote_map[ranking] = c
+        instance.append_vote_map(vote_map)    
+        return instance   
+
+    @classmethod
+    def from_preflib(cls, instance_or_preflib_file, include_cmap=False): 
+        """
+        Read a profile from an OrdinalInstance or a .soc, .soi, .toc, or .toi file used by PrefLib (https://www.preflib.org/format#types).
+
+        This function uses the ``OrdinalInstance`` class from the ``preflibtools`` package to read the profile from the file (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).
+
+        Args:
+            preflib_file (str): the path to the file
+            include_cmap (bool): if True, then include the candidate map.  Defaults to False.
+
+        Returns:    
+            Profile: the profile read from the file
+        
+        """
+        from preflibtools.instances import OrdinalInstance
+
+        assert type(instance_or_preflib_file) == OrdinalInstance or type(instance_or_preflib_file) == str, "The argument must be an instance of OrdinalInstance or a string."
+
+        if type(instance_or_preflib_file) == str:
+            preflib_file = instance_or_preflib_file
+
+            assert preflib_file.endswith(".soc") or preflib_file.endswith(".soi") or preflib_file.endswith(".toc") or preflib_file.endswith(".toi"), f"The file must be one of the file types from preflib: https://www.preflib.org/format#types, not {preflib_file}."
+
+            assert os.path.exists(preflib_file), f"The file {preflib_file} does not exist."
+
+            instance = OrdinalInstance()
+            instance.parse_file(preflib_file)
+
+        else:
+            instance = instance_or_preflib_file
+
+        rankings = []
+        rcounts = []
+        cmap = {c:str(c) for c in range(instance.num_alternatives)}
+
+        for order in instance.orders:
+            
+            rank = dict()
+            for r,cs in enumerate(order): 
+                for c in cs: 
+                    rank[c] = r + 1
+                    if include_cmap:
+                        cmap[c] = instance.alternatives_name[c]
+
+            rankings.append(rank)
+            rcounts.append(instance.multiplicity[order])
+        
+        return cls(rankings, 
+                   rcounts=rcounts,
+                   cmap=cmap)
+
+    def write(self, filename, file_format="preflib"): 
+        """
+        Write the profile to a file.  The file format is specified by ``file_format``.  The default is "soc" which is the format used by PrefLib (https://www.preflib.org/format#types).  The other option is "csv".
+
+        Args:
+            filename (str): the path to the file
+            file_format (str): the format of the file.  Defaults to "prelfib".  The other option is "csv".
+        
+        """
+        import csv
+
+        if file_format == "preflib":
+            instance = self.to_preflib_instance()
+            preflib_type = instance.infer_type()
+            instance.write(filename)
+
+            print(f"Profile written to {filename}.{preflib_type}.")
+
+        elif file_format == "csv":
+            
+            candidates = self.candidates
+
+            if self.is_truncated_linear():
+                if not filename.endswith(".csv"):
+                    filename += "_truncated_linear.csv"
+                else: 
+                    filename = filename.replace(".csv", "_truncated_linear.csv")
+
+                ranks = range(1, len(candidates) + 1)
+                with open(filename, mode='w') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([f"Rank{_r}" for _r in ranks])
+                    for r in self.rankings:
+                        ranking = [str(self.cmap[c[0]]) for c in r.to_indiff_list()]
+                        writer.writerow(ranking if len(ranking) == len(candidates) else ranking + ["skipped"] * (len(candidates) - len(ranking)))
+            else:
+                if not filename.endswith(".csv"):
+                    filename += ".csv"
+                # generate the anonymous profile
+                rs, cs = self.rankings_counts
+                anon_rankings = []
+                for r, count in zip(rs, cs): 
+                    r.normalize_ranks()
+                    found_it = False
+                    for r_c in anon_rankings: 
+                        if r_c[0] == r: 
+                            found_it = True
+                            r_c[1] += count
+                    if not found_it: 
+                        anon_rankings.append([r, count])
+            
+                with open(filename, mode='w') as file:
+                    writer = csv.writer(file)
+                    # Write the header
+                    writer.writerow([self.cmap[c] for c in candidates] + ["#"])
+                        # Write the rankings
+                    for r,count in anon_rankings:
+                        writer.writerow([r.rmap[c] if r.is_ranked(c) else "" for c in candidates] + [count])
+
+            print(f"Profile written to {filename}.")
+
+        else:
+            raise ValueError(f"Unknown file format {file_format}.  The options are 'preflib' and 'csv'.") 
+
+    @classmethod
+    def from_csv(cls, filename, is_truncated_linear=False, items_to_skip=None):
+        """
+        Read a profile from a csv file. 
+
+        Args:
+            filename (str): the path to the file
+            is_truncated_linear (bool): if True, then the file contains truncated linear orders.  Defaults to False.    
+            items_to_skip (list[str]): a list of items to skip.  Defaults to None.  Items in this list are not included in the profile.  Only relevant for the truncated linear orders.
+
+        Returns:
+            Profile: the profile read from the file
+        """
+        import csv
+        if is_truncated_linear:
+            df = pd.read_csv(filename)
+            items_to_skip = items_to_skip if items_to_skip is not None else ["skipped"]
+            ranks = []
+            rank_columns = [col for col in df.columns if col.startswith('rank') or col.startswith('Rank')]
+
+            # Get unique values from these columns, excluding 'skipped'
+            cand_names = pd.unique(df[rank_columns].values.ravel('K'))
+            cand_names = [str(value) for value in cand_names if value not in items_to_skip]
+
+            if 'writein' in cand_names:
+                cands = list(set([c for c in sorted(cand_names) if c != 'writein'])) + ['writein']
+            else: 
+                cands = sorted(list(set(cand_names)))
+            if len(cands) == 0: 
+                print("No candidates found in file", filename)
+            cmap = {cidx: c for cidx,c in enumerate(cands)}
+            cand_to_cidx = {c:cidx for cidx,c in enumerate(cands)}
+
+            for _, row in df.iterrows():
+                # Initialize an empty dictionary for the current row
+                ballot_dict = {}
+                # Iterate through each rank column
+                for rank in rank_columns:
+                    candidate = str(row[rank])
+                    # Skip if the candidate is marked as "skipped"
+                    if candidate not in items_to_skip:
+                        # Assign the candidate as the key with the numerical rank as the value
+                        ballot_dict[cand_to_cidx[candidate]] = int(rank[-1])
+                # Add the dictionary to the list
+                ranks.append(ballot_dict)
+            return cls(ranks, cmap=cmap)
+        else:             
+            with open(filename, mode='r') as file:
+                reader = csv.reader(file)
+                header = next(reader)
+                candidates = header[:-1]
+                # Write the rankings
+                rankings = list()
+                rcounts = list()
+                for row in reader:
+                    ranks = [int(r) if r != "" else None for r in row[:-1]]
+                    count = int(row[-1])
+                    ranking = {c:r  for c,r in zip(candidates, ranks) if r is not None}
+                    rankings.append(ranking)
+                    rcounts.append(count)
+            return cls(rankings, 
+                       rcounts=rcounts, 
+                       cmap={c:c for c in candidates})
+        
+    def __eq__(self, other_prof): 
+        """
+        Returns true if two profiles are equal.  Two profiles are equal if they have the same rankings.  Note that we ignore the cmaps. 
+        """
+
+        rankings = self.rankings
+        other_rankings = other_prof.rankings[:] # make a copy
+        for r1 in rankings:
+            for i, r2 in enumerate(other_rankings):
+                if r1 == r2:   
+                    # Remove the matched item to handle duplicates
+                    del other_rankings[i]
+                    break
+            else:
+                # If we didn't find a match for r1, the profiles are not identical
+                return False
+    
+        return not other_rankings
+    
+
+    def __add__(self, other_prof): 
+        """
+        Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings from the first in addition to all the rankings from the second profile. 
+
+        Note: the cmaps of the profiles are ignored. 
+        """
+
+        return ProfileWithTies(self._rankings + other_prof._rankings, rcounts=self.rcounts + other_prof.rcounts, candidates = sorted(list(set(self.candidates +other_prof.candidates))))

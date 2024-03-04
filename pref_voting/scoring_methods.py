@@ -45,18 +45,21 @@ def plurality(profile, curr_cands = None):
         plurality.display(prof2)
 
     """
+                                        
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
     # get the Plurality scores for all the candidates in curr_cands
     plurality_scores = profile.plurality_scores(curr_cands = curr_cands)
     
+    assert plurality_scores != {}, "Cannot calculate plurality scores."
+
     max_plurality_score = max(plurality_scores.values())
 
     return sorted([c for c in curr_cands if plurality_scores[c] == max_plurality_score])
 
 
 @swf(name="Plurality ranking")
-def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
+def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
     """The SWF that ranks the candidates in curr_cands according to their plurality scores. If local is True, then the plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the plurality scores are computed with respect to the entire profile.
 
     Args:
@@ -78,6 +81,8 @@ def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
         plurality_scores_dict = profile.plurality_scores()
         plurality_scores_dict = {k: v for k, v in plurality_scores_dict.items() if k in cands}
 
+    assert plurality_scores_dict != {}, "Cannot calculate plurality scores."
+
     for cand in cands:
         plurality_scores_dict[cand] = -plurality_scores_dict[cand]
 
@@ -91,7 +96,7 @@ def plurality_swf(profile, curr_cands=None, local=True, tie_breaking=None):
 
 @vm(name = "Borda")
 def borda(profile, curr_cands = None):
-    """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
+    r"""The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -133,7 +138,7 @@ def borda(profile, curr_cands = None):
     return sorted([c for c in curr_cands if borda_scores[c] == max_borda_score])
 
 @swf(name="Borda ranking")
-def borda_swf(profile, curr_cands=None, local=True, tie_breaking=None):
+def borda_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
     """The SWF that ranks the candidates in curr_cands according to their Borda scores. If local is True, then the Borda scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Borda scores are computed with respect to the entire profile.
 
     Args:
@@ -288,6 +293,58 @@ def dowdall(profile, curr_cands = None):
 
     return scoring_rule(profile, curr_cands = curr_cands, score = lambda num_cands, rank: 1 / rank)
 
+@vm("Positive-Negative Voting")
+def positive_negative_voting(profile, curr_cands = None):
+    """The **Positive-Negative Voting** method is a scoring rule where each voter assigns a score of 1 to their top-ranked candidate and a score of -1 to their bottom-ranked candidate.  See https://onlinelibrary.wiley.com/doi/10.1111/ecin.12929 for more information.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+
+    return scoring_rule(profile, 
+                        curr_cands = curr_cands, 
+                        score = lambda num_cands, rank : 1 if rank == 1 else (-1 if rank == num_cands else 0))
+
+
+@swf(name = "Score Ranking")
+def score_ranking(profile, curr_cands = None, score = lambda num_cands, rank : 1 if rank == 1 else 0):
+    """A general swf that ranks the candidates according to the given score function.  Each voter assign a score to each candidate using the ``score`` function based on their submitted ranking (restricted to candidates in ``curr_cands``).   Returns the ranking of the candidates according to the scores. 
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        score (function): A function that accepts two parameters ``num_cands`` (the number of candidates) and ``rank`` (a rank of a candidate) used to calculate the score of a candidate.   The default ``score`` function assigns 1 to a candidate ranked in first place, otherwise it assigns 0 to the candidate. 
+
+    Returns: 
+        A ranking of the candidates
+
+    .. important:: 
+        The signature of the ``score`` function is:: 
+
+            def score(num_cands, rank):
+                # return an int or float 
+    """
+    
+    # get ranking data
+    _rankings, rcounts = profile.rankings_counts
+
+    # get (restricted) rankings
+    cands_to_ignore = np.array([c for c in profile.candidates if c not in curr_cands]) if curr_cands is not None else np.array([])
+    rankings = _rankings if curr_cands is None else _find_updated_profile(np.array(_rankings), cands_to_ignore, len(profile.candidates))
+    candidates = profile.candidates if curr_cands is None else curr_cands
+
+    # find the candidate scores using the score function
+    cand_scores = {c: -1 * sum(_num_rank(rankings, rcounts, c, level) * score(len(candidates), level) for level in range(1, len(candidates) + 1)) for c in candidates}
+    
+    ranking = Ranking(cand_scores)
+    ranking.normalize_ranks()
+    return ranking
+
 ## Borda for ProfilesWithTies
 
 def symmetric_borda_scores(profile): 
@@ -301,7 +358,6 @@ def symmetric_borda_scores(profile):
     return  {cand: sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(cand, _cand)]) * c 
                     for r,c in zip(*profile.rankings_counts)]) - sum([len([_cand for _cand in profile.candidates if r.extended_strict_pref(_cand, cand)]) * c 
                     for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
-
 
 def domination_borda_scores(profile): 
     """
@@ -326,8 +382,6 @@ def weak_domination_borda_scores(profile):
     return  {cand: sum([len([_cand for _cand in profile.candidates if r.extended_weak_pref(cand, _cand)]) * c 
                     for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
 
-
-
 def non_domination_borda_scores(profile): 
     """
     The non-domination Borda score of a candidate c for a ranking r is -1 times the number of candidates ranked strictly above c according to r. 
@@ -341,7 +395,10 @@ def non_domination_borda_scores(profile):
 
 
 @vm(name="Borda")
-def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symmetric_borda_scores): 
+def borda_for_profile_with_ties(
+    profile, 
+    curr_cands=None, 
+    borda_scores=symmetric_borda_scores): 
     """
     Borda score for truncated linear orders using different ways of defining the Borda score for truncated linear
     orders.  
@@ -363,7 +420,8 @@ def borda_for_profile_with_ties(profile, curr_cands = None, borda_scores = symme
 
 scoring_swfs = [
     plurality_ranking,
-    borda_ranking
+    borda_ranking,
+    score_ranking   
 ]
 
 scoring_vms = [
@@ -373,4 +431,21 @@ scoring_vms = [
     borda_for_profile_with_ties,
     dowdall,
     scoring_rule
+    anti_plurality,
+    scoring_rule, 
+    positive_negative_voting,
+    anti_plurality  
+]
+
+scoring_vms_profiles = [
+    plurality, 
+    borda, 
+    anti_plurality,
+    scoring_rule, 
+    positive_negative_voting,
+    anti_plurality  
+]
+
+scoring_vms_profiles_with_ties = [
+    borda_for_profile_with_ties
 ]

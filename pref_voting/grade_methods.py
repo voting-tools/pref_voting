@@ -42,6 +42,18 @@ def approval(gprofile, curr_cands=None):
     
     return score_voting(gprofile, curr_cands=curr_cands, evaluation_method="sum")
 
+@vm(name="Dis&approval")
+def dis_and_approval(gprofile, curr_cands=None):
+    """Return the Dis&approval vote of the grade profile ``gprofile``.  If ``curr_cands`` is provided, then the dis&approval vote is restricted to the candidates in ``curr_cands``.  See https://link.springer.com/article/10.1007/s00355-013-0766-7 for more information.
+
+    .. warning:: 
+        Dis&approval only works on Grade Profiles that are based on 2 grades: -1 and 1.
+
+    """
+    assert sorted(gprofile.grades) == [-1, 0, 1], "The  grades in the profile must be {-1, 0, 1}."
+    
+    return score_voting(gprofile, curr_cands=curr_cands, evaluation_method="sum")
+
 @vm(name="Cumulative Voting")
 def cumulative_voting(gprofile, curr_cands=None, max_total_grades=5):
     """Return the cumulative vote winner of the grade profile ``gprofile``.   This is the candidates with the largest sum of the grades where each voter submits a ballot of scores that sum to ``max_total_grades``.   If ``curr_cands`` is provided, then the cumulative vote is restricted to the candidates in ``curr_cands``."""

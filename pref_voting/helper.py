@@ -143,3 +143,56 @@ def create_election(ranking_list,
     else: # ranking_list is empty
         print("Warning: list of rankings is empty.")
         return Profile(ranking_list)
+    
+
+class SPO(object):
+    """A strict partial order class due to Jobst Heitzig.
+    
+    The strict partial order P as a binary relation is encoded as a 2d numpy array.  The predecessors and successors of each object are precomputed.  The add method adds a new pair to the relation and computes the transitive closure.
+
+    Args:
+        n (int): The number of objects.
+    
+    """
+
+    n = None
+    """The number of objects"""
+    objects = None
+    """The list of objects"""
+    P = None
+    """The strict partial ordering P as a binary relation encoded as a 2d numpy array"""
+    preds = None
+    """The list of predecessors of each object"""
+    succs = None
+    """The list of successors of each object"""
+
+    def __init__(self, n):
+        self.n = n
+        self.objects = list(range(n))
+        self.P = np.zeros((n, n), dtype=bool)
+        self.preds = [[] for _ in range(n)]
+        self.succs = [[] for _ in range(n)]
+
+    def add(self, a, b):
+        """add a P b and all transitive consequences"""
+        if not self.P[a][b]:
+            self.P[a][b] = True
+            self.preds[b].append(a)
+            self.succs[a].append(b)
+            for c in self.preds[a]:
+                self._register(c, b)
+                for d in self.succs[b]:
+                    self._register(c, d)
+            for d in self.succs[b]:
+                self._register(a, d)
+
+    def initial_elements(self):
+        """return the initial elements of P (those without predecessors))"""
+        return [i for i in self.objects if len(self.preds[i]) == 0]    
+
+    def _register(self, a, b):
+        """register that a P b, without forming the transitive closure"""
+        if not self.P[a][b]:
+            self.P[a][b] = True
+            self.preds[b].append(a)
+            self.succs[a].append(b)
