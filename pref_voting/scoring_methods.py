@@ -267,6 +267,31 @@ def scoring_rule(profile, curr_cands = None, score = lambda num_cands, rank : 1 
 
     return sorted([c for c in candidates if cand_scores[c] == max_score])
 
+def create_scoring_method(score, name):
+    """Create a scoring method using a given score function and name."""
+
+    def _vm(profile, curr_cands = None):
+        return scoring_rule(profile = profile, curr_cands = curr_cands, score = score)
+
+    return VotingMethod(_vm, name = name)
+
+@vm(name = "Dowdall")
+def dowdall(profile, curr_cands = None):
+    """The first-ranked candidate gets 1 point, the second-ranked candidate gets 1/2 point, the third-ranked candidate gets 1/3 point, and so on.  The Dowdall winners are the candidates with the greatest overall score in the profile restricted to ``curr_cands``.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``.
+
+    Returns:
+        A sorted list of candidates
+
+    .. note::
+        This system is used in Nauru. See, e.g., Jon Fraenkel & Bernard Grofman (2014), "The Borda Count and its real-world alternatives: Comparing scoring rules in Nauru and Slovenia," Australian Journal of Political Science, 49:2, 186-205, DOI: 10.1080/10361146.2014.900530.
+    
+    """
+
+    return scoring_rule(profile, curr_cands = curr_cands, score = lambda num_cands, rank: 1 / rank)
 
 @vm("Positive-Negative Voting")
 def positive_negative_voting(profile, curr_cands = None):
@@ -400,9 +425,12 @@ scoring_swfs = [
 ]
 
 scoring_vms = [
+    anti_plurality,
     plurality, 
     borda, 
     borda_for_profile_with_ties,
+    dowdall,
+    scoring_rule
     anti_plurality,
     scoring_rule, 
     positive_negative_voting,
