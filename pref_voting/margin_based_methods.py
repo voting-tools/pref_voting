@@ -918,7 +918,7 @@ def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_funct
         winners = [cw]
     else:
         w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates 
-                   if edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2)]
+                   if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
         winners = list()            
         strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
         
@@ -929,11 +929,9 @@ def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_funct
             
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
-
             for e0,e1,s in sorted_edges:
                 if not rp_defeat.P[e1][e0]:
                     rp_defeat.add(e0,e1)
-
         winners.append(rp_defeat.initial_elements()[0])
 
     return sorted(list(set(winners)))
