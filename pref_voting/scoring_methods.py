@@ -430,11 +430,8 @@ scoring_vms = [
     borda, 
     borda_for_profile_with_ties,
     dowdall,
-    scoring_rule
-    anti_plurality,
-    scoring_rule, 
+    scoring_rule,
     positive_negative_voting,
-    anti_plurality  
 ]
 
 scoring_vms_profiles = [
