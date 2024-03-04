@@ -17,6 +17,7 @@ from tabulate import tabulate
 import matplotlib.pyplot as plt
 from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph, SupportGraph
 from pref_voting.voting_method import _num_rank_first
+import os
 
 # turn off future warnings.
 # getting the following warning when calling tabulate to display a profile: 
@@ -147,7 +148,7 @@ def _find_updated_profile(rankings, cands_to_ignore, num_cands):
 # #######
 
 class Profile(object):
-    """An anonymous profile of linear rankings of :math:`n` candidates.  It is assumed that the candidates are named :math:`0, 1, \ldots, n-1` and a ranking of the candidates is a list of candidate names.  For instance, the list ``[0, 2, 1]`` represents the ranking in which :math:`0` is ranked above :math:`2`, :math:`2` is ranked above :math:`1`, and :math:`0` is ranked above :math:`1`.   
+    r"""An anonymous profile of linear rankings of :math:`n` candidates.  It is assumed that the candidates are named :math:`0, 1, \ldots, n-1` and a ranking of the candidates is a list of candidate names.  For instance, the list ``[0, 2, 1]`` represents the ranking in which :math:`0` is ranked above :math:`2`, :math:`2` is ranked above :math:`1`, and :math:`0` is ranked above :math:`1`.   
 
     :param rankings: List of rankings in the profile, where a ranking is a list of candidates.
     :type rankings: list[list[int]]
@@ -184,15 +185,20 @@ class Profile(object):
         # linear ordering of the candidates for each voter
         self._rankings = np.array(rankings)   
         
+        assert all([all([c in self.candidates for c in r]) for r in rankings]), f"The candidates must be from the set {self.candidates}."
+
         # for number of each ranking
         self._rcounts = np.array([1]*len(rankings)) if rcounts is None else np.array(rcounts) 
         
         # for each voter, the ranks of each candidate
-        self._ranks = np.array([[np.where(_r == c)[0][0] + 1 for c in self.candidates] for  _r in self._rankings])
+        self._ranks = np.array([[np.where(_r == c)[0][0] + 1 
+                                 for c in self.candidates] 
+                                 for  _r in self._rankings])
         
         # 2d array where the c,d entry is the support of c over d
         self._tally = np.array([[_support(self._ranks, self._rcounts, c1, c2) 
-                                 for c2 in self.candidates] for c1 in self.candidates ])
+                                 for c2 in self.candidates] 
+                                 for c1 in self.candidates ])
         
         # mapping candidates to candidate names
         self.cmap = cmap if cmap is not None else {c:str(c) for c in self.candidates}
@@ -473,7 +479,7 @@ class Profile(object):
         return MarginGraph.from_profile(self).is_uniquely_weighted()
     
     def remove_candidates(self, cands_to_ignore):
-        """Remove all candidates from ``cands_to_ignore`` from the profile. 
+        r"""Remove all candidates from ``cands_to_ignore`` from the profile. 
 
         :param cands_to_ignore: list of candidates to remove from the profile
         :type cands_to_ignore: list[int]
@@ -516,33 +522,6 @@ class Profile(object):
                 rcounts.append(1)
         return Profile(rankings, rcounts=rcounts, cmap=self.cmap)
         
-    def display(self, cmap=None, style="pretty", curr_cands=None):
-        """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
-
-        :param cmap: the candidate map to use (overrides the cmap associated with this profile)
-        :type cmap: dict[int,str], optional
-        :param style: the candidate map to use (overrides the cmap associated with this profile)
-        :type style: str ---  "pretty" or "fancy_grid" (or any other style option for tabulate)
-        :param curr_cands: list of candidates
-        :type curr_cands: list[int], optional
-        :rtype: None
-
-        :Example: 
-
-        .. exec_code::
-
-            from pref_voting.profiles import Profile 
-            prof = Profile([[0,1,2], [1,2,0], [2,0,1]], [2, 3, 1])
-            prof.display()
-            prof.display(cmap={0:"a", 1:"b", 2:"c"})
-
-        """
-        cmap = cmap if cmap is not None else self.cmap
-        
-        rankings = self._rankings if curr_cands is None else _find_updated_profile(self._rankings, np.array([c for c in self.candidates if c not in curr_cands]), len(self.candidates))
-
-        print(tabulate([[cmap[c] for c in cs] for cs in rankings.transpose()], self._rcounts, tablefmt=style))        
-
     def to_profile_with_ties(self): 
         """Returns the profile as a ProfileWithTies
         """
@@ -604,98 +583,209 @@ class Profile(object):
 
         MarginGraph.from_profile(self).display_with_defeat(defeat, curr_cands = curr_cands, show_undefeated = show_undefeated, cmap = cmap)
 
-    def write(self): 
-        """
-        Returns a string encoding the profile for to store in a file.
-
-        The format is based on the format used by PrefLib (https://www.preflib.org/data/format)
-        
-        the format is: 
-        
-        - The number of candidates
-        - The number of submitted rankings
-        - The list of the rankings, one on each line,  where a ranking is represented by ``n:a,b,c`` meaning the rcount is n for the ranking is [a, b, c]
-        - List of the cmap, one on each line. 
-
-        :Example: 
-
-        .. exec_code::
-
-            from pref_voting.profiles import Profile 
-            prof = Profile([[0,1,2], [1,2,0], [2,0,1]], [2, 3, 1], cmap={0:"a", 1:"b", 2:"c"})
-            prof.display()
-            print('\\nThe string encoding: \\n')
-            print(prof.write())
-
-        """
-        election_str = f"{self.num_cands}\n"
-        election_str += f"{len(self._rankings)}\n"
-        for rc,r in zip(self._rcounts, self._rankings): 
-            r_str = ",".join([str(c) for c in r])
-            election_str += f"{str(rc)}:{r_str}\n"
-        for c,cname in self.cmap.items():
-            election_str += f"{c}:{cname}\n"
-        return election_str
-    
-    @classmethod
-    def from_string(cls, e_str): 
-        """
-        Returns a profile described by ``e_str``.
-
-        ``e_str`` must be in the format produced by the :meth:`pref_voting.Profile.write` function.
-        """
-        edata = e_str.split("\n")
-
-        num_cands = int(edata[0])
-        num_rankings = int(edata[1])
-
-        rc_data = edata[2:2+num_rankings]
-
-        cmap_data = edata[2+num_rankings:2+num_rankings + num_cands]
-        rankings = list()
-        rcounts = list()
-        for rcd in rc_data:
-            _rc, _r = rcd.split(":")
-            rc = int(_rc)
-            r = [int(c) for c in _r.split(",")]
-            rcounts.append(rc)
-            rankings.append(r)
-
-        cmap = {int(c_cname.split(":")[0]): str(c_cname.split(":")[1]) for c_cname in cmap_data}
-
-        return cls(rankings, num_cands, rcounts, cmap)
-    
     def description(self): 
         """
         Returns a string describing the profile.
         """
         rs, cs = self.rankings_counts
         return f"Profile({[list(r) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
+
+    def display(self, cmap=None, style="pretty", curr_cands=None):
+        """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
+
+        :param cmap: the candidate map to use (overrides the cmap associated with this profile)
+        :type cmap: dict[int,str], optional
+        :param style: the candidate map to use (overrides the cmap associated with this profile)
+        :type style: str ---  "pretty" or "fancy_grid" (or any other style option for tabulate)
+        :param curr_cands: list of candidates
+        :type curr_cands: list[int], optional
+        :rtype: None
+
+        :Example: 
+
+        .. exec_code::
+
+            from pref_voting.profiles import Profile 
+            prof = Profile([[0,1,2], [1,2,0], [2,0,1]], [2, 3, 1])
+            prof.display()
+            prof.display(cmap={0:"a", 1:"b", 2:"c"})
+
+        """
+        cmap = cmap if cmap is not None else self.cmap
+        
+        rankings = self._rankings if curr_cands is None else _find_updated_profile(self._rankings, np.array([c for c in self.candidates if c not in curr_cands]), len(self.candidates))
+
+        print(tabulate([[cmap[c] for c in cs] for cs in rankings.transpose()], self._rcounts, tablefmt=style))        
+
+    def to_preflib_instance(self):
+        """
+        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).  
+        
+        """
+        from preflibtools.instances import OrdinalInstance
+
+        instance = OrdinalInstance()
+        vote_map = dict()
+        for r,c in zip(*self.rankings_counts):
+            ranking = tuple([(c,) for c in r])
+            if ranking in vote_map.keys():
+                vote_map[ranking] += c
+            else:
+                vote_map[ranking] = c
+        instance.append_vote_map(vote_map)    
+        return instance   
+
+    @classmethod
+    def from_preflib(cls, instance_or_preflib_file, include_cmap=False): 
+        """
+        Read a profile from an OrdinalInstance or a .soc file used by PrefLib (https://www.preflib.org/format#types).
+
+        This function uses the ``OrdinalInstance`` class from the ``preflibtools`` package to read the profile from the file (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).
+
+        Args:
+            preflib_file (str): the path to the file
+            include_cmap (bool): if True, then include the candidate map.  Defaults to False.
+
+        Returns:    
+            Profile: the profile read from the file
+        
+        """
+        from preflibtools.instances import OrdinalInstance
+        import csv
+
+        assert type(instance_or_preflib_file) == OrdinalInstance or type(instance_or_preflib_file) == str, "The argument must be an instance of OrdinalInstance or a string."
+
+        if type(instance_or_preflib_file) == str:
+            preflib_file = instance_or_preflib_file
+
+            assert preflib_file.endswith(".soc"), f"The file must be a .soc file (see https://www.preflib.org/format#types), not {preflib_file}."
+
+            assert os.path.exists(preflib_file), f"The file {preflib_file} does not exist."
+
+            instance = OrdinalInstance()
+            instance.parse_file(preflib_file)
+
+        else:
+            instance = instance_or_preflib_file
+
+        rankings = []
+        rcounts = []
+
+        cand_to_cidx = {c:cidx for cidx,c in enumerate(sorted(list(instance.alternatives_name.keys())))}
+        for order in instance.orders:
+        
+            rank = list()
+            cmap = {c:str(c) for c in range(instance.num_alternatives)}
+            for _,cs in enumerate(order): 
+                for c in cs: 
+                    rank.append(cand_to_cidx[c])
+                    if include_cmap:
+                        cmap[cand_to_cidx[c]] = instance.alternatives_name[c]
+            rankings.append(rank)
+            rcounts.append(instance.multiplicity[order])
+        return cls(rankings,
+                   rcounts=rcounts,
+                   cmap=cmap)
+
+    @classmethod
+    def from_csv(cls, filename):
+        """
+        Read a profile from a CSV file.  The CSV file should have the format produced by the ``write`` method.
+
+        Args:
+            filename (str): the path to the file
+            cmap (dict[int: str]): a dictionary mapping candidate numbers to candidate names.  If not provided, the candidate names are mapped to themselves. 
+        """
+        import pandas as pd
+
+        assert os.path.exists(filename), f"The file {filename} does not exist."
+        
+        df = pd.read_csv(filename)    
+
+        # Filter columns: keep only those that start with "Rank"
+        df_filtered = df.filter(regex='^Rank')
+
+        sorted_df = pd.DataFrame(df_filtered.apply(lambda x: sorted(x), axis=1).tolist(), columns=df_filtered.columns)
+
+        # Check if all rows are identical
+        is_identical = len(sorted_df.drop_duplicates()) == 1
+
+        assert is_identical, "The CSV file does not contain complete linear ordering on a set of candidates."
+        candidates = list(sorted_df.drop_duplicates().values[0])
+
+        cands_to_cidx = {c:cidx for cidx,c in enumerate(candidates)}
+        cmap = {cidx:str(c) for cidx,c in enumerate(candidates)}
+
+        ranks = [int(r.replace("Rank", "")) for r in df_filtered if r.startswith("Rank")]
+
+        rankings = list()
+        for row in df_filtered.iterrows():
+            rankings.append([cands_to_cidx[row[1][f"Rank{r}"]] for r in ranks])
+
+        return cls(rankings, cmap=cmap)
+
+    def write(self, filename, file_format="soc"): 
+        """
+        Write the profile to a file.  The file format is specified by ``file_format``.  The default is "soc" which is the format used by PrefLib (https://www.preflib.org/format#types).  The other option is "csv".
+
+        Args:
+            filename (str): the path to the file
+            file_format (str): the format of the file.  Defaults to "soc".  The other option is "csv".
+        
+        """
+        import csv
+
+        if file_format == "soc":
+            if not filename.endswith(".soc"):
+                filename += ".soc"
+            instance = self.to_preflib_instance()
+            instance.write(filename)
+
+            print(f"Profile written to {filename}.")
+
+        elif file_format == "csv":
+            if not filename.endswith(".csv"):
+                filename += ".csv"
+
+            # Generate column labels based on the maximum length
+            column_labels = [f"Rank{i+1}" for i in range(len(self.candidates))]
+
+            # Writing to the CSV file
+            with open(filename, mode='w') as file:
+                writer = csv.writer(file)
+                # Write the header
+                writer.writerow(column_labels)
+                # Write the rankings
+                for row in self.rankings:
+                    writer.writerow([self.cmap[c] for c in row])
+
+            print(f"Profile written to {filename}.")
+
+        else:
+            raise ValueError(f"Unknown file format {file_format}.  The options are 'soc' and 'csv'.") 
+        
+    def __add__(self, other_prof): 
+        """
+        Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings from the first in addition to all the rankings from the second profile. 
+
+        It is required that the two profiles have the same candidates. 
+
+        Note: the cmaps of the profiles are ignored. 
+        """
+
+        assert self.candidates == other_prof.candidates, "The two profiles must have the same candidates"
+
+        return Profile(np.concatenate([self._rankings, other_prof._rankings]), rcounts=np.concatenate([self._rcounts, other_prof._rcounts]))
+    
+    def __eq__(self, other_prof): 
+        """
+        Returns true if two profiles are equal.  Two profiles are equal if they have the same rankings.  Note that we ignore the cmaps.
+        """
+
+        return sorted(self.rankings) == sorted(other_prof.rankings)
     
     def __str__(self): 
-        # print the profile as a table
+        """print the profile as a table using tabulate."""
         
         return tabulate([[self.cmap[c] for c in cs] for cs in self._rankings.transpose()], self._rcounts, tablefmt="pretty")    
 
-def simple_lift(ranking, c):
-    """
-    Return a ranking (i.e., a list of candidates) in which ``c`` is moved up one position in ``ranking``.
-    """
-    assert c != ranking[0], "can't lift a candidate already in first place"
-    
-    c_idx = ranking.index(c)
-    ranking[c_idx - 1], ranking[c_idx] = ranking[c_idx],ranking[c_idx-1]
-    return ranking
-
-def simple_drop(ranking, c):
-    """
-    Return a ranking (i.e., a list of candidates) in which ``c`` is moved down one position in ``ranking``.
-    """
-    
-    assert c != ranking[-1], "can't drop a candidate already in last place"
-    
-    c_idx = ranking.index(c)
-    ranking[c_idx + 1], ranking[c_idx] = ranking[c_idx],ranking[c_idx + 1]
-    return ranking
-
-    

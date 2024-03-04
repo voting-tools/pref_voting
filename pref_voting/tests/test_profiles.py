@@ -1,8 +1,15 @@
 from pref_voting.profiles import Profile
+from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MarginGraph, MajorityGraph, SupportGraph
+from pref_voting.margin_based_methods import split_cycle_defeat
 import numpy as np
 import pytest
 from collections import Counter
+from preflibtools.instances import OrdinalInstance
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 @pytest.fixture
 def test_profile():
@@ -125,54 +132,130 @@ def test_margin_matrix(test_profile):
     assert mm[2][0] == 2
     assert mm[1][2] == 4
     
-    # def is_uniquely_weighted(self): 
-    #     """Returns True if the profile is uniquely weighted. 
-        
-    #     A profile is **uniquely weighted** when there are no 0 margins and all the margins between any two candidates are unique.     
-    #     """
-        
-    #     return MarginGraph.from_profile(self).is_uniquely_weighted()
+def test_is_uniquely_weighted(test_profile):
+    assert not test_profile.is_uniquely_weighted()
+
+def test_remove_candidates(test_profile):
+
+    updated_prof = Profile([[0,  1], [1, 0], [1, 0]], [2, 3, 1])
+    new_prof, orig_cnames = test_profile.remove_candidates([1])
+    assert new_prof == updated_prof    
+    assert orig_cnames == {0: 0, 1: 2}
+
+def test_anonymize(): 
+    prof = Profile([[0, 1], [0, 1], [0, 1]])
+    anon_prof = prof.anonymize()
+    assert anon_prof == prof
+    assert list([list(r) for r in anon_prof._rankings]) == [[0, 1]]
+    assert anon_prof._rcounts == [3]
+
+def test_to_profile_with_ties(test_profile): 
+    prof_w_ties = test_profile.to_profile_with_ties()
+    assert type(prof_w_ties) == ProfileWithTies
+    assert test_profile.candidates == prof_w_ties.candidates
+    assert test_profile.margin(0, 1) == prof_w_ties.margin(0, 1)
+    assert test_profile.margin(0, 2) == prof_w_ties.margin(0, 2)
+    assert test_profile.margin(1, 2) == prof_w_ties.margin(1, 2)
+
+def test_to_latex(condorcet_cycle): 
     
-    # def remove_candidates(self, cands_to_ignore):
-    #     """Remove all candidates from ``cands_to_ignore`` from the profile. 
+    assert condorcet_cycle.to_latex() == '\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$0$ & $1$ & $2$\\\\ \n$1$ & $2$ & $0$\\\\ \n$2$ & $0$ & $1$\n\\end{tabular}'
 
-    #     :param cands_to_ignore: list of candidates to remove from the profile
-    #     :type cands_to_ignore: list[int]
-    #     :returns: a profile with candidates from ``cands_to_ignore`` removed and a dictionary mapping the candidates from the new profile to the original candidate names. 
+    assert condorcet_cycle.to_latex(cmap={0:"a", 1:"b", 2:"c"}) == '\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$a$ & $b$ & $c$\\\\ \n$b$ & $c$ & $a$\\\\ \n$c$ & $a$ & $b$\n\\end{tabular}'
 
-    #     .. warning:: Since the candidates in a Profile must be named :math:`0, 1, \ldots, n-1` (where :math:`n` is the number of candidates), you must use the candidate map returned to by the function to recover the original candidate names. 
+def test_display_margin_matrix(capsys, condorcet_cycle):
+    condorcet_cycle.display_margin_matrix()
 
-    #     :Example: 
+    # Capture the output
+    captured = capsys.readouterr()
 
-    #     .. exec_code::
+    assert"""+----+----+----+
+|  0 |  1 | -1 |
++----+----+----+
+| -1 |  0 |  1 |
++----+----+----+
+|  1 | -1 |  0 |
++----+----+----+
+""" in captured.out
 
-    #         from pref_voting.profiles import Profile 
-    #         prof = Profile([[0,1,2], [1,2,0], [2,0,1]])
-    #         prof.display()
-    #         new_prof, orig_cnames = prof.remove_candidates([1])
-    #         new_prof.display() # displaying new candidates names
-    #         new_prof.display(cmap=orig_cnames) # use the original candidate names
-    #     """        
-    #     updated_rankings = _find_updated_profile(self._rankings, np.array(cands_to_ignore), self.num_cands)
-    #     new_names = {c:cidx  for cidx, c in enumerate(sorted(updated_rankings[0]))}
-    #     orig_names = {v:k  for k,v in new_names.items()}
-    #     return Profile([[new_names[c] for c in r] for r in updated_rankings], rcounts=self._rcounts, cmap=self.cmap), orig_names
+
+def test_display_margin_matrix(capsys, condorcet_cycle):
+    condorcet_cycle.display_margin_matrix()
+
+    # Capture the output
+    captured = capsys.readouterr()
+
+    assert"""+----+----+----+
+|  0 |  1 | -1 |
++----+----+----+
+| -1 |  0 |  1 |
++----+----+----+
+|  1 | -1 |  0 |
++----+----+----+
+""" in captured.out
+
+def test_display_margin_graph(condorcet_cycle):
+    # just test that the function runs
+    condorcet_cycle.display_margin_graph()
+
+def test_display_margin_graph_with_defeat(condorcet_cycle):
+    # just test that the function runs
+    condorcet_cycle.display_margin_graph_with_defeat(split_cycle_defeat(condorcet_cycle))
+
+def test_description(condorcet_cycle):
+
+    assert condorcet_cycle.description() == "Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], rcounts=[1, 1, 1], cmap={0: '0', 1: '1', 2: '2'})"
+
+def test_display(capsys, condorcet_cycle):
+    # just test that the function runs
+    condorcet_cycle.display()
+    captured = capsys.readouterr()
+    assert"""+---+---+---+
+| 1 | 1 | 1 |
++---+---+---+
+| 0 | 1 | 2 |
+| 1 | 2 | 0 |
+| 2 | 0 | 1 |
++---+---+---+
+""" in captured.out
     
-    # def anonymize(self): 
-    #     """
-    #     Return a profile which is the anonymized version of this profile. 
-    #     """
+def test_to_preflib_instance(condorcet_cycle):
 
-    #     rankings = list()
-    #     rcounts = list()
-    #     for r in self.rankings:
-    #         found_it = False
-    #         for _ridx, _r in enumerate(rankings): 
-    #             if r == _r: 
-    #                 rcounts[_ridx] += 1
-    #                 found_it = True
-    #                 break
-    #         if not found_it: 
-    #             rankings.append(r)
-    #             rcounts.append(1)
-    #     return Profile(rankings, rcounts=rcounts, cmap=self.cmap)
+    preflib_instance = condorcet_cycle.to_preflib_instance()
+    assert isinstance(preflib_instance, OrdinalInstance)
+    assert preflib_instance.num_voters == 3    
+    assert preflib_instance.num_alternatives == 3    
+    assert preflib_instance.full_profile() == [((0,), (1,), (2,)), ((1,), (2,), (0,)), ((2,), (0,), (1,))]
+
+def test_from_preflib(condorcet_cycle):
+    preflib_instance = condorcet_cycle.to_preflib_instance()
+    prof = Profile.from_preflib(preflib_instance)
+    assert prof == condorcet_cycle
+
+    preflib_instance.write("./condorcet_cycle.soc")
+    prof = Profile.from_preflib("./condorcet_cycle.soc")
+    assert prof == condorcet_cycle
+
+def test_write(condorcet_cycle):
+    condorcet_cycle.write("./condorcet_cycle.soc")
+    prof = Profile.from_preflib("./condorcet_cycle.soc")
+    assert prof == condorcet_cycle
+
+    condorcet_cycle.write("./condorcet_cycle.csv", file_format="csv")
+
+def read_write(condorcet_cycle):
+
+    condorcet_cycle.write("./condorcet_cycle.csv", file_format="csv")
+    prof = Profile.from_csv("./condorcet_cycle.csv")
+    assert condorcet_cycle == prof    
+
+def test_add(condorcet_cycle):
+    r1 = Profile([[0, 1, 2]])
+    r2 = Profile([[1, 2, 0]])
+    r3 = Profile([[2, 0, 1]])
+    prof = r1 + r2 + r3
+    assert prof == condorcet_cycle
+
+def test_eq(condorcet_cycle):   
+    prof = Profile([[1, 2, 0], [0, 1, 2], [2, 0, 1]], [1, 1, 1])
+    assert prof == condorcet_cycle

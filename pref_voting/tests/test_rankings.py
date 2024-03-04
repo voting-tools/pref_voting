@@ -181,6 +181,9 @@ def test_has_skipped_rank(linear_ranking, ranking_with_tie):
     assert not Ranking({0:1, 1:1, 2:2}).has_skipped_rank()
     assert Ranking({0:1, 1:1, 2:3}).has_skipped_rank()
 
+def test_to_indiff_list():
+    r = Ranking({0:1, 1:1, 2:2})
+    assert r.to_indiff_list() == ((0, 1), (2,))
 
 @pytest.mark.parametrize("rmap, expected", [
     ({0:1, 1:2, 2:3, 3:3}, {0:1, 1:2}),

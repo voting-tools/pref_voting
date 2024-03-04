@@ -269,6 +269,12 @@ class Ranking(object):
             c1s, c2s, use_extended_preferences=use_extended_preferences
         ) and any([any([strict_pref(c1, c2) for c2 in c2s]) for c1 in c1s])
 
+    def to_indiff_list(self): 
+        """
+        Returns the ranking as a tuple of indifference classes (represented as a tuple).
+        """
+        return tuple([tuple(self.cands_at_rank(r)) for r in self.ranks])
+    
     def display(self, cmap = None): 
         """
         Display the ranking vertically as a column of a table. 
@@ -325,6 +331,7 @@ class Ranking(object):
 
         ranks = sorted(list(set(normalized_ranks.values())))
 
+        assert r < len(ranks), "There is no item at rank " + str(r + 1)
         cands_at_rank = [c for c,crank in normalized_ranks.items() if crank == ranks[r]]
 
         return cands_at_rank[0] if len(cands_at_rank) == 1 else cands_at_rank
@@ -359,6 +366,7 @@ class Ranking(object):
             if set(self.cands_at_rank(self_rank)) != set(other.cands_at_rank(other_rank)): 
                 return False
         return True
+
 
 def break_ties_alphabetically(ranking):
     """Break ties in the ranking alphabetically.
