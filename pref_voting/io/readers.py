@@ -255,12 +255,13 @@ def csv_to_profile(
             cmap = {cidx: c for cidx,c in enumerate(cands)}
             cand_to_cidx = {c:cidx for cidx,c in enumerate(cands)}
 
+            rank_str_to_rank = lambda rank_str: int(rank_str[4:].strip())
             for _, row in df.iterrows():
                 ballot_dict = {}
                 for rank in rank_columns:
                     candidate = str(row[rank])
                     if candidate not in items_to_skip:
-                        ballot_dict[cand_to_cidx[candidate]] = int(rank[-1])
+                        ballot_dict[cand_to_cidx[candidate]] = rank_str_to_rank(rank)
                         
                 ballot_dict = {cand_type(c) if cand_type is not None else c:r 
                                for c,r in ballot_dict.items()}
