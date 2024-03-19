@@ -71,6 +71,7 @@ split_cycle.display(prof)
 - v0.5.0 (2023-9-24): Add _Mapping class with Utility and Grade as subclasses of _Mapping, add GradeProfile class, add Score Vote, Approval Vote, and STAR Vote.
 - v0.5.4 (2023-10-01): Add median grading voting methods.
 - v0.7.0 (2024-02-18): Use prefsampling for generating preference profiles.
+- v0.9.0 (2024-03-19): Add save/load functions for saving election data.
 
 ## Questions?
 

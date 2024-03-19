@@ -19,3 +19,4 @@ pandas
 nashpy
 seaborn
 numba
+preflibtools
