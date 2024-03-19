@@ -207,6 +207,9 @@ class Profile(object):
         self.num_voters = np.sum(self._rcounts)
         """The number of voters in the election."""
 
+        self.is_truncated_linear = True     
+        """The profile is a (truncated) linear order profile. This is needed for compatability with the ProfileWithTies class. """
+
     @property
     def rankings_counts(self):
         """
@@ -229,6 +232,14 @@ class Profile(object):
         """
         
         return [tuple(r) for ridx,r in enumerate(self._rankings) for n in range(self._rcounts[ridx])]
+
+    @property
+    def rankings_as_indifference_list(self):
+        """
+        Return a list of all individual rankings as indifference lists in the profile.  An indifference list of a ranking is a tuple of tuples.  Since the rankings are linear orders, an indifference list is a tuple of tuples consisting of a single candidate.   The return type is a list of indifference lists. 
+        """
+        
+        return [tuple([(c,) for c in r]) for ridx,r in enumerate(self._rankings) for n in range(self._rcounts[ridx])]
 
     @property
     def counts(self): 
@@ -619,151 +630,66 @@ class Profile(object):
 
     def to_preflib_instance(self):
         """
-        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).  
+        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package. See ``pref_voting.io.writers.to_preflib_instance``.
         
         """
-        from preflibtools.instances import OrdinalInstance
+        from pref_voting.io.writers import to_preflib_instance
 
-        instance = OrdinalInstance()
-        vote_map = dict()
-        for r,c in zip(*self.rankings_counts):
-            ranking = tuple([(c,) for c in r])
-            if ranking in vote_map.keys():
-                vote_map[ranking] += c
-            else:
-                vote_map[ranking] = c
-        instance.append_vote_map(vote_map)    
-        return instance   
+        return to_preflib_instance(self)
 
     @classmethod
-    def from_preflib(cls, instance_or_preflib_file, include_cmap=False): 
+    def from_preflib(
+        cls, 
+        instance_or_preflib_file, 
+        include_cmap=False): 
         """
-        Read a profile from an OrdinalInstance or a .soc file used by PrefLib (https://www.preflib.org/format#types).
-
-        This function uses the ``OrdinalInstance`` class from the ``preflibtools`` package to read the profile from the file (see https://preflib.github.io/preflibtools/usage.html#ordinal-preferences).
-
-        Args:
-            preflib_file (str): the path to the file
-            include_cmap (bool): if True, then include the candidate map.  Defaults to False.
-
-        Returns:    
-            Profile: the profile read from the file
+        Convert an preflib OrdinalInstance or file to a Profile.   See ``pref_voting.io.readers.from_preflib``.
         
         """
-        from preflibtools.instances import OrdinalInstance
-        import csv
+        from pref_voting.io.readers import preflib_to_profile
 
-        assert type(instance_or_preflib_file) == OrdinalInstance or type(instance_or_preflib_file) == str, "The argument must be an instance of OrdinalInstance or a string."
+        return preflib_to_profile(
+            instance_or_preflib_file, 
+            include_cmap=include_cmap, 
+            as_linear_profile=True)
 
-        if type(instance_or_preflib_file) == str:
-            preflib_file = instance_or_preflib_file
-
-            assert preflib_file.endswith(".soc"), f"The file must be a .soc file (see https://www.preflib.org/format#types), not {preflib_file}."
-
-            assert os.path.exists(preflib_file), f"The file {preflib_file} does not exist."
-
-            instance = OrdinalInstance()
-            instance.parse_file(preflib_file)
-
-        else:
-            instance = instance_or_preflib_file
-
-        rankings = []
-        rcounts = []
-
-        cand_to_cidx = {c:cidx for cidx,c in enumerate(sorted(list(instance.alternatives_name.keys())))}
-        for order in instance.orders:
-        
-            rank = list()
-            cmap = {c:str(c) for c in range(instance.num_alternatives)}
-            for _,cs in enumerate(order): 
-                for c in cs: 
-                    rank.append(cand_to_cidx[c])
-                    if include_cmap:
-                        cmap[cand_to_cidx[c]] = instance.alternatives_name[c]
-            rankings.append(rank)
-            rcounts.append(instance.multiplicity[order])
-        return cls(rankings,
-                   rcounts=rcounts,
-                   cmap=cmap)
+    def write(
+            self, 
+            filename, 
+            file_format="preflib", 
+            csv_format="candidate_columns"):
+        """
+        Write a profile to a file.   See ``pref_voting.io.writers.write``.
+        """
+        from pref_voting.io.writers import  write
+ 
+        return write(
+            self, 
+            filename, 
+            file_format=file_format, 
+            csv_format=csv_format)
 
     @classmethod
-    def from_csv(cls, filename):
+    def read(
+        cls, 
+        filename, 
+        file_format="preflib",
+        csv_format="candidate_columns",
+        items_to_skip=None): 
         """
-        Read a profile from a CSV file.  The CSV file should have the format produced by the ``write`` method.
-
-        Args:
-            filename (str): the path to the file
-            cmap (dict[int: str]): a dictionary mapping candidate numbers to candidate names.  If not provided, the candidate names are mapped to themselves. 
-        """
-        import pandas as pd
-
-        assert os.path.exists(filename), f"The file {filename} does not exist."
-        
-        df = pd.read_csv(filename)    
-
-        # Filter columns: keep only those that start with "Rank"
-        df_filtered = df.filter(regex='^Rank')
-
-        sorted_df = pd.DataFrame(df_filtered.apply(lambda x: sorted(x), axis=1).tolist(), columns=df_filtered.columns)
-
-        # Check if all rows are identical
-        is_identical = len(sorted_df.drop_duplicates()) == 1
-
-        assert is_identical, "The CSV file does not contain complete linear ordering on a set of candidates."
-        candidates = list(sorted_df.drop_duplicates().values[0])
-
-        cands_to_cidx = {c:cidx for cidx,c in enumerate(candidates)}
-        cmap = {cidx:str(c) for cidx,c in enumerate(candidates)}
-
-        ranks = [int(r.replace("Rank", "")) for r in df_filtered if r.startswith("Rank")]
-
-        rankings = list()
-        for row in df_filtered.iterrows():
-            rankings.append([cands_to_cidx[row[1][f"Rank{r}"]] for r in ranks])
-
-        return cls(rankings, cmap=cmap)
-
-    def write(self, filename, file_format="soc"): 
-        """
-        Write the profile to a file.  The file format is specified by ``file_format``.  The default is "soc" which is the format used by PrefLib (https://www.preflib.org/format#types).  The other option is "csv".
-
-        Args:
-            filename (str): the path to the file
-            file_format (str): the format of the file.  Defaults to "soc".  The other option is "csv".
+        Read a profile from a file.  See ``pref_voting.io.readers.read``.
         
         """
-        import csv
+        from pref_voting.io.readers import  read
 
-        if file_format == "soc":
-            if not filename.endswith(".soc"):
-                filename += ".soc"
-            instance = self.to_preflib_instance()
-            instance.write(filename)
+        return read(
+            filename, 
+            file_format=file_format, 
+            csv_format=csv_format,
+            as_linear_profile=True,
+            items_to_skip=items_to_skip
+            )
 
-            print(f"Profile written to {filename}.")
-
-        elif file_format == "csv":
-            if not filename.endswith(".csv"):
-                filename += ".csv"
-
-            # Generate column labels based on the maximum length
-            column_labels = [f"Rank{i+1}" for i in range(len(self.candidates))]
-
-            # Writing to the CSV file
-            with open(filename, mode='w') as file:
-                writer = csv.writer(file)
-                # Write the header
-                writer.writerow(column_labels)
-                # Write the rankings
-                for row in self.rankings:
-                    writer.writerow([self.cmap[c] for c in row])
-
-            print(f"Profile written to {filename}.")
-
-        else:
-            raise ValueError(f"Unknown file format {file_format}.  The options are 'soc' and 'csv'.") 
-        
     def __add__(self, other_prof): 
         """
         Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings from the first in addition to all the rankings from the second profile. 

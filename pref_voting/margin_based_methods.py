@@ -8,7 +8,8 @@
 '''
 
 from pref_voting.voting_method import  *
-from pref_voting.probabilistic_methods import  maximal_lottery
+from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph 
+from pref_voting.probabilistic_methods import  maximal_lottery, c1_maximal_lottery
 from pref_voting.helper import get_mg, SPO
 import math
 from itertools import product, permutations, combinations, chain
@@ -1446,6 +1447,13 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
                                     mem_sv_winners = {})[0])
 
 
+
+## Slater
+#
+
+
+
+
 @vm(name="Essential Set")
 def essential(edata, curr_cands=None, threshold = 0.0000001): 
     """The Essential Set is the support of the (chosen) C2 maximal lottery.
@@ -1538,6 +1546,28 @@ def loss_trimmer(edata, curr_cands = None):
         winners += winners_without_bl
 
     return list(set(winners))
+
+
+def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
+    """
+    Calculate the distance of ``rel`` (a relation) to the majority graph of ``edata``. 
+    """
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    
+    if type(edata) == MajorityGraph and exp == 0:
+        # if edata is a MajorityGraph, we need to add margins for the following code to work.  The margins do not matter when exp==0.   
+        edata = MarginGraph(candidates, [(c1, c2, 1) for c1, c2 in edata.edges if (c1 in candidates and c2 in candidates)])
+    penalty = 0
+    for a,b in combinations(candidates, 2): 
+        if edata.majority_prefers(a, b) and (b,a) in rel: 
+            penalty += (edata.margin(a, b) ** exp)
+        elif edata.majority_prefers(b, a) and (a,b) in rel: 
+            penalty += (edata.margin(b, a) ** exp)
+        elif edata.majority_prefers(a, b) and (a,b) not in rel and (b,a) not in rel: 
+            penalty += (edata.margin(a, b) ** exp) / 2 
+        elif edata.majority_prefers(b, a) and (a,b) not in rel and (b,a) not in rel: 
+            penalty += (edata.margin(b, a) ** exp)  / 2
+    return penalty
 
 
 mg_vms = [

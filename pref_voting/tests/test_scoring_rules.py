@@ -12,6 +12,10 @@ import pytest
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
         'linear_profile_0_curr_cands': [1]}),
+    (dowdall, {
+        'condorcet_cycle': [0, 1, 2], 
+        'linear_profile_0': [0], 
+        'linear_profile_0_curr_cands': [1]}),
     (anti_plurality, {
         'condorcet_cycle': [0, 1, 2],
         'linear_profile_0': [1], 
@@ -23,7 +27,8 @@ import pytest
         }),
 ])
 def test_scoring_rules(
-    voting_method, expected, 
+    voting_method, 
+    expected, 
     condorcet_cycle, 
     linear_profile_0):
     assert voting_method(condorcet_cycle) == expected['condorcet_cycle']
@@ -46,7 +51,7 @@ def test_plurality_on_profiles_with_ties(profile_with_ties, profile_with_ties_li
     assert plurality(profile_with_ties_linear_0) == [0]
     with pytest.raises(AssertionError) as excinfo:
         plurality(profile_with_ties)
-        assert "Cannot calculate plurality scores." in str(excinfo.value)
+    assert "Cannot calculate plurality scores." in str(excinfo.value)
 
 def test_borda_on_profiles_with_ties(profile_with_ties, profile_with_ties_linear_0):
     assert borda_for_profile_with_ties(profile_with_ties_linear_0) == [0]
@@ -70,7 +75,7 @@ def test_plurality_ranking(condorcet_cycle, linear_profile_0, profile_with_ties,
     assert plurality_ranking(profile_with_ties_linear_0) == Ranking({0:1, 1:3, 2:2})
     with pytest.raises(AssertionError) as excinfo:
         plurality_ranking(profile_with_ties)
-        assert "Cannot calculate plurality scores." in str(excinfo.value)
+    assert "Cannot calculate plurality scores." in str(excinfo.value)
  
 def test_plurality_ranking_curr_cands(condorcet_cycle, linear_profile_0, profile_with_ties_linear_0):
     assert plurality_ranking(condorcet_cycle, curr_cands=[1, 2], local=False) == Ranking({1:1, 2:1})
@@ -88,3 +93,10 @@ def test_borda_ranking(condorcet_cycle, linear_profile_0):
 def test_score_ranking(condorcet_cycle, linear_profile_0):
     assert score_ranking(condorcet_cycle) == Ranking({0:1, 1:1, 2:1})
     assert score_ranking(linear_profile_0, score = lambda num_cands, rank: 1 if rank==2 else 0) == Ranking({0:2, 1:1, 2:2})
+
+def test_create_scoring_method():
+    prof = Profile([[0, 1, 2]])
+    scoring_method = create_scoring_method(lambda ncs, x: 1, "test")
+    assert type(scoring_method) == VotingMethod
+    assert scoring_method.name == "test"
+    assert scoring_method(prof) == [0, 1, 2]

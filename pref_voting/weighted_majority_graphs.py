@@ -1,6 +1,6 @@
 """
     File: weighted_majority_graphs.py
-    Author: Eric Pacuit (epacuit@umd.edu)
+    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 5, 2022
     Updated: July 12, 2022
     Updated: December 19, 2022
@@ -75,13 +75,13 @@ class MajorityGraph(object):
                     self.maj_matrix[c1_idx][c2_idx] = False
 
     def margin(self, c1, c2):
-        raise NotImplemented
+        raise Exception("margin is not implemented for majority graphs.")
 
     def support(self, c1, c2):
-        raise NotImplemented
+        raise Exception("support is not implemented for majority graphs.")
 
     def ratio(self, c1, c2):
-        raise NotImplemented
+        raise Exception("ratio is not implemented for majority graphs.")
 
     @property
     def edges(self):
@@ -93,11 +93,12 @@ class MajorityGraph(object):
     def is_tournament(self):
         """Returns True if the majority graph is a **tournament** (there is an edge between any two distinct nodes)."""
 
-        return [
+        return all([
             self.mg.has_edge(c1, c2) or self.mg.has_edge(c2, c1)
             for c1 in self.candidates
             for c2 in self.candidates
-        ]
+            if c1 != c2
+        ])
 
     def majority_prefers(self, c1, c2):
         """Returns true if there is an edge from `c1` to `c2`."""
@@ -193,7 +194,7 @@ class MajorityGraph(object):
                 break  # if a Condorcet loser exists, then it is unique
         return cl
 
-    def cycles(self):
+    def cycles(self, curr_cands = None):
         """Returns True if the margin graph has a cycle.
 
         This uses the networkx method ``networkx.find_cycle`` to find the cycles in ``self.mg``.
@@ -212,14 +213,28 @@ class MajorityGraph(object):
 
         """
 
-        return list(nx.simple_cycles(self.mg))
+        if curr_cands is None:
+            return list(nx.simple_cycles(self.mg))
+        else:
+            mg = nx.DiGraph()
+            subgraph = mg.subgraph(curr_cands).copy()
+            return list(nx.simple_cycles(subgraph))
 
-    def has_cycle(self):
+
+    def has_cycle(self, curr_cands = None):
         """Returns True if there is a cycle in the majority graph."""
-        try:
-            cycle = nx.find_cycle(self.mg)
-        except:
-            cycle = list()
+        if curr_cands is None:
+            try:
+                cycle = nx.find_cycle(self.mg)
+            except:
+                cycle = list()
+        else:
+            mg = nx.DiGraph()
+            subgraph = mg.subgraph(curr_cands).copy()
+            try:
+                cycle = nx.find_cycle(subgraph)
+            except:
+                cycle = list()
 
         return len(cycle) != 0
 
@@ -441,6 +456,27 @@ class MajorityGraph(object):
             cmap=cmap,
         )
 
+    def __add__(self, other_mg):
+        """
+        Add to majority graphs together.  The result is a majority graph with the union of the candidates and edges of the two majority graphs.  If there is an edge from :math:`c` to :math:`d` in both majority graphs, then the edge is included in the resulting majority graph.  If there is an edge from :math:`c` to :math:`d` in neither majority graph, then there is no edge from :math:`c` to :math:`d` in the resulting majority graph.
+        """
+        new_cands = list(set(self.candidates + other_mg.candidates))
+
+        _new_edges = list(set(self.edges + other_mg.edges))
+
+        new_edges = list()
+        for c1, c2 in _new_edges:
+            if (self.majority_prefers(c1, c2) and other_mg.majority_prefers(c2, c1)) or (self.majority_prefers(c2, c1) and other_mg.majority_prefers(c1, c2)):
+                continue
+            else: 
+                new_edges.append((c1, c2))
+        return MajorityGraph(new_cands, new_edges)
+    
+    def __eq__(self, other_mg): 
+        """
+        Check if two majority graphs are equal. 
+        """
+        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(other_mg.edges)
 
 class MarginGraph(MajorityGraph):
     """A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that :math:`c` is majority preferred to :math:`d` by a **margin** of :math:`w`.

@@ -111,6 +111,13 @@ def test_rankings(test_profile_with_ties):
 
     assert len(rankings) == len(expected_values) and all([r in rankings for r in expected_values]) and all([r in expected_values for r in rankings])
     
+def test_rankings_as_indifference_list(test_profile_with_ties): 
+    rankings = test_profile_with_ties.rankings_as_indifference_list
+
+    expected_values = [((0,), (1,)), ((0,), (1,)), ((1,), (2,), (0,)), ((1,), (2,), (0,)), ((1,), (2,), (0,)), ((2,0),)]
+
+    assert len(rankings) == len(expected_values) and all([r in rankings for r in expected_values]) and all([r in expected_values for r in rankings])
+
 def test_ranking_types(test_profile_with_ties): 
     rankings = test_profile_with_ties.ranking_types
 
@@ -266,34 +273,34 @@ def test_truncate_overvotes():
     assert prof_truncated == prof2
 
 def test_is_truncated_linear(condorcet_cycle_profile_with_ties):
-    assert condorcet_cycle_profile_with_ties.is_truncated_linear()
+    assert condorcet_cycle_profile_with_ties.is_truncated_linear
     prof = ProfileWithTies([
         {0:1}, 
         {0:1, 1:2}, 
         {0:1, 1:2, 2:3}])
-    assert prof.is_truncated_linear()
+    assert prof.is_truncated_linear
     prof = ProfileWithTies([
         {0:1}, 
         {0:1, 1:2}, 
         {0:1, 1:2, 2:3}], candidates=[0, 1, 2, 3])
-    assert prof.is_truncated_linear()
+    assert prof.is_truncated_linear
     prof = ProfileWithTies([
         {},
         {0:1}, 
         {0:1, 1:2}, 
         {0:1, 1:2, 2:3}])
-    assert prof.is_truncated_linear()
+    assert prof.is_truncated_linear
     prof = ProfileWithTies([
         {0:1}, 
         {0:1, 1:2}, 
         {0:1, 1:2, 2:2}])
-    assert not prof.is_truncated_linear()
+    assert not prof.is_truncated_linear
 
     prof = ProfileWithTies([
         {0:1}, 
         {0:1, 1:1}, 
         {0:1, 1:2, 2:3}])
-    assert not prof.is_truncated_linear()
+    assert not prof.is_truncated_linear
 
 
 def test_add_unranked_candidates(): 
@@ -312,7 +319,7 @@ def test_add_unranked_candidates():
 
     assert prof.add_unranked_candidates() == prof2
 
-def to_linear_profile(condorcet_cycle_profile_with_ties):
+def test_to_linear_profile(condorcet_cycle_profile_with_ties):
     prof = condorcet_cycle_profile_with_ties.to_linear_profile()
     assert type(prof) == Profile
     assert prof == Profile([
@@ -326,6 +333,18 @@ def to_linear_profile(condorcet_cycle_profile_with_ties):
     prof = ProfileWithTies([{0:1, 1:2}], candidates=[0, 1, 2])
     prof2 = prof.to_linear_profile()
     assert prof2 is None
+
+def test_to_linear_profile2():
+    prof = ProfileWithTies([
+        {'a':1, 'b':2, 'c':3}, 
+        {'b':1, 'c':2, 'a':3}, 
+        {'a':1, 'b':2, 'c':3}], 
+        candidates=['a', 'b', 'c'])
+    prof2 = prof.to_linear_profile()
+    assert type(prof2) == Profile
+    
+    prof3 = Profile([[0, 1, 2], [1, 2, 0], [0, 1, 2]])
+    assert prof2 == prof3
 
 def test_margin_graph(test_profile_with_ties, condorcet_cycle_profile_with_ties):
 
@@ -429,45 +448,37 @@ def test_display_margin_graph(test_profile_with_ties):
     # just test that the function runs without error
     test_profile_with_ties.display_margin_graph()
 
-def test_to_preflib_instance(test_profile_with_ties):
-    inst = test_profile_with_ties.to_preflib_instance()
-    assert isinstance(inst, OrdinalInstance)
-    assert inst.num_voters == 6
-    assert inst.num_alternatives == 3
-    assert inst.full_profile() == [((0,), (1,)), ((0,), (1,)), ((1,), (2,), (0,)), ((1,), (2,), (0,)), ((1,), (2,), (0,)), ((2, 0),)]
     
-def test_from_prelfib(test_profile_with_ties):
-    inst = test_profile_with_ties.to_preflib_instance()
-    prof = ProfileWithTies.from_preflib(inst)
-    prof == test_profile_with_ties
 
-    inst.write("./t.toi")
-    prof = ProfileWithTies.from_preflib("./t.toi")
-    prof == test_profile_with_ties
+def test_to_from_preflib(test_profile_with_ties):
+    instance = test_profile_with_ties.to_preflib_instance()
+    assert isinstance(instance, OrdinalInstance)
+    assert instance.num_voters == 6
+    prof = ProfileWithTies.from_preflib(instance)
+    assert prof == test_profile_with_ties
 
-def test_write_read(test_profile_with_ties):
-    test_profile_with_ties.write("./test", file_format='preflib')
-    prof = ProfileWithTies.from_preflib("./test.toi")
-    prof == test_profile_with_ties
+def test_write_read(tmp_path):
+    prof = ProfileWithTies([{0:1, 1:0}, {1:1, 2:0}, {0:1, 1:1}])
 
-    test_profile_with_ties.write("./test", file_format='csv')
-    prof = ProfileWithTies.from_csv("./test.csv", is_truncated_linear=True)
-    prof == test_profile_with_ties
+    fname = prof.write(str(tmp_path / "prof"), file_format="abif")
+    prof2 = ProfileWithTies.read(fname, file_format="abif", cand_type=int)
+    assert prof == prof2
 
-def test_write_read2():
-    prof = ProfileWithTies([{0:1, 1:1}], candidates=[0, 1, 2])
-    prof.write("./test", file_format='preflib')
-    prof2 = ProfileWithTies.from_preflib("./test.toi")
-    prof == prof2
+    fname = prof.write(str(tmp_path / "prof"), file_format="csv")
+    prof2 = ProfileWithTies.read(fname, file_format="csv", cand_type=int)
+    assert prof == prof2
 
-    prof = ProfileWithTies([{0:1, 1:1}], candidates=[0, 1, 2])
-    prof.write("test", file_format='csv')
-    prof = ProfileWithTies.from_csv("./test.csv", is_truncated_linear=False)
-    prof == prof2
+    with pytest.raises(AssertionError) as excinfo:
+        fname = prof.write(str(tmp_path / "prof"), file_format="csv", csv_format="rank_columns")
+    assert "The profile must be truncated linear to use the rank_columns csv format." in str(excinfo.value)
+
+    fname = prof.write(str(tmp_path / "prof"), file_format="json")
+    prof2 = ProfileWithTies.read(fname, file_format="json", cand_type=int)
+    assert prof == prof2
 
 def test_eq():
     prof1 = ProfileWithTies([{0:1, 1:2}, {1:1, 2:2}, {0:1, 1:1}])
-    prof2 = ProfileWithTies([{1:1, 2:2}, {0:1, 1:1}, {0:1, 1:2}])
+    prof2 = ProfileWithTies([{1:1, 2:5}, {0:1, 1:1}, {0:1, 1:2}])
     prof3 = ProfileWithTies([{1:1, 2:2}, {0:1, 1:2}, {0:1, 1:2}])
     assert prof1 == prof2
     assert not prof1 == prof3

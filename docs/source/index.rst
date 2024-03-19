@@ -54,6 +54,7 @@ Contents
    utility_profiles
    spatial_profiles
    weighted_majority_graphs
+   io
    
 .. toctree::
    :maxdepth: 2

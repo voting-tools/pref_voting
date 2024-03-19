@@ -1,4 +1,5 @@
 from pref_voting.profiles import Profile
+from pref_voting.profiles import isin, _borda_score, _find_updated_profile, _num_rank, _margin, _support
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MarginGraph, MajorityGraph, SupportGraph
 from pref_voting.margin_based_methods import split_cycle_defeat
@@ -50,6 +51,11 @@ def test_rankings2():
     count_ranking_types1 = Counter(prof.rankings)
     count_ranking_types2 = Counter([(0, 1, 2), (0, 1, 2),  (1, 2, 0),(1, 2, 0),(1, 2, 0), (2, 0, 1), (2, 0, 1), (2, 0, 1)])
     assert count_ranking_types1 == count_ranking_types2
+
+def test_rankings_as_indifference_list(test_profile):
+    count_indiff_lists = Counter(test_profile.rankings_as_indifference_list)
+    count_indiff_lists2 = Counter([((0,), (1,), (2,)), ((0,), (1,), (2,)),  ((1,), (2,), (0,)),((1,), (2,), (0,)),((1,), (2,), (0,)), ((2,), (0,), (1,))])
+    assert count_indiff_lists == count_indiff_lists2
 
 def test_counts(test_profile):
     assert test_profile.counts == [2, 3, 1]
@@ -132,6 +138,16 @@ def test_margin_matrix(test_profile):
     assert mm[2][0] == 2
     assert mm[1][2] == 4
     
+def test_condorcet_winner(test_profile): 
+    prof = Profile([[0, 1, 2], [0, 2, 1], [1, 2, 0]])   
+    assert test_profile.condorcet_winner() == None
+    assert prof.condorcet_winner() == 0
+
+def test_weak_condorcet_winner(test_profile): 
+    prof = Profile([[0, 1, 2], [1, 0, 2]])   
+    assert test_profile.weak_condorcet_winner() == [1]
+    assert prof.weak_condorcet_winner() == [0, 1]
+
 def test_is_uniquely_weighted(test_profile):
     assert not test_profile.is_uniquely_weighted()
 
@@ -219,35 +235,31 @@ def test_display(capsys, condorcet_cycle):
 +---+---+---+
 """ in captured.out
     
-def test_to_preflib_instance(condorcet_cycle):
-
-    preflib_instance = condorcet_cycle.to_preflib_instance()
-    assert isinstance(preflib_instance, OrdinalInstance)
-    assert preflib_instance.num_voters == 3    
-    assert preflib_instance.num_alternatives == 3    
-    assert preflib_instance.full_profile() == [((0,), (1,), (2,)), ((1,), (2,), (0,)), ((2,), (0,), (1,))]
-
-def test_from_preflib(condorcet_cycle):
-    preflib_instance = condorcet_cycle.to_preflib_instance()
-    prof = Profile.from_preflib(preflib_instance)
+def test_to_from_preflib(condorcet_cycle):
+    instance = condorcet_cycle.to_preflib_instance()
+    assert isinstance(instance, OrdinalInstance)
+    assert instance.num_voters == 3
+    prof = Profile.from_preflib(instance)
     assert prof == condorcet_cycle
 
-    preflib_instance.write("./condorcet_cycle.soc")
-    prof = Profile.from_preflib("./condorcet_cycle.soc")
-    assert prof == condorcet_cycle
+def test_write_read(tmp_path):
+    prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]])
 
-def test_write(condorcet_cycle):
-    condorcet_cycle.write("./condorcet_cycle.soc")
-    prof = Profile.from_preflib("./condorcet_cycle.soc")
-    assert prof == condorcet_cycle
+    fname = prof.write(str(tmp_path / "prof"), file_format="abif")
+    prof2 = Profile.read(fname, file_format="abif")
+    assert prof == prof2
 
-    condorcet_cycle.write("./condorcet_cycle.csv", file_format="csv")
+    fname = prof.write(str(tmp_path / "prof"), file_format="csv")
+    prof2 = Profile.read(fname, file_format="csv")
+    assert prof == prof2
 
-def read_write(condorcet_cycle):
+    fname = prof.write(str(tmp_path / "prof"), file_format="csv", csv_format="rank_columns")
+    prof2 = Profile.read(fname, file_format="csv", csv_format="rank_columns")
+    assert prof == prof2
 
-    condorcet_cycle.write("./condorcet_cycle.csv", file_format="csv")
-    prof = Profile.from_csv("./condorcet_cycle.csv")
-    assert condorcet_cycle == prof    
+    fname = prof.write(str(tmp_path / "prof"), file_format="json")
+    prof2 = Profile.read(fname, file_format="json")
+    assert prof == prof2
 
 def test_add(condorcet_cycle):
     r1 = Profile([[0, 1, 2]])
@@ -259,3 +271,34 @@ def test_add(condorcet_cycle):
 def test_eq(condorcet_cycle):   
     prof = Profile([[1, 2, 0], [0, 1, 2], [2, 0, 1]], [1, 1, 1])
     assert prof == condorcet_cycle
+
+
+    
+# def test_isin():
+#     assert isin(np.array([1, 2, 3]), 2)
+#     assert not isin(np.array([1, 2, 3]), 4)
+
+# def test__support(test_profile):
+    
+#     assert _support(test_profile._ranks, test_profile._rcounts, 0, 1) == 3
+#     assert _support(test_profile._ranks, test_profile._rcounts, 1, 0) == 3
+#     assert _support(test_profile._ranks, test_profile._rcounts, 2, 0) == 4
+#     assert _support(test_profile._ranks, test_profile._rcounts, 0, 2) == 2
+#     assert _support(test_profile._ranks, test_profile._rcounts, 1, 2) == 5
+#     assert _support(test_profile._ranks, test_profile._rcounts, 2, 1) == 1
+
+# def test__margin(test_profile):
+#     assert _margin(test_profile._tally, 0, 1) == 0
+#     assert _margin(test_profile._tally, 1, 0) == 0
+#     assert _margin(test_profile._tally, 2, 0) == 2
+#     assert _margin(test_profile._tally, 0, 2) == -2
+#     assert _margin(test_profile._tally, 1, 2) == 4
+#     assert _margin(test_profile._tally, 2, 1) == -4
+
+
+# def test__num_rank(test_profile):
+#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=1) == 2
+#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=2) == 1
+#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=3) == 3
+
+

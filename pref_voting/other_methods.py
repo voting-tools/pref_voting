@@ -10,6 +10,7 @@
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
+from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.helper import get_mg
 from itertools import combinations, permutations
 import networkx as nx
@@ -66,8 +67,11 @@ def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_p
         A sorted list of candidates
 
     """
-    if use_extended_strict_preferences:
-        prof.use_extended_strict_preference()
+
+    if type(prof) == ProfileWithTies:
+        currently_using_extended_strict_preferences = prof.using_extended_strict_preference
+        if use_extended_strict_preferences:
+            prof.use_extended_strict_preference()
         
     Pareto_dominated = set()
     candidates = prof.candidates if curr_cands is None else curr_cands
@@ -79,9 +83,12 @@ def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_p
             if strong_Pareto and prof.support(a,b) > 0 and prof.support(b,a) == 0:
                 Pareto_dominated.add(b)     
 
-    return list(set(candidates) - Pareto_dominated)
-    
+    if type(prof) == ProfileWithTies and use_extended_strict_preferences:
+        if not currently_using_extended_strict_preferences:
+            prof.use_strict_preference()
 
+    return sorted(list(set(candidates) - Pareto_dominated))
+    
 
 ## Kemeny-Young Method 
 #
@@ -455,7 +462,7 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
 
 
 @vm(name = "Bracket Voting")
-def bracket_voting(profile, curr_cands = None):
+def bracket_voting(profile, curr_cands = None, seed = None):
     """The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
 
     .. note::
@@ -464,6 +471,7 @@ def bracket_voting(profile, curr_cands = None):
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        seed (int, optional): The seed for the random tie breaking ordering of the candidates.   
 
     Returns: 
         A sorted list of candidates
@@ -475,8 +483,9 @@ def bracket_voting(profile, curr_cands = None):
         return plurality(profile, curr_cands = curr_cands)
     
     # Generate a random tie breaking ordering of cands
+    rng = np.random.default_rng(seed)
     tie_breaking_ordering = cands.copy()
-    random.shuffle(tie_breaking_ordering)
+    rng.shuffle(tie_breaking_ordering)
 
     plurality_scores = profile.plurality_scores(curr_cands = cands)
     descending_plurality_scores = sorted(plurality_scores.values(), reverse=True)

@@ -271,7 +271,7 @@ def create_scoring_method(score, name):
     """Create a scoring method using a given score function and name."""
 
     def _vm(profile, curr_cands = None):
-        return scoring_rule(profile = profile, curr_cands = curr_cands, score = score)
+        return scoring_rule(profile, curr_cands = curr_cands, score = score)
 
     return VotingMethod(_vm, name = name)
 

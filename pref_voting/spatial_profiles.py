@@ -22,11 +22,20 @@ class SpatialProfile(object):
     """
     def __init__(self, cand_pos, voter_pos):
 
+        cand_dims = [len(v) for v in cand_pos.values()]
+        voter_dims = [len(v) for v in voter_pos.values()]
+
+        assert len(cand_dims) > 0, "There must be at least one candidate."
+        assert len(set(cand_dims)) == 1, "All candidate positions must have the same number of dimensions."
+        assert len(voter_dims) > 0, "There must be at least one voter."
+        assert len(set(voter_dims)) == 1, "All voter positions must have the same number of dimensions."
+        assert cand_dims[0] == voter_dims[0], "Candidate and voter positions must have the same number of dimensions."
+
         self.candidates = sorted(list(cand_pos.keys())) 
         self.voters = sorted(list(voter_pos.keys())) 
         self.cand_pos = cand_pos
         self.voter_pos = voter_pos
-        self.num_dims = len(list(cand_pos.values())[0])
+        self.num_dims = len(list(cand_pos.values())[0]) 
 
     def voter_position(self, v): 
         """
@@ -58,8 +67,7 @@ class SpatialProfile(object):
              for c in self.candidates} for v in self.voters
             ])
     
-    
-    def write(self): 
+    def to_string(self): 
         """
         Returns a string representation of the spatial profile.
         """

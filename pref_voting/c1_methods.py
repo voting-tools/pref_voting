@@ -9,6 +9,7 @@
 
 from pref_voting.voting_method import  *
 from pref_voting.helper import get_mg, get_weak_mg
+from pref_voting.margin_based_methods import distance_to_margin_graph
 from pref_voting.probabilistic_methods import c1_maximal_lottery
 import copy
 import math
@@ -619,21 +620,6 @@ schwartz_set = copy.deepcopy(gocha)
 gocha.set_name("GOCHA")
 
 
-@vm(name="Bipartisan Set")
-def bipartisan(edata, curr_cands = None, threshold = 0.0000001): 
-    """The Bipartisan Set is the support of the (chosen) C1 maximal lottery.
-
-    Args:
-        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `margin_matrix` attribute.
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-
-    Returns:
-        A sorted list of candidates.
-    """
-
-    ml = c1_maximal_lottery(edata, curr_cands=curr_cands)
-    return sorted([c for c in ml.keys() if  ml[c] > threshold])
-
 ## Banks
 #
 
@@ -778,27 +764,6 @@ def banks_with_explanation(edata, curr_cands = None):
     
     return sorted(list(set([p[0] for p in maximal_paths]))), maximal_paths
 
-## Slater
-#
-
-def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
-    """
-    Calculate the distance of ``rel`` (a relation) to the majority graph of ``edata``. 
-    """
-    candidates = edata.candidates if curr_cands is None else curr_cands
-    
-    penalty = 0
-    for a,b in combinations(candidates, 2): 
-        if edata.majority_prefers(a, b) and (b,a) in rel: 
-            penalty += (edata.margin(a, b) ** exp)
-        elif edata.majority_prefers(b, a) and (a,b) in rel: 
-            penalty += (edata.margin(b, a) ** exp)
-        elif edata.majority_prefers(a, b) and (a,b) not in rel and (b,a) not in rel: 
-            penalty += (edata.margin(a, b) ** exp) / 2 
-        elif edata.majority_prefers(b, a) and (a,b) not in rel and (b,a) not in rel: 
-            penalty += (edata.margin(b, a) ** exp)  / 2
-    return penalty
-
 
 def lin_order_to_rel(lin_order): 
     """Convert a linear order (a list of items) into a set of ordered pairs"""
@@ -896,6 +861,23 @@ def slater(edata, curr_cands = None):
     
     return sorted(list(set([r[0] for r in rankings])))
 
+
+@vm(name="Bipartisan Set")
+def bipartisan(edata, curr_cands = None, threshold = 0.0000001): 
+    """The Bipartisan Set is the support of the (chosen) C1 maximal lottery.
+
+    Args:
+        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `margin_matrix` attribute.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates.
+    """
+
+    ml = c1_maximal_lottery(edata, curr_cands=curr_cands)
+    return sorted([c for c in ml.keys() if  ml[c] > threshold])
+
+
 c1_vms = [
     banks,
     condorcet,
@@ -905,10 +887,8 @@ c1_vms = [
     uc_fish,
     uc_bordes,
     uc_mckelvey,
-    slater,
     top_cycle,
     gocha,
-    bipartisan
 ]
 
 defeat_methods = [
