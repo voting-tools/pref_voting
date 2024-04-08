@@ -181,6 +181,9 @@ def test_has_skipped_rank(linear_ranking, ranking_with_tie):
     assert not Ranking({0:1, 1:1, 2:2}).has_skipped_rank()
     assert Ranking({0:1, 1:1, 2:3}).has_skipped_rank()
 
+def test_to_indiff_list():
+    r = Ranking({0:1, 1:1, 2:2})
+    assert r.to_indiff_list() == ((0, 1), (2,))
 
 @pytest.mark.parametrize("rmap, expected", [
     ({0:1, 1:2, 2:3, 3:3}, {0:1, 1:2}),
@@ -191,6 +194,36 @@ def test_truncate_overvote(rmap, expected):
     r = Ranking(rmap)
     r.truncate_overvote()
     assert r.rmap == expected
+
+def test_AAdom():
+    r = Ranking({0:1, 1:3, 2:1, 3:4})
+    assert r.AAdom([0, 2], [1, 3]) 
+    assert r.AAdom([0, 1], [1, 3]) 
+    assert not r.AAdom([0, 1], [2, 3]) 
+    assert r.AAdom([0], [1, 2, 3])
+    assert r.AAdom([0], [0,1, 2, 3])
+    assert not r.AAdom([0, 3], [0, 1])
+
+
+def test_strong_dom():
+    r = Ranking({0:1, 1:3, 2:1, 3:4})
+    assert r.strong_dom([0, 2], [1, 3]) 
+    assert r.strong_dom([0, 1], [1, 3]) 
+    assert not r.strong_dom([0, 1], [2, 3]) 
+    assert not r.strong_dom([0], [1, 2, 3])
+    assert not r.strong_dom([0], [0, 1, 2, 3])
+    assert not r.strong_dom([0, 3], [0, 1])
+
+
+def test_weak_dom():
+    r = Ranking({0:1, 1:3, 2:1, 3:4})
+    assert r.weak_dom([0, 2], [1, 3]) 
+    assert r.weak_dom([0, 1], [1, 3]) 
+    assert not r.weak_dom([0, 1], [2, 3]) 
+    assert  r.weak_dom([0], [1, 2, 3])
+    assert  r.weak_dom([0], [0, 1, 2, 3])
+    assert not r.weak_dom([0, 3], [0, 1])
+
 
 @pytest.mark.parametrize("rmap, expected", [
     ({0:1, 1:2, 2:3}, {0:1, 1:2, 2:3}),
@@ -225,9 +258,24 @@ def test_display(capsys):
 def test_str(rmap, expected):
     assert str(Ranking(rmap)).strip() == expected.strip()
 
+def test_get_item():
+    r = Ranking({0:1, 1:2, 2:3})
+    assert r[0] == 0
+    assert r[1] == 1
+    assert r[2] == 2
+    r = Ranking({0:1, 1:1, 2:3})
+    assert r[0] == [0,1]
+    assert r[1] == 2
+
+
 @pytest.mark.parametrize("rmap1, rmap2, expected", [
     ({0:1, 1:2, 2:3, 3:3}, {0:1, 1:2, 2:3, 3:3}, True),
     ({0:1, 1:2, 2:3, 3:3}, {0:2, 1:1, 2:3, 3:3}, False),
     ({0:1, 1:2, 2:3}, {0:-10, 1:20, 2:300}, True),])
 def test_eq(rmap1, rmap2, expected): 
     assert (Ranking(rmap1) == Ranking(rmap2)) == expected   
+
+def test_eq2(): 
+    rmap1 = {0:1, 1:1}
+    rmap2 = {1:1, 0:1}
+    assert Ranking(rmap1) == Ranking(rmap2) 

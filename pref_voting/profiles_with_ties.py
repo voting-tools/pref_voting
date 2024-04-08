@@ -18,7 +18,8 @@ from pref_voting.weighted_majority_graphs import (
     MarginGraph,
     SupportGraph,
 )
-
+import os
+import pandas as pd
 
 class ProfileWithTies(object):
     """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates. 
@@ -105,7 +106,9 @@ class ProfileWithTies(object):
         }
 
     def use_extended_strict_preference(self):
-        """Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates."""
+        """
+        Redefine the supports so that *extended strict preferences* are used. Using extended strict preference may change the margins between candidates.
+        """
 
         self.using_extended_strict_preference = True
         self._supports = {
@@ -121,7 +124,9 @@ class ProfileWithTies(object):
         }
 
     def use_strict_preference(self):
-        """Redefine the supports so that strict preferences are used. Using extended strict preference may change the margins between candidates."""
+        """
+        Redefine the supports so that strict preferences are used. Using strict preference may change the margins between candidates.
+        """
 
         self.using_extended_strict_preference = False
         self._supports = {
@@ -137,13 +142,27 @@ class ProfileWithTies(object):
         }
     @property 
     def rankings(self): 
-        """Return a list of all individual rankings in the profile. """
+        """
+        Return a list of all individual rankings in the profile. 
+        """
         
-        return [r for ridx,r in enumerate(self._rankings) for _ in range(self.rcounts[ridx])]
+        return [r for ridx,r in enumerate(self._rankings) 
+                for _ in range(self.rcounts[ridx])]
+
+    @property 
+    def rankings_as_indifference_list(self): 
+        """
+        Return a list of all individual rankings as indifference lists in the profile. 
+        """
+        
+        return [r.to_indiff_list() for ridx,r in enumerate(self._rankings) 
+                for _ in range(self.rcounts[ridx])]
 
     @property 
     def ranking_types(self): 
-        """Return a list of the types of rankings in the profile. """
+        """
+        Return a list of the types of rankings in the profile. 
+        """
         
         unique_rankings = []
         for r in self._rankings: 
@@ -153,23 +172,31 @@ class ProfileWithTies(object):
     
     @property
     def rankings_counts(self):
-        """Returns the rankings and the counts of each ranking."""
+        """
+        Returns the rankings and the counts of each ranking.
+        """
 
         return self._rankings, self.rcounts
 
     @property
     def rankings_as_dicts_counts(self):
-        """Returns the rankings represented as dictionaries and the counts of each ranking."""
+        """
+        Returns the rankings represented as dictionaries and the counts of each ranking.
+        """
 
         return [r.rmap for r in self._rankings], self.rcounts
 
-    def support(self, c1, c2, use_extended_preferences=False):
-        """Returns the support of candidate ``c1`` over candidate ``c2``, where the support is the number of voters that rank ``c1`` strictly above ``c2``."""
+    def support(self, c1, c2):
+        """
+        Returns the support of candidate ``c1`` over candidate ``c2``, where the support is the number of voters that rank ``c1`` strictly above ``c2``.
+        """
 
         return self._supports[c1][c2]
 
     def margin(self, c1, c2):
-        """Returns the margin of candidate ``c1`` over candidate ``c2``, where the margin is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``."""
+        """
+        Returns the margin of candidate ``c1`` over candidate ``c2``, where the margin is the number of voters that rank ``c1`` strictly above ``c2`` minus the number of voters that rank ``c2`` strictly above ``c1``.
+        """
 
         return self._supports[c1][c2] - self._supports[c2][c1]
 
@@ -187,19 +214,25 @@ class ProfileWithTies(object):
         return self.margin(c1, c2) == 0
 
     def dominators(self, cand, curr_cands=None):
-        """Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``."""
+        """
+        Returns the list of candidates that are majority preferred to ``cand`` in the profile restricted to the candidates in ``curr_cands``.
+        """
         candidates = self.candidates if curr_cands is None else curr_cands
 
         return [c for c in candidates if self.majority_prefers(c, cand)]
 
     def dominates(self, cand, curr_cands=None):
-        """Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``."""
+        """
+        Returns the list of candidates that ``cand`` is majority preferred to in the majority graph restricted to ``curr_cands``.
+        """
         candidates = self.candidates if curr_cands is None else curr_cands
 
         return [c for c in candidates if self.majority_prefers(cand, c)]
 
     def ratio(self, c1, c2):
-        """Returns the ratio of the support of ``c1`` over ``c2`` to the support ``c2`` over ``c1``."""
+        """
+        Returns the ratio of the support of ``c1`` over ``c2`` to the support ``c2`` over ``c1``.
+        """
 
         if self.support(c1, c2) > 0 and self.support(c2, c1) > 0:
             return self.support(c1, c2) / self.support(c2, c1)
@@ -334,13 +367,16 @@ class ProfileWithTies(object):
         return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first(cs=curr_cands)]) 
                 for cand in curr_cands}
 
-    def plurality_scores_ignoring_overvotes(self): 
+    def plurality_scores_ignoring_overvotes(self, curr_cands=None): 
         """
         Return the Plurality scores ignoring empty rankings and overvotes.
         """
+
+        curr_cands = curr_cands if curr_cands is not None else self.candidates
+        
         rankings, rcounts = self.rankings_counts
         
-        return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first()]) for cand in self.candidates}
+        return {cand: sum([c for r, c in zip(rankings, rcounts) if len(r.cands) > 0 and [cand] == r.first(cs=curr_cands)]) for cand in curr_cands}
 
     def borda_scores(self, 
                      curr_cands=None, 
@@ -396,7 +432,7 @@ class ProfileWithTies(object):
 
     def add_unranked_candidates(self): 
         """
-        Return a profile in which for each voter, any  unranked candidate is added to the bottom of their ranking. 
+        Return a profile in which for each voter, any unranked candidate is added to the bottom of their ranking. 
         """
         cands = self.candidates
         ranks = list()
@@ -421,21 +457,28 @@ class ProfileWithTies(object):
 
         return ProfileWithTies([r.rmap for r in ranks], rcounts=rcounts, cmap=self.cmap)
 
+    @property
+    def is_truncated_linear(self):
+        """
+        Return True if the profile only contains (truncated) linear orders.
+        """
+        return all([r.is_truncated_linear(len(self.candidates)) or r.is_linear(len(self.candidates)) for r in self._rankings])
+    
     def to_linear_profile(self):
-        """Return a linear profile from the profile with ties. """
+        """Return a linear profile from the profile with ties. If the profile is not a linear profile, then return None. 
         
+        Note that the candidates in a Profile must be integers, so the candidates in the linear profile will be the indices of the candidates in the original profile.
+        
+        """
         rankings, rcounts = self.rankings_counts
-        new_rankings = [r.to_linear() for r in rankings]
-        if any([r is None or len(r) != len(self.candidates) for r in new_rankings]): 
+        _new_rankings = [r.to_linear() for r in rankings]
+        cand_to_cindx = {c:i for i,c in enumerate(sorted(self.candidates))}
+        new_cmap = {cand_to_cindx[c]: self.cmap[c] for c in sorted(self.candidates)}
+        if any([r is None or len(r) != len(self.candidates) for r in _new_rankings]): 
             print("Error: Cannot convert to linear profile.")
             return None
-        return Profile(new_rankings, rcounts=rcounts, cmap=self.cmap)
-
-    def unique_rankings(self): 
-        """Return to the list of unique rankings in the profile. 
-        """
-        
-        return (list(set([str(r) for r in self._rankings])))
+        new_rankings = [tuple([cand_to_cindx[c] for c in r]) for r in _new_rankings]
+        return Profile(new_rankings, rcounts=rcounts, cmap=new_cmap)
                 
     def margin_graph(self):
         """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
@@ -587,7 +630,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
                 rs[str(r)] = c
                 
         for r,c in rs.items(): 
-            print(f"{r} {c}")
+            print(f"{r}: {c}")
 
 
     def anonymize(self): 
@@ -616,6 +659,9 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         return prof
 
     def description(self): 
+        """
+        Return the Python code needed to create the profile.
+        """
         return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
@@ -680,3 +726,97 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
 
         cmap = cmap if cmap is not None else self.cmap
         SupportGraph.from_profile(self, cmap=cmap).display(curr_cands=curr_cands)
+
+    def to_preflib_instance(self):
+        """
+        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package. See ``pref_voting.io.writers.to_preflib_instance``.
+        
+        """
+        from pref_voting.io.writers import to_preflib_instance
+
+        return to_preflib_instance(self)
+
+    @classmethod
+    def from_preflib(
+        cls, 
+        instance_or_preflib_file, 
+        include_cmap=False): 
+        """
+        Convert an preflib OrdinalInstance or file to a Profile.   See ``pref_voting.io.readers.from_preflib``.
+        
+        """
+        from pref_voting.io.readers import preflib_to_profile
+
+        return preflib_to_profile(
+            instance_or_preflib_file, 
+            include_cmap=include_cmap, 
+            as_linear_profile=False)
+
+    def write(
+            self, 
+            filename, 
+            file_format="preflib", 
+            csv_format="candidate_columns"):
+        """
+        Write a profile to a file.   See ``pref_voting.io.writers.write``.
+        """
+        from pref_voting.io.writers import  write
+ 
+        return write(
+            self, 
+            filename, 
+            file_format=file_format, 
+            csv_format=csv_format)
+
+    @classmethod
+    def read(
+        cls, 
+        filename, 
+        file_format="preflib",
+        csv_format="candidate_columns",
+        cand_type=None,
+        items_to_skip=None): 
+        """
+        Read a profile from a file.  See ``pref_voting.io.readers.read``.
+        
+        """
+        from pref_voting.io.readers import  read
+
+        return read(
+            filename, 
+            file_format=file_format, 
+            csv_format=csv_format,
+            cand_type=cand_type,
+            items_to_skip=items_to_skip,
+            as_linear_profile=False,
+            )
+
+
+    def __eq__(self, other_prof): 
+        """
+        Returns true if two profiles are equal.  Two profiles are equal if they have the same rankings.  Note that we ignore the cmaps. 
+        """
+
+        rankings = self.rankings
+        other_rankings = other_prof.rankings[:] # make a copy
+        for r1 in rankings:
+            for i, r2 in enumerate(other_rankings):
+                if r1 == r2:   
+                    # Remove the matched item to handle duplicates
+                    del other_rankings[i]
+                    break
+            else:
+                # If we didn't find a match for r1, the profiles are not identical
+                return False
+    
+        return not other_rankings
+    
+
+    def __add__(self, other_prof): 
+        """
+        Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings from the first in addition to all the rankings from the second profile. 
+
+        Note: the cmaps of the profiles are ignored. 
+        """
+
+        return ProfileWithTies(self._rankings + other_prof._rankings, rcounts=self.rcounts + other_prof.rcounts, candidates = sorted(list(set(self.candidates +other_prof.candidates))))

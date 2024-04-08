@@ -1965,6 +1965,7 @@ iterated_vms = [
     tideman_alternative_smith_put,
     tideman_alternative_schwartz,
     tideman_alternative_schwartz_put,
+    woodall,
     knockout
 ]
 

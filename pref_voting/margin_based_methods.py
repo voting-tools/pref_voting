@@ -8,8 +8,9 @@
 '''
 
 from pref_voting.voting_method import  *
-from pref_voting.probabilistic_methods import  maximal_lottery
-from pref_voting.helper import get_mg
+from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph 
+from pref_voting.probabilistic_methods import  maximal_lottery, c1_maximal_lottery
+from pref_voting.helper import get_mg, SPO
 import math
 from itertools import product, permutations, combinations, chain
 import networkx as nx
@@ -618,12 +619,11 @@ def ranked_pairs(edata, curr_cands = None, strength_function = None):
             tbs = product(*[permutations(edges) for edges in sorted_edges])
             for tb in tbs:
                 edges = flatten(tb)
-                rp_defeat = nx.DiGraph() 
-                for e in edges: 
-                    rp_defeat.add_edge(e[0], e[1], weight=e[2])
-                    if does_create_cycle(rp_defeat, e):
-                        rp_defeat.remove_edge(e[0], e[1])
-                winners.append(maximal_elements(rp_defeat)[0])
+                rp_defeat = SPO(len(candidates))
+                for e0,e1,s in edges: 
+                    if not rp_defeat.P[e1][e0]:
+                        rp_defeat.add(e0,e1)
+                winners.append(rp_defeat.initial_elements()[0])
         else: 
             winners = candidates
     return sorted(list(set(winners)))
@@ -692,12 +692,11 @@ def ranked_pairs_with_test(edata, curr_cands = None, strength_function = None):
             tbs = product(*[permutations(edges) for edges in sorted_edges])
             for tb in tbs:
                 edges = flatten(tb)
-                rp_defeat = nx.DiGraph() 
-                for e in edges: 
-                    rp_defeat.add_edge(e[0], e[1], weight=e[2])
-                    if does_create_cycle(rp_defeat, e):
-                        rp_defeat.remove_edge(e[0], e[1])
-                winners.append(maximal_elements(rp_defeat)[0])
+                rp_defeat = SPO(len(candidates))
+                for e0,e1,s in edges: 
+                    if not rp_defeat.P[e1][e0]:
+                        rp_defeat.add(e0,e1)
+                winners.append(rp_defeat.initial_elements()[0])
     return sorted(list(set(winners)))
 
 def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):   
@@ -920,21 +919,21 @@ def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_funct
         winners = [cw]
     else:
         w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates 
-                   if edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2)]
+                   if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
         winners = list()            
         strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
         
-        rp_defeat = nx.DiGraph() 
+        rp_defeat = SPO(len(candidates))
+
         for s in strengths: 
             edges = [e for e in w_edges if e[2] == s]
             
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
-            for e in sorted_edges: 
-                rp_defeat.add_edge(e[0], e[1], weight=e[2])
-                if does_create_cycle(rp_defeat, e):
-                    rp_defeat.remove_edge(e[0], e[1])
-        winners.append(maximal_elements(rp_defeat)[0])
+            for e0,e1,s in sorted_edges:
+                if not rp_defeat.P[e1][e0]:
+                    rp_defeat.add(e0,e1)
+        winners.append(rp_defeat.initial_elements()[0])
 
     return sorted(list(set(winners)))
 
@@ -1021,13 +1020,12 @@ def river(edata, curr_cands = None, strength_function = None):
         tbs = product(*[permutations(edges) for edges in sorted_edges])
         for tb in tbs:
             edges = flatten(tb)
-            river_defeat = nx.DiGraph() 
-            for e in edges: 
-                if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
-                    river_defeat.add_edge(e[0], e[1], weight=e[2])
-                    if does_create_cycle(river_defeat, e):
-                        river_defeat.remove_edge(e[0], e[1])
-            winners.append(maximal_elements(river_defeat)[0])
+            rv_defeat = SPO(len(candidates))
+            for e0,e1,s in edges: 
+                if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
+                    rv_defeat.add(e0,e1)
+            winners.append(rv_defeat.initial_elements()[0])
+
     return sorted(list(set(winners)))
 
 def river_defeats(edata, curr_cands = None, strength_function = None):
@@ -1050,7 +1048,7 @@ def river_defeats(edata, curr_cands = None, strength_function = None):
     strength_function = edata.margin if strength_function is None else strength_function    
 
     w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
-    winners = list()            
+
     strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
     sorted_edges = [[e for e in w_edges if e[2] == s] for s in strengths]
     tbs = product(*[permutations(edges) for edges in sorted_edges])
@@ -1109,13 +1107,11 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
             tbs = product(*[permutations(edges) for edges in sorted_edges])
             for tb in tbs:
                 edges = flatten(tb)
-                river_defeat = nx.DiGraph() 
-                for e in edges: 
-                    if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
-                        river_defeat.add_edge(e[0], e[1], weight=e[2])
-                        if does_create_cycle(river_defeat, e):
-                            river_defeat.remove_edge(e[0], e[1])
-                winners.append(maximal_elements(river_defeat)[0])
+                rv_defeat = SPO(len(candidates))
+                for e0,e1,s in edges: 
+                    if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
+                        rv_defeat.add(e0,e1)
+                winners.append(rv_defeat.initial_elements()[0])
     return sorted(list(set(winners)))
 
 
@@ -1148,18 +1144,18 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
         w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
         winners = list()  
         strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
-        river_defeat = nx.DiGraph() 
+
+        rv_defeat = SPO(len(candidates))
+
         for s in strengths: 
             edges = [e for e in w_edges if e[2] == s]
             
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
-            for e in sorted_edges: 
-                if e[1] not in river_defeat.nodes or len(list(river_defeat.in_edges(e[1]))) == 0:
-                    river_defeat.add_edge(e[0], e[1], weight=e[2])
-                    if does_create_cycle(river_defeat, e):
-                        river_defeat.remove_edge(e[0], e[1])
-        winners.append(maximal_elements(river_defeat)[0])
+            for e0,e1,s in sorted_edges: 
+                if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
+                    rv_defeat.add(e0, e1)
+        winners.append(rv_defeat.initial_elements()[0])
     return sorted(list(set(winners)))
 
 
@@ -1451,6 +1447,13 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
                                     mem_sv_winners = {})[0])
 
 
+
+## Slater
+#
+
+
+
+
 @vm(name="Essential Set")
 def essential(edata, curr_cands=None, threshold = 0.0000001): 
     """The Essential Set is the support of the (chosen) C2 maximal lottery.
@@ -1543,6 +1546,28 @@ def loss_trimmer(edata, curr_cands = None):
         winners += winners_without_bl
 
     return list(set(winners))
+
+
+def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
+    """
+    Calculate the distance of ``rel`` (a relation) to the majority graph of ``edata``. 
+    """
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    
+    if type(edata) == MajorityGraph and exp == 0:
+        # if edata is a MajorityGraph, we need to add margins for the following code to work.  The margins do not matter when exp==0.   
+        edata = MarginGraph(candidates, [(c1, c2, 1) for c1, c2 in edata.edges if (c1 in candidates and c2 in candidates)])
+    penalty = 0
+    for a,b in combinations(candidates, 2): 
+        if edata.majority_prefers(a, b) and (b,a) in rel: 
+            penalty += (edata.margin(a, b) ** exp)
+        elif edata.majority_prefers(b, a) and (a,b) in rel: 
+            penalty += (edata.margin(b, a) ** exp)
+        elif edata.majority_prefers(a, b) and (a,b) not in rel and (b,a) not in rel: 
+            penalty += (edata.margin(a, b) ** exp) / 2 
+        elif edata.majority_prefers(b, a) and (a,b) not in rel and (b,a) not in rel: 
+            penalty += (edata.margin(b, a) ** exp)  / 2
+    return penalty
 
 
 mg_vms = [

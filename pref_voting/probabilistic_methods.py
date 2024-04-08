@@ -7,6 +7,7 @@
 '''
 
 from pref_voting.voting_method import  *
+from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
 import nashpy as nash
 
 @vm(name="Random Dictator")
@@ -76,6 +77,13 @@ def c1_maximal_lottery(edata, curr_cands=None):
     Returns:
         dict: A dictionary mapping candidates to probabilities.
     '''
+
+    if type(edata) == MajorityGraph:
+        # if edata is a MajorityGraph, we need to add margins for the following code to work.  The margins do not matter when finding the c1 maximal lottery.
+
+        candidates = edata.candidates if curr_cands is None else curr_cands 
+          
+        edata = MarginGraph(candidates, [(c1, c2, 1) for c1, c2 in edata.edges if (c1 in candidates and c2 in candidates)])
 
     return _maximal_lottery(edata, 
                             curr_cands=curr_cands, 

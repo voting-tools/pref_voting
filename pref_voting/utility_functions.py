@@ -57,7 +57,7 @@ def quadratic_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     return -np.linalg.norm(v_pos - c_pos)**2
 
-@jit(nopython=True, fastmath=True)
+
 def city_block_utility(v_pos: float32[:], c_pos: float32[:]):
     """
     The utility of the voter for the candidate is negative of the city-block distance between the positions (also known as the Manhattan distance). 
