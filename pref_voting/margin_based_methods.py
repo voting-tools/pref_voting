@@ -334,7 +334,7 @@ def has_strong_path(A, source, target, k):
             return True
         visited[node] = True
         for neighbor, weight in enumerate(A[node, :]):
-            if weight >= k and not visited[neighbor]:
+            if A[node][neighbor] > A[neighbor][node] and weight >= k and not visited[neighbor]:
                 if dfs(neighbor):
                     return True
         return False
@@ -399,7 +399,7 @@ def split_cycle(edata, curr_cands = None, strength_function = None):
 
     for a in candidates:
         for b in candidates:
-            if strength_function(b,a) > 0 and not has_strong_path(strength_matrix, cand_to_cindex(a), cand_to_cindex(b), strength_function(b,a)):
+            if strength_function(b, a) > strength_function(a, b) and not has_strong_path(strength_matrix, cand_to_cindex(a), cand_to_cindex(b), strength_function(b,a)):
                 potential_winners.discard(a)
                 break
 

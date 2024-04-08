@@ -69,7 +69,7 @@ def test_support(test_profile_with_ties):
     assert test_profile_with_ties.support(0, 2) == 0
     assert test_profile_with_ties.support(1, 2) == 3
     assert test_profile_with_ties.support(2, 1) == 0
-
+    
 def test_margin(test_profile_with_ties):
     assert test_profile_with_ties.margin(0, 1) == -1 
     assert test_profile_with_ties.margin(1, 0) == 1 

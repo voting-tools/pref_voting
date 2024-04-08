@@ -589,24 +589,6 @@ class MarginGraph(MajorityGraph):
             list(set([self.margin(e[0], e[1]) for e in self.mg.edges]))
         ) == len(self.mg.edges)
 
-    def add(self, edata): 
-        """
-        Return a MarginGraph in which the new margin of candidate :math:`a` over :math:`b` is the sum of the 
-        existing margin of :math:`a` over :math:`b` with with the margin :math:`a` over :math:`b` in ``edata``. 
-        """
-        candidates = self.candidates
-        new_edges = list()
-        for c1, c2 in combinations(candidates, 2): 
-            
-            new_margin = self.margin(c1, c2) + edata.margin(c1, c2)
-            
-            if new_margin > 0: 
-                new_edges.append((c1, c2, new_margin))
-            elif new_margin < 0: 
-                
-                new_edges.append((c2, c1, -1 * new_margin))
-            
-        return MarginGraph(candidates, new_edges, cmap=self.cmap)
 
     def to_networkx(self): 
         """
@@ -984,7 +966,32 @@ class MarginGraph(MajorityGraph):
             cmap=cmap,
         )
 
+    def __add__(self, edata): 
+        """
+        Return a MarginGraph in which the new margin of candidate :math:`a` over :math:`b` is the sum of the 
+        existing margin of :math:`a` over :math:`b` with with the margin :math:`a` over :math:`b` in ``edata``. 
+        """
+        candidates = self.candidates
+        new_edges = list()
+        for c1, c2 in combinations(candidates, 2): 
+            
+            new_margin = self.margin(c1, c2) + edata.margin(c1, c2)
+            
+            if new_margin > 0: 
+                new_edges.append((c1, c2, new_margin))
+            elif new_margin < 0: 
+                
+                new_edges.append((c2, c1, -1 * new_margin))
+            
+        return MarginGraph(candidates, new_edges, cmap=self.cmap)
 
+    def __eq__(self, other_mg): 
+        """
+        Return True if the margin graphs are equal (the candidates, and all edges and weights are the same); otherwise, return False
+        """
+
+        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(other_mg.edges)
+    
 class SupportGraph(MajorityGraph):
     """A support graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that the **support** of  :math:`c` over :math:`d` is :math:`w`.
 

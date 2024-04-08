@@ -2,6 +2,10 @@ import numpy as np
 import pytest
 from pref_voting.spatial_profiles import SpatialProfile
 from pref_voting.utility_profiles import UtilityProfile
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
+
 # Setup sample data
 cand_pos = {1: np.array([0.1, 0.2]), 2: np.array([0.3, 0.4])}
 voter_pos = {1: np.array([0.5, 0.6]), 2: np.array([0.7, 0.8])}
@@ -90,28 +94,14 @@ def test_to_from_string(sample_profile):
         np.testing.assert_array_equal(sp.candidate_position(candidate), pos, err_msg=f"Incorrect position for candidate {candidate}")
 
 def test_view_does_not_raise_errors_with_valid_data(sample_profile):
-    try:
-        sample_profile.view() 
-    except Exception as e:
-        pytest.fail(f"View method raised an unexpected exception: {e}")
-
-    try:
-        sample_profile.view(show_labels=True) 
-    except Exception as e:
-        pytest.fail(f"View method raised an unexpected exception: {e}")
+    sample_profile.view() 
+    sample_profile.view(show_labels=True) 
 
     sp2 = SpatialProfile({0:[0.1], 1:[0.2]}, {0:[0.3], 1:[0.75], 2:[0.55]})
-    try:
-        sp2.view(show_labels=True) 
-    except Exception as e:
-        pytest.fail(f"View method raised an unexpected exception: {e}")
-
+    sp2.view(show_labels=True) 
 
     sp2 = SpatialProfile({0:[0.1, 0.2, 0.3], 1:[0.2, 0.25, 0.35]}, {0:[0.1, 0.2, 0.3], 1:[0.25, 0.75, 0.25], 2:[0.1, 0.85, 0.55]})
-    try:
-        sp2.view() 
-    except Exception as e:
-        pytest.fail(f"View method raised an unexpected exception: {e}")
+    sp2.view() 
 
 def test_display_runs_without_errors(sample_profile, capsys):
     try:
