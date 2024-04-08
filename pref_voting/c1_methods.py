@@ -11,6 +11,7 @@ from pref_voting.voting_method import  *
 from pref_voting.helper import get_mg, get_weak_mg
 from pref_voting.margin_based_methods import distance_to_margin_graph
 from pref_voting.probabilistic_methods import c1_maximal_lottery
+from pref_voting.rankings import Ranking, break_ties_alphabetically
 import copy
 import math
 from itertools import product, permutations, combinations, chain
@@ -110,6 +111,39 @@ def copeland(edata, curr_cands = None):
     max_score = max(c_scores.values())
     return sorted([c for c in c_scores.keys() if c_scores[c] == max_score])
 
+@swf(name = "Copeland ranking")
+def copeland_ranking(edata, curr_cands=None, local=True, tie_breaking=None):
+    """The SWF that ranks candidates by their Copeland scores. If local is True, then the Copeland scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Copeland scores are computed with respect to the entire profile.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
+        local (bool, optional): If True, then the Copeland scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Copeland scores are computed with respect to the entire profile.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
+
+    Returns:
+        A Ranking object
+    """
+
+    cands = edata.candidates if curr_cands is None else curr_cands
+
+    if local:
+        copeland_scores_dict = edata.copeland_scores(curr_cands=cands)
+
+    else:
+        c_scores = edata.copeland_scores(curr_cands=edata.candidates)
+        copeland_scores_dict = {c: c_scores[c] for c in cands}
+
+    for cand in cands:
+        copeland_scores_dict[cand] = -copeland_scores_dict[cand]
+
+    copeland_ranking = Ranking(copeland_scores_dict)
+    copeland_ranking.normalize_ranks()
+
+    if tie_breaking == "alphabetic":
+        copeland_ranking = break_ties_alphabetically(copeland_ranking)
+
+    return copeland_ranking
 
 @vm(name = "Llull")
 def llull(edata, curr_cands = None):
@@ -889,6 +923,10 @@ c1_vms = [
     uc_mckelvey,
     top_cycle,
     gocha,
+]
+
+c1_swf = [
+    copeland_ranking
 ]
 
 defeat_methods = [
