@@ -75,7 +75,7 @@ def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
     cands = profile.candidates if curr_cands is None else curr_cands
 
     if local:
-        plurality_scores_dict = profile.plurality_scores(curr_cands = curr_cands)
+        plurality_scores_dict = profile.plurality_scores(curr_cands = cands)
 
     else:
         plurality_scores_dict = profile.plurality_scores()
@@ -154,7 +154,7 @@ def borda_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
     cands = profile.candidates if curr_cands is None else curr_cands
 
     if local:
-        borda_scores_dict = profile.borda_scores(curr_cands = curr_cands)
+        borda_scores_dict = profile.borda_scores(curr_cands = cands)
 
     else:
         borda_scores_dict = profile.borda_scores()
@@ -211,6 +211,40 @@ def anti_plurality(profile, curr_cands = None):
     min_last_place_score = min(list(last_place_scores.values()))
     
     return sorted([c for c in curr_cands if last_place_scores[c] == min_last_place_score])
+
+@swf(name="Anti-Plurality ranking")
+def anti_plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
+    """The SWF that ranks the candidates in curr_cands according to their Anti-Plurality scores. If local is True, then the Anti-Plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Anti-Plurality scores are computed with respect to the entire profile.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): The candidates to rank. If None, then all candidates in profile are ranked
+        local (bool, optional): If True, then the Anti-Plurality scores are computed with respect to the profile restricted to curr_cands. Otherwise, the Anti-Plurality scores are computed with respect to the entire profile.
+        tie_breaking (str, optional): The tie-breaking method to use. If None, then no tie-breaking is used. If "alphabetic", then the tie-breaking is done alphabetically.
+
+    Returns:
+        A Ranking object
+    """
+
+    cands = profile.candidates if curr_cands is None else curr_cands
+
+    rankings, rcounts = profile.rankings_counts
+
+    if local:
+        cands_to_ignore = np.array([c for c in profile.candidates if c not in cands])
+
+    else:
+        cands_to_ignore = np.array([])
+    
+    anti_plurality_scores_dict = {c: _num_rank_last(rankings, rcounts, cands_to_ignore, c) for c in cands}
+
+    ap_ranking = Ranking(anti_plurality_scores_dict)
+    ap_ranking.normalize_ranks()
+
+    if tie_breaking == "alphabetic":
+        ap_ranking = break_ties_alphabetically(ap_ranking)
+
+    return ap_ranking
 
 
 @vm(name = "Scoring Rule")
@@ -421,6 +455,7 @@ def borda_for_profile_with_ties(
 scoring_swfs = [
     plurality_ranking,
     borda_ranking,
+    anti_plurality_ranking,
     score_ranking   
 ]
 
