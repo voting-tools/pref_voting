@@ -35,7 +35,7 @@ def rm_utility(v_pos: float32[:], c_pos: float32[:]):
 
 def linear_utility(v_pos: float32[:], c_pos: float32[:]):
     """
-    The utility of the voter for the candidate is negative of the difference in positions. 
+    The utility of the candidate for the voter is negative of the Euclidean distance between the positions. 
 
     Args:   
         v_pos (numpy array): The position(s) of the voter.
@@ -47,7 +47,7 @@ def linear_utility(v_pos: float32[:], c_pos: float32[:]):
 
 def quadratic_utility(v_pos: float32[:], c_pos: float32[:]):
     """ 
-    The utility of the voter for the candidate is negative of the squared difference in positions.
+    The utility of the candidate for the voter is negative of the squared Euclidean distance between the positions. 
 
     Args:
         v_pos (numpy array): The position(s) of the voter.
@@ -60,7 +60,7 @@ def quadratic_utility(v_pos: float32[:], c_pos: float32[:]):
 
 def city_block_utility(v_pos: float32[:], c_pos: float32[:]):
     """
-    The utility of the voter for the candidate is negative of the city-block distance between the positions (also known as the Manhattan distance). 
+    The utility of the candidate for the voter is the negative of the city-block distance between the positions (also known as the Manhattan distance). 
 
     Args:
         v_pos (numpy array): The position(s) of the voter.
