@@ -12,6 +12,7 @@ from pref_voting.helper import get_mg, get_weak_mg
 from pref_voting.margin_based_methods import distance_to_margin_graph
 from pref_voting.probabilistic_methods import c1_maximal_lottery
 from pref_voting.rankings import Ranking, break_ties_alphabetically
+from pref_voting.social_welfare_function import swf
 import copy
 import math
 from itertools import product, permutations, combinations, chain
