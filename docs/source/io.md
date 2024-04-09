@@ -5,14 +5,14 @@ The `pref_voting.io` module provides functionality for saving and loading electi
 
 A ``Profile`` or ``ProfileWithTies`` can be saved in any of the following formats:
 
-* preflib: The format used by preflib descrbed here: https://www.preflib.org/format#types.
+* preflib: The format used by preflib described here: https://www.preflib.org/format#types.
 * csv: There are two formats for the csv file: "rank_columns" and "candidate_columns".  The "rank_columns" format is used when the csv file contains a column for each rank and the rows are the candidates at that rank (or "skipped" if the ranked is skipped).  The "candidate_columns" format is used when the csv file contains a column for each candidate and the rows are the rank of the candidates (or the empty string if the candidate is not ranked).
 * abif: This format is explained here: https://electowiki.org/wiki/ABIF
 * json: Save the election data in a json file, where each ranking is a dictionary with the candidate names as keys and the ranks as values.
 
 The `pref_voting.io` module also provides functionality for reading election data from these formats.  
 
-All of these functions are accessible through `write` and `read` methods in the ``Proile`` and ``ProfileWithTies`` classes. 
+All of these functions are accessible through `write` and `read` methods in the ``Profile`` and ``ProfileWithTies`` classes. 
 
 
 A ``SpatialProfile`` can be saved as a json file. 
@@ -53,7 +53,7 @@ A ``SpatialProfile`` can be saved as a json file.
 
 ```
 
-## Save Spatial Profile Data
+## Saving Spatial Profile Data
 
 ```{eval-rst}
 
@@ -61,7 +61,7 @@ A ``SpatialProfile`` can be saved as a json file.
 
 ```
 
-## Load Spatial Profile Data
+## Loading Spatial Profile Data
 
 ```{eval-rst}
 
