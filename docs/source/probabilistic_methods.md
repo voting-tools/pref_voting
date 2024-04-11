@@ -11,7 +11,7 @@ Probabilistic Methods
 
 
 
-## Proporitional Borda
+## Proportional Borda
 
 ```{eval-rst}
 
