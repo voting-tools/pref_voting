@@ -213,13 +213,26 @@ def instant_runoff_put(profile, curr_cands = None):
     
     candidates = profile.candidates if curr_cands is None else curr_cands 
 
+    plurality_scores = profile.plurality_scores(candidates)
+
     strict_maj_size = profile.strict_maj_size()
-    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
+    majority_winner = [cand for cand, score in plurality_scores.items() if score >= strict_maj_size]
 
     if len(majority_winner) > 0:
         return majority_winner
+    
+    original_num_cands = len(candidates)
+    
+    # immediately eliminate candidates with plurality score 0
+    # this is safe, because every elimination order will eliminate all these candidates first (in some order)
+    candidates = [cand for cand in candidates if plurality_scores[cand] > 0]
+    if len(candidates) < original_num_cands:
+        # if we removed some candidates, we need to update the plurality scores
+        plurality_scores = profile.plurality_scores(candidates)
 
-    cands_to_remove = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    # plurality losers
+    worst_score = min(plurality_scores.values())
+    cands_to_remove = [cand for cand, value in plurality_scores.items() if value == worst_score]
     
     winners = []
     for cand_to_remove in cands_to_remove:
