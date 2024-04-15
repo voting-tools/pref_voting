@@ -12,6 +12,8 @@ jobs:
         with:
           journal: joss
           paper-path: paper/paper.md
+      - name: List output files
+        run: ls -alh paper/
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
