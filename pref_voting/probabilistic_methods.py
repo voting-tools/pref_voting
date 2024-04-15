@@ -6,11 +6,12 @@
     Implementations of probabilistic voting methods.
 '''
 
-from pref_voting.voting_method import  *
+from pref_voting.probabilistic_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
+import random
 import nashpy as nash
 
-@vm(name="Random Dictator")
+@pvm(name="Random Dictator")
 def random_dictator(profile, curr_cands = None): 
     '''Returns lottery over the candidates that is proportional to the Plurality scores. 
 
@@ -27,8 +28,7 @@ def random_dictator(profile, curr_cands = None):
 
     return {c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()}
 
-
-@vm(name="Proportional Borda")
+@pvm(name="Proportional Borda")
 def pr_borda(profile, curr_cands=None): 
     '''Returns lottery over the candidates that is proportional to the Borda scores.
     
@@ -51,21 +51,24 @@ def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x:
     
     Returns a randomly chosen maximal lottery.
     '''
-    
+
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
+
     A = np.array([[margin_transformation(m) for m in row] 
-                  for row in edata.margin_matrix])
+                  for row in m_matrix])
 
     # Create the game
     game = nash.Game(A)
     # Find the Nash Equilibrium with Vertex Enumeration
     equilibria = list(game.vertex_enumeration())
     if len(equilibria) == 0:
-        return {c: 1/len(edata.candidates) for c in edata.candidates}
+        return {c: 1/len(candidates) for c in candidates}
     else:
         eq = random.choice(equilibria)
-        return {c: eq[0][cidx] for cidx, c in enumerate(edata.candidates)}
+        return {c: eq[0][cand_to_cidx(c)] for c in candidates}
 
-@vm(name="C1 Maximal Lottery")
+@pvm(name="C1 Maximal Lottery")
 def c1_maximal_lottery(edata, curr_cands=None): 
 
     '''Returns the C1 maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
@@ -89,7 +92,7 @@ def c1_maximal_lottery(edata, curr_cands=None):
                             curr_cands=curr_cands, 
                             margin_transformation = np.sign)
 
-@vm(name="Maximal Lottery")
+@pvm(name="Maximal Lottery")
 def maximal_lottery(edata, curr_cands=None): 
     '''Returns the maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
     

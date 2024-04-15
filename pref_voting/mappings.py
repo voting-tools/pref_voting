@@ -209,7 +209,8 @@ class _Mapping(object):
         for x in items:
             if x not in processed_items:
                 indiff = [y for y in items if compare_fnc(x, y) == 0]
-                indiff_classes.append(indiff)
+                if len(indiff) > 0:
+                    indiff_classes.append(indiff)
                 for y in indiff:
                     processed_items.add(y)
         return indiff_classes

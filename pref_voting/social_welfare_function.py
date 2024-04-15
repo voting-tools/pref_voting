@@ -29,6 +29,17 @@ class SocialWelfareFunction(object):
             return []
         return self.swf(edata, curr_cands = curr_cands, **kwargs)
         
+    def winners(self, edata, curr_cands = None, **kwargs):
+        """Return a sorted list of the first place candidates."""
+
+        return sorted(self.swf(edata, curr_cands = curr_cands, **kwargs).first())
+    
+    def display(self, edata, curr_cands = None, **kwargs):
+        """Display the result of the social welfare function."""
+
+        ranking = self.swf(edata, curr_cands = curr_cands, **kwargs)
+        print(f"{self.name} ranking is {ranking}")
+
     def set_name(self, new_name):
         """Set the name of the social welfare function."""
 

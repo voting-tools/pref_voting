@@ -29,13 +29,16 @@ def to_preflib_instance(profile):
 
     instance = OrdinalInstance()
     vote_map = dict()
+    cand_to_cidx = {c: i for i, c in enumerate(profile.candidates)}
+    cmap = {i: profile.cmap[c] for c, i in cand_to_cidx.items()}
     for r,c in zip(*profile.rankings_counts):
-        ranking = r.to_indiff_list() if type(r) == Ranking else tuple([(c,) for c in r])
+        ranking = tuple([tuple([cand_to_cidx[_c] for _c in indiff]) for indiff in r.to_indiff_list()]) if type(r) == Ranking else tuple([(c,) for c in r])
         if ranking in vote_map.keys():
             vote_map[ranking] += c
         else:
             vote_map[ranking] = c
-    instance.append_vote_map(vote_map)    
+    instance.append_vote_map(vote_map)  
+    instance.alternatives_name = cmap  
     return instance   
 
 def write_preflib(profile, filename):

@@ -602,10 +602,12 @@ def ranked_pairs(edata, curr_cands = None, strength_function = None):
         ranked_pairs.display(mg)
 
     """
-    candidates = edata.candidates if curr_cands is None else curr_cands    
+    candidates = edata.candidates if curr_cands is None else curr_cands 
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
     strength_function = edata.margin if strength_function is None else strength_function    
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
     # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -621,9 +623,9 @@ def ranked_pairs(edata, curr_cands = None, strength_function = None):
                 edges = flatten(tb)
                 rp_defeat = SPO(len(candidates))
                 for e0,e1,s in edges: 
-                    if not rp_defeat.P[e1][e0]:
-                        rp_defeat.add(e0,e1)
-                winners.append(rp_defeat.initial_elements()[0])
+                    if not rp_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]]:
+                        rp_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+                winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
         else: 
             winners = candidates
     return sorted(list(set(winners)))
@@ -674,9 +676,12 @@ def ranked_pairs_with_test(edata, curr_cands = None, strength_function = None):
 
     """    
     candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
+    
     strength_function = edata.margin if strength_function is None else strength_function   
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands = curr_cands)
     # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -694,9 +699,9 @@ def ranked_pairs_with_test(edata, curr_cands = None, strength_function = None):
                 edges = flatten(tb)
                 rp_defeat = SPO(len(candidates))
                 for e0,e1,s in edges: 
-                    if not rp_defeat.P[e1][e0]:
-                        rp_defeat.add(e0,e1)
-                winners.append(rp_defeat.initial_elements()[0])
+                    if not rp_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]]:
+                        rp_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+                winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
 def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):   
@@ -909,11 +914,14 @@ def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_funct
     """
 
     candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
+
     strength_function = edata.margin if strength_function is None else strength_function
     
     tb_ranking = tie_breaker if tie_breaker is not None else sorted(list(candidates))
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
     # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -930,10 +938,10 @@ def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_funct
             
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
-            for e0,e1,s in sorted_edges:
-                if not rp_defeat.P[e1][e0]:
-                    rp_defeat.add(e0,e1)
-        winners.append(rp_defeat.initial_elements()[0])
+            for e0,e1,s in edges: 
+                if not rp_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]]:
+                    rp_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+            winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
 
     return sorted(list(set(winners)))
 
@@ -1005,9 +1013,12 @@ def river(edata, curr_cands = None, strength_function = None):
 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
+
     strength_function = edata.margin if strength_function is None else strength_function    
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
     # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -1022,9 +1033,9 @@ def river(edata, curr_cands = None, strength_function = None):
             edges = flatten(tb)
             rv_defeat = SPO(len(candidates))
             for e0,e1,s in edges: 
-                if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
-                    rv_defeat.add(e0,e1)
-            winners.append(rv_defeat.initial_elements()[0])
+                if not rv_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]] and len(rv_defeat.preds[cand_to_cidx[e1]]) == 0:
+                    rv_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+            winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
 
     return sorted(list(set(winners)))
 
@@ -1089,9 +1100,12 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
+
     strength_function = edata.margin if strength_function is None else strength_function    
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
     # Ranked Pairs is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -1109,9 +1123,9 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
                 edges = flatten(tb)
                 rv_defeat = SPO(len(candidates))
                 for e0,e1,s in edges: 
-                    if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
-                        rv_defeat.add(e0,e1)
-                winners.append(rv_defeat.initial_elements()[0])
+                    if not rv_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]] and len(rv_defeat.preds[cand_to_cidx[e1]]) == 0:
+                        rv_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+                winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
 
@@ -1132,11 +1146,13 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
     strength_function = edata.margin if strength_function is None else strength_function    
 
     tb_ranking = tie_breaker if tie_breaker is not None else sorted(list(candidates))
 
-    cw = edata.condorcet_winner()
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
     # River is Condorcet consistent, so simply return the Condorcet winner if exists
     if cw is not None: 
         winners = [cw]
@@ -1153,9 +1169,9 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
             for e0,e1,s in sorted_edges: 
-                if not rv_defeat.P[e1][e0] and len(rv_defeat.preds[e1]) == 0:
-                    rv_defeat.add(e0, e1)
-        winners.append(rv_defeat.initial_elements()[0])
+                if not rv_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]] and len(rv_defeat.preds[cand_to_cidx[e1]]) == 0:
+                    rv_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+            winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
 
@@ -1296,7 +1312,7 @@ def simple_stable_voting_faster(edata, curr_cands = None, strength_function = No
 
     """
     
-    cw = edata.condorcet_winner(curr_cands = None)
+    cw = edata.condorcet_winner(curr_cands = curr_cands)
     if cw is not None: 
         return [cw]
     else: 
@@ -1455,7 +1471,7 @@ def stable_voting_faster(edata, curr_cands = None, strength_function = None):
 
 
 @vm(name="Essential Set")
-def essential(edata, curr_cands=None, threshold = 0.0000001): 
+def essential(edata, curr_cands = None, threshold = 0.0000001): 
     """The Essential Set is the support of the (chosen) C2 maximal lottery.
 
     Args:
@@ -1527,9 +1543,10 @@ def loss_trimmer(edata, curr_cands = None):
 
     curr_cands = edata.candidates if curr_cands is None else curr_cands
 
+    weak_cw = edata.weak_condorcet_winner(curr_cands = curr_cands)
     # If there are weak Condorcet winners, return those candidates
     if edata.weak_condorcet_winner(curr_cands = curr_cands) is not None:
-        return edata.weak_condorcet_winner(curr_cands = curr_cands)
+        return sorted(weak_cw)
     
     # Otherwise, calculate the sum of margins of loss for each candidate
     sum_of_margins_of_loss = {cand: sum([edata.margin(other_cand, cand) for other_cand in curr_cands if edata.margin(other_cand, cand) > 0]) for cand in curr_cands}
@@ -1545,7 +1562,7 @@ def loss_trimmer(edata, curr_cands = None):
         winners_without_bl = loss_trimmer(edata, curr_cands = [cand for cand in curr_cands if cand != bl])
         winners += winners_without_bl
 
-    return list(set(winners))
+    return sorted(list(set(winners)))
 
 
 def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
@@ -1602,6 +1619,7 @@ mg_vms_all = [
     ranked_pairs_with_test,
     ranked_pairs_zt,
     ranked_pairs_tb,
+    ranked_pairs_from_stacks,
     river,
     river_with_test, 
     simple_stable_voting,
