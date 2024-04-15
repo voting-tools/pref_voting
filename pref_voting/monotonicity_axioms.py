@@ -13,78 +13,162 @@ import numpy as np
 from itertools import product
 import copy
 
-def one_rank_lift(ranking, c):
+def ranks_above(ranking,c):
     """
-    Return a ranking in which ``c`` is moved up one position in ``ranking``.
+    Returns the number of positions above candidate ``c`` in ``ranking``, taking into account ties in Ranking objects.
     """
     if isinstance(ranking, tuple):
-        assert c != ranking[0], "can't lift a candidate already in first place"
-        new_ranking = copy.deepcopy(ranking)
-        c_idx = new_ranking.index(c)
-        new_ranking = new_ranking[:c_idx-1] + (new_ranking[c_idx],) + (new_ranking[c_idx-1],) + new_ranking[c_idx+1:]
+
+        return ranking.index(c)
+
+    if isinstance(ranking, Ranking):
+
+        ranking.normalize_ranks()
+
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]):
+            return 2 * (ranking.rmap[c] - 1) + 1
+        else:
+            return 2 * (ranking.rmap[c] - 1)
+    
+def ranks_below(ranking,c):
+    """
+    Returns the number of positions below candidate ``c`` in ``ranking``, taking into account ties in Ranking objects.
+    """
+    if isinstance(ranking, tuple):
+            
+        return len(ranking) - ranking.index(c) - 1
     
     if isinstance(ranking, Ranking):
-        assert [c] != ranking.first(), "can't lift a candidate already uniquely in first place"
 
         ranking.normalize_ranks()
 
-        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
-            new_ranking_dict = dict()
-            for d in ranking.cands:
-                if ranking.rmap[d] < ranking.rmap[c] or d == c:
-                    new_ranking_dict[d] = ranking.rmap[d]
-                elif ranking.rmap[d] >= ranking.rmap[c]:
-                    new_ranking_dict[d] = ranking.rmap[d] + 1
-
-            new_ranking = Ranking(new_ranking_dict)
-
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]):
+            return 2 * (len(ranking.cands) - ranking.rmap[c]) + 1
         else:
-            new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]-1 for a in ranking.cands})
+            return 2 * (len(ranking.cands) - ranking.rmap[c])
 
-        new_ranking.normalize_ranks()
-
-    return new_ranking
-
-def one_rank_drop(ranking, c):
+def n_rank_lift(ranking, c, n):
     """
-    Return a ranking in which ``c`` is moved down one position in ``ranking``.
+    Return a ranking in which ``c`` is moved up n positions in ``ranking``.
     """
-
     if isinstance(ranking, tuple):
-        assert c != ranking[-1], "can't drop a candidate already in last place"
-        new_ranking = copy.deepcopy(ranking)
-        c_idx = new_ranking.index(c)
-        new_ranking = new_ranking[:c_idx] + (new_ranking[c_idx+1],) + (new_ranking[c_idx],) + new_ranking[c_idx+2:]   
-
+        assert c not in ranking[:n], f"there are not enough ranks above {c} to lift {c} {n} ranks"
+        _new_ranking = copy.deepcopy(ranking)
+        c_idx = _new_ranking.index(c)
+        new_ranking = _new_ranking[:c_idx-n] + (_new_ranking[c_idx],) + _new_ranking[c_idx-n:c_idx] + _new_ranking[c_idx+1:]
+    
     if isinstance(ranking, Ranking):
-        assert not ranking.last() == [c], "can't drop a candidate already uniquely in last place"
-        
+
         ranking.normalize_ranks()
 
-        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
-            new_ranking_dict = dict()
-            for d in ranking.cands:
-                if d == c or ranking.rmap[d] > ranking.rmap[c]:
-                    new_ranking_dict[d] = ranking.rmap[d]
-                elif ranking.rmap[d] <= ranking.rmap[c]:
-                    new_ranking_dict[d] = ranking.rmap[d] - 1
+        assert ranks_above(ranking,c) >= n, f"there are not enough ranks above {c} to lift {c} {n} ranks"
 
+        new_ranking_dict = dict()
+
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
+
+            if n%2 == 0: 
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] - (n/2)
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+
+            else:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] - (math.floor(n/2) + math.ceil(n/2))/2
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+                
             new_ranking = Ranking(new_ranking_dict)
 
         else:
-            new_ranking = Ranking({a: ranking.rmap[a] if a !=c else ranking.rmap[a]+1 for a in ranking.cands})
+            if n%2 == 0:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] - ((n//2) + (n//2 + 1))/2
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+            else:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] - math.ceil(n/2)
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+
+            new_ranking = Ranking(new_ranking_dict)
 
         new_ranking.normalize_ranks()
 
     return new_ranking
 
-def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_type="Lift", check_probabilities = False): 
+def n_rank_drop(ranking, c, n):
     """
-    If violation_type = "Lift", returns True if there is some winning candidate A and some voter v such that lifting A up one position in v's ranking causes A to lose.
+    Return a ranking in which ``c`` is moved down n positions in ``ranking``.
+    """
+    if isinstance(ranking, tuple):
+        # assert that there are n ranks below c
+        assert len(ranking) - ranking.index(c) - 1 >= n, f"there are not enough ranks below {c} to drop {c} {n} ranks"
+        _new_ranking = copy.deepcopy(ranking)
+        c_idx = _new_ranking.index(c)
+        new_ranking = _new_ranking[:c_idx] + _new_ranking[c_idx+1:c_idx+n+1] + (_new_ranking[c_idx],) + _new_ranking[c_idx+n+1:]
+    
+    if isinstance(ranking, Ranking):
 
-    If violation_type = "Drop", returns True if there is some losing candidate A and some voter v such that dropping A down one position in v's ranking causes A to win.
+        ranking.normalize_ranks()
+
+        assert ranks_below(ranking,c) >= n, f"there are not enough ranks below {c} to drop {c} {n} ranks"
+
+        new_ranking_dict = dict()
+
+        if any([ranking.rmap[d] == ranking.rmap[c] for d in ranking.cands if c!=d]): # if c is tied with another candidate
+
+            if n%2 == 0: 
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] + (n/2)
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+
+            else:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] + (math.floor(n/2) + math.ceil(n/2))/2
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+                
+            new_ranking = Ranking(new_ranking_dict)
+
+        else:
+            if n%2 == 0:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] + ((n//2) + (n//2 + 1))/2
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+            else:
+                for d in ranking.cands:
+                    if d == c:
+                        new_ranking_dict[d] = ranking.rmap[d] + math.ceil(n/2)
+                    else:
+                        new_ranking_dict[d] = ranking.rmap[d]
+
+            new_ranking = Ranking(new_ranking_dict)
+
+        new_ranking.normalize_ranks()
+    
+    return new_ranking
+
+def has_monotonicity_violation(profile, vm, verbose = False, violation_type = "Lift", check_probabilities = False, one_rank_monotonicity = False): 
+    """
+    If violation_type = "Lift", returns True if there is some winning candidate A and some voter v such that lifting A up some number of positions in v's ranking causes A to lose.
+
+    If violation_type = "Drop", returns True if there is some losing candidate A and some voter v such that dropping A down some number of positions in v's ranking causes A to win.
 
     If checking_probabilities = True, returns True if there is some candidate whose probability of winning decreases after a lifting or increases after a dropping.
+
+    If one_rank_monotonicity = True, then the function will check lifts/drops of one rank only.
     
     Args:
         profile: a Profile object.
@@ -95,8 +179,8 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
     Returns: 
         Result of the test (bool): Returns True if there is a violation and False otherwise. 
 
-    ..note:
-        If a voting method violates monotonicity, then it violates one-rank monotonicity, so this function is sufficient for testing whether a method violates monotonicity (though not for testing the frequency of monotonicity violations).
+    .. note::
+        If a voting method violates monotonicity, then it violates one-rank monotonicity, so setting one_rank_monotonicity = True is sufficient for testing whether a method violates monotonicity (though not for testing the frequency of monotonicity violations).
 
     """
     
@@ -122,61 +206,15 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
 
                 if r[0] != w:
                     old_ranking = copy.deepcopy(r)
-                    new_ranking = one_rank_lift(r, w)
-                    new_rankings = old_rankings + [new_ranking]
-                    new_rcounts  = copy.deepcopy(rcounts + [1])
-                    new_rcounts[r_idx] -= 1
 
-                    if isinstance(profile, Profile):
-                        new_prof = Profile(new_rankings, new_rcounts)
-                    if isinstance(profile, ProfileWithTies):
-                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
-                        if profile.using_extended_strict_preference:
-                            new_prof.use_extended_strict_preference()
+                    if one_rank_monotonicity:
+                        ranks_above_w = 1
+                    else:
+                        ranks_above_w = ranks_above(r, w)
 
-                    new_ws = vm(new_prof)
-                    
-                    if w not in new_ws: 
-                        if verbose: 
-                            print(f"One-rank monotonicity violation for {vm.name} by lifting {w}:")
-                            profile.display()
-                            print(profile.description())
-                            profile.display_margin_graph()
-                            print(f"{vm.name} winners: ", ws)
-                            print("Original ranking: ", old_ranking)
-                            print(f"New ranking: {new_ranking}")
-                            new_prof.display()
-                            print(new_prof.description())
-                            new_prof.display_margin_graph()
-                            print(f"{vm.name} winners in updated profile:", new_ws)
-                        return True
-                    
-                    if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
-                        if verbose: 
-                            print(f"One-rank probabilistic monotonicity violation for {vm.name} by lifting {w}:")
-                            profile.display()
-                            print(profile.description())
-                            profile.display_margin_graph()
-                            print(f"{vm.name} winners: ", ws)
-                            print("Original ranking: ", old_ranking)
-                            print(f"New ranking: {new_ranking}")
-                            new_prof.display()
-                            print(new_prof.description())
-                            new_prof.display_margin_graph()
-                            print(f"{vm.name} winners in updated profile:", new_ws)
-                        return True
-                    
-    elif violation_type == "Drop":
-        for l in profile.candidates:
-            if l not in ws:
-                for r_idx, r in enumerate(rankings): 
+                    for n in range(1, ranks_above_w+1):
 
-                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
-                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
-
-                    if r[-1] != l:
-                        old_ranking = copy.deepcopy(r)
-                        new_ranking = one_rank_drop(r, l)
+                        new_ranking = n_rank_lift(r, w, n)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
                         new_rcounts[r_idx] -= 1
@@ -189,10 +227,13 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                                 new_prof.use_extended_strict_preference()
 
                         new_ws = vm(new_prof)
-
-                        if l in new_ws: 
+                        
+                        if w not in new_ws: 
                             if verbose: 
-                                print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
+                                if n==1:
+                                    print(f"Monotonicity violation for {vm.name} by lifting {w} one rank:")
+                                else:
+                                    print(f"Monotonicity violation for {vm.name} by lifting {w} by {n} ranks:")
                                 profile.display()
                                 print(profile.description())
                                 profile.display_margin_graph()
@@ -202,9 +243,77 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                                 new_prof.display()
                                 print(new_prof.description())
                                 new_prof.display_margin_graph()
-                                print(f"{vm.name} winners in updated profile: ", new_ws)
+                                print(f"{vm.name} winners in updated profile:", new_ws)
                             return True
                         
+                        if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
+                            if verbose: 
+                                if n==1:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by lifting {w} one rank:")
+                                else:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by lifting {w} by {n} ranks:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile:", new_ws)
+                            return True
+                    
+    elif violation_type == "Drop":
+        for l in profile.candidates:
+            if l not in ws:
+                for r_idx, r in enumerate(rankings): 
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                    if r[-1] != l:
+                        old_ranking = copy.deepcopy(r)
+
+                        if one_rank_monotonicity:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
+
+                        for n in range(1, ranks_below_l+1):
+                            
+                            new_ranking = n_rank_drop(r, l, n)
+                            new_rankings = old_rankings + [new_ranking]
+                            new_rcounts  = copy.deepcopy(rcounts + [1])
+                            new_rcounts[r_idx] -= 1
+
+                            if isinstance(profile, Profile):
+                                new_prof = Profile(new_rankings, new_rcounts)
+                            if isinstance(profile, ProfileWithTies):
+                                new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                                if profile.using_extended_strict_preference:
+                                    new_prof.use_extended_strict_preference()
+
+                            new_ws = vm(new_prof)
+
+                            if l in new_ws: 
+                                if verbose: 
+                                    if n==1:
+                                        print(f"Monotonicity violation for {vm.name} by dropping {l} one rank:")
+                                    else:
+                                        print(f"Monotonicity violation for {vm.name} by dropping {l} by {n} ranks:")
+                                    profile.display()
+                                    print(profile.description())
+                                    profile.display_margin_graph()
+                                    print(f"{vm.name} winners: ", ws)
+                                    print("Original ranking: ", old_ranking)
+                                    print(f"New ranking: {new_ranking}")
+                                    new_prof.display()
+                                    print(new_prof.description())
+                                    new_prof.display_margin_graph()
+                                    print(f"{vm.name} winners in updated profile: ", new_ws)
+                                return True
+                            
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
 
@@ -213,6 +322,12 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
 
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
+
+                        if one_rank_monotonicity:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
+
                         new_ranking = one_rank_drop(r, l)
                         new_rankings = old_rankings + [new_ranking]
                         new_rcounts  = copy.deepcopy(rcounts + [1])
@@ -228,7 +343,10 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
                         new_ws = vm(new_prof)
                         if l in new_ws and len(new_ws) < len(ws): 
                             if verbose: 
-                                print(f"One-rank probabilistic monotonicity violation for {vm.name} by dropping {l}:")
+                                if n==1:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by dropping {l} one rank:")
+                                else:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by dropping {l} by {n} ranks:")
                                 profile.display()
                                 print(profile.description())
                                 profile.display_margin_graph()
@@ -243,13 +361,15 @@ def has_one_rank_monotonicity_violation(profile, vm, verbose = False, violation_
 
     return False
 
-def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, violation_type="Lift", check_probabilities = False):
+def find_all_monotonicity_violations(profile, vm, verbose = False, violation_type = "Lift", check_probabilities = False, one_rank_monotonicity = False):
     """
-    If violation_type = "Lift", returns all pairs (candidate, ranking) such that the candidate wins in the original profile but loses after lifting the candidate up one position in the ranking.
+    If violation_type = "Lift", returns all tuples (candidate, ranking, "Lift", n) such that the candidate wins in the original profile but loses after lifting the candidate up n positions in the ranking.
 
-    If violation_type = "Drop", returns all pairs (candidate, ranking) such that the candidate loses in the original profile but wins after dropping the candidate down one position in the ranking.
+    If violation_type = "Drop", returns all tuples (candidate, ranking, "Drop", n) such that the candidate loses in the original profile but wins after dropping the candidate down n positions in the ranking.
 
-    If checking_probabilities = True, returns all pairs (candidate, ranking) such that the candidate's probability of winning decreases after a lifting or increases after a dropping.
+    If checking_probabilities = True, returns all tuples (candidate, ranking, violation_type, n) such that the candidate's probability of winning decreases after a lifting or increases after a dropping.
+
+    If one_rank_monotonicity = True, then the function will check lifts/drops of one rank only.
 
     Args:
         profile: a Profile object.
@@ -258,8 +378,10 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
         violation_type: default is "Lift"
 
     Returns:
-        A list of pairs (candidate, ranking) witnessing violations of one-rank monotonicity.
+        A list of tuples (candidate, ranking, violation_type, positions lifted/dropped) witnessing violations of monotonicity.
 
+    .. note::
+        If a voting method violates monotonicity, then it violates one-rank monotonicity, so setting one_rank_monotonicity = True is sufficient for testing whether a method violates monotonicity (though not for testing the frequency of monotonicity violations).
     """
 
     _rankings, _rcounts = profile.rankings_counts
@@ -285,49 +407,64 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
                     
                 if r[0] != w:
                     old_ranking = copy.deepcopy(r)
-                    new_ranking = one_rank_lift(r, w)
-                    new_rankings = old_rankings + [new_ranking]
-                    new_rcounts  = copy.deepcopy(rcounts + [1])
-                    new_rcounts[r_idx] -= 1
+                    
+                    if one_rank_monotonicity:
+                        ranks_above_w = 1
+                    else:
+                        ranks_above_w = ranks_above(r, w)
 
-                    if isinstance(profile, Profile):
-                        new_prof = Profile(new_rankings, new_rcounts)
-                    if isinstance(profile, ProfileWithTies):
-                        new_prof = ProfileWithTies(new_rankings, new_rcounts)
-                        if profile.using_extended_strict_preference:
-                            new_prof.use_extended_strict_preference()
+                    for n in range(1, ranks_above_w+1):
+                        new_ranking = n_rank_lift(r, w, n)
+                        new_rankings = old_rankings + [new_ranking]
+                        new_rcounts  = copy.deepcopy(rcounts + [1])
+                        new_rcounts[r_idx] -= 1
 
-                    new_ws = vm(new_prof)
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
 
-                    if w not in new_ws: 
-                        witnesses.append((w, old_ranking, "Lift"))
-                        if verbose: 
-                            print(f"One-rank monotonicity violation for {vm.name} by lifting {w}:")
-                            profile.display()
-                            print(profile.description())
-                            profile.display_margin_graph()
-                            print(f"{vm.name} winners: ", ws)
-                            print("Original ranking ", old_ranking)
-                            print(f"New ranking: {new_ranking}")
-                            new_prof.display()
-                            print(new_prof.description())
-                            new_prof.display_margin_graph()
-                            print(f"{vm.name} winners in updated profile: ", new_ws)
+                        new_ws = vm(new_prof)
 
-                    if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
-                        witnesses.append((w, old_ranking, "Lift"))
-                        if verbose: 
-                            print(f"One-rank probabilistic monotonicity violation for {vm.name} by lifting {w}:")
-                            profile.display()
-                            print(profile.description())
-                            profile.display_margin_graph()
-                            print(f"{vm.name} winners: ", ws)
-                            print("Original ranking: ", old_ranking)
-                            print(f"New ranking: {new_ranking}")
-                            new_prof.display()
-                            print(new_prof.description())
-                            new_prof.display_margin_graph()
-                            print(f"{vm.name} winners in updated profile:", new_ws)
+                        if w not in new_ws: 
+                            witnesses.append((w, old_ranking, "Lift", n))
+                            if verbose: 
+                                if n==1:
+                                    print(f"Monotonicity violation for {vm.name} by lifting {w} one rank:")
+                                else:
+                                    print(f"Monotonicity violation for {vm.name} by lifting {w} by {n} ranks:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile: ", new_ws)
+                                print("")
+
+                        if w in new_ws and check_probabilities == True and len(new_ws) > len(ws):
+                            witnesses.append((w, old_ranking, "Lift", n))
+                            if verbose: 
+                                if n==1:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by lifting {w} one rank:")
+                                else:
+                                    print(f"Probabilistic monotonicity violation for {vm.name} by lifting {w} by {n} ranks:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile:", new_ws)
+                                print("")
 
     elif violation_type == "Drop":
         for l in profile.candidates:
@@ -339,34 +476,45 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
 
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
-                        new_ranking = one_rank_drop(r, l)
-                        new_rankings = old_rankings + [new_ranking]
-                        new_rcounts  = copy.deepcopy(rcounts + [1])
-                        new_rcounts[r_idx] -= 1
+                        
+                        if one_rank_monotonicity:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
 
-                        if isinstance(profile, Profile):
-                            new_prof = Profile(new_rankings, new_rcounts)
-                        if isinstance(profile, ProfileWithTies):
-                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
-                            if profile.using_extended_strict_preference:
-                                new_prof.use_extended_strict_preference()
+                        for n in range(1, ranks_below_l+1):
+                            new_ranking = n_rank_drop(r, l, n)
+                            new_rankings = old_rankings + [new_ranking]
+                            new_rcounts  = copy.deepcopy(rcounts + [1])
+                            new_rcounts[r_idx] -= 1
 
-                        new_ws = vm(new_prof)
+                            if isinstance(profile, Profile):
+                                new_prof = Profile(new_rankings, new_rcounts)
+                            if isinstance(profile, ProfileWithTies):
+                                new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                                if profile.using_extended_strict_preference:
+                                    new_prof.use_extended_strict_preference()
 
-                        if l in new_ws: 
-                            witnesses.append((l, old_ranking, "Drop"))
-                            if verbose: 
-                                print(f"One-rank monotonicity violation for {vm.name} by dropping {l}:")
-                                profile.display()
-                                print(profile.description())
-                                profile.display_margin_graph()
-                                print(f"{vm.name} winners: ", ws)
-                                print("Original ranking: ", old_ranking)
-                                print(f"New ranking: {new_ranking}")
-                                new_prof.display()
-                                print(new_prof.description())
-                                new_prof.display_margin_graph()
-                                print(f"{vm.name} winners in updated profile: ", new_ws)
+                            new_ws = vm(new_prof)
+
+                            if l in new_ws: 
+                                witnesses.append((l, old_ranking, "Drop", n))
+                                if verbose: 
+                                    if n==1:
+                                        print(f"Monotonicity violation for {vm.name} by dropping {l} one rank:")
+                                    else:
+                                        print(f"Monotonicity violation for {vm.name} by dropping {l} by {n} ranks:")
+                                    profile.display()
+                                    print(profile.description())
+                                    profile.display_margin_graph()
+                                    print(f"{vm.name} winners: ", ws)
+                                    print("Original ranking: ", old_ranking)
+                                    print(f"New ranking: {new_ranking}")
+                                    new_prof.display()
+                                    print(new_prof.description())
+                                    new_prof.display_margin_graph()
+                                    print(f"{vm.name} winners in updated profile: ", new_ws)
+                                    print("")
 
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
@@ -376,41 +524,52 @@ def find_all_one_rank_monotonicity_violations(profile, vm, verbose = False, viol
 
                     if r[-1] != l:
                         old_ranking = copy.deepcopy(r)
-                        new_ranking = one_rank_drop(r, l)
-                        new_rankings = old_rankings + [new_ranking]
-                        new_rcounts  = copy.deepcopy(rcounts + [1])
-                        new_rcounts[r_idx] -= 1
+                        
+                        if one_rank_monotonicity:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
 
-                        if isinstance(profile, Profile):
-                            new_prof = Profile(new_rankings, new_rcounts)
-                        if isinstance(profile, ProfileWithTies):
-                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
-                            if profile.using_extended_strict_preference:
-                                new_prof.use_extended_strict_preference()
+                        for n in range(1, ranks_below_l+1):
+                            new_ranking = n_rank_drop(r, l, n)
+                            new_rankings = old_rankings + [new_ranking]
+                            new_rcounts  = copy.deepcopy(rcounts + [1])
+                            new_rcounts[r_idx] -= 1
 
-                        new_ws = vm(new_prof)
+                            if isinstance(profile, Profile):
+                                new_prof = Profile(new_rankings, new_rcounts)
+                            if isinstance(profile, ProfileWithTies):
+                                new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                                if profile.using_extended_strict_preference:
+                                    new_prof.use_extended_strict_preference()
 
-                        if l in new_ws and len(new_ws) < len(ws): 
-                            witnesses.append((l, old_ranking, "Drop"))
-                            if verbose: 
-                                print(f"One-rank probabilistic monotonicity violation for {vm.name} by dropping {l}:")
-                                profile.display()
-                                print(profile.description())
-                                profile.display_margin_graph()
-                                print(f"{vm.name} winners: ", ws)
-                                print("Original ranking: ", old_ranking)
-                                print(f"New ranking: {new_ranking}")
-                                new_prof.display()
-                                print(new_prof.description())
-                                new_prof.display_margin_graph()
-                                print(f"{vm.name} winners in updated profile: ", new_ws)
+                            new_ws = vm(new_prof)
+
+                            if l in new_ws and len(new_ws) < len(ws): 
+                                witnesses.append((l, old_ranking, "Drop", n))
+                                if verbose: 
+                                    if n==1:
+                                        print(f"Probabilistic monotonicity violation for {vm.name} by dropping {l} one rank:")
+                                    else:
+                                        print(f"Probabilistic monotonicity violation for {vm.name} by dropping {l} by {n} ranks:")
+                                    profile.display()
+                                    print(profile.description())
+                                    profile.display_margin_graph()
+                                    print(f"{vm.name} winners: ", ws)
+                                    print("Original ranking: ", old_ranking)
+                                    print(f"New ranking: {new_ranking}")
+                                    new_prof.display()
+                                    print(new_prof.description())
+                                    new_prof.display_margin_graph()
+                                    print(f"{vm.name} winners in updated profile: ", new_ws)
+                                    print("")
 
     return witnesses
                     
-one_rank_monotonicity = Axiom(
-    "One-Rank Monotonicity",
-    has_violation = has_one_rank_monotonicity_violation,
-    find_all_violations = find_all_one_rank_monotonicity_violations,
+monotonicity = Axiom(
+    "Monotonicity",
+    has_violation = has_monotonicity_violation,
+    find_all_violations = find_all_monotonicity_violations,
 )
 
 def lift_to_first(ranking, c):
@@ -677,6 +836,6 @@ weak_positive_responsiveness = Axiom(
 )
                    
 monotonicity_axioms = [
-    one_rank_monotonicity,
+    monotonicity,
     weak_positive_responsiveness
 ]
