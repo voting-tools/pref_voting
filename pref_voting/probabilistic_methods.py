@@ -6,7 +6,7 @@
     Implementations of probabilistic voting methods.
 '''
 
-from pref_voting.probabilistic_voting_method import  *
+from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
 import random
 import nashpy as nash

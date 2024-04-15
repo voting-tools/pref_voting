@@ -9,7 +9,7 @@
 import functools
 import numpy as np
 
-class ProbabilisticVotingMethod(object): 
+class ProbVotingMethod(object): 
     """
     A class to add functionality to probabilistic voting methods 
 
@@ -82,5 +82,5 @@ def pvm(name = None):
     A decorator used when creating a social welfare function. 
     """
     def wrapper(f):
-        return ProbabilisticVotingMethod(f, name=name)
+        return ProbVotingMethod(f, name=name)
     return wrapper
