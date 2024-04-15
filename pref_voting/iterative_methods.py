@@ -213,13 +213,26 @@ def instant_runoff_put(profile, curr_cands = None):
     
     candidates = profile.candidates if curr_cands is None else curr_cands 
 
+    plurality_scores = profile.plurality_scores(candidates)
+
     strict_maj_size = profile.strict_maj_size()
-    majority_winner = [cand for cand, value in profile.plurality_scores(candidates).items() if value >= strict_maj_size]
+    majority_winner = [cand for cand, score in plurality_scores.items() if score >= strict_maj_size]
 
     if len(majority_winner) > 0:
         return majority_winner
+    
+    original_num_cands = len(candidates)
+    
+    # immediately eliminate candidates with plurality score 0
+    # this is safe, because every elimination order will eliminate all these candidates first (in some order)
+    candidates = [cand for cand in candidates if plurality_scores[cand] > 0]
+    if len(candidates) < original_num_cands:
+        # if we removed some candidates, we need to update the plurality scores
+        plurality_scores = profile.plurality_scores(candidates)
 
-    cands_to_remove = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    # plurality losers
+    worst_score = min(plurality_scores.values())
+    cands_to_remove = [cand for cand, value in plurality_scores.items() if value == worst_score]
     
     winners = []
     for cand_to_remove in cands_to_remove:
@@ -433,12 +446,15 @@ def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
     if len(candidates) == 1:
         return candidates
 
-    cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    plurality_scores = profile.plurality_scores(candidates)
+    worst_score = min(plurality_scores.values())
+    cands_with_lowest_plurality_score = [cand for cand, value in plurality_scores.items() if value == worst_score]
 
     if len(cands_with_lowest_plurality_score) > 1:
         cands_with_second_lowest_plurality_score = cands_with_lowest_plurality_score
     else:
-        cands_with_second_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == sorted(profile.plurality_scores(candidates).values())[1]]
+        second_lowest_plurality_score = sorted(plurality_scores.values())[1]
+        cands_with_second_lowest_plurality_score = [cand for cand, value in plurality_scores.items() if value == second_lowest_plurality_score]
     
     cands_to_remove = []
 
@@ -474,12 +490,15 @@ def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     if len(candidates) == 1:
         return candidates
 
-    cands_with_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    plurality_scores = profile.plurality_scores(candidates)
+    worst_score = min(plurality_scores.values())
+    cands_with_lowest_plurality_score = [cand for cand, value in plurality_scores.items() if value == worst_score]
 
     if len(cands_with_lowest_plurality_score) > 1:
         cands_with_second_lowest_plurality_score = cands_with_lowest_plurality_score
     else:
-        cands_with_second_lowest_plurality_score = [cand for cand, value in profile.plurality_scores(candidates).items() if value == sorted(profile.plurality_scores(candidates).values())[1]]
+        second_lowest_plurality_score = sorted(plurality_scores.values())[1]
+        cands_with_second_lowest_plurality_score = [cand for cand, value in plurality_scores.items() if value == second_lowest_plurality_score]
     
     winners = []
 
@@ -1714,8 +1733,11 @@ def benham_put(profile, curr_cands = None):
     cw = profile.condorcet_winner(candidates)
     if cw is not None:
         return [cw]
+    
+    plurality_scores = profile.plurality_scores(candidates)
+    worst_score = min(plurality_scores.values())
 
-    cands_to_remove = [cand for cand, value in profile.plurality_scores(candidates).items() if value == min(profile.plurality_scores(candidates).values())]
+    cands_to_remove = [cand for cand, value in plurality_scores.items() if value == worst_score]
     
     winners = []
     for cand_to_remove in cands_to_remove:
@@ -1766,7 +1788,10 @@ def tideman_alternative(vm):
     
         vm_ws = vm(profile, curr_cands = candidates)
 
-        cands_to_remove = [cand for cand, value in profile.plurality_scores(vm_ws).items() if value == min(profile.plurality_scores(vm_ws).values())]
+        plurality_scores = profile.plurality_scores(vm_ws)
+        worst_score = min(plurality_scores.values())
+
+        cands_to_remove = [cand for cand, value in plurality_scores.items() if value == worst_score]
         
         if len(cands_to_remove) == len(vm_ws):
             return vm_ws
@@ -1800,7 +1825,9 @@ def tideman_alternative_put(vm):
             return vm_ws
     
         else: 
-            cands_to_remove = [cand for cand, value in profile.plurality_scores(vm_ws).items() if value == min(profile.plurality_scores(vm_ws).values())]
+            plurality_scores = profile.plurality_scores(vm_ws)
+            worst_score = min(plurality_scores.values())
+            cands_to_remove = [cand for cand, value in plurality_scores.items() if value == worst_score]
         
             winners = []
             for cand_to_remove in cands_to_remove:
