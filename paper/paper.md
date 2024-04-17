@@ -16,11 +16,11 @@ authors:
     equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
 affiliations:
- - name: Department of Philosophy, University of California, Berkeley, USA
+ - name: University of California, Berkeley, USA
    index: 1
- - name: Department of Philosophy, University of Maryland, USA
+ - name: University of Maryland, USA
    index: 2
-date: 11 January 2024
+date: 17 January 2024
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
