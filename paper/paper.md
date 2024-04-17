@@ -69,11 +69,12 @@ Dozens of aggregation methods are implemented in `pref_voting` and organized int
 
 ## Axioms
 
-The `pref_voting` package also contains an `Axiom` class for functions that check whether an aggregation method satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the aggreation method for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations with the relevant witnessing data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
+The `pref_voting` package also contains an `Axiom` class for functions that check whether an aggregation method satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the aggregation method for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations with the relevant witnessing data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
 
 ## Analysis
 
 Finally, `pref_voting` comes with functions that facilitate the analysis of aggregation methods, such as producing data on the frequency of axiom violations in elections generated using one of the available probability models.
+
 
 # Acknowledgements
 
