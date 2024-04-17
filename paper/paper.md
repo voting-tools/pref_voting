@@ -35,7 +35,7 @@ Preferential Voting Tools (`pref_voting`) is a Python package designed for resea
 
 # Statement of need
 
-Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;Aziz2019] often applies computer-assisted methods to the study of voting methods and other aggregation functions. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings, and `prelibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org). The `pref_voting` package provides functionality not available in those previous packages, as desribed below, while also interfacing with other packages. Like `pref_voting`, the `VoteLib` [@Simbera2021] and `VoteKit` [@MGGG2024] packages provides implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
+Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;Aziz2019] often applies computer-assisted methods to the study of voting methods and other aggregation functions. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings, and `preflibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org). The `pref_voting` package provides functionality not available in those previous packages, while also interfacing with other packages. Like `pref_voting`, the `VoteLib` [@Simbera2021] and `VoteKit` [@MGGG2024] packages provide implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
 
 # Functionality
 
@@ -61,11 +61,11 @@ For sampling profiles according to standard probability models, `pref_voting` in
 
 Several classes of aggregation methods are built into `pref_voting`:
 
-- `VotingMethod`: given `edata`, outputs a sorted list of candidates, representing tied winners;
+- `VotingMethod`: given `edata`, outputs a list of candidates, representing tied winners;
 - `ProbVotingMethod`: given `edata`, outputs a dictionary whose keys are candidates and whose values are probabilities;
 - `SocialWelfareFunctions`: given `edata`, outputs a `Ranking` of the candidates.
 
-Dozens of aggregation methods are implemented in `pref_voting` and organized into standard classes identified in voting theory, e.g., positional scoring rules, iterative methods, margin-based methods (weighted tournament methods), cardinal methods, etc.
+Dozens of aggregation methods are implemented in `pref_voting` and organized into standard classes identified in voting theory, e.g., positional scoring rules, iterative methods, margin-based methods (weighted tournament solutions), cardinal methods, etc.
 
 ## Axioms
 
