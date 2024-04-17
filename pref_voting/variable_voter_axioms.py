@@ -9,7 +9,7 @@
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 import numpy as np
-from itertools import product, combinations
+from itertools import product, combinations, permutations
 
 def divide_electorate(prof):
     """Given a Profile or ProfileWithTies object, yield all possible ways to divide the electorate into two nonempty electorates."""
@@ -956,6 +956,7 @@ tolerant_positive_involvement = Axiom(
     has_violation = has_tolerant_positive_involvement_violation,
     find_all_violations = find_all_tolerant_positive_involvement_violations, 
 )
+    
 
 def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coalition_size = 1, require_resoluteness = False, require_uniquely_weighted = False, check_probabilities = False):
     """
@@ -1128,10 +1129,151 @@ bullet_vote_positive_involvement = Axiom(
     find_all_violations = find_all_bullet_vote_positive_involvement_violations, 
 )
 
+def weakorders(A):
+    if not A:
+        yield {}
+        return
+    for k in range(1, len(A) + 1):
+        for B in itertools.combinations(A, k):
+            for order in weakorders(set(A) - set(B)):
+                new_order = {cand: rank + 1 for cand, rank in order.items()}
+                yield {**new_order, **{cand: 0 for cand in B}}
+
+def has_single_voter_resolvability_violation(prof, vm, verbose=False):
+    """
+    If prof is a Profile, returns True if there are multiple vm winners in prof and for one such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
+
+    If prof is a ProfileWithTies, returns True if there are multiple vm winners in prof and for one such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner. 
+
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise.
+    """
+
+    winners = vm(prof)
+
+    if isinstance(prof,ProfileWithTies):
+        prof.use_extended_strict_preference()
+
+    if len(winners) > 1:
+        for winner in winners:
+
+            found_voter_to_add = False
+
+            if isinstance(prof,Profile):
+                for r in permutations(prof.candidates):
+                    new_prof = Profile(prof.rankings + [r])
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+                   
+            if isinstance(prof,ProfileWithTies):
+                for _r in weakorders(prof.candidates):
+                    r = Ranking(_r)
+                    new_prof = ProfileWithTies(prof.rankings + [r], candidates = prof.candidates)
+                    new_prof.use_extended_strict_preference()
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+        
+            if not found_voter_to_add:
+
+                if verbose:
+                    if isinstance(prof,Profile):
+                        print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
+                    if isinstance(prof,ProfileWithTies):
+                        print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a Ranking.")
+                    print("")
+                    print("Profile:")
+                    prof.display()
+                    print(prof.description())
+                    print("")
+                    vm.display(prof)
+                    prof.display_margin_graph()
+                    print("")
+
+                return True
+            
+        return False
+
+def find_all_single_voter_resolvability_violations(prof, vm, verbose=False):
+    """
+    If prof is a Profile, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a linear ballot.
+
+    If prof is a ProfileWithTies, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a Ranking (allowing ties).
+
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+
+    Returns:
+        A List of candidates who win in the given profile but who cannot be made the unique winner by adding a ballot.
+    """
+
+    winners = vm(prof)
+
+    if isinstance(prof,ProfileWithTies):
+        prof.use_extended_strict_preference()
+
+    violations = list()
+
+    if len(winners) > 1:
+        for winner in winners:
+
+            found_voter_to_add = False
+
+            if isinstance(prof,Profile):
+                for r in permutations(prof.candidates):
+                    new_prof = Profile(prof.rankings + [r])
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+                   
+            if isinstance(prof,ProfileWithTies):
+                for _r in weakorders(prof.candidates):
+                    r = Ranking(_r)
+                    new_prof = ProfileWithTies(prof.rankings + [r], candidates = prof.candidates)
+                    new_prof.use_extended_strict_preference()
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+        
+            if not found_voter_to_add:
+
+                if verbose:
+                    if isinstance(prof,Profile):
+                        print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
+                    if isinstance(prof,ProfileWithTies):
+                        print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a Ranking.")
+                    print("")
+                    print("Profile:")
+                    prof.display()
+                    print(prof.description())
+                    print("")
+                    vm.display(prof)
+                    prof.display_margin_graph()
+                    print("")
+
+                violations.append(winner)
+            
+    return violations
+
+single_voter_resolvability = Axiom(
+    "Single-Voter Resolvability",
+    has_violation = has_single_voter_resolvability_violation,
+    find_all_violations = find_all_single_voter_resolvability_violations, 
+)
+
 variable_voter_axioms = [
     reinforcement,
     positive_involvement,
     negative_involvement,
     tolerant_positive_involvement,
-    bullet_vote_positive_involvement
+    bullet_vote_positive_involvement,
+    single_voter_resolvability,
 ]

@@ -42,4 +42,25 @@ Variable Voter Axioms
 
 ```
 
+## Bullet-Vote Positive Involvement
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_bullet_vote_positive_involvement_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_bullet_vote_positive_involvement_violations
+
+```
+
+## Single-Voter Resolvability
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_single_voter_resolvability_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations
+
+```
+
+
 
