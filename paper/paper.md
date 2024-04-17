@@ -16,9 +16,9 @@ authors:
     equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
 affiliations:
- - name: University of California, Berkeley, USA
+ - name: University of California, Berkeley
    index: 1
- - name: University of Maryland, USA
+ - name: University of Maryland
    index: 2
 date: 17 January 2024
 bibliography: paper.bib
