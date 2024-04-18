@@ -45,8 +45,8 @@ The `pref_voting` package includes classes for the most important representation
 
  - `Profile`: each voter linearly orders the candidates; 
  - `ProfileWithTies`: each voter ranks the candidates, allowing ties and omissions of candidates;
- - `GradeProfile`: each voter assigns to each candidate a grade from some finite list of grades; 
- - `UtilityProfile`: each voter assigns to each candidate a real number; 
+ - `GradeProfile`: each voter assigns grades from some finite list of grades to selected candidates (with approval ballots as a special case); 
+ - `UtilityProfile`: each voter assigns a real number to each candidate; 
  - `SpatialProfile`: each voter and each candidate is placed in a multi-dimensional space;
  - `MajorityGraph`: an edge from candidate A to candidate B represents that more voters rank A above B than vice versa;
  - `MarginGraph`: a weighted version of a `MajorityGraph`, where the weight on an edge represents the margin of victory (or other measure of strength of majority preference). 
