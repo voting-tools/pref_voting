@@ -31,11 +31,11 @@ aas-journal:
 
 # Summary
 
-Preferential Voting Tools (`pref_voting`) is a Python package designed for research in and applications of voting theory [@Dummett1984;@Brams2002;@Tideman2006;@Zwicker2016;@Pacuit2019], a subfield of social choice theory [@Arrow1963;@Fishburn1973;@Kelly1988;@Sen2017]. The basic problem of voting theory concerns how to combine "inputs" from many individual voters into a single social "output". For example, a common type of input to elicit from each voter is a *ranking* of some set of candidates according to the voter's preferences, while a common type of social output is the selection of a *winning candidate* (or perhaps a set of candidates tied for winning). A *voting method* is then a function that takes in a ranking from each voter and outputs a winning candidate (or set of tied candidates). Other functions may instead output a social ranking of the candidates [@Arrow1963], or a probability distribution over the candidates [@Brandt2017], etc., and other input types are also possible, such as grades that voters assign to candidates [@Balinski2010], or voter utility functions [@Aspremont2002;@Sen2017], etc. Faced with an aggregation function of any of these types, voting theorists study the function from several perspectives, including the general principles or "axioms" it satisfies [@Nurmi1987;@Nurmi1999;@Taylor2005;@Felsenthal2012], its statistical behavior according to various probability models for generating voter inputs [@Merrill1988;@Green-Armytage2016], the complexity of the function and related problems [@Faliszewski2009], and more. These studies are greatly facilitated by the implementation of algorithms for computing aggregation functions and checking their properties, which are provided in `pref_voting`.
+Preferential Voting Tools (`pref_voting`) is a Python package designed for research in and applications of voting theory [@Dummett1984;@Brams2002;@Tideman2006;@Zwicker2016;@Pacuit2019], a subfield of social choice theory [@Arrow1963;@Fishburn1973;@Kelly1988;@Sen2017]. The basic problem of voting theory concerns how to combine "inputs" from many individual voters into a single social "output". For example, a common type of input from each voter is a *ranking* of some set of candidates, while a common type of social output is the selection of a *winning candidate* (or perhaps a set of candidates tied for winning). A *voting method* is then a function that takes in a ranking from each voter and outputs a winning candidate (or set of tied candidates). Other functions may instead output a social ranking of the candidates [@Arrow1963], or a probability distribution over the candidates [@Brandt2017], etc., and other input types are also possible, such as sets of approved candidates [@Brams2007], or assignments of grades to candidates [@Balinski2010], or real-valued functions on the set of candidates [@Aspremont2002;@Sen2017], etc. Faced with a function of any of these types, voting theorists study the function from several perspectives, including the general principles or "axioms" it satisfies [@Nurmi1987;@Nurmi1999;@Felsenthal2012],  its susceptibility to manipulation by strategic voters [@Taylor2005], its statistical behavior according to various probability models for generating voter inputs [@Merrill1988;@Green-Armytage2016], the complexity of the function and related problems [@Faliszewski2009], and more. These studies are greatly facilitated by the implementation of algorithms for computing the relevant functions and checking their properties, which are provided in `pref_voting`.
 
 # Statement of need
 
-Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;@Aziz2019] often applies computer-assisted techniques to the study of voting methods and other aggregation functions. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `preflibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org), and `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings. The `pref_voting` package provides functionality not available in those previous packages, while also interfacing with `preflibtools` and `prefsampling`. Like `pref_voting`, the `VoteKit` [@MGGG2024] and `VoteLib` [@Simbera2021] packages provide implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
+Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;@Aziz2019] often applies computer-assisted techniques to the study of voting methods and other social choice mechanisms. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `preflibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org), and `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings. The `pref_voting` package provides functionality not available in these previous packages, while also interfacing with `preflibtools` and `prefsampling`. Like `pref_voting`, the `VoteKit` [@MGGG2024] and `VoteLib` [@Simbera2021] packages provide implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
 
 # Functionality
 
@@ -43,12 +43,12 @@ Research in the burgeoning field of *computational social choice* [@Brandt2016;@
 
 The `pref_voting` package includes classes for the most important representations of elections, or types of `edata`, used in voting theory: 
 
- - `Profile`: each voter has a linear order of the candidates; 
- - `ProfileWithTies`: each voter has a ranking of the candidates that may contain ties and may omit some candidates;
- - `GradeProfile`: voters assign to candidates grades from some finite list of grades; 
- - `UtilityProfile`: each voter has a cardinal utility function on the set of candidates; 
+ - `Profile`: each voter linearly orders the candidates; 
+ - `ProfileWithTies`: each voter ranks the candidates, allowing ties and omissions of candidates;
+ - `GradeProfile`: each voter assigns to each candidate a grade from some finite list of grades; 
+ - `UtilityProfile`: each voter assigns to each candidate a real number; 
  - `SpatialProfile`: each voter and each candidate is placed in a multi-dimensional space;
- - `MajorityGraph`: an edge from one candidate to another represents that a majority of voters prefer the first candidate to the second;
+ - `MajorityGraph`: an edge from candidate A to candidate B represents that more voters rank A above B than vice versa;
  - `MarginGraph`: a weighted version of a `MajorityGraph`, where the weight on an edge represents the margin of victory (or other measure of strength of majority preference). 
 
 The package also includes methods for transforming one type of representation into another, e.g., turning a `SpatialProfile` into a `UtilityProfile` given a choice of how spatial positions of voters and candidates determine voter utility functions [@MerrillGrofman1999], or turning a `MarginGraph` into a minimal `Profile` that induces that `MarginGraph` by solving an associated linear program, and so on. Other methods are included for standard voting-theoretic tests and operations, e.g., testing for the existence of Condorcet winners/losers, removing candidates, and so on. Methods are also included to import from and export to the PrefLib preference data format, the ABIF format [@Lanphier2024], and other data formats.
@@ -57,23 +57,23 @@ The package also includes methods for transforming one type of representation in
 
 For sampling profiles according to standard probability models, `pref_voting` interfaces with the `prefsampling` package. In addition, `pref_voting` contains functions for sampling other types of `edata` listed above, as well as functions for enumerating such objects up to certain equivalence relations.
 
-## Aggregation methods
+## Social choice mechanisms
 
-Several classes of aggregation methods are built into `pref_voting`:
+Several classes of social choice mechanisms are built into `pref_voting`:
 
 - `VotingMethod`: given `edata`, outputs a list of candidates, representing tied winners;
 - `ProbVotingMethod`: given `edata`, outputs a dictionary whose keys are candidates and whose values are probabilities;
 - `SocialWelfareFunctions`: given `edata`, outputs a ranking of the candidates.
 
-Dozens of aggregation methods are implemented in `pref_voting` and organized into standard groups identified in voting theory, e.g., positional scoring rules, iterative methods, margin-based methods (weighted tournament solutions), cardinal methods, etc.
+Dozens of such functions are implemented in `pref_voting` and organized into standard groups identified in voting theory, e.g., positional scoring rules, iterative methods, margin-based methods (weighted tournament solutions), cardinal methods, etc.
 
 ## Axioms
 
-The `pref_voting` package also contains an `Axiom` class for functions that check whether an aggregation method satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the aggregation method for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations with the relevant witnessing data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
+The `pref_voting` package also contains an `Axiom` class for functions that check whether a social choice mechanism satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the mechanism for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations together with relevant data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
 
 ## Analysis
 
-Finally, `pref_voting` comes with functions that facilitate the analysis of aggregation methods, such as producing data on the frequency of axiom violations in elections generated using one of the available probability models.
+Finally, `pref_voting` comes with functions that facilitate the analysis of social choice mechanisms, such as producing data on the frequency of axiom violations in elections generated using one of the available probability models.
 
 
 # Acknowledgements
