@@ -17,6 +17,7 @@ import math
 import random
 from scipy.stats import gamma
 from itertools import permutations
+from helper import weak_compositions
 
 from pref_voting.profiles_with_ties import ProfileWithTies
 from ortools.linear_solver import pywraplp
@@ -504,6 +505,42 @@ def generate_profile_with_groups(
     return profs[0] if num_profiles == 1 else profs
 
 
+def enumerate_anon_profile(num_cands, num_voters):
+    """A generator that enumerates all anonymous profiles with num_cands candidates and num_voters voters.
+
+    Args:
+        num_cands (int): Number of candidates.
+        num_voters (int): Number of voters.
+
+    Yields:
+        Profile: An anonymous profile.
+    """
+    
+    ballot_types = list(permutations(range(num_cands)))
+    num_ballot_types = len(ballot_types)
+
+    for comp in weak_compositions(num_voters, num_ballot_types):
+        yield Profile(ballot_types, rcounts = comp)
+
+
+def enumerate_anon_profile_with_ties(num_cands, num_voters):
+    """A generator that enumerates all anonymous profiles--allowing ties and omissions in ballots--with num_cands candidates and num_voters voters
+
+    Args:
+        num_cands (int): Number of candidates.
+        num_voters (int): Number of voters.
+
+    Yields:
+        ProfileWithTies: An anonymous profile.
+    """
+    
+    ballot_types = list(weak_orders(range(num_cands)))
+    num_ballot_types = len(ballot_types)
+
+    for comp in weak_compositions(num_voters, num_ballot_types):
+        yield ProfileWithTies(ballot_types, rcounts = comp)
+
+
 ####
 # Generating ProfilesWithTies
 ####
@@ -596,18 +633,18 @@ def generate_truncated_profile(
     return prof
 
 ####
-# Generating Profile from qualitative margin graph
+# Generating Profile from ordinal margin graph
 ####
 
 def minimal_profile_from_edge_order(cands, edge_order):
-    """Given a list of candidates and a list of edges (positive margin edges only) in order of descending strength, find a minimal profile whose qualitative margin graph has that edge order.
+    """Given a list of candidates and a list of edges (positive margin edges only) in order of descending strength, find a minimal profile whose ordinal margin graph has that edge order.
 
     Args: 
         cands (list): list of candidates
         edge_order (list): list of edges in order of descending strength
 
     Returns:
-        Profile: a profile whose qualitative margin graph has the given edge order
+        Profile: a profile whose ordinal margin graph has the given edge order
     """
 
     solver = pywraplp.Solver.CreateSolver("SAT")

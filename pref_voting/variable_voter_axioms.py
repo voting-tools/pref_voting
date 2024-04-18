@@ -10,6 +10,7 @@ from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 import numpy as np
 from itertools import product, combinations, permutations
+from helper import weak_orders
 
 def divide_electorate(prof):
     """Given a Profile or ProfileWithTies object, yield all possible ways to divide the electorate into two nonempty electorates."""
@@ -1129,16 +1130,6 @@ bullet_vote_positive_involvement = Axiom(
     find_all_violations = find_all_bullet_vote_positive_involvement_violations, 
 )
 
-def weakorders(A):
-    if not A:
-        yield {}
-        return
-    for k in range(1, len(A) + 1):
-        for B in itertools.combinations(A, k):
-            for order in weakorders(set(A) - set(B)):
-                new_order = {cand: rank + 1 for cand, rank in order.items()}
-                yield {**new_order, **{cand: 0 for cand in B}}
-
 def has_single_voter_resolvability_violation(prof, vm, verbose=False):
     """
     If prof is a Profile, returns True if there are multiple vm winners in prof and for one such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
@@ -1172,7 +1163,7 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False):
                         break
                    
             if isinstance(prof,ProfileWithTies):
-                for _r in weakorders(prof.candidates):
+                for _r in weak_orders(prof.candidates):
                     r = Ranking(_r)
                     new_prof = ProfileWithTies(prof.rankings + [r], candidates = prof.candidates)
                     new_prof.use_extended_strict_preference()
@@ -1235,7 +1226,7 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False):
                         break
                    
             if isinstance(prof,ProfileWithTies):
-                for _r in weakorders(prof.candidates):
+                for _r in weak_orders(prof.candidates):
                     r = Ranking(_r)
                     new_prof = ProfileWithTies(prof.rankings + [r], candidates = prof.candidates)
                     new_prof.use_extended_strict_preference()

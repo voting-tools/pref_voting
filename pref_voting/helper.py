@@ -5,6 +5,7 @@ from pref_voting.weighted_majority_graphs import MajorityGraph
 from pref_voting.rankings import Ranking
 from pref_voting.social_welfare_function import *
 from pref_voting.voting_method import *
+from itertools import combinations
 import random
 
 import networkx as nx
@@ -196,3 +197,25 @@ class SPO(object):
             self.P[a][b] = True
             self.preds[b].append(a)
             self.succs[a].append(b)
+
+def weak_orders(A):
+    """A generator for all weak orders on A"""
+    if not A:
+        yield {}
+        return
+    for k in range(1, len(A) + 1):
+        for B in itertools.combinations(A, k):
+            for order in weak_orders(set(A) - set(B)):
+                new_order = {cand: rank + 1 for cand, rank in order.items()}
+                yield {**new_order, **{cand: 0 for cand in B}}
+
+
+def weak_compositions(n, k):
+    """A generator for all weak compositions of n into k parts"""
+
+    if k == 1:
+        yield [n]
+    else:
+        for i in range(n + 1):
+            for comp in weak_compositions(n - i, k - 1):
+                yield [i] + comp

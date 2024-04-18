@@ -1,7 +1,9 @@
 Generate Profiles
 =======================================
 
-We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.html) package to generate profiles. There is a single function, ``generate_profile``, to interface with the prefsampling functions.  The following are the available probability models for generating profiles.: 
+# Sampling Profiles
+
+We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.html) package to sample profiles from standard probability functions. There is a single function, ``generate_profile``, to interface with the prefsampling functions.  The following are the available probability models for generating profiles: 
 
 1. Impartial Culture Model: generate a profile by sampling from a uniform distribution over profiles with $n$ candidates and $m$ voters, where each voter is equally likely to have any of the $n!$ linear orders on the candidates.
 
@@ -316,23 +318,39 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 
 ```
 
-## Generate a Profile with Groups
+## Generate a Profile with groups
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.generate_profile_with_groups
 
 ```
 
-## Generate a Profile with Truncated Linear Orders
+## Generate a Profile with truncated linear orders
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.generate_truncated_profile
 
 ```
 
-## Generate a Profile for a given qualitative margin graph
+## Generate a Profile for a given ordinal margin graph
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.minimal_profile_from_edge_order
+
+```
+
+# Enumerating profiles
+
+## Enumerate anonymous profiles
+
+```{eval-rst}
+.. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile
+
+```
+
+## Enumerate anonymous profiles with ties
+
+```{eval-rst}
+.. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile_with_ties
 
 ```
