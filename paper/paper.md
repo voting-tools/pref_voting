@@ -35,7 +35,7 @@ Preferential Voting Tools (`pref_voting`) is a Python package designed for resea
 
 # Statement of need
 
-Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;@Aziz2019] often applies computer-assisted techniques to the study of voting methods and other social choice mechanisms. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `preflibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org), and `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings. The `pref_voting` package provides functionality not available in these previous packages, while also interfacing with `preflibtools` and `prefsampling`. Like `pref_voting`, the `VoteKit` [@MGGG2024] and `VoteLib` [@Simbera2021] packages provide implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
+Research in the burgeoning field of *computational social choice* [@Brandt2016;@Geist2017;@Aziz2019] often applies computer-assisted techniques to the study of voting methods and other collective decision procedures. The aim of `pref_voting` is to contribute to a comprehensive set of tools for such research. Other packages in this area include `abcvoting` [@Lackner2023], which focuses on approval-based committee voting,  `preflibtools` [@Mattei2013], which contains tools for working with preference data from [PrefLib.org](https://PrefLib.org), and `prefsampling` [@Boehmer2024], which implements probability models for generating voter rankings. The `pref_voting` package provides functionality not available in these previous packages, while also interfacing with `preflibtools` and `prefsampling`. Like `pref_voting`, the `VoteKit` [@MGGG2024] and `VoteLib` [@Simbera2021] packages provide implementations of a number of voting methods; and like `prefsampling`, `VoteKit` provides tools for generating elections. However, neither package includes all the voting methods and functionality in `pref_voting`, as described below. The `pref_voting` package has already been used in research in computational social choice [@HKP2024]. The package can also be used by election administrators to determine election outcomes, as it is used in the backend of the [Stable Voting](https://stablevoting.org) website.
 
 # Functionality
 
@@ -57,9 +57,9 @@ The package also includes methods for transforming one type of representation in
 
 For sampling profiles according to standard probability models, `pref_voting` interfaces with the `prefsampling` package. In addition, `pref_voting` contains functions for sampling other types of `edata` listed above, as well as functions for enumerating such objects up to certain equivalence relations.
 
-## Social choice mechanisms
+## Collective decision procedures
 
-Several classes of social choice mechanisms are built into `pref_voting`:
+Several classes of collective decision procedures are built into `pref_voting`:
 
 - `VotingMethod`: given `edata`, outputs a list of candidates, representing tied winners;
 - `ProbVotingMethod`: given `edata`, outputs a dictionary whose keys are candidates and whose values are probabilities;
@@ -69,15 +69,15 @@ Dozens of such functions are implemented in `pref_voting` and organized into sta
 
 ## Axioms
 
-The `pref_voting` package also contains an `Axiom` class for functions that check whether a social choice mechanism satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the mechanism for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations together with relevant data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
+The `pref_voting` package also contains an `Axiom` class for functions that check whether a collective decision procedure satisfies a given axiom with respect to some `edata`. Each axiom comes with a `has_violation` method that checks whether there is at least one violation of the axiom by the procedure for the given `edata`, as well as a `find_all_violations` method that enumerates all such violations together with relevant data. Axioms are divided into several well-known groups from voting theory, e.g., dominance axioms, monotonicity axioms, variable voter axioms, variable candidate axioms, etc.
 
 ## Analysis
 
-Finally, `pref_voting` comes with functions that facilitate the analysis of social choice mechanisms, such as producing data on the frequency of axiom violations in elections generated using one of the available probability models.
+Finally, `pref_voting` comes with functions that facilitate the analysis of collective decision procedures, such as producing data on the frequency of axiom violations in elections generated using one of the available probability models.
 
 
 # Acknowledgements
 
-We thank Jobst Heitzig and Dominik Peters for helpful contributions and Zoi Terzopoulou for helpful feature requests.
+We thank Jobst Heitzig and Dominik Peters for helpful contributions, Zoi Terzopoulou for helpful feature requests, and all three for helpful feedback on this paper.
 
 # References
