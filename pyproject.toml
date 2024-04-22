@@ -25,6 +25,6 @@ matplotlib = "^3.5.2"
 nashpy = "^0.0.40"
 numba = "^0.58.0"
 ortools = "^9.8.0"
-prefsampling = "^0.1.0"
+prefsampling = "0.1.9"
 
 [tool.poetry.dev-dependencies]
