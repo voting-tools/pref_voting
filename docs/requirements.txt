@@ -20,4 +20,4 @@ nashpy
 seaborn
 numba
 preflibtools
-prefsampling==0.1.9
+prefsampling

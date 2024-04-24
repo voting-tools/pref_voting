@@ -400,16 +400,18 @@ def get_rankings(num_candidates, num_voters, **kwargs):
     elif probmodel == "euclidean":
         
         euclidean_spaces = {
-            "uniform": EuclideanSpace.UNIFORM,
-            "ball": EuclideanSpace.BALL,
-            "gaussian": EuclideanSpace.GAUSSIAN,
-            "sphere": EuclideanSpace.SPHERE,
+            "gaussian_ball": EuclideanSpace.GAUSSIAN_BALL,
+            "gaussian_cube": EuclideanSpace.GAUSSIAN_CUBE,
+            "unbounded_gaussian": EuclideanSpace.UNBOUNDED_GAUSSIAN,
+            "uniform_ball": EuclideanSpace.UNIFORM_BALL,
+            "uniform_cube": EuclideanSpace.UNIFORM_CUBE,
+            "uniform_sphere": EuclideanSpace.UNIFORM_SPHERE,
         }
 
         if 'space' in kwargs:
             space = kwargs['space']
         else:
-            space = "uniform"
+            space = "uniform_ball"
 
         if 'dimension' in kwargs:
             dimension = kwargs['dimension']
@@ -418,8 +420,9 @@ def get_rankings(num_candidates, num_voters, **kwargs):
 
         rankings = euclidean(num_voters,
                              num_candidates, 
-                             space=euclidean_spaces[space],
-                             dimension=dimension, 
+                             voters_positions=euclidean_spaces[space],
+                             candidates_positions=euclidean_spaces[space],
+                             num_dimensions=dimension, 
                              seed=seed) 
     
     else: 
