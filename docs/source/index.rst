@@ -67,9 +67,9 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Aggregation Methods
+   :caption: Collective Decision Procedures
 
-   aggregation_methods_overview
+   collective_decision_procedures
    scoring_methods
    iterative_methods
    c1_methods
@@ -87,7 +87,9 @@ Contents
 
    axioms_overview
    dominance_axioms
+   invariance_axioms
    monotonicity_axioms
+   strategic_axioms
    variable_voter_axioms
    variable_candidate_axioms
 
