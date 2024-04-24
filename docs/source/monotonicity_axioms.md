@@ -2,7 +2,7 @@ Monotonicity Axioms
 ==========
 
 
-## One-Rank Monotonicity
+## Monotonicity
 
 ```{eval-rst}
 
