@@ -6,19 +6,9 @@ Invariance Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_block_invariance_violation
+.. autofunction:: pref_voting.invariance_axioms.has_block_invariance_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_block_invariance_violations
-
-```
-
-## Upward Block Preservation
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.variable_voter_axioms.has_upward_block_preservation_violation
-
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_upward_block_preservation_violations
+.. autofunction:: pref_voting.invariance_axioms.find_all_block_invariance_violations
 
 ```
 
@@ -26,9 +16,19 @@ Invariance Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_downward_block_preservation_violation
+.. autofunction:: pref_voting.invariance_axioms.has_upward_block_preservation_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_downward_block_preservation_violations
+.. autofunction:: pref_voting.invariance_axioms.find_all_upward_block_preservation_violations
+
+```
+
+## Upward Block Preservation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.invariance_axioms.has_downward_block_preservation_violation
+
+.. autofunction:: pref_voting.invariance_axioms.find_all_downward_block_preservation_violations
 
 ```
 
@@ -36,9 +36,9 @@ Invariance Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_homogeneity_violation
+.. autofunction:: pref_voting.invariance_axioms.has_homogeneity_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_homogeneity_violations
+.. autofunction:: pref_voting.invariance_axioms.find_all_homogeneity_violations
 
 ```
 
@@ -46,9 +46,9 @@ Invariance Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_upward_homogeneity_violation
+.. autofunction:: pref_voting.invariance_axioms.has_upward_homogeneity_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_upward_homogeneity_violations
+.. autofunction:: pref_voting.invariance_axioms.find_all_upward_homogeneity_violations
 
 ```
 
@@ -56,8 +56,8 @@ Invariance Axioms
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.variable_voter_axioms.has_downward_homogeneity_violation
+.. autofunction:: pref_voting.invariance_axioms.has_downward_homogeneity_violation
 
-.. autofunction:: pref_voting.variable_voter_axioms.find_all_downward_homogeneity_violations
+.. autofunction:: pref_voting.invariance_axioms.find_all_downward_homogeneity_violations
 
 ```
