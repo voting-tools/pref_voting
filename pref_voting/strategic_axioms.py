@@ -9,7 +9,7 @@
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 from itertools import permutations
-from helper import weak_orders
+from pref_voting.helper import weak_orders
 
 def has_strategy_proofness_violation(prof, vm, set_preference = "single-winner", verbose=False):
     """
