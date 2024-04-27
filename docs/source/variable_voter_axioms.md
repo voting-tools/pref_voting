@@ -52,6 +52,16 @@ Variable Voter Axioms
 
 ```
 
+## Participation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_participation_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_participation_violations
+
+```
+
 ## Single-Voter Resolvability
 
 ```{eval-rst}
@@ -61,6 +71,3 @@ Variable Voter Axioms
 .. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations
 
 ```
-
-
-
