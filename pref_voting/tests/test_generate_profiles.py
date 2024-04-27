@@ -266,7 +266,7 @@ def test_euclidean():
 
     prof = generate_profile(4, 3, 
                              dim=2,
-                             space='uniform',
+                             space='gaussian_ball',
                              probmodel="euclidean")
     assert type(prof) == Profile
     assert len(prof.candidates) == 4
@@ -274,7 +274,7 @@ def test_euclidean():
 
     prof = generate_profile(4, 3, 
                              dim=2,
-                             space='ball',
+                             space='gaussian_cube',
                              probmodel="euclidean")
     assert type(prof) == Profile
     assert len(prof.candidates) == 4
@@ -282,7 +282,7 @@ def test_euclidean():
 
     prof = generate_profile(4, 3, 
                              dim=2,
-                             space='gaussian',
+                             space='unbounded_gaussian',
                              probmodel="euclidean")
     assert type(prof) == Profile
     assert len(prof.candidates) == 4
@@ -291,7 +291,23 @@ def test_euclidean():
 
     prof = generate_profile(4, 3, 
                              dim=4,
-                             space='sphere',
+                             space='uniform_ball',
+                             probmodel="euclidean")
+    assert type(prof) == Profile
+    assert len(prof.candidates) == 4
+    assert len(prof.rankings) == 3
+
+    prof = generate_profile(4, 3, 
+                             dim=2,
+                             space='uniform_cube',
+                             probmodel="euclidean")
+    assert type(prof) == Profile
+    assert len(prof.candidates) == 4
+    assert len(prof.rankings) == 3
+
+    prof = generate_profile(4, 3, 
+                             dim=2,
+                             space='uniform_sphere',
                              probmodel="euclidean")
     assert type(prof) == Profile
     assert len(prof.candidates) == 4

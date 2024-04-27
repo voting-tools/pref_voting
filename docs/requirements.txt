@@ -20,3 +20,4 @@ nashpy
 seaborn
 numba
 preflibtools
+prefsampling

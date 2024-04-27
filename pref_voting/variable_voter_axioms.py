@@ -10,7 +10,7 @@ from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 import numpy as np
 from itertools import product, combinations, permutations
-from helper import weak_orders
+from pref_voting.helper import weak_orders
 
 def divide_electorate(prof):
     """Given a Profile or ProfileWithTies object, yield all possible ways to divide the electorate into two nonempty electorates."""

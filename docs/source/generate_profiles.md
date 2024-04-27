@@ -206,22 +206,33 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
     prof = generate_profile(3, 5, 
                             probmodel="euclidean", 
                             dimensions=3, 
-                            space="uniform")
- 
-    prof = generate_profile(3, 5, 
-                            probmodel="euclidean", 
-                            dimensions=3, 
-                            space="ball")
+                            space="gaussian_ball")
+
 
     prof = generate_profile(3, 5, 
                             probmodel="euclidean", 
                             dimensions=3, 
-                            space="gaussian")
+                            space="gaussian_cube")
 
     prof = generate_profile(3, 5, 
                             probmodel="euclidean", 
                             dimensions=3, 
-                            space="sphere")
+                            space="unbounded_gaussian")
+
+    prof = generate_profile(3, 5, 
+                            probmodel="euclidean", 
+                            dimensions=3, 
+                            space="uniform_ball")
+    
+    prof = generate_profile(3, 5, 
+                            probmodel="euclidean", 
+                            dimensions=3, 
+                            space="uniform_cube")
+
+    prof = generate_profile(3, 5, 
+                            probmodel="euclidean", 
+                            dimensions=3, 
+                            space="uniform_sphere")
 
 ```
 
