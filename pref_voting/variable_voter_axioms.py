@@ -274,7 +274,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
         if uniform_coalition:
             for loser in losers:
 
-                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and prof.rankings.count(r) >= coalition_size]
+                relevant_ranking_types = [r for r in prof.ranking_types if prof.rankings.count(r) >= coalition_size]
 
                 for r in relevant_ranking_types:
 
@@ -302,6 +302,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     if loser in winners2:
 
                         if verbose:
+                            prof = prof.anonymize()
                             if coalition_size == 1:
                                 print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {str(r)}:")
                             else:
@@ -317,11 +318,11 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                                 print(f"Profile with voter removed:")
                             else:
                                 print(f"Profile with {coalition_size} voters removed:")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
                         return True
                     
@@ -356,6 +357,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         if winner in winners2 and len(winners) > len(winners2):
 
                             if verbose:
+                                prof = prof.anonymize()
                                 if coalition_size == 1:
                                     print(f"{winner} has a higher probability of winning after removing voter with the ranking {str(r)}:")
                                 else:
@@ -371,11 +373,11 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                                     print(f"Profile with voter removed:")
                                 else:
                                     print(f"Profile with {coalition_size} voters removed:")
-                                anonprof2 = prof2.anonymize()
-                                anonprof2.display()
-                                print(anonprof2.description())
-                                anonprof2.display_margin_graph()
-                                vm.display(anonprof2)
+                                prof2 = prof2.anonymize()
+                                prof2.display()
+                                print(prof2.description())
+                                prof2.display_margin_graph()
+                                vm.display(prof2)
                                 print("")
                             return True
 
@@ -413,6 +415,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                     if loser in winners2:
 
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                             print("")
                             print("Full profile:")
@@ -422,11 +425,11 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                             vm.display(prof)
                             print("")
                             print(f"Profile with coalition removed:")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
                         return True
                     
@@ -463,6 +466,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                         if winner in winners2 and len(winners) > len(winners2):
 
                             if verbose:
+                                prof = prof.anonymize()
                                 print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile:")
@@ -472,11 +476,11 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
                                 vm.display(prof)
                                 print("")
                                 print(f"Profile with coalition removed:")
-                                anonprof2 = prof2.anonymize()
-                                anonprof2.display()
-                                print(anonprof2.description())
-                                anonprof2.display_margin_graph()
-                                vm.display(anonprof2)
+                                prof2 = prof2.anonymize()
+                                prof2.display()
+                                print(prof2.description())
+                                prof2.display_margin_graph()
+                                vm.display(prof2)
                                 print("")
                             return True
     
@@ -549,6 +553,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                     if loser in winners2:
                         witnesses.append((loser, [r], [coalition_size]))
                         if verbose:
+                            prof = prof.anonymize()
                             if coalition_size == 1:
                                 print(f"{loser} loses in the full profile, but {loser} is a winner after removing voter with the ranking {str(r)}:")
                             else:
@@ -564,11 +569,11 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                                 print(f"Profile with voter removed:")
                             else:
                                 print(f"Profile with {coalition_size} voters removed:")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
             
             if check_probabilities:
@@ -601,6 +606,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         if winner in winners2 and len(winners) > len(winners2):
                             witnesses.append((winner, [r], [coalition_size]))
                             if verbose:
+                                prof = prof.anonymize()
                                 if coalition_size == 1:
                                     print(f"{winner} has a higher probability of winning after removing voter with the ranking {str(r)}:")
                                 else:
@@ -616,11 +622,11 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                                     print(f"Profile with voter removed:")
                                 else:
                                     print(f"Profile with {coalition_size} voters removed:")
-                                anonprof2 = prof2.anonymize()
-                                anonprof2.display()
-                                print(anonprof2.description())
-                                anonprof2.display_margin_graph()
-                                vm.display(anonprof2)
+                                prof2 = prof2.anonymize()
+                                prof2.display()
+                                print(prof2.description())
+                                prof2.display_margin_graph()
+                                vm.display(prof2)
                                 print("")
 
 
@@ -656,6 +662,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                     if loser in winners2:
                         witnesses.append((loser, coalition_rankings, coalition_rankings_counts))
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{loser} loses in the full profile, but {loser} is a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                             print("")
                             print("Full profile")
@@ -665,11 +672,11 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                             vm.display(prof)
                             print("")
                             print(f"Profile with coalition removed:")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
 
             if check_probabilities:
@@ -704,6 +711,7 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                         if winner in winners2 and len(winners) > len(winners2):
                             witnesses.append((winner, coalition_rankings, coalition_rankings_counts))
                             if verbose:
+                                prof = prof.anonymize()
                                 print(f"{winner} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
@@ -713,11 +721,11 @@ def find_all_positive_involvement_violations(prof, vm, verbose=False, violation_
                                 vm.display(prof)
                                 print("")
                                 print(f"Profile with coalition removed:")
-                                anonprof2 = prof2.anonymize()
-                                anonprof2.display()
-                                print(anonprof2.description())
-                                anonprof2.display_margin_graph()
-                                vm.display(anonprof2)
+                                prof2 = prof2.anonymize()
+                                prof2.display()
+                                print(prof2.description())
+                                prof2.display_margin_graph()
+                                vm.display(prof2)
                                 print("")
         
     return witnesses
@@ -759,6 +767,7 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
 
                     if winner not in vm(prof2):
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
@@ -768,11 +777,11 @@ def has_negative_involvement_violation(prof, vm, verbose=False, violation_type="
                             vm.display(prof)
                             print("")
                             print("Profile with voter removed")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
                         return True
                     
@@ -811,6 +820,7 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
                     if winner not in vm(prof2):
                         witnesses.append((winner, r))
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{winner} wins in the full profile, but {winner} is a loser after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
@@ -820,11 +830,11 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
                             vm.display(prof)
                             print("")
                             print("Profile with voter removed")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
     return witnesses
 
@@ -876,6 +886,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
 
                     if loser in vm(prof2):
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {rl}:")
                             print("")
                             print("Full profile")
@@ -885,11 +896,11 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
                             vm.display(prof)
                             print("")
                             print("Profile with voter removed")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
                         return True
                     
@@ -935,6 +946,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
                     if loser in vm(prof2):
                         witnesses.append((loser, r))
                         if verbose:
+                            prof = prof.anonymize()
                             print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {str(r)}:")
                             print("")
                             print("Full profile")
@@ -944,11 +956,11 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
                             vm.display(prof)
                             print("")
                             print("Profile with voter removed")
-                            anonprof2 = prof2.anonymize()
-                            anonprof2.display()
-                            print(anonprof2.description())
-                            anonprof2.display_margin_graph()
-                            vm.display(anonprof2)
+                            prof2 = prof2.anonymize()
+                            prof2.display()
+                            print(prof2.description())
+                            prof2.display_margin_graph()
+                            vm.display(prof2)
                             print("")
     return witnesses
                     
@@ -1001,14 +1013,14 @@ def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coal
 
         if w not in new_ws:
             if verbose:
-
+                prof = prof.anonymize()
+                new_prof = new_prof.anonymize()
                 print(f"Violation of Bullet Vote Positive Involvement for {vm.name}")
                 print("Original profile:")
                 prof.display()
                 print(prof.description())
                 prof.display_margin_graph()
                 vm.display(prof)
-
                 print("New profile:")
                 new_prof.display()
                 print(new_prof.description())
@@ -1021,20 +1033,20 @@ def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coal
         if check_probabilities and len(new_ws) > len(ws):
 
             if verbose:
-                    
-                    print(f"Violation of Probabilistic Bullet Vote Positive Involvement for {vm.name}")
-                    print("Original profile:")
-                    prof.display()
-                    print(prof.description())
-                    prof.display_margin_graph()
-                    vm.display(prof)
-    
-                    print("New profile:")
-                    new_prof.display()
-                    print(new_prof.description())
-                    new_prof.display_margin_graph()
-                    vm.display(new_prof)
-                    print("")
+                prof = prof.anonymize()
+                new_prof = new_prof.anonymize()
+                print(f"Violation of Probabilistic Bullet Vote Positive Involvement for {vm.name}")
+                print("Original profile:")
+                prof.display()
+                print(prof.description())
+                prof.display_margin_graph()
+                vm.display(prof)
+                print("New profile:")
+                new_prof.display()
+                print(new_prof.description())
+                new_prof.display_margin_graph()
+                vm.display(new_prof)
+                print("")
 
             return True
         
@@ -1085,14 +1097,14 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
 
         if w not in new_ws:
             if verbose:
-                
+                prof = prof.anonymize()
+                new_prof = new_prof.anonymize()
                 print(f"Violation of Bullet Vote Positive Involvement for {vm.name}")
                 print("Original profile:")
                 prof.display()
                 print(prof.description())
                 prof.display_margin_graph()
                 vm.display(prof)
-
                 print("New profile:")
                 new_prof.display()
                 print(new_prof.description())
@@ -1105,20 +1117,20 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
         if check_probabilities and len(new_ws) > len(ws):
                 
                 if verbose:
-                        
-                        print(f"Violation of Probabilistic Bullet Vote Positive Involvement for {vm.name}")
-                        print("Original profile:")
-                        prof.display()
-                        print(prof.description())
-                        prof.display_margin_graph()
-                        vm.display(prof)
-        
-                        print("New profile:")
-                        new_prof.display()
-                        print(new_prof.description())
-                        new_prof.display_margin_graph()
-                        vm.display(new_prof)
-                        print("")
+                    prof = prof.anonymize()
+                    new_prof = new_prof.anonymize()
+                    print(f"Violation of Probabilistic Bullet Vote Positive Involvement for {vm.name}")
+                    print("Original profile:")
+                    prof.display()
+                    print(prof.description())
+                    prof.display_margin_graph()
+                    vm.display(prof)
+                    print("New profile:")
+                    new_prof.display()
+                    print(new_prof.description())
+                    new_prof.display_margin_graph()
+                    vm.display(new_prof)
+                    print("")
     
                 violations.append(w)
         
@@ -1128,6 +1140,618 @@ bullet_vote_positive_involvement = Axiom(
     "Bullet Vote Positive Involvement",
     has_violation = has_bullet_vote_positive_involvement_violation,
     find_all_violations = find_all_bullet_vote_positive_involvement_violations, 
+)
+
+def has_participation_violation(prof, vm, verbose = False, violation_type = "Removal", coalition_size = 1, uniform_coalition = True, set_preference = "single-winner"):
+    """
+    If violation_type = "Removal", returns True if removing some voter(s) from prof changes the vm winning set such that the (each) voter prefers the new winner(s) to the original winner(s), according to the set_preference relation.
+
+    If violation_type = "Addition", returns True if adding some voter(s) from prof changes the vm winning set such that the (each) voter prefers the original winner(s) to the new winner(s), according to the set_preference relation.
+
+    If coalition_size > 1, checks for a violation involving a coalition of voters acting together.
+
+    If uniform_coalition = True, all voters in the coalition must have the same ranking.
+
+    If set_preference = "single-winner", a voter prefers a set A of candidates to a set B of candidates if A and B are singletons and the voter ranks the candidate in A above the candidate in B.
+
+    If set_preference = "weak-dominance", a voter prefers a set A to a set B if in their sincere ranking, all candidates in A are weakly above all candidates in B and some candidate in A is strictly above some candidate in B.
+
+    If set_preference = "optimist", a voter prefers a set A to a set B if in their sincere ranking, their favorite from A is above their favorite from B.
+
+    If set_preference = "pessimist", a voter prefers a set A to a set B if in their sincere ranking, their least favorite from A is above their least favorite from B.
+    
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        coalition_size: default is 1
+        uniform_coalition: default is True
+        set_preference: default is "single-winner". Other options are "weak-dominance", "optimist", and "pessimist".
+        
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise.
+
+    """
+    
+    winners = vm(prof)
+
+    if isinstance(prof,ProfileWithTies):
+        prof.use_extended_strict_preference()
+
+    found_manipulator = False
+
+    ranking_types = prof.ranking_types
+
+    ws = vm(prof)
+
+    if set_preference == "single-winner":
+        if len(ws) > 1:
+            return False
+        
+    if uniform_coalition:
+        
+        if violation_type == "Removal":
+
+            relevant_ranking_types = [r for r in prof.ranking_types if prof.rankings.count(r) >= coalition_size]
+
+            for r in relevant_ranking_types:
+                if not found_manipulator:
+
+                    ranking_tokens = [r for r in prof.rankings]
+
+                    for i in range(coalition_size):
+                        ranking_tokens.remove(r) # remove coalition_size-many tokens of the type of ranking
+
+                    if isinstance(prof,Profile):
+
+                        new_prof = Profile(ranking_tokens)
+                        new_ws = vm(new_prof)
+
+                        old_winner_to_compare = None
+                        new_winner_to_compare = None
+
+                        if set_preference == "single-winner" and len(new_ws) == 1:
+
+                            old_winner_to_compare = ws[0]
+                            new_winner_to_compare = new_ws[0] 
+                        
+                        elif set_preference == "weak-dominance":
+                            r_as_ranking = Ranking({c: i for i, c in enumerate(r)})
+                        
+                        elif set_preference == "optimist":
+                                
+                            old_winner_to_compare = [cand for cand in r if cand in ws][0]
+                            new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+
+                        elif set_preference == "pessimist":
+                            
+                            old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
+                            new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+
+                        if old_winner_to_compare is not None and r.index(old_winner_to_compare) > r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and r_as_ranking.weak_dom(new_ws,ws)):
+                            
+                            found_manipulator = True
+
+                            if verbose:
+                                prof = prof.anonymize()
+                                new_prof = new_prof.anonymize()
+                                print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                                if coalition_size == 1:
+                                    print(f"A voter with the ranking {r} can benefit by abstaining.")
+                                else:
+                                    print(f"{coalition_size} voters with the ranking {r} can benefit by jointly abstaining.")
+                                print("")
+                                print("Original Profile:")
+                                prof.display()
+                                print(prof.description())
+                                print("")
+                                vm.display(prof)
+                                prof.display_margin_graph()
+                                print("")
+                                if coalition_size == 1:
+                                    print("Profile if the voter abstains:")
+                                else:
+                                    print("Profile if the voters abstain:")
+                                new_prof.display()
+                                print(new_prof.description())
+                                print("")
+                                vm.display(new_prof)
+                                new_prof.display_margin_graph()
+
+                    if isinstance(prof,ProfileWithTies):
+                        r_dict = r.rmap
+
+                        new_prof = ProfileWithTies(ranking_tokens, candidates = prof.candidates)
+                        new_prof.use_extended_strict_preference()
+                        new_ws = vm(new_prof)
+
+                        ranked_old_winners = [c for c in ws if c in r_dict.keys()]
+                        ranked_new_winners = [c for c in new_ws if c in r_dict.keys()]
+
+                        rank_of_old_winner_to_compare = None
+                        rank_of_new_winner_to_compare = None
+
+                        if set_preference == "single-winner" and len(new_ws) == 1:
+
+                            rank_of_old_winner_to_compare = r_dict[ws[0]] if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = r_dict[new_ws[0]] if ranked_new_winners else math.inf
+                        
+                        elif set_preference == "optimist":
+
+                            rank_of_old_winner_to_compare = min([r_dict[c] for c in ranked_old_winners]) if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = min([r_dict[c] for c in ranked_new_winners]) if ranked_new_winners else math.inf
+
+                        elif set_preference == "pessimist":
+
+                            rank_of_old_winner_to_compare = max([r_dict[c] for c in ranked_old_winners]) if ranked_old_winners == ws else math.inf
+                            rank_of_new_winner_to_compare = max([r_dict[c] for c in ranked_new_winners]) if ranked_new_winners == new_ws else math.inf
+
+                        if rank_of_old_winner_to_compare is not None and rank_of_old_winner_to_compare > rank_of_new_winner_to_compare or (set_preference == "weak-dominance" and r.weak_dom(new_ws,ws,use_extended_preferences=True)):
+                            
+                            found_manipulator = True
+
+                            if verbose:
+                                prof = prof.anonymize()
+                                new_prof = new_prof.anonymize()
+                                print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                                if coalition_size == 1:
+                                    print(f"A voter with the ranking {r} can benefit by abstaining.")
+                                else:
+                                    print(f"{coalition_size} voters with the ranking {r} can benefit by jointly abstaining.")
+                                print("")
+                                print("Original Profile:")
+                                prof.display()
+                                print(prof.description())
+                                print("")
+                                vm.display(prof)
+                                prof.display_margin_graph()
+                                print("")
+                                if coalition_size == 1:
+                                    print("Profile if the voter abstains:")
+                                else:
+                                    print("Profile if the voters abstain:")
+                                new_prof.display()
+                                print(new_prof.description())
+                                print("")
+                                vm.display(new_prof)
+                                new_prof.display_margin_graph()
+
+        if violation_type == "Addition":
+
+            if isinstance(prof,Profile):
+
+                for new_r in permutations(prof.candidates):
+                    if not found_manipulator:
+
+                        new_ranking_tokens = [r for r in prof.rankings]
+
+                        for i in range(coalition_size):
+                            new_ranking_tokens.append(new_r)
+
+                        new_prof = Profile(new_ranking_tokens)
+                        new_ws = vm(new_prof)
+
+                        old_winner_to_compare = None
+                        new_winner_to_compare = None
+
+                        if set_preference == "single-winner" and len(new_ws) == 1:
+
+                            old_winner_to_compare = ws[0]
+                            new_winner_to_compare = new_ws[0] 
+                        
+                        elif set_preference == "weak-dominance":
+                            new_r_as_ranking = Ranking({c: i for i, c in enumerate(new_r)})
+                        
+                        elif set_preference == "optimist":
+                                
+                            old_winner_to_compare = [cand for cand in r if cand in ws][0]
+                            new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+
+                        elif set_preference == "pessimist":
+                            
+                            old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
+                            new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+
+                        if old_winner_to_compare is not None and new_r.index(old_winner_to_compare) < new_r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and new_r_as_ranking.weak_dom(ws,new_ws)):
+                            
+                            found_manipulator = True
+
+                            if verbose:
+                                prof = prof.anonymize()
+                                new_prof = new_prof.anonymize()
+                                print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                                if coalition_size == 1:
+                                    print(f"A new voter who joins with the ranking {new_r} will wish they had abstained.")
+                                else:
+                                    print(f"{coalition_size} new voters who join with the ranking {new_r} will wish they had jointly abstained.")
+                                print("")
+                                print("Original Profile without voter(s):")
+                                prof.display()
+                                print(prof.description())
+                                print("")
+                                vm.display(prof)
+                                prof.display_margin_graph()
+                                print("")
+                                print("New Profile with voter(s) added:")
+                                new_prof.display()
+                                print(new_prof.description())
+                                print("")
+                                vm.display(new_prof)
+                                new_prof.display_margin_graph()
+
+            if isinstance(prof,ProfileWithTies):
+
+                for _new_r in weak_orders(prof.candidates):
+                    new_r = Ranking(_new_r)
+                    new_r_dict = new_r.rmap
+
+                    if not found_manipulator:
+
+                        new_ranking_tokens = [r for r in prof.rankings] 
+
+                        for i in range(coalition_size):
+                            new_ranking_tokens.append(new_r)
+
+                        new_prof = ProfileWithTies(new_ranking_tokens, candidates = prof.candidates)
+                        new_prof.use_extended_strict_preference()
+                        new_ws = vm(new_prof)
+
+                        ranked_old_winners = [c for c in ws if c in new_r_dict.keys()]
+                        ranked_new_winners = [c for c in new_ws if c in new_r_dict.keys()]
+
+                        rank_of_old_winner_to_compare = None
+                        rank_of_new_winner_to_compare = None
+
+                        if set_preference == "single-winner" and len(new_ws) == 1:
+
+                            rank_of_old_winner_to_compare = new_r_dict[ws[0]] if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = new_r_dict[new_ws[0]] if ranked_new_winners else math.inf
+                        
+                        elif set_preference == "optimist":
+
+                            rank_of_old_winner_to_compare = min([new_r_dict[c] for c in ranked_old_winners]) if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = min([new_r_dict[c] for c in ranked_new_winners]) if ranked_new_winners else math.inf
+
+                        elif set_preference == "pessimist":
+
+                            rank_of_old_winner_to_compare = max([new_r_dict[c] for c in ranked_old_winners]) if ranked_old_winners == ws else math.inf
+                            rank_of_new_winner_to_compare = max([new_r_dict[c] for c in ranked_new_winners]) if ranked_new_winners == new_ws else math.inf
+
+                        if rank_of_old_winner_to_compare is not None and rank_of_old_winner_to_compare < rank_of_new_winner_to_compare or (set_preference == "weak-dominance" and r.weak_dom(ws,new_ws,use_extended_preferences=True)):
+                            
+                            found_manipulator = True
+
+                            if verbose:
+                                prof = prof.anonymize()
+                                new_prof = new_prof.anonymize()
+                                print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                                if coalition_size == 1:
+                                    print(f"A new voter who joins with the ranking {new_r} will wish they had abstained.")
+                                else:
+                                    print(f"{coalition_size} new voters who join with the ranking {new_r} will wish they had jointly abstained.")
+                                print("")
+                                print("Original Profile without voter(s):")
+                                prof.display()
+                                print(prof.description())
+                                print("")
+                                vm.display(prof)
+                                prof.display_margin_graph()
+                                print("")
+                                print("New Profile with voter(s) added:")
+                                new_prof.display()
+                                print(new_prof.description())
+                                print("")
+                                vm.display(new_prof)
+                                new_prof.display_margin_graph()
+            
+    return found_manipulator
+
+def find_all_participation_violations(prof, vm, verbose = False, violation_type = "Removal", coalition_size = 1, uniform_coalition = True, set_preference = "single-winner"):
+    """
+    Returns a list of tuples (preferred_winners, dispreferred_winners, ranking) witnessing violations of participation.
+
+    If violation_type = "Removal", returns a list of tuples (preferred_winners, dispreferred_winners, ranking) such that removing coalition_size-many voters with the given ranking changes the winning set from the preferred_winners to the dispreferred_winners, according to the set_preference relation.
+
+    If violation_type = "Addition", returns a list of tuples (preferred_winners, dispreferred_winners, ranking) such that adding coalition_size-many voters with the given ranking changes the winning set from the preferred_winners to the dispreferred_winners, according to the set_preference relation.
+
+    If coalition_size > 1, checks for a violation involving a coalition of voters acting together.
+
+    If uniform_coalition = True, all voters in the coalition must have the same ranking.
+
+    If set_preference = "single-winner", a voter prefers a set A of candidates to a set B of candidates if A and B are singletons and the voter ranks the candidate in A above the candidate in B.
+
+    If set_preference = "weak-dominance", a voter prefers a set A to a set B if in their sincere ranking, all candidates in A are weakly above all candidates in B and some candidate in A is strictly above some candidate in B.
+
+    If set_preference = "optimist", a voter prefers a set A to a set B if in their sincere ranking, their favorite from A is above their favorite from B.
+
+    If set_preference = "pessimist", a voter prefers a set A to a set B if in their sincere ranking, their least favorite from A is above their least favorite from B.
+
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Removal"
+        coalition_size: default is 1
+        uniform_coalition: default is True
+        set_preference: default is "single-winner". Other options are "weak-dominance", "optimist", and "pessimist".
+
+    Returns:
+        A List of tuples (preferred_winners, dispreferred_winners, ranking) witnessing violations of participation.
+    """
+
+    violations = list()
+
+    winners = vm(prof)
+
+    if isinstance(prof,ProfileWithTies):
+        prof.use_extended_strict_preference()
+
+    ranking_types = prof.ranking_types
+
+    ws = vm(prof)
+
+    if set_preference == "single-winner":
+        if len(ws) > 1:
+            return False
+        
+    if uniform_coalition:
+        
+        if violation_type == "Removal":
+
+            relevant_ranking_types = [r for r in prof.ranking_types if prof.rankings.count(r) >= coalition_size]
+
+            for r in relevant_ranking_types:
+                ranking_tokens = [r for r in prof.rankings]
+
+                for i in range(coalition_size):
+                    ranking_tokens.remove(r) # remove coalition_size-many tokens of the type of ranking
+
+                if isinstance(prof,Profile):
+
+                    new_prof = Profile(ranking_tokens)
+                    new_ws = vm(new_prof)
+
+                    old_winner_to_compare = None
+                    new_winner_to_compare = None
+
+                    if set_preference == "single-winner" and len(new_ws) == 1:
+
+                        old_winner_to_compare = ws[0]
+                        new_winner_to_compare = new_ws[0] 
+                    
+                    elif set_preference == "weak-dominance":
+                        r_as_ranking = Ranking({c: i for i, c in enumerate(r)})
+                    
+                    elif set_preference == "optimist":
+                            
+                        old_winner_to_compare = [cand for cand in r if cand in ws][0]
+                        new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+
+                    elif set_preference == "pessimist":
+                        
+                        old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
+                        new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+
+                    if old_winner_to_compare is not None and r.index(old_winner_to_compare) > r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and r_as_ranking.weak_dom(new_ws,ws)):
+                        
+                        violations.append((ws, new_ws, r))
+
+                        if verbose:
+                            prof = prof.anonymize()
+                            new_prof = new_prof.anonymize()
+                            print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                            if coalition_size == 1:
+                                print(f"A voter with the ranking {r} can benefit by abstaining.")
+                            else:
+                                print(f"{coalition_size} voters with the ranking {r} can benefit by jointly abstaining.")
+                            print("")
+                            print("Original Profile:")
+                            prof.display()
+                            print(prof.description())
+                            print("")
+                            vm.display(prof)
+                            prof.display_margin_graph()
+                            print("")
+                            if coalition_size == 1:
+                                print("Profile if the voter abstains:")
+
+                            else:
+                                print("Profile if the voters abstain:")
+                            new_prof.display()
+                            print(new_prof.description())
+                            print("")
+                            vm.display(new_prof)
+                            new_prof.display_margin_graph()
+
+                if isinstance(prof,ProfileWithTies):
+                    r_dict = r.rmap
+
+                    new_prof = ProfileWithTies(ranking_tokens, candidates = prof.candidates)
+                    new_prof.use_extended_strict_preference()
+                    new_ws = vm(new_prof)
+
+                    ranked_old_winners = [c for c in ws if c in r_dict.keys()]
+                    ranked_new_winners = [c for c in new_ws if c in r_dict.keys()]
+
+                    rank_of_old_winner_to_compare = None
+                    rank_of_new_winner_to_compare = None
+
+                    if set_preference == "single-winner" and len(new_ws) == 1:
+
+                        rank_of_old_winner_to_compare = r_dict[ws[0]] if ranked_old_winners else math.inf
+                        rank_of_new_winner_to_compare = r_dict[new_ws[0]] if ranked_new_winners else math.inf
+                    
+                    elif set_preference == "optimist":
+
+                        rank_of_old_winner_to_compare = min([r_dict[c] for c in ranked_old_winners]) if ranked_old_winners else math.inf
+                        rank_of_new_winner_to_compare = min([r_dict[c] for c in ranked_new_winners]) if ranked_new_winners else math.inf
+
+                    elif set_preference == "pessimist":
+
+                        rank_of_old_winner_to_compare = max([r_dict[c] for c in ranked_old_winners]) if ranked_old_winners == ws else math.inf
+                        rank_of_new_winner_to_compare = max([r_dict[c] for c in ranked_new_winners]) if ranked_new_winners == new_ws else math.inf
+
+                    if rank_of_old_winner_to_compare is not None and rank_of_old_winner_to_compare > rank_of_new_winner_to_compare or (set_preference == "weak-dominance" and r.weak_dom(new_ws,ws,use_extended_preferences=True)):
+                        
+                        violations.append((ws, new_ws, r_dict))
+
+                        if verbose:
+                            prof = prof.anonymize()
+                            new_prof = new_prof.anonymize()
+                            print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                            if coalition_size == 1:
+                                print(f"A voter with the ranking {r} can benefit by abstaining.")
+                            else:
+                                print(f"{coalition_size} voters with the ranking {r} can benefit by jointly abstaining.")
+                            print("")
+                            print("Original Profile:")
+                            prof.display()
+                            print(prof.description())
+                            print("")
+                            vm.display(prof)
+                            prof.display_margin_graph()
+                            print("")
+                            if coalition_size == 1:
+                                print("Profile if the voter abstains:")
+                            else:
+                                print("Profile if the voters abstain:")
+                            new_prof.display()
+                            print(new_prof.description())
+                            print("")
+                            vm.display(new_prof)
+                            new_prof
+
+        if violation_type == "Addition":
+
+            if isinstance(prof,Profile):
+
+                for new_r in permutations(prof.candidates):
+                    new_ranking_tokens = [r for r in prof.rankings]
+
+                    for i in range(coalition_size):
+                        new_ranking_tokens.append(new_r)
+
+                    new_prof = Profile(new_ranking_tokens)
+                    new_ws = vm(new_prof)
+
+                    old_winner_to_compare = None
+                    new_winner_to_compare = None
+
+                    if set_preference == "single-winner" and len(new_ws) == 1:
+
+                        old_winner_to_compare = ws[0]
+                        new_winner_to_compare = new_ws[0] 
+                    
+                    elif set_preference == "weak-dominance":
+                        new_r_as_ranking = Ranking({c: i for i, c in enumerate(new_r)})
+                    
+                    elif set_preference == "optimist":
+                            
+                        old_winner_to_compare = [cand for cand in r if cand in ws][0]
+                        new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+
+                    elif set_preference == "pessimist":
+                        
+                        old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
+                        new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+
+                    if old_winner_to_compare is not None and new_r.index(old_winner_to_compare) < new_r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and new_r_as_ranking.weak_dom(ws,new_ws)):
+                        
+                        violations.append((ws, new_ws, new_r))
+
+                        if verbose:
+                            prof = prof.anonymize()
+                            new_prof = new_prof.anonymize()
+                            print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                            if coalition_size == 1:
+                                print(f"A new voter who joins with the ranking {new_r} will wish they had abstained.")
+                            else:
+                                print(f"{coalition_size} new voters who join with the ranking {new_r} will wish they had jointly abstained.")
+                            print("")
+                            print("Original Profile without voter(s):")
+                            prof.display()
+                            print(prof.description())
+                            print("")
+                            vm.display(prof)
+                            prof.display_margin_graph()
+                            print("")
+                            print("New Profile with voter(s) added:")
+                            new_prof.display()
+                            print(new_prof.description())
+                            print("")
+                            vm.display(new_prof)
+                            new_prof.display_margin_graph()
+
+            if isinstance(prof,ProfileWithTies):
+                
+                    for _new_r in weak_orders(prof.candidates):
+                        new_r = Ranking(_new_r)
+                        new_r_dict = new_r.rmap
+    
+                        new_ranking_tokens = [r for r in prof.rankings] 
+    
+                        for i in range(coalition_size):
+                            new_ranking_tokens.append(new_r)
+    
+                        new_prof = ProfileWithTies(new_ranking_tokens, candidates = prof.candidates)
+                        new_prof.use_extended_strict_preference()
+                        new_ws = vm(new_prof)
+    
+                        ranked_old_winners = [c for c in ws if c in new_r_dict.keys()]
+                        ranked_new_winners = [c for c in new_ws if c in new_r_dict.keys()]
+    
+                        rank_of_old_winner_to_compare = None
+                        rank_of_new_winner_to_compare = None
+    
+                        if set_preference == "single-winner" and len(new_ws) == 1:
+    
+                            rank_of_old_winner_to_compare = new_r_dict[ws[0]] if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = new_r_dict[new_ws[0]] if ranked_new_winners else math.inf
+                        
+                        elif set_preference == "optimist":
+    
+                            rank_of_old_winner_to_compare = min([new_r_dict[c] for c in ranked_old_winners]) if ranked_old_winners else math.inf
+                            rank_of_new_winner_to_compare = min([new_r_dict[c] for c in ranked_new_winners]) if ranked_new_winners else math.inf
+    
+                        elif set_preference == "pessimist":
+    
+                            rank_of_old_winner_to_compare = max([new_r_dict[c] for c in ranked_old_winners]) if ranked_old_winners == ws else math.inf
+                            rank_of_new_winner_to_compare = max([new_r_dict[c] for c in ranked_new_winners]) if ranked_new_winners == new_ws else math.inf
+    
+                        if rank_of_old_winner_to_compare is not None and rank_of_old_winner_to_compare < rank_of_new_winner_to_compare or (set_preference == "weak-dominance" and r.weak_dom(ws,new_ws,use_extended_preferences=True)):
+                            
+                            violations.append((ws, new_ws, new_r_dict))
+    
+                            if verbose:
+                                prof = prof.anonymize()
+                                new_prof = new_prof.anonymize()
+                                print(f"Violation of Participation for {vm.name} under the {set_preference} set preference.")
+                                if coalition_size == 1:
+                                    print(f"A new voter who joins with the ranking {new_r} will wish they had abstained.")
+                                else:
+                                    print(f"{coalition_size} new voters who join with the ranking {new_r} will wish they had jointly abstained.")
+                                print("")
+                                print(" Original Profile without voter(s):")
+                                prof.display()
+                                print(prof.description())
+                                print("")
+                                vm.display(prof)
+                                prof.display_margin_graph()
+                                print("")
+                                print("New Profile with voter(s) added:")
+                                new_prof.display()
+                                print(new_prof.description())
+                                print("")
+                                vm.display(new_prof)
+                                new_prof.display_margin_graph()
+
+    return violations
+
+participation = Axiom(
+    "Participation",
+    has_violation = has_participation_violation,
+    find_all_violations = find_all_participation_violations, 
 )
 
 def has_single_voter_resolvability_violation(prof, vm, verbose=False):
@@ -1174,6 +1798,7 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False):
             if not found_voter_to_add:
 
                 if verbose:
+                    prof = prof.anonymize()
                     if isinstance(prof,Profile):
                         print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
                     if isinstance(prof,ProfileWithTies):
@@ -1237,6 +1862,7 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False):
             if not found_voter_to_add:
 
                 if verbose:
+                    prof = prof.anonymize()
                     if isinstance(prof,Profile):
                         print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
                     if isinstance(prof,ProfileWithTies):
@@ -1266,5 +1892,6 @@ variable_voter_axioms = [
     negative_involvement,
     tolerant_positive_involvement,
     bullet_vote_positive_involvement,
+    participation,
     single_voter_resolvability,
 ]
