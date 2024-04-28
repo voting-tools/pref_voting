@@ -1,7 +1,7 @@
 Margin Methods
 =======================================
 
-Suppose that $\mathbf{P}$ is a profile.   We write $\mathcal{M}(\mathbf{P})$ for the margin graph of $\mathbf{P}$. 
+Suppose that $\mathbf{P}$ is a profile.  We write $\mathcal{M}(\mathbf{P})$ for the margin graph of $\mathbf{P}$. 
 
 A voting method $F$ is **margin-based** if it satisfies the following invariance property: For all $\mathbf{P}, \mathbf{P}'$, if $\mathcal{M}(\mathbf{P})= \mathcal{M}(\mathbf{P}')$, then $F(\mathbf{P}) = F(\mathbf{P}')$. 
 

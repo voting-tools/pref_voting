@@ -613,34 +613,9 @@ def _ranked_pairs_from_stacks(edata, curr_cands = None):
         A sorted list of candidates. 
 
     .. seealso::
-
-        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.is_stack`
-
-    :Example: 
-
-    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
-        :context: reset  
-        :include-source: True
-
-
-    .. code-block:: 
-
-        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
-
-        ranked_pairs.display(mg)
-        ranked_pairs_from_stacks.display(mg)
-
-
-    .. exec_code:: 
-        :hide_code:
-
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
         
-        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+        :meth:`pref_voting.margin_based_methods.is_stack`
 
-        ranked_pairs.display(mg)
-        ranked_pairs_from_stacks.display(mg)
 
     """    
 
@@ -658,6 +633,14 @@ def _ranked_pairs_basic(
     curr_cands = None, 
     strength_function = None):   
     """An implementation of Ranked Pairs that uses a basic algorithm. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates. 
+
     """
     candidates = edata.candidates if curr_cands is None else curr_cands 
     cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
@@ -752,7 +735,10 @@ def ranked_pairs(
 
 
 @vm(name="Ranked Pairs")
-def ranked_pairs_with_test(edata, curr_cands = None, strength_function = None):   
+def ranked_pairs_with_test(
+    edata, 
+    curr_cands=None, 
+    strength_function=None):   
     """Find the Ranked Pairs winners, but include a test to determined if it will take too long to compute the Ranked Pairs winners. If the calculation of the winners will take too long, return None.
 
     .. important::
@@ -905,18 +891,17 @@ def ranked_pairs_tb(
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`, :meth:`pref_voting.margin_based_methods.ranked_pairs_from_stacks`
+        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`
 
     .. exec_code::
 
         from pref_voting.profiles import Profile
-        from pref_voting.margin_based_methods import ranked_pairs_from_stacks, ranked_pairs_tb, ranked_pairs_zt
+        from pref_voting.margin_based_methods import ranked_pairs_tb, ranked_pairs_zt
 
         prof = Profile([[2, 3, 1, 0], [0, 3, 1, 2], [1, 3, 2, 0], [2, 1, 3, 0]], [1, 1, 1, 1])
 
         prof.display()
 
-        ranked_pairs_from_stacks.display(prof)
         ranked_pairs_tb.display(prof)
         ranked_pairs_tb.display(prof, tie_breaker = [3, 2, 1, 0])
         ranked_pairs_zt.display(prof)
@@ -972,18 +957,17 @@ def ranked_pairs_zt(
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`, :meth:`pref_voting.margin_based_methods.ranked_pairs_from_stacks`
+        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`
 
     .. exec_code::
 
         from pref_voting.profiles import Profile
-        from pref_voting.margin_based_methods import ranked_pairs_from_stacks, ranked_pairs_tb, ranked_pairs_zt
+        from pref_voting.margin_based_methods import ranked_pairs_tb, ranked_pairs_zt
 
         prof = Profile([[2, 3, 1, 0], [0, 3, 1, 2], [1, 3, 2, 0], [2, 1, 3, 0]], [1, 1, 1, 1])
 
         prof.display()
 
-        ranked_pairs_from_stacks.display(prof)
         ranked_pairs_tb.display(prof)
         ranked_pairs_tb.display(prof, tie_breaker = [3, 2, 1, 0])
         ranked_pairs_zt.display(prof)
@@ -1327,7 +1311,7 @@ def simple_stable_voting(
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.simple_stable_voting_faster`, :meth:`pref_voting.margin_based_methods.stable_voting`
+        :meth:`pref_voting.margin_based_methods.stable_voting`
 
     :Example: 
 
@@ -1478,7 +1462,7 @@ def stable_voting(
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.simple_stable_faster`, :meth:`pref_voting.margin_based_methods.simple_stable_voting`
+        :meth:`pref_voting.margin_based_methods.simple_stable_voting`
 
 
     :Example: 
@@ -1634,9 +1618,7 @@ mg_vms = [
     #river,
     #river_with_test, 
     simple_stable_voting,
-    #simple_stable_voting_faster,
     stable_voting,
-    #stable_voting_faster,
     essential,
     weighted_covering,
     loss_trimmer

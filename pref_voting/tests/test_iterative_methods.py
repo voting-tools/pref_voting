@@ -7,140 +7,204 @@ import pytest
     (instant_runoff, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (ranked_choice, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (hare, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (instant_runoff_tb, {
         'condorcet_cycle': [1], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (instant_runoff_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (bottom_two_runoff_instant_runoff, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (bottom_two_runoff_instant_runoff_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (benham, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (benham_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (benham_tb, {
         'condorcet_cycle': [1], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (plurality_with_runoff_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (coombs, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (coombs_tb, {
         'condorcet_cycle': [1], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (coombs_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (baldwin, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (baldwin_tb, {
         'condorcet_cycle': [1], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (baldwin_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (strict_nanson, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (weak_nanson, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (iterated_removal_cl, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (raynaud, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (tideman_alternative_smith, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (tideman_alternative_smith_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (tideman_alternative_schwartz, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (tideman_alternative_schwartz_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (woodall, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    }),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (knockout, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
-    })
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
 ])
 def test_methods(
     voting_method, expected, 
-    condorcet_cycle, 
+    condorcet_cycle,
+    profile_single_voter, 
     linear_profile_0):
     assert voting_method(condorcet_cycle) == expected['condorcet_cycle']
     assert voting_method(linear_profile_0) == expected['linear_profile_0']
     if 'linear_profile_0_curr_cands' in expected:
         assert voting_method(linear_profile_0, curr_cands=[1, 2]) == expected['linear_profile_0_curr_cands']
+    assert voting_method(profile_single_voter) == expected['profile_single_voter']
+    assert voting_method(profile_single_voter, curr_cands=[0, 1]) == expected['profile_single_voter_curr_cands']
 
 
 def test_instant_runoff_for_truncated_linear_orders():
@@ -163,13 +227,12 @@ def test_instant_runoff_with_explanation(condorcet_cycle, linear_profile_0):
     prof = Profile([[0, 1, 2], [0, 1, 2], [1, 2, 0], [2, 1, 0]])
     ws, exp = instant_runoff_with_explanation(prof)
     assert ws == [0]
-    assert exp == [[1,2]]
-
+    assert exp == [[1, 2]]
 
 def test_coombs_with_explanation(condorcet_cycle, linear_profile_0):
     ws, exp = coombs_with_explanation(condorcet_cycle)
     assert ws == [0, 1, 2]
-    assert exp == [[0,1,2]]
+    assert exp == [[0, 1, 2]]
     ws, exp = coombs_with_explanation(linear_profile_0)
     assert ws == [0]
     assert exp == []
