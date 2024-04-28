@@ -41,21 +41,7 @@ def condorcet_cycle_prof_with_ties():
         'condorcet_cycle_prof': [0, 1, 2], 
         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
     }),
-    (split_cycle_Floyd_Warshall, {
-        'condorcet_cycle': [0, 1, 2], 
-        'cycle': [1], 
-        'linear_margin_graph_0': [0],
-        'linear_margin_graph_0_curr_cands': [1],
-        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    }),
     (beat_path, {
-        'condorcet_cycle': [0, 1, 2], 
-        'cycle': [1], 
-        'linear_margin_graph_0': [0],
-        'linear_margin_graph_0_curr_cands': [1],
-        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    }),
-    (beat_path_Floyd_Warshall, {
         'condorcet_cycle': [0, 1, 2], 
         'cycle': [1], 
         'linear_margin_graph_0': [0],
@@ -70,20 +56,6 @@ def condorcet_cycle_prof_with_ties():
         'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
     }),
     (ranked_pairs_with_test, {
-        'condorcet_cycle': [0, 1, 2], 
-        'cycle': [1], 
-        'linear_margin_graph_0': [0],
-        'linear_margin_graph_0_curr_cands': [1],
-        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    }),
-    # (ranked_pairs_zt, {
-    #     'condorcet_cycle': [0, 1, 2], 
-    #     'cycle': [1], 
-    #     'linear_margin_graph_0': [0],
-    #     'linear_margin_graph_0_curr_cands': [1],
-    #     'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    # }),
-    (ranked_pairs_from_stacks, {
         'condorcet_cycle': [0, 1, 2], 
         'cycle': [1], 
         'linear_margin_graph_0': [0],
@@ -125,21 +97,7 @@ def condorcet_cycle_prof_with_ties():
         'linear_margin_graph_0_curr_cands': [1],
         'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
     }),
-    (simple_stable_voting_faster, {
-        'condorcet_cycle': [0, 1, 2], 
-        'cycle': [1], 
-        'linear_margin_graph_0': [0],
-        'linear_margin_graph_0_curr_cands': [1],
-        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    }),
     (stable_voting, {
-        'condorcet_cycle': [0, 1, 2], 
-        'cycle': [1], 
-        'linear_margin_graph_0': [0],
-        'linear_margin_graph_0_curr_cands': [1],
-        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    }),
-    (stable_voting_faster, {
         'condorcet_cycle': [0, 1, 2], 
         'cycle': [1], 
         'linear_margin_graph_0': [0],
@@ -153,13 +111,13 @@ def condorcet_cycle_prof_with_ties():
         'linear_margin_graph_0_curr_cands': [1],
         'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
     }),
-    # (weighted_covering, {
-    #     'condorcet_cycle': [0, 1, 2], 
-    #     'cycle': [0, 1, 2], 
-    #     'linear_margin_graph_0': [0],
-    #     'linear_margin_graph_0_curr_cands': [1],
-    #     'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
-    # }),
+    (weighted_covering, {
+        'condorcet_cycle': [0, 1, 2], 
+        'cycle': [0, 1, 2], 
+        'linear_margin_graph_0': [0, 1],
+        'linear_margin_graph_0_curr_cands': [1],
+        'condorcet_cycle_prof': [0, 1, 2],         'condorcet_cycle_prof_with_ties': ['a', 'b', 'c']
+    }),
     (loss_trimmer, {
         'condorcet_cycle': [0, 1, 2], 
         'cycle': [1], 
@@ -184,3 +142,80 @@ def test_margin_based_methods(
 
     assert voting_method(condorcet_cycle_prof) == expected['condorcet_cycle_prof']
     assert voting_method(condorcet_cycle_prof_with_ties) == expected['condorcet_cycle_prof_with_ties']
+
+def test_different_algorithms_split_cycle(condorcet_cycle, linear_margin_graph_0):
+    assert split_cycle(condorcet_cycle, algorithm='basic') == [0, 1, 2]
+    assert split_cycle(condorcet_cycle, curr_cands=[0, 1], algorithm='basic') == [0]
+    assert split_cycle(linear_margin_graph_0, algorithm='basic') == [0]
+    assert split_cycle(linear_margin_graph_0, curr_cands=[1, 2], algorithm='basic') == [1]
+
+    assert split_cycle(condorcet_cycle, algorithm='floyd_warshall') == [0, 1, 2]
+    assert split_cycle(condorcet_cycle, curr_cands=[0, 1], algorithm='floyd_warshall') == [0]
+    assert split_cycle(linear_margin_graph_0, algorithm='floyd_warshall') == [0]
+    assert split_cycle(linear_margin_graph_0, curr_cands=[1, 2], algorithm='floyd_warshall') == [1]
+
+    with pytest.raises(ValueError) as exc_info:
+        split_cycle(linear_margin_graph_0, algorithm='unknown')
+    assert str(exc_info.value) == "Invalid algorithm specified."
+
+def test_different_algorithms_beat_path(condorcet_cycle, linear_margin_graph_0):
+    assert beat_path(condorcet_cycle, algorithm='basic') == [0, 1, 2]
+    assert beat_path(condorcet_cycle, curr_cands=[0, 1], algorithm='basic') == [0]
+    assert beat_path(linear_margin_graph_0, algorithm='basic') == [0]
+    assert beat_path(linear_margin_graph_0, curr_cands=[1, 2], algorithm='basic') == [1]
+
+    assert beat_path(condorcet_cycle, algorithm='floyd_warshall') == [0, 1, 2]
+    assert beat_path(condorcet_cycle, curr_cands=[0, 1], algorithm='floyd_warshall') == [0]
+    assert beat_path(linear_margin_graph_0, algorithm='floyd_warshall') == [0]
+    assert beat_path(linear_margin_graph_0, curr_cands=[1, 2], algorithm='floyd_warshall') == [1]
+
+    with pytest.raises(ValueError) as exc_info:
+        beat_path(linear_margin_graph_0, algorithm='unknown')
+    assert str(exc_info.value) == "Invalid algorithm specified."
+
+def test_different_algorithms_ranked_pairs(condorcet_cycle, linear_margin_graph_0):
+    assert ranked_pairs(condorcet_cycle, algorithm='basic') == [0, 1, 2]
+    assert ranked_pairs(condorcet_cycle, curr_cands=[0, 1], algorithm='basic') == [0]
+    assert ranked_pairs(linear_margin_graph_0, algorithm='basic') == [0]
+    assert ranked_pairs(linear_margin_graph_0, curr_cands=[1, 2], algorithm='basic') == [1]
+
+    assert ranked_pairs(condorcet_cycle, algorithm='from_stacks') == [0, 1, 2]
+    assert ranked_pairs(condorcet_cycle, curr_cands=[0, 1], algorithm='from_stacks') == [0]
+    assert ranked_pairs(linear_margin_graph_0, algorithm='from_stacks') == [0]
+    assert ranked_pairs(linear_margin_graph_0, curr_cands=[1, 2], algorithm='from_stacks') == [1]
+
+    with pytest.raises(ValueError) as exc_info:
+        ranked_pairs(linear_margin_graph_0, algorithm='unknown')
+    assert str(exc_info.value) == "Invalid algorithm specified."
+
+
+def test_different_algorithms_simple_stable_voting(condorcet_cycle, linear_margin_graph_0):
+    assert simple_stable_voting(condorcet_cycle, algorithm='basic') == [0, 1, 2]
+    assert simple_stable_voting(condorcet_cycle, curr_cands=[0, 1], algorithm='basic') == [0]
+    assert simple_stable_voting(linear_margin_graph_0, algorithm='basic') == [0]
+    assert simple_stable_voting(linear_margin_graph_0, curr_cands=[1, 2], algorithm='basic') == [1]
+
+    assert simple_stable_voting(condorcet_cycle, algorithm='with_condorcet_check') == [0, 1, 2]
+    assert simple_stable_voting(condorcet_cycle, curr_cands=[0, 1], algorithm='with_condorcet_check') == [0]
+    assert simple_stable_voting(linear_margin_graph_0, algorithm='with_condorcet_check') == [0]
+    assert simple_stable_voting(linear_margin_graph_0, curr_cands=[1, 2], algorithm='with_condorcet_check') == [1]
+
+    with pytest.raises(ValueError) as exc_info:
+        simple_stable_voting(linear_margin_graph_0, algorithm='unknown')
+    assert str(exc_info.value) == "Invalid algorithm specified."
+
+
+def test_different_algorithms_stable_voting(condorcet_cycle, linear_margin_graph_0):
+    assert stable_voting(condorcet_cycle, algorithm='basic') == [0, 1, 2]
+    assert stable_voting(condorcet_cycle, curr_cands=[0, 1], algorithm='basic') == [0]
+    assert stable_voting(linear_margin_graph_0, algorithm='basic') == [0]
+    assert stable_voting(linear_margin_graph_0, curr_cands=[1, 2], algorithm='basic') == [1]
+
+    assert stable_voting(condorcet_cycle, algorithm='with_condorcet_check') == [0, 1, 2]
+    assert stable_voting(condorcet_cycle, curr_cands=[0, 1], algorithm='with_condorcet_check') == [0]
+    assert stable_voting(linear_margin_graph_0, algorithm='with_condorcet_check') == [0]
+    assert stable_voting(linear_margin_graph_0, curr_cands=[1, 2], algorithm='with_condorcet_check') == [1]
+
+    with pytest.raises(ValueError) as exc_info:
+        stable_voting(linear_margin_graph_0, algorithm='unknown')
+    assert str(exc_info.value) == "Invalid algorithm specified."

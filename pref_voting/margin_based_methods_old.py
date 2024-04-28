@@ -15,6 +15,7 @@ import math
 from itertools import product, permutations, combinations, chain
 import networkx as nx
 
+
 @vm(name = "Minimax")
 def minimax(edata, curr_cands = None, strength_function = None):   
     """
@@ -64,7 +65,6 @@ def minimax(edata, curr_cands = None, strength_function = None):
               for c in candidates}
     min_score = min(scores.values())
     return sorted([c for c in candidates if scores[c] == min_score])
-
 
 def minimax_scores(edata, curr_cands = None, score_method="margins"):
     """Return the minimax scores for each candidate, where the minimax score for :math:`c` is -1 * the maximum pairwise majority loss. 
@@ -136,11 +136,13 @@ def maximal_elements(g):
     return [n for n in g.nodes if g.in_degree(n) == 0]
 
 
-def _beat_path_basic(edata, 
-                     curr_cands = None, 
-                     strength_function = None): 
-    """An implementation of the Beat Path method that uses a basic algorithm.  This is not efficient for large graphs.
-    
+@vm(name="Beat Path")
+def beat_path(edata, curr_cands = None, strength_function = None):   
+    """For candidates :math:`a` and :math:`b`, a **path** from :math:`a` to :math:`b` is a sequence 
+    :math:`x_1, \ldots, x_n` of distinct candidates  with  :math:`x_1=a` and :math:`x_n=b` such that 
+    for :math:`1\leq k\leq n-1`, :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The **strength of a path**
+    is the minimal margin along that path.  Say that :math:`a` defeats :math:`b` according to Beat Path if the the strength of the strongest path from :math:`a` to :math:`b` is greater than the strength of the strongest path from :math:`b` to :math:`a`. Then, the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule. 
+
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
@@ -149,8 +151,37 @@ def _beat_path_basic(edata,
     Returns: 
         A sorted list of candidates. 
 
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.beat_path_Floyd_Warshall`, :meth:`pref_voting.margin_based_methods.beat_path_defeat`
+
+    :Example: 
+
+    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
+        :context: reset  
+        :include-source: True
+
+
+    .. code-block:: 
+
+        from pref_voting.margin_based_methods import beat_path
+
+        beat_path.display(mg)
+
+
+    .. exec_code:: 
+        :hide_code:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import beat_path
+        
+        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+        
+        beat_path.display(mg)
+
+
     """
-    
+
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function
     
@@ -172,10 +203,8 @@ def _beat_path_basic(edata,
     return sorted(list(winners))
 
 
-def _beat_path_floyd_warshall(
-        edata, 
-        curr_cands = None, 
-        strength_function = None):   
+@vm(name="Beat Path")
+def beat_path_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
     """An implementation of Beat Path using a variation of the Floyd-Warshall Algorithm
     See https://en.wikipedia.org/wiki/Schulze_method#Implementation)
  
@@ -186,6 +215,37 @@ def _beat_path_floyd_warshall(
 
     Returns: 
         A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.beat_path`, :meth:`pref_voting.margin_based_methods.beat_path_defeat`
+
+
+    :Example: 
+
+    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
+        :context: reset  
+        :include-source: True
+
+
+    .. code-block:: 
+
+        from pref_voting.margin_based_methods import beat_path_Floyd_Warshall
+
+        beat_path.display(mg)
+        beat_path_Floyd_Warshall.display(mg)
+
+
+    .. exec_code:: 
+        :hide_code:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import beat_path, beat_path_Floyd_Warshall
+        
+        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+
+        beat_path.display(mg)
+        beat_path_Floyd_Warshall.display(mg)
 
     """
 
@@ -211,65 +271,6 @@ def _beat_path_floyd_warshall(
                 if strength[j_idx][i_idx] > strength[i_idx][j_idx]:
                     winners[i] = False
     return sorted([c for c in candidates if winners[c]])
-
-@vm(name="Beat Path")
-def beat_path(
-    edata, 
-    curr_cands = None, 
-    strength_function = None, 
-    algorithm = 'floyd_warshall'):  
-
-    """For candidates :math:`a` and :math:`b`, a **path** from :math:`a` to :math:`b` is a sequence 
-    :math:`x_1, \ldots, x_n` of distinct candidates  with  :math:`x_1=a` and :math:`x_n=b` such that 
-    for :math:`1\leq k\leq n-1`, :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The **strength of a path**
-    is the minimal margin along that path.  Say that :math:`a` defeats :math:`b` according to Beat Path if the the strength of the strongest path from :math:`a` to :math:`b` is greater than the strength of the strongest path from :math:`b` to :math:`a`. Then, the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-        algorithm (str): Specify which algorithm to use.  Options are 'floyd_warshall' (the default) and 'basic'.
-
-    Returns: 
-        A sorted list of candidates. 
-
-    .. seealso::
-
-        :meth:`pref_voting.margin_based_methods.beat_path_defeat`
-
-    :Example: 
-
-    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
-        :context: reset  
-        :include-source: True
-
-
-    .. code-block:: 
-
-        from pref_voting.margin_based_methods import beat_path
-
-        beat_path.display(mg)
-
-
-    .. exec_code:: 
-        :hide_code:
-
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import beat_path
-        
-        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
-        
-        beat_path.display(mg)
-        beat_path.display(mg, algorithm='floyd_warshall') 
-        beat_path.display(mg, algorithm='basic')
-    """
-
-    if algorithm == 'floyd_warshall':
-        return _beat_path_floyd_warshall(edata, curr_cands = curr_cands, strength_function = strength_function)
-    elif algorithm == 'basic':
-        return _beat_path_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
-    else:
-        raise ValueError("Invalid algorithm specified.")
 
 def beat_path_defeat(edata, curr_cands = None, strength_function = None):   
     """Returns the defeat relation for Beat Path. 
@@ -320,9 +321,7 @@ def beat_path_defeat(edata, curr_cands = None, strength_function = None):
                     defeat_graph.add_weighted_edges_from([(j,i,s_matrix[j_idx][i_idx])])
 
     return defeat_graph
-
-
-
+    
 def has_strong_path(A, source, target, k):
     """Given a square matrix A, return True if there is a path from source to target in the associated directed graph     where each edge has a weight greater than or equal to k, and False otherwise."""
     
@@ -341,12 +340,54 @@ def has_strong_path(A, source, target, k):
 
     return dfs(source)
 
-def _split_cycle_basic(
-        edata, 
-        curr_cands = None, 
-        strength_function = None):
-    """An implementation of Split Cycle based on the mathematical definition.  This is more efficient than the floyd_warshall implementation. 
+@vm(name="Split Cycle")
+def split_cycle(edata, curr_cands = None, strength_function = None):
+
+    """A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  
+    
+    If candidate x has a positive margin over y and (x,y) is not the weakest edge in a cycle, then x defeats y. Equivalently, if x has a positive margin over y and there is no path from y back to x of strength at least the margin of x over y, then x defeats y. 
+    
+    The candidates that are undefeated are the Split Cycle winners.
+
+    See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.split_cycle_Floyd_Warshall`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
+
+    :Example: 
+
+    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
+        :context: reset  
+        :include-source: True
+
+
+    .. code-block:: 
+
+        from pref_voting.margin_based_methods import split_cycle
+
+        split_cycle.display(mg)
+
+
+    .. exec_code:: 
+        :hide_code:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import split_cycle
+        
+        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+        
+        split_cycle.display(mg)
     """
+    
     strength_matrix, cand_to_cindex = edata.strength_matrix(curr_cands = curr_cands, strength_function=strength_function)
 
     candidates = edata.candidates if curr_cands is None else curr_cands  
@@ -363,13 +404,52 @@ def _split_cycle_basic(
 
     return sorted(potential_winners)
 
-def _split_cycle_floyd_warshall(
-        edata, 
-        curr_cands = None, 
-        strength_function = None):   
+
+@vm(name="Split Cycle")
+def split_cycle_Floyd_Warshall(edata, curr_cands = None, strength_function = None):   
     """An implementation of Split Cycle based on the Floyd-Warshall Algorithm. 
 
     See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.split_cycle`, :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
+
+
+    :Example: 
+
+    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
+        :context: reset  
+        :include-source: True
+
+
+    .. code-block:: 
+
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
+
+        split_cycle.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
+
+
+    .. exec_code:: 
+        :hide_code:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import split_cycle, split_cycle_Floyd_Warshall
+        
+        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+        
+        split_cycle.display(mg)
+        split_cycle_Floyd_Warshall.display(mg)
+
 
     """
 
@@ -401,67 +481,6 @@ def _split_cycle_floyd_warshall(
                 if s_matrix[j_idx][i_idx] > strength[i_idx][j_idx]: # the main difference with Beat Path
                     winners[i] = False
     return sorted([c for c in candidates if winners[c]])
-
-@vm(name="Split Cycle")
-def split_cycle(
-    edata, 
-    curr_cands=None, 
-    strength_function=None,
-    algorithm='basic'):
-
-    """A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  
-    
-    If candidate x has a positive margin over y and (x,y) is not the weakest edge in a cycle, then x defeats y. Equivalently, if x has a positive margin over y and there is no path from y back to x of strength at least the margin of x over y, then x defeats y. 
-    
-    The candidates that are undefeated are the Split Cycle winners.
-
-    See https://github.com/epacuit/splitcycle and the paper https://arxiv.org/abs/2004.02350 for more information. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-        algorithm (str): Specify which algorithm to use.  Options are 'basic' (the default) and 'floyd_warshall'.
-
-    Returns: 
-        A sorted list of candidates. 
-
-    .. seealso::
-
-        :meth:`pref_voting.margin_based_methods.split_cycle_defeat`
-
-    :Example: 
-
-    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
-        :context: reset  
-        :include-source: True
-
-    .. code-block:: 
-
-        from pref_voting.margin_based_methods import split_cycle
-
-        split_cycle.display(mg)
-
-
-    .. exec_code:: 
-        :hide_code:
-
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import split_cycle
-        
-        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
-        
-        split_cycle.display(mg)
-        split_cycle.display(mg, algorithm='basic')
-        split_cycle.display(mg, algorithm='floyd_warshall')
-    """
-    
-    if algorithm == 'basic':
-        return _split_cycle_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
-    elif algorithm == 'floyd_warshall':
-        return _split_cycle_floyd_warshall(edata, curr_cands = curr_cands, strength_function = strength_function)
-    else:
-        raise ValueError("Invalid algorithm specified.")
 
 
 def split_cycle_defeat(edata, curr_cands = None, strength_function = None):   
@@ -523,6 +542,7 @@ def split_cycle_defeat(edata, curr_cands = None, strength_function = None):
     return defeat_graph
 
 
+
 # flatten a 2d list - turn a 2d list into a single list of items
 flatten = lambda l: [item for sublist in l for item in sublist]
 
@@ -536,85 +556,25 @@ def does_create_cycle(g, edge):
             return True
     return False
 
-
-
-def powerset(iterable):
+@vm(name="Ranked Pairs")
+def ranked_pairs(edata, curr_cands = None, strength_function = None):   
     """
-    Return the powerset of ``iterable``
+    Order the edges in the margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle.  If there are ties in the margins, break the ties using a tie-breaking rule: a linear ordering over the edges.   A candidate is a Ranked Pairs winner if it wins according to some tie-breaking rule. Also known as Tideman's Rule.
 
-    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
-    """
-    s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
-
-
-def is_stack(edata, cand_list, curr_cands=None): 
-    """
-    A **stack** is a linear order :math:`L` on the candidate such that for all candidates :math:`a` and :math:`b`, if :math:`aLb`, then there are distinct candidates :math:`x_1,\dots,x_n` with :math:`x_1=a` and :math:`x_n=b` such that :math:`x_i L x_{i+1}` and for all :math:`i\in \{1,\dots, n-1\}`, the margin of :math:`x_1` over :math:`x_{i+1}` is greater than or equal to the margin of :math:`b` over :math:`a`.
-
-    This definition is due to Zavist and Tideman 1989, and is used as an alternative characterization of Ranked Pairs: :math:`a` is a Ranked Pairs winner if and only if :math:`a` is the maximum element of some stack. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        cand_list (list): The list of candidates that may be a stack
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-
-    Returns: 
-        True if ``cand_list`` is a stack and False otherwise
-
-    :Example: 
-    
-    .. plot::  margin_graphs_examples/mg_ex_rp_stacks.py
-        :context: reset  
-        :include-source: True
-
-
-    .. exec_code::
+    .. warning:: 
+        This method can take a very long time to find winners. 
         
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import is_stack
-        from itertools import permutations
-        
-        mg = MarginGraph([0, 1, 2], [(0, 1, 2), (1, 2, 4), (2, 0, 2)])
-        
-        for clist in permutations(mg.candidates): 
-            print(f"{clist} {'is' if is_stack(mg, clist) else 'is not'} a stack")
-            
-    """
-    
-    candidates = curr_cands if curr_cands is not None else edata.candidates
-    cand_pairs = [(a, b) if cand_list.index(a) < cand_list.index(b) else (b, a) for a, b in combinations(candidates, 2)]
-        
-    for a, b in cand_pairs:
-        other_cands = [c for c in candidates if c != a and c != b]
-        found_path = False
-        
-        sublist = cand_list[cand_list.index(a) + 1:cand_list.index(b)]
-        
-        for indices in powerset(range(len(sublist))): 
-            
-            path = [a] + [sublist[i] for i in sorted(indices)] + [b]
-            margins = [edata.margin(xi, path[i + 1]) for i, xi in enumerate(path[0:-1])]
-            if all([cand_list.index(xi) < cand_list.index(path[i+1]) for i, xi in enumerate(path[0:-1])]) and all([m >= edata.margin(b, a) for m in margins]): 
-                found_path = True
-                break
-        if not found_path: 
-            return False
-    return True
-
-def _ranked_pairs_from_stacks(edata, curr_cands = None): 
-    """Find the Ranked Pairs winners by iterating over all permutations of candidates (restricted to ``curr_cands`` if not None), and checking if the list is a stack. 
-
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
         A sorted list of candidates. 
 
     .. seealso::
 
-        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.is_stack`
+        :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`, :meth:`pref_voting.margin_based_methods.ranked_pairs_zt`, :meth:`pref_voting.margin_based_methods.ranked_pairs_defeats`
 
     :Example: 
 
@@ -625,39 +585,21 @@ def _ranked_pairs_from_stacks(edata, curr_cands = None):
 
     .. code-block:: 
 
-        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
+        from pref_voting.margin_based_methods import ranked_pairs
 
         ranked_pairs.display(mg)
-        ranked_pairs_from_stacks.display(mg)
 
 
     .. exec_code:: 
         :hide_code:
 
         from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
+        from pref_voting.margin_based_methods import ranked_pairs
         
         mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
-
+        
         ranked_pairs.display(mg)
-        ranked_pairs_from_stacks.display(mg)
 
-    """    
-
-    candidates = curr_cands if curr_cands is not None else edata.candidates
-    winners = list()
-    for clist in permutations(candidates): 
-        isstack = is_stack(edata, clist, curr_cands = curr_cands)
-        if isstack: 
-            winners.append(clist[0])
-            
-    return sorted(list(set(winners)))
-
-def _ranked_pairs_basic(
-    edata, 
-    curr_cands = None, 
-    strength_function = None):   
-    """An implementation of Ranked Pairs that uses a basic algorithm. 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands 
     cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
@@ -686,70 +628,6 @@ def _ranked_pairs_basic(
         else: 
             winners = candidates
     return sorted(list(set(winners)))
-
-
-@vm(name="Ranked Pairs")
-def ranked_pairs(
-    edata, 
-    curr_cands=None, 
-    strength_function=None, 
-    algorithm='basic'):   
-    """
-    Order the edges in the margin graph from largest to smallest and lock them in in that order, skipping edges that create a cycle.  If there are ties in the margins, break the ties using a tie-breaking rule: a linear ordering over the edges.   A candidate is a Ranked Pairs winner if it wins according to some tie-breaking rule. Also known as Tideman's Rule.
-
-    .. warning:: 
-        This method can take a very long time to find winners. 
-        
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-        algorithm (str, optional): Specify which algorithm to use.  Options are 'basic' (the default) and 'from_stacks'.
-
-    Returns: 
-        A sorted list of candidates. 
-
-    .. seealso::
-
-        :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`, :meth:`pref_voting.margin_based_methods.ranked_pairs_zt`, :meth:`pref_voting.margin_based_methods.ranked_pairs_defeats`
-
-    :Example: 
-
-    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
-        :context: reset  
-        :include-source: True
-
-
-    .. code-block:: 
-
-        from pref_voting.margin_based_methods import ranked_pairs
-
-        ranked_pairs.display(mg)
-        ranked_pairs.display(mg, algorithm='basic') 
-        ranked_pairs.display(mg, algorithm='from_stacks')    
-
-
-    .. exec_code:: 
-        :hide_code:
-
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import ranked_pairs
-        
-        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
-        
-        ranked_pairs.display(mg)
-        ranked_pairs.display(mg, algorithm='basic')
-        ranked_pairs.display(mg, algorithm='from_stacks')
-
-    """
-
-    if algorithm == 'basic':
-        return _ranked_pairs_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
-    elif algorithm == 'from_stacks':
-        return _ranked_pairs_from_stacks(edata, curr_cands = curr_cands)
-    else:
-        raise ValueError("Invalid algorithm specified.")
-
 
 @vm(name="Ranked Pairs")
 def ranked_pairs_with_test(edata, curr_cands = None, strength_function = None):   
@@ -884,13 +762,124 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         winners.append(maximal_elements(rp_defeat)[0])
     return rp_defeats
 
+def powerset(iterable):
+    """
+    Return the powerset of ``iterable``
+
+    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+
+def is_stack(edata, cand_list, curr_cands=None): 
+    """
+    A **stack** is a linear order :math:`L` on the candidate such that for all candidates :math:`a` and :math:`b`, if :math:`aLb`, then there are distinct candidates :math:`x_1,\dots,x_n` with :math:`x_1=a` and :math:`x_n=b` such that :math:`x_i L x_{i+1}` and for all :math:`i\in \{1,\dots, n-1\}`, the margin of :math:`x_1` over :math:`x_{i+1}` is greater than or equal to the margin of :math:`b` over :math:`a`.
+
+    This definition is due to Zavist and Tideman 1989, and is used as an alternative characterization of Ranked Pairs: :math:`a` is a Ranked Pairs winner if and only if :math:`a` is the maximum element of some stack. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        cand_list (list): The list of candidates that may be a stack
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        True if ``cand_list`` is a stack and False otherwise
+
+    :Example: 
+    
+    .. plot::  margin_graphs_examples/mg_ex_rp_stacks.py
+        :context: reset  
+        :include-source: True
+
+
+    .. exec_code::
+        
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import is_stack
+        from itertools import permutations
+        
+        mg = MarginGraph([0, 1, 2], [(0, 1, 2), (1, 2, 4), (2, 0, 2)])
+        
+        for clist in permutations(mg.candidates): 
+            print(f"{clist} {'is' if is_stack(mg, clist) else 'is not'} a stack")
+            
+    """
+    
+    candidates = curr_cands if curr_cands is not None else edata.candidates
+    cand_pairs = [(a, b) if cand_list.index(a) < cand_list.index(b) else (b, a) for a, b in combinations(candidates, 2)]
+        
+    for a, b in cand_pairs:
+        other_cands = [c for c in candidates if c != a and c != b]
+        found_path = False
+        
+        sublist = cand_list[cand_list.index(a) + 1:cand_list.index(b)]
+        
+        for indices in powerset(range(len(sublist))): 
+            
+            path = [a] + [sublist[i] for i in sorted(indices)] + [b]
+            margins = [edata.margin(xi, path[i + 1]) for i, xi in enumerate(path[0:-1])]
+            if all([cand_list.index(xi) < cand_list.index(path[i+1]) for i, xi in enumerate(path[0:-1])]) and all([m >= edata.margin(b, a) for m in margins]): 
+                found_path = True
+                break
+        if not found_path: 
+            return False
+    return True
+
+@vm(name="Ranked Pairs")
+def ranked_pairs_from_stacks(edata, curr_cands = None): 
+    """Find the Ranked Pairs winners by iterating over all permutations of candidates (restricted to ``curr_cands`` if not None), and checking if the list is a stack. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.ranked_pairs`, :meth:`pref_voting.margin_based_methods.is_stack`
+
+    :Example: 
+
+    .. plot::  margin_graphs_examples/mg_ex_bp_rp.py
+        :context: reset  
+        :include-source: True
+
+
+    .. code-block:: 
+
+        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
+
+        ranked_pairs.display(mg)
+        ranked_pairs_from_stacks.display(mg)
+
+
+    .. exec_code:: 
+        :hide_code:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import ranked_pairs, ranked_pairs_from_stacks
+        
+        mg = MarginGraph([0, 1, 2, 3], [(0, 2, 3), (1, 0, 5), (2, 1, 5), (2, 3, 1), (3, 0, 3), (3, 1, 1)])
+
+        ranked_pairs.display(mg)
+        ranked_pairs_from_stacks.display(mg)
+
+    """    
+
+    candidates = curr_cands if curr_cands is not None else edata.candidates
+    winners = list()
+    for clist in permutations(candidates): 
+        isstack = is_stack(edata, clist, curr_cands = curr_cands)
+        if isstack: 
+            winners.append(clist[0])
+            
+    return sorted(list(set(winners)))
 
 @vm(name="Ranked Pairs TB")
-def ranked_pairs_tb(
-    edata, 
-    curr_cands = None, 
-    tie_breaker = None, 
-    strength_function = None):   
+def ranked_pairs_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None):   
     """
     Ranked Pairs with a fixed linear order on the candidates to break any ties in the margins.   
     Since the tie_breaker is a linear order, this method is resolute.   
@@ -957,10 +946,7 @@ def ranked_pairs_tb(
 
 
 @vm(name="Ranked Pairs ZT")
-def ranked_pairs_zt(
-    profile, 
-    curr_cands = None, 
-    strength_function = None):   
+def ranked_pairs_zt(profile, curr_cands = None, strength_function = None):   
     """Ranked pairs where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  This is known as Ranked Pairs ZT, for Zavist Tideman.
 
     Args:
@@ -996,6 +982,7 @@ def ranked_pairs_zt(
     tb_ranking = tuple([c for c in list(profile._rankings[0]) if c in candidates])
     
     return ranked_pairs_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
+
 
 
 @vm(name="River")
@@ -1109,6 +1096,7 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
 
         :meth:`pref_voting.margin_based_methods.ranked_pairs_with_test`, :meth:`pref_voting.margin_based_methods.river`
 
+
     """
     candidates = edata.candidates if curr_cands is None else curr_cands    
     cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
@@ -1139,6 +1127,7 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
                 winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
+
 @vm(name="River TB")
 def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None):   
     """
@@ -1152,6 +1141,7 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
 
     Returns: 
         A sorted list of candidates. 
+
 
     """
     candidates = edata.candidates if curr_cands is None else curr_cands    
@@ -1245,12 +1235,53 @@ def _simple_stable_voting(curr_cands,
 
     return sv_winners, mem_sv_winners
     
+@vm(name = "Simple Stable Voting")
+def simple_stable_voting(edata, curr_cands = None, strength_function = None): 
+    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
+
+    Simple Stable Voting is a recursive voting method defined as follows: 
+
+    1. If there is only one candidate in the profile, then that candidate is the winner. 
+    2. Order the pairs :math:`(a,b)` of candidates from largest to smallest value of the margin of :math:`a` over :math:`b`, and declare as Simple Stable Voting winners the candidate(s) :math:`a` from the earliest pair(s) :math:`(a,b)` such that :math:`a` is a Simple Stable Voting winner in the election without :math:`b`. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.simple_stable_voting_faster`, :meth:`pref_voting.margin_based_methods.stable_voting`
+
+
+    :Example: 
+
+    .. exec_code::
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import simple_stable_voting
+
+        mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
+
+        simple_stable_voting.display(mg)
+
+    """
+    
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function  
+
+    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+    
+    return sorted(_simple_stable_voting(curr_cands = curr_cands, 
+                                        sorted_matches = sorted_matches,
+                                        mem_sv_winners = {})[0])
 
 @vm(name = "Simple Stable Voting")
-def _simple_stable_voting_with_condorcet_check(
-    edata, 
-    curr_cands = None, 
-    strength_function = None): 
+def simple_stable_voting_faster(edata, curr_cands = None, strength_function = None): 
     """Simple Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winnerFirst check if there is a Condorcet winner.  If so, return the Condorcet winner, otherwise find the Simple Stable Voting winner using _simple_stable_voting
 
     Args:
@@ -1260,6 +1291,23 @@ def _simple_stable_voting_with_condorcet_check(
 
     Returns: 
         A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.simple_stable_voting`, :meth:`pref_voting.margin_based_methods.stable_voting`
+
+
+    :Example: 
+
+    .. exec_code::
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import simple_stable_voting, simple_stable_voting_faster
+
+        mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
+
+        simple_stable_voting_faster.display(mg)
+        simple_stable_voting.display(mg)
 
     """
     
@@ -1277,81 +1325,7 @@ def _simple_stable_voting_with_condorcet_check(
                                             sorted_matches = sorted_matches,
                                             mem_sv_winners = {})[0])
 
-
-def _simple_stable_voting_basic(edata, curr_cands = None, strength_function = None): 
-    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-
-    Returns: 
-        A sorted list of candidates. 
-
-    """
     
-    curr_cands = edata.candidates if curr_cands is None else curr_cands
-    strength_function = edata.margin if strength_function is None else strength_function  
-
-    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
-    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
-    
-    return sorted(_simple_stable_voting(curr_cands = curr_cands, 
-                                        sorted_matches = sorted_matches,
-                                        mem_sv_winners = {})[0])
-
-
-@vm(name = "Simple Stable Voting")
-def simple_stable_voting(
-    edata, 
-    curr_cands=None, 
-    strength_function=None,
-    algorithm = 'basic'): 
-
-    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
-
-    Simple Stable Voting is a recursive voting method defined as follows: 
-
-    1. If there is only one candidate in the profile, then that candidate is the winner. 
-    2. Order the pairs :math:`(a,b)` of candidates from largest to smallest value of the margin of :math:`a` over :math:`b`, and declare as Simple Stable Voting winners the candidate(s) :math:`a` from the earliest pair(s) :math:`(a,b)` such that :math:`a` is a Simple Stable Voting winner in the election without :math:`b`. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-        algorithm (str, optional): Specify which algorithm to use.  Options are 'basic' (the default) and 'with_condorcet_check'.
-
-    Returns: 
-        A sorted list of candidates. 
-
-    .. seealso::
-
-        :meth:`pref_voting.margin_based_methods.simple_stable_voting_faster`, :meth:`pref_voting.margin_based_methods.stable_voting`
-
-    :Example: 
-
-    .. exec_code::
-
-        from pref_voting.weighted_majority_graphs import MarginGraph
-        from pref_voting.margin_based_methods import simple_stable_voting
-
-        mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
-
-        simple_stable_voting.display(mg)
-        simple_stable_voting.display(mg, algorithm='basic')
-        simple_stable_voting.display(mg, algorithm='with_condorcet_check')
-
-    """
-    
-    if algorithm == 'basic': 
-        return _simple_stable_voting_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
-    elif algorithm == 'with_condorcet_check':
-        return _simple_stable_voting_with_condorcet_check(edata, curr_cands = curr_cands, strength_function = strength_function)
-    else:
-        raise ValueError("Invalid algorithm specified.")
-    
-
 def _stable_voting(edata, 
                    curr_cands,
                    strength_function,
@@ -1393,74 +1367,7 @@ def _stable_voting(edata,
     return sv_winners, mem_sv_winners
         
 @vm(name = "Stable Voting")
-def _stable_voting_with_condorcet_check(
-    edata, 
-    curr_cands=None, 
-    strength_function=None): 
-    """
-    Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winner.  
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-
-    Returns: 
-        A sorted list of candidates. 
-
-    """
-    cw = edata.condorcet_winner(curr_cands = curr_cands)
-    if cw is not None: 
-        return [cw]
-    else: 
-        curr_cands = edata.candidates if curr_cands is None else curr_cands
-        strength_function = edata.margin if strength_function is None else strength_function  
-
-        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
-        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
-
-        return sorted(_stable_voting(edata, 
-                                    curr_cands = curr_cands, 
-                                    strength_function = strength_function,
-                                    sorted_matches = sorted_matches,
-                                    mem_sv_winners = {})[0])
-
-def _stable_voting_basic(
-        edata, 
-        curr_cands = None, 
-        strength_function = None): 
-    """Implementation of  Stable Voting from https://arxiv.org/abs/2108.00542. 
-
-    Args:
-        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-
-    Returns: 
-        A sorted list of candidates. 
-
-    """
-
-    curr_cands = edata.candidates if curr_cands is None else curr_cands
-    strength_function = edata.margin if strength_function is None else strength_function  
-
-    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
-    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
-
-    return sorted(_stable_voting(edata, 
-                                 curr_cands = curr_cands, 
-                                 strength_function = strength_function,
-                                 sorted_matches = sorted_matches,
-                                 mem_sv_winners = {})[0])
-
-
-
-@vm(name = "Stable Voting")
-def stable_voting(
-    edata, 
-    curr_cands=None, 
-    strength_function=None, 
-    algorithm='basic'): 
+def stable_voting(edata, curr_cands = None, strength_function = None): 
     """Implementation of  Stable Voting from https://arxiv.org/abs/2108.00542. 
 
     Stable Voting is a recursive voting method defined as follows: 
@@ -1491,18 +1398,73 @@ def stable_voting(
         mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
 
         stable_voting.display(mg)
-        stable_voting.display(mg, algorithm='basic')
-        stable_voting.display(mg, algorithm='with_condorcet_check')
 
     """
 
-    if algorithm == 'basic': 
-        return _stable_voting_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
-    elif algorithm == 'with_condorcet_check':
-        return _stable_voting_with_condorcet_check(edata, curr_cands = curr_cands, strength_function = strength_function)
-    else:
-        raise ValueError("Invalid algorithm specified.")
-    
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function  
+
+    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
+    return sorted(_stable_voting(edata, 
+                                 curr_cands = curr_cands, 
+                                 strength_function = strength_function,
+                                 sorted_matches = sorted_matches,
+                                 mem_sv_winners = {})[0])
+
+@vm(name = "Stable Voting")
+def stable_voting_faster(edata, curr_cands = None, strength_function = None): 
+    """
+    Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winner.  
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    .. seealso::
+
+        :meth:`pref_voting.margin_based_methods.simple_stable_voting`, :meth:`pref_voting.margin_based_methods.stable_voting`
+
+
+    :Example: 
+
+    .. exec_code::
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import stable_voting, stable_voting_faster
+
+        mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
+
+        stable_voting_faster.display(mg)
+        stable_voting.display(mg)
+
+
+    """
+    cw = edata.condorcet_winner(curr_cands = curr_cands)
+    if cw is not None: 
+        return [cw]
+    else: 
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_function = edata.margin if strength_function is None else strength_function  
+
+        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
+        return sorted(_stable_voting(edata, 
+                                    curr_cands = curr_cands, 
+                                    strength_function = strength_function,
+                                    sorted_matches = sorted_matches,
+                                    mem_sv_winners = {})[0])
+
+
+
+## Slater
+#
 
 
 
@@ -1626,7 +1588,9 @@ def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None):
 mg_vms = [
     minimax, 
     split_cycle,
+    #split_cycle_Floyd_Warshall,
     #beat_path,
+    beat_path_Floyd_Warshall,
     #ranked_pairs,
     #ranked_pairs_with_test,
     ranked_pairs_zt,
@@ -1646,15 +1610,20 @@ mg_vms = [
 mg_vms_all = [
     minimax, 
     split_cycle,
+    split_cycle_Floyd_Warshall,
     beat_path,
+    beat_path_Floyd_Warshall,
     ranked_pairs,
     ranked_pairs_with_test,
     ranked_pairs_zt,
     ranked_pairs_tb,
+    ranked_pairs_from_stacks,
     river,
     river_with_test, 
     simple_stable_voting,
+    simple_stable_voting_faster,
     stable_voting,
+    stable_voting_faster,
     essential,
     weighted_covering,
     loss_trimmer
