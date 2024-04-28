@@ -1345,13 +1345,13 @@ def has_participation_violation(prof, vm, verbose = False, violation_type = "Rem
                         
                         elif set_preference == "optimist":
                                 
-                            old_winner_to_compare = [cand for cand in r if cand in ws][0]
-                            new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+                            old_winner_to_compare = [cand for cand in new_r if cand in ws][0]
+                            new_winner_to_compare = [cand for cand in new_r if cand in new_ws][0]
 
                         elif set_preference == "pessimist":
                             
-                            old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
-                            new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+                            old_winner_to_compare = [cand for cand in new_r if cand in ws][-1] 
+                            new_winner_to_compare = [cand for cand in new_r if cand in new_ws][-1]
 
                         if old_winner_to_compare is not None and new_r.index(old_winner_to_compare) < new_r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and new_r_as_ranking.weak_dom(ws,new_ws)):
                             
@@ -1648,13 +1648,13 @@ def find_all_participation_violations(prof, vm, verbose = False, violation_type 
                     
                     elif set_preference == "optimist":
                             
-                        old_winner_to_compare = [cand for cand in r if cand in ws][0]
-                        new_winner_to_compare = [cand for cand in r if cand in new_ws][0]
+                        old_winner_to_compare = [cand for cand in new_r if cand in ws][0]
+                        new_winner_to_compare = [cand for cand in new_r if cand in new_ws][0]
 
                     elif set_preference == "pessimist":
                         
-                        old_winner_to_compare = [cand for cand in r if cand in ws][-1] 
-                        new_winner_to_compare = [cand for cand in r if cand in new_ws][-1]
+                        old_winner_to_compare = [cand for cand in new_r if cand in ws][-1] 
+                        new_winner_to_compare = [cand for cand in new_r if cand in new_ws][-1]
 
                     if old_winner_to_compare is not None and new_r.index(old_winner_to_compare) < new_r.index(new_winner_to_compare) or (set_preference == "weak-dominance" and new_r_as_ranking.weak_dom(ws,new_ws)):
                         
