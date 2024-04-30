@@ -12,7 +12,7 @@ from pref_voting.profiles import  _borda_score, _find_updated_profile
 from pref_voting.margin_based_methods import split_cycle, minimax_scores
 from pref_voting.c1_methods import top_cycle, gocha
 from pref_voting.rankings import Ranking
-
+from pref_voting.social_welfare_function import swf
 import copy
 from itertools import permutations, product
 import numpy as np

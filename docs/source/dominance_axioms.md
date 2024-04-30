@@ -2,13 +2,13 @@ Dominance Axioms
 ==========
 
 
-## Pareto
+## Pareto Dominance
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.dominance_axioms.has_pareto_violation
+.. autofunction:: pref_voting.dominance_axioms.has_pareto_dominance_violation
 
-.. autofunction:: pref_voting.dominance_axioms.find_all_pareto_violations
+.. autofunction:: pref_voting.dominance_axioms.find_all_pareto_dominance_violations
 
 ```
 
