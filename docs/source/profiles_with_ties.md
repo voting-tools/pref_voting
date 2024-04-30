@@ -69,7 +69,7 @@ Use the `ProfileWithTies` class to create a profile in which voters may submit s
 
 ```{eval-rst}
 
-.. info::
+.. note::
     The ``Ranking`` class used to the represent the ballots in a ``ProfileWithTies`` is described on the [ballots](ballots) page.
 
 ```

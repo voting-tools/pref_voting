@@ -7,34 +7,51 @@ import pytest
     (plurality, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (borda, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (dowdall, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (anti_plurality, {
         'condorcet_cycle': [0, 1, 2],
         'linear_profile_0': [1], 
-        'linear_profile_0_curr_cands': [1]}),
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0, 1, 2],
+        'profile_single_voter_curr_cands': [0]
+        }),
     (positive_negative_voting, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
-        'linear_profile_0_curr_cands': [1]
+        'linear_profile_0_curr_cands': [1],
+        'profile_single_voter': [0],
+        'profile_single_voter_curr_cands': [0]
         }),
 ])
 def test_scoring_rules(
     voting_method, 
     expected, 
     condorcet_cycle, 
-    linear_profile_0):
+    linear_profile_0,
+    profile_single_voter):
     assert voting_method(condorcet_cycle) == expected['condorcet_cycle']
     assert voting_method(linear_profile_0) == expected['linear_profile_0']
     if 'linear_profile_0_curr_cands' in expected:
         assert voting_method(linear_profile_0, curr_cands=[1, 2]) == expected['linear_profile_0_curr_cands']
+    assert voting_method(profile_single_voter) == expected['profile_single_voter']
+    assert voting_method(profile_single_voter, curr_cands = [0, 1]) == expected['profile_single_voter_curr_cands']
 
 def test_scoring_rule(condorcet_cycle, linear_profile_0):
     assert scoring_rule(condorcet_cycle) == [0, 1, 2]

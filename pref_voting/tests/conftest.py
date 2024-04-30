@@ -30,3 +30,7 @@ def profile_with_ties():
         {0:1, 1:1, 2:2}, 
         {0:2, 1:2, 2:1}],
         rcounts=[2, 1])
+
+@pytest.fixture
+def profile_single_voter():
+    return Profile([[0, 1, 2, 3]])

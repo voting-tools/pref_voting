@@ -978,25 +978,22 @@ def baldwin(profile, curr_cands = None):
         prof.display()
         baldwin.display(prof)
     """
-    all_num_cands = profile.num_cands   
+    all_num_cands = profile.num_cands  
     candidates = profile.candidates if curr_cands is None else curr_cands
-        
     rcounts = profile._rcounts # get all the ranking data
-    rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
-    
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
-
+    rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in candidates]), all_num_cands)
+    num_cands = len(candidates)
+    cands_to_ignore = np.empty(0) 
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
 
     min_borda_score = min(list(borda_scores.values()))
-    
     last_place_borda_scores = [c for c in candidates 
                                if c in borda_scores.keys() and borda_scores[c] == min_borda_score]
       
     cands_to_ignore = np.concatenate((cands_to_ignore, last_place_borda_scores), axis=None)
     
     winners = list()
-    if cands_to_ignore.shape[0] ==  all_num_cands: # all candidates have lowest Borda score
+    if cands_to_ignore.shape[0] ==  num_cands: # all candidates have lowest Borda score
         winners = sorted(last_place_borda_scores)
     else: # remove the candidates with lowest Borda score
         num_cands = len(candidates)
@@ -1010,7 +1007,7 @@ def baldwin(profile, curr_cands = None):
         
         cands_to_ignore = np.concatenate((cands_to_ignore, last_place_borda_scores), axis=None)
                 
-        if cands_to_ignore.shape[0] == all_num_cands: # removed all remaining candidates
+        if cands_to_ignore.shape[0] == num_cands: # removed all remaining candidates
             winners = sorted(last_place_borda_scores)
         elif num_cands - cands_to_ignore.shape[0] ==  1: # only one candidate remains
             winners = sorted([c for c in candidates if c not in cands_to_ignore])
@@ -1053,21 +1050,18 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
     # the tie_breaker is any linear order (i.e., list) of the candidates
     tb = tie_breaker if tie_breaker is not None else list(range(profile.num_cands))
 
-    all_num_cands = profile.num_cands   
+    all_num_cands = profile.num_cands  
     candidates = profile.candidates if curr_cands is None else curr_cands
-        
     rcounts = profile._rcounts # get all the ranking data
-    rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
-    
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
-
-    borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
+    rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in candidates]), all_num_cands)
+    num_cands = len(candidates)
+    cands_to_ignore = np.empty(0) 
+    borda_scores = {c: _borda_score(rankings, rcounts, num_cands, c) for c in candidates}
 
     min_borda_score = min(list(borda_scores.values()))
-    
     last_place_borda_scores = [c for c in candidates 
                                if c in borda_scores.keys() and borda_scores[c] == min_borda_score]
-      
+            
     cand_to_remove = last_place_borda_scores[0]
     for c in last_place_borda_scores[1:]: 
         if tb.index(c) < tb.index(cand_to_remove):
@@ -1096,7 +1090,7 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
         
         cands_to_ignore = np.concatenate((cands_to_ignore, np.array([cand_to_remove])), axis=None)
                 
-        if cands_to_ignore.shape[0] == all_num_cands: # removed all remaining candidates
+        if cands_to_ignore.shape[0] == num_cands: # removed all remaining candidates
             winners = sorted(last_place_borda_scores)
         elif num_cands - cands_to_ignore.shape[0] ==  1: # only one candidate remains
             winners = sorted([c for c in candidates if c not in cands_to_ignore])

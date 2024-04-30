@@ -1,7 +1,7 @@
 Margin Methods
 =======================================
 
-Suppose that $\mathbf{P}$ is a profile.   We write $\mathcal{M}(\mathbf{P})$ for the margin graph of $\mathbf{P}$. 
+Suppose that $\mathbf{P}$ is a profile.  We write $\mathcal{M}(\mathbf{P})$ for the margin graph of $\mathbf{P}$. 
 
 A voting method $F$ is **margin-based** if it satisfies the following invariance property: For all $\mathbf{P}, \mathbf{P}'$, if $\mathcal{M}(\mathbf{P})= \mathcal{M}(\mathbf{P}')$, then $F(\mathbf{P}) = F(\mathbf{P}')$. 
 
@@ -30,14 +30,6 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Beat Path Floyd-Warshall
-
- 
-```{eval-rst}
-
-.. autofunction:: pref_voting.margin_based_methods.beat_path_Floyd_Warshall
-
-```
 
 ### Beat Path Defeat
 
@@ -55,14 +47,6 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Split Cycle Floyd-Warshall
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.margin_based_methods.split_cycle_Floyd_Warshall
-
-
-```
 
 ### Split Cycle Defeat
 
@@ -98,17 +82,11 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Ranked Pairs from Stacks
+### Stacks
 
 ```{eval-rst}
 
 .. autofunction:: pref_voting.margin_based_methods.is_stack
-
-```
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.margin_based_methods.ranked_pairs_from_stacks
 
 ```
 
@@ -169,15 +147,8 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 .. autofunction:: pref_voting.margin_based_methods.stable_voting
 ```
 
-### Stable Voting Faster
 
-```{eval-rst}
-
-.. autofunction:: pref_voting.margin_based_methods.stable_voting_faster
-
-```
-
-### Simple Stable Voting
+## Simple Stable Voting
 
 ```{eval-rst}
 
@@ -185,13 +156,6 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
-### Simple Stable Voting Faster
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.margin_based_methods.simple_stable_voting_faster
-
-```
 
 ## Loss-Trimmer
 
@@ -201,3 +165,19 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
  
+
+## Essential Set
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.essential
+
+```
+ 
+## Weighted Covering
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.weighted_covering
+
+```
