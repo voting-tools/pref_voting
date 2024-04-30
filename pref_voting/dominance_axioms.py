@@ -32,10 +32,11 @@ def has_pareto_violation(edata, vm, verbose=False, strong_Pareto = False):
         for c in edata.candidates: 
             if (strong_Pareto == False and edata.support(c,w)==edata.num_voters) or (strong_Pareto == True and edata.support(c,w)> 0 and edata.support(w,c)==0):
                 if verbose:  
+                    print(f"Pareto violation by {vm}:")
                     edata.display()
                     print(edata.description())
                     vm.display(edata)
-                    print(f"The winner {w} is Pareto dominated by {c}. ")
+                    print(f"The winner {w} is Pareto dominated by {c}.")
                     print()
                 return True
     return False
@@ -64,11 +65,12 @@ def find_all_pareto_violations(edata, vm, verbose=False, strong_Pareto = False):
                 pareto_dominated_winners.append((w, c))
     
     if len(pareto_dominated_winners) > 0 and verbose: 
+        print(f"Pareto violation by {vm}:")
         edata.display()
         print(edata.description())
         vm.display(edata)
         for w,c in pareto_dominated_winners:
-            print(f"The winner {w} is Pareto dominated by {c}. ")
+            print(f"The winner {w} is Pareto dominated by {c}.")
 
     return pareto_dominated_winners
 
