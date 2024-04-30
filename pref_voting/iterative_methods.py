@@ -11,23 +11,72 @@ from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
 from pref_voting.margin_based_methods import split_cycle, minimax_scores
 from pref_voting.c1_methods import top_cycle, gocha
+from pref_voting.rankings import Ranking
 
 import copy
 from itertools import permutations, product
 import numpy as np
 
+def _instant_runoff_basic(profile,curr_cands = None):
+    "The basic implementation of instant runoff"
+    # need the total number of all candidates in a profile to check when all candidates have been removed   
+    num_cands = profile.num_cands 
+    
+    candidates = profile.candidates if curr_cands is None else curr_cands
+    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+
+    strict_maj_size = profile.strict_maj_size()
+    
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+
+    winners = [c for c in candidates 
+               if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+
+    while len(winners) == 0:
+        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates 
+                            if  not isin(cands_to_ignore,c)}  
+        min_plurality_score = min(plurality_scores.values())
+        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                             if  plurality_scores[c] == min_plurality_score])
+
+        # remove cands with lowest plurality score
+        cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
+        if len(cands_to_ignore) == num_cands: # removed all of the candidates 
+            winners = sorted(lowest_first_place_votes)
+        else:
+            winners = [c for c in candidates 
+                       if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+     
+    return sorted(winners)
+
+def _instant_runoff_recursive(profile, curr_cands = None):
+    "A recursive implementation of instant runoff"
+    candidates = curr_cands if curr_cands is not None else profile.candidates
+    cands_to_ignore = np.array([c for c in profile.candidates if c not in candidates])
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+    plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates if not isin(cands_to_ignore,c)}  
+    min_plurality_score = min(plurality_scores.values())
+    lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                            if  plurality_scores[c] == min_plurality_score])
+
+    if len(lowest_first_place_votes) == len(candidates):
+        return sorted(lowest_first_place_votes)
+    
+    else:
+        return _instant_runoff_recursive(profile, [c for c in candidates if c not in lowest_first_place_votes])
+
 @vm(name = "Instant Runoff")
-def instant_runoff(profile, curr_cands = None):
+def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
     """
-    If there is a majority winner then that candidate is the  winner.  If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters.  Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  
+    If there is a majority winner then that candidate is the winner. If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters. Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  
     
     .. important::
-        If there is  more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. 
+        If there is more than one candidate with the fewest number of first-place votes, then *all* such candidates are removed from the profile. 
     
-
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        algorithm (str, optiona): The algorithm to use.  Options are "basic" and "recursive".  The default is "basic".
 
     Returns: 
         A sorted list of candidates
@@ -55,36 +104,14 @@ def instant_runoff(profile, curr_cands = None):
 
     """
 
-    # need the total number of all candidates in a profile to check when all candidates have been removed   
-    num_cands = profile.num_cands 
+    if algorithm == "basic":
+        return _instant_runoff_basic(profile, curr_cands = curr_cands)
     
-    candidates = profile.candidates if curr_cands is None else curr_cands
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
-
-    strict_maj_size = profile.strict_maj_size()
+    elif algorithm == "recursive":
+        return _instant_runoff_recursive(profile, curr_cands = curr_cands)
     
-    rs, rcounts = profile.rankings_counts # get all the ranking data
-    
-
-    winners = [c for c in candidates 
-               if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
-
-    while len(winners) == 0:
-        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates 
-                            if  not isin(cands_to_ignore,c)}  
-        min_plurality_score = min(plurality_scores.values())
-        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
-                                             if  plurality_scores[c] == min_plurality_score])
-
-        # remove cands with lowest plurality score
-        cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
-        if len(cands_to_ignore) == num_cands: # removed all of the candidates 
-            winners = sorted(lowest_first_place_votes)
-        else:
-            winners = [c for c in candidates 
-                       if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
-     
-    return sorted(winners)
+    else:
+        raise ValueError("Algorithm must be either 'basic' or 'recursive'.")
 
 # Create some aliases for instant runoff
 instant_runoff.set_name("Hare")
@@ -96,6 +123,38 @@ alternative_vote = copy.deepcopy(instant_runoff)
 
 # reset the name Instant Runoff
 instant_runoff.set_name("Instant Runoff")
+
+@swf(name = "Instant Runoff Ranking")
+def instant_runoff_ranking(profile, curr_cands = None):
+    """Returns the reverse of the elimination order in the instant runoff voting process.
+
+    Args:
+        profile (Profile): An anonymous Profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A Ranking of the candidates.
+    """
+    
+    candidates = curr_cands if curr_cands is not None else profile.candidates
+    cands_to_ignore = np.array([c for c in profile.candidates if c not in candidates])
+    rs, rcounts = profile.rankings_counts # get all the ranking data
+    plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates if not isin(cands_to_ignore,c)}  
+    min_plurality_score = min(plurality_scores.values())
+    lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                            if  plurality_scores[c] == min_plurality_score])
+    
+    if len(lowest_first_place_votes) == len(candidates):
+        full_tie = Ranking({c:0 for c in candidates})
+        return full_tie
+    
+    else:
+        rec_ranking = instant_runoff_ranking(profile, [c for c in candidates if c not in lowest_first_place_votes])
+        max_rank = max(rec_ranking.ranks)
+        rec_ranking_dict = rec_ranking.rmap
+        ranking = Ranking({c: rec_ranking_dict[c] if not isin(lowest_first_place_votes,c) else max_rank+1 for c in candidates})
+
+        return ranking
 
 @vm(name = "Instant Runoff TB")
 def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):

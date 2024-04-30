@@ -1,7 +1,7 @@
 """
     File: strategic_axioms.py
     Author: Wesley H. Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: April 18, 2023
+    Date: April 18, 2024
     
     Strategic axioms 
 """
