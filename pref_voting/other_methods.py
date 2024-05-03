@@ -198,6 +198,53 @@ def kemeny_young(profile, curr_cands = None):
     
     return sorted(list(set([r[0] for r in ky_rankings])))
 
+
+@vm("Preliminary Weighted Condorcet")
+def preliminary_weighted_condorcet(prof, curr_cands = None, show_orders = False, require_positive_plurality_score = False):
+    """The preliminary version of the Weighted Condorcet Rule in Tideman's book, Collective Decisions and Voting (p. 223). The winners are the candidates ranked first by some linear order of the candidates with highest score, where the score of an order (c_1,...,c_n) is the sum over all i<j of the margin of c_i vs. c_j multiplied by the plurality scores of c_i and c_j. 
+    
+    The multiplication by plurality scores is what distinguishes this method from the Kemeny-Young method.
+    
+    Tideman (p. 224) defines a more complicated Weighted Condorcet rule that is intended to be used when some candidates receive zero first-place votes.
+    
+    Args:
+        prof (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        show_orders (bool): If True, then print the set of best orders.
+        require_positive_plurality_score (bool): If True, then require that all candidates have a positive plurality score.
+
+    Returns:
+        A sorted list of candidates
+    """
+
+    cands = curr_cands if curr_cands is not None else prof.candidates
+
+    if require_positive_plurality_score:
+        assert all([prof.plurality_scores(curr_cands=curr_cands)[c] > 0 for c in cands]), "All candidates must have a positive plurality score."
+
+    best_order_score = 0
+    best_orders = []
+
+    for r in permutations(cands):
+
+        score_of_r = 0 
+        for i in r[:-1]:
+            for j in r[r.index(i)+1:]:
+                score_of_r += (prof.plurality_scores(curr_cands=curr_cands)[i] * prof.plurality_scores(curr_cands=curr_cands)[j] * prof.margin(i,j))
+
+        if score_of_r > best_order_score:
+            best_order_score = score_of_r
+            best_orders = [r]
+        if score_of_r == best_order_score:
+            best_orders.append(r)
+
+    if show_orders == True:
+        print(f"Best orders: {set(best_orders)}")
+
+    winners = [r[0] for r in best_orders]
+
+    return list(set(winners))
+
 ### Bucklin
 
 @vm(name = "Bucklin")
@@ -558,6 +605,8 @@ def superior_voting(profile, curr_cands = None):
 
 other_vms = [
     kemeny_young, 
+    pareto,
+    preliminary_weighted_condorcet,
     majority, 
     bucklin,
     simplified_bucklin,
