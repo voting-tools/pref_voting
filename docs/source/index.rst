@@ -92,6 +92,7 @@ Contents
    strategic_axioms
    variable_voter_axioms
    variable_candidate_axioms
+   swf_axioms
 
 .. toctree::
    :maxdepth: 2
