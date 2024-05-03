@@ -230,7 +230,7 @@ def has_smith_violation(edata, vm, verbose=False):
     s_set = smith_set(edata)
     ws = vm(edata)
 
-    winners_not_in_smith = [w not in s_set for w in ws]
+    winners_not_in_smith = [w for w in ws if w not in s_set]
     if len(winners_not_in_smith) > 0: 
         if verbose:
             if type(edata) == Profile or type(edata) == ProfileWithTies: 
@@ -259,7 +259,7 @@ def find_all_smith_violations(edata, vm, verbose=False):
     s_set = smith_set(edata)
     ws = vm(edata)
 
-    winners_not_in_smith = [w not in s_set for w in ws]
+    winners_not_in_smith = [w for w in ws if w not in s_set]
     if len(winners_not_in_smith) > 0: 
         if verbose:
             if type(edata) == Profile or type(edata) == ProfileWithTies: 
