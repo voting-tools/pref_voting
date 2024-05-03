@@ -19,12 +19,22 @@ class VotingMethod(object):
     Args:
         vm (function): An implementation of a voting method. The function should accept a Profile, ProfileWithTies, MajorityGraph, and/or MarginGraph, and a keyword parameter ``curr_cands`` to find the winner after restricting to ``curr_cands``. 
         name (string): The Human-readable name of the voting method.
+        properties (VotingMethodProperties): The properties of the voting method.
+        input_types (list): The types of input that the voting method can accept.
 
     """
-    def __init__(self, vm, name = None): 
+    def __init__(self, 
+                 vm, 
+                 name=None, 
+                 properties=None, 
+                 input_types=None, 
+                 skip_registration=False): 
         
         self.vm = vm
         self.name = name
+        self.properties = properties
+        self.input_types = input_types
+        self.skip_registration = skip_registration
         functools.update_wrapper(self, vm)   
 
     def __call__(self, edata, curr_cands = None, **kwargs):
@@ -72,12 +82,12 @@ class VotingMethod(object):
     def __str__(self): 
         return f"{self.name}"
 
-def vm(name = None):
+def vm(name=None, properties=None, input_types=None, skip_registration=False):
     """
     A decorator used when creating a voting method. 
     """
     def wrapper(f):
-        return VotingMethod(f, name=name)
+        return VotingMethod(f, name=name, properties=properties, input_types=input_types, skip_registration=skip_registration)
     return wrapper
 
 @jit(nopython=True, fastmath=True)

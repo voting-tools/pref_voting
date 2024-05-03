@@ -11,7 +11,7 @@ from pref_voting.c1_methods import smith_set, schwartz_set
 from pref_voting.axiom_helpers import *
 
 
-def has_pareto_violation(edata, vm, verbose=False, strong_Pareto = False):
+def has_pareto_dominance_violation(edata, vm, verbose=False, strong_Pareto = False):
     """
     Returns True if some winner according to vm is Pareto dominated (there is a candidate that is unanimously preferred to the winner).
 
@@ -41,7 +41,7 @@ def has_pareto_violation(edata, vm, verbose=False, strong_Pareto = False):
                 return True
     return False
 
-def find_all_pareto_violations(edata, vm, verbose=False, strong_Pareto = False):
+def find_all_pareto_dominance_violations(edata, vm, verbose=False, strong_Pareto = False):
     """
     Returns all Pareto-dominated winners.
 
@@ -74,10 +74,10 @@ def find_all_pareto_violations(edata, vm, verbose=False, strong_Pareto = False):
 
     return pareto_dominated_winners
 
-pareto = Axiom(
-    "Pareto Criterion",
-    has_violation = has_pareto_violation,
-    find_all_violations = find_all_pareto_violations, 
+pareto_dominance = Axiom(
+    "Pareto Dominance Criterion",
+    has_violation = has_pareto_dominance_violation,
+    find_all_violations = find_all_pareto_dominance_violations, 
 )
 
 def has_condorcet_winner_violation(edata, vm, verbose=False):
@@ -342,7 +342,7 @@ schwartz = Axiom(
 )
 
 dominance_axioms = [
-    pareto, 
+    pareto_dominance, 
     condorcet_winner, 
     condorcet_loser,
     smith,
