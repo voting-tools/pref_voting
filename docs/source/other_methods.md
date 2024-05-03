@@ -10,7 +10,6 @@ Other Methods
 ```
 
 
-
 ## Kemeny-Young
 
 ```{eval-rst}
@@ -25,6 +24,14 @@ Other Methods
 ```{eval-rst}
 
 .. autofunction:: pref_voting.other_methods.kemeny_young_rankings
+
+```
+
+## Preliminary Weighted Condorcet
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.preliminary_weighted_condorcet
 
 ```
 
