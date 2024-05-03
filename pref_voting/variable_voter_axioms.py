@@ -275,7 +275,7 @@ def has_positive_involvement_violation(prof, vm, verbose=False, violation_type="
         if uniform_coalition:
             for loser in losers:
 
-                relevant_ranking_types = [r for r in prof.ranking_types if prof.rankings.count(r) >= coalition_size]
+                relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and prof.rankings.count(r) >= coalition_size]
 
                 for r in relevant_ranking_types:
 
