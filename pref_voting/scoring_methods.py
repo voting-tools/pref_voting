@@ -103,23 +103,19 @@ def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 
     return p_ranking
 
-borda_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=True,
-    pareto_dominance=True, 
-    )
-@vm(name = "Borda",
-    properties=borda_properties,
-    input_types=[ElectionTypes.PROFILE])
-def borda(profile, curr_cands = None):
-    r"""The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
-
+@vm(name = "Borda")
+def borda(edata, curr_cands = None, algorithm = "positional"):
+    """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
     Args:
-        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        edata (Profile, MarginGraph): An anonymous profile of linear orders or a MarginGraph.
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        algorithm (String): if "positional", then the Borda score of a candidate is calculated from each voter's ranking as described above. If "marginal", then the Borda score of a candidate is calculated as the sum of the margins of the candidate vs. all other candidates. The positional scores and marginal scores are affinely equivalent.
 
     Returns: 
         A sorted list of candidates
+
+    .. note:
+        If edata is a MarginGraph, then the "marginal" algorithm is used.
 
     .. seealso::
 
@@ -144,10 +140,17 @@ def borda(profile, curr_cands = None):
 
     """
 
-    curr_cands = profile.candidates if curr_cands is None else curr_cands
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
 
-    # get the Borda scores for all the candidates in curr_cands
-    borda_scores = profile.borda_scores(curr_cands = curr_cands)
+    if isinstance(edata,MarginGraph):
+        algorithm = "marginal"
+
+    if algorithm == "positional":
+        # get the Borda scores for all the candidates in curr_cands
+        borda_scores = edata.borda_scores(curr_cands = curr_cands)
+
+    if algorithm == "marginal":
+        borda_scores = {c: sum([edata.margin(c,d) for d in curr_cands]) for c in curr_cands}
     
     max_borda_score = max(borda_scores.values())
     
