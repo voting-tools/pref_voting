@@ -11,6 +11,7 @@ from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
 from pref_voting.profiles_with_ties import ProfileWithTies
+from pref_voting.weighted_majority_graphs import MarginGraph
 from pref_voting.helper import get_mg
 from itertools import combinations, permutations
 import networkx as nx
@@ -156,12 +157,13 @@ def kemeny_young_rankings(profile, curr_cands = None):
 
 
 @vm(name = "Kemeny-Young")
-def kemeny_young(profile, curr_cands = None): 
-    """A Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings.  The Kemeny-Young winners are the candidates that are ranked first by some Kemeny-Young ranking.
+def kemeny_young(edata, curr_cands = None, algorithm = "marginal"): 
+    """A Kemeny-Young ranking is a ranking that maximizes the sum of the margins of pairs of candidates in the ranking. Equivalently, a Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings. The Kemeny-Young winners are the candidates that are ranked first by some Kemeny-Young ranking.
 
     Args:
-        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method.
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        algorithm (str, optional): The algorithm to use.  Options are "marginal" and "Kendall tau". If "marginal" is used, then the Kemeny-Young rankings are computed by finding the sum of the margins of each pair of candidates in the ranking.  If "Kendall tau" is used, then the Kemeny-Young rankings are computed by summing the Kendall tau distances to the voters' rankings.  Default is "marginal".
 
     Returns: 
         A sorted list of candidates
@@ -190,11 +192,34 @@ def kemeny_young(profile, curr_cands = None):
             kemeny_young.display(prof2)
 
     """
+    assert algorithm in ["marginal", "Kendall tau"], "Algorithm must be either 'marginal' or 'Kendall tau'."
 
-    candidates = profile.candidates if curr_cands is None else curr_cands
-    
-    rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]),  profile.num_cands)
-    ky_rankings, min_dist = _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
+    candidates = edata.candidates if curr_cands is None else curr_cands
+
+    if isinstance(edata, MarginGraph) or isinstance(edata,ProfileWithTies):
+        algorithm = "marginal"
+
+    if algorithm == "Kendall tau":
+        rankings = edata._rankings if curr_cands is None else _find_updated_profile(edata._rankings, np.array([c for c in edata.candidates if c not in curr_cands]), edata.num_cands)
+        ky_rankings, min_dist = _kemeny_young_rankings(list(rankings), list(edata._rcounts), candidates)
+
+    if algorithm == "marginal":
+
+        best_ranking_score = 0
+        ky_rankings = []
+
+        for r in permutations(candidates):
+
+            score_of_r = 0 
+            for i in r[:-1]:
+                for j in r[r.index(i)+1:]:
+                    score_of_r += edata.margin(i,j)
+
+            if score_of_r > best_ranking_score:
+                best_ranking_score = score_of_r
+                ky_rankings = [r]
+            if score_of_r == best_ranking_score:
+                ky_rankings.append(r)
     
     return sorted(list(set([r[0] for r in ky_rankings])))
 
