@@ -11,12 +11,13 @@ from pref_voting.profiles import Profile
 from pref_voting.rankings import Ranking, break_ties_alphabetically
 from pref_voting.voting_method import _num_rank_last 
 from pref_voting.profiles import _find_updated_profile, _num_rank
+from pref_voting.weighted_majority_graphs import MarginGraph
 from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
 
 pl_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
-    pareto_dominance=False, 
+    pareto_dominance=True, 
     )
 @vm(name = "Plurality", 
     properties=pl_properties, 
@@ -103,7 +104,14 @@ def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 
     return p_ranking
 
-@vm(name = "Borda")
+borda_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Borda",
+    properties=borda_properties,
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.MARGIN_GRAPH])
 def borda(edata, curr_cands = None, algorithm = "positional"):
     """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
     Args:
@@ -474,7 +482,7 @@ borda_prof_with_ties_properties = VotingMethodProperties(
     condorcet_loser=None,
     pareto_dominance=None, 
     )
-@vm(name="Borda",
+@vm(name="Borda (for Truncated Profiles)",
     properties=borda_prof_with_ties_properties,
     input_types=[ElectionTypes.TRUNCATED_LINEAR_PROFILE])
 def borda_for_profile_with_ties(
@@ -507,25 +515,3 @@ scoring_swfs = [
     score_ranking   
 ]
 
-scoring_vms = [
-    anti_plurality,
-    plurality, 
-    borda, 
-    borda_for_profile_with_ties,
-    dowdall,
-    scoring_rule,
-    positive_negative_voting,
-]
-
-scoring_vms_profiles = [
-    plurality, 
-    borda, 
-    anti_plurality,
-    scoring_rule, 
-    positive_negative_voting,
-    anti_plurality  
-]
-
-scoring_vms_profiles_with_ties = [
-    borda_for_profile_with_ties
-]

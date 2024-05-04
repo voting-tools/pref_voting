@@ -12,12 +12,12 @@ from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MarginGraph
-from pref_voting.helper import get_mg
 from itertools import combinations, permutations
-import networkx as nx
+from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
 
-
-@vm(name = "Majority")
+@vm(name = "Majority",
+    skip_registration=True, # skip registration since majority may return an empty list
+    input_types = [ElectionTypes.PROFILE])
 def majority(profile, curr_cands = None):
     """The majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Returns the majority winner in the ``profile`` restricted to ``curr_cands``.
 
@@ -54,8 +54,15 @@ def majority(profile, curr_cands = None):
 
     return sorted(maj_winner)
 
-@vm(name = "Pareto")
-def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_preferences = True):
+pareto_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=False,
+    pareto_dominance=True,
+)
+@vm(name = "Pareto",
+    properties = pareto_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
+def pareto(profile, curr_cands = None, strong_Pareto = False, use_extended_strict_preferences = True):
     """Returns the set of candidates who are not Pareto dominated.
 
     For ProfilesWithTies, if strong_Pareto == True, then a dominates b if some voter strictly prefers a to b and no voter strictly prefers b to a.
@@ -69,24 +76,24 @@ def pareto(prof, curr_cands = None, strong_Pareto = False, use_extended_strict_p
 
     """
 
-    if type(prof) == ProfileWithTies:
-        currently_using_extended_strict_preferences = prof.using_extended_strict_preference
+    if type(profile) == ProfileWithTies:
+        currently_using_extended_strict_preferences = profile.using_extended_strict_preference
         if use_extended_strict_preferences:
-            prof.use_extended_strict_preference()
+            profile.use_extended_strict_preference()
         
     Pareto_dominated = set()
-    candidates = prof.candidates if curr_cands is None else curr_cands
+    candidates = profile.candidates if curr_cands is None else curr_cands
     for a in candidates:
         for b in candidates:
-            if not strong_Pareto and prof.support(a,b) == prof.num_voters:
+            if not strong_Pareto and profile.support(a,b) == profile.num_voters:
                 Pareto_dominated.add(b)
 
-            if strong_Pareto and prof.support(a,b) > 0 and prof.support(b,a) == 0:
+            if strong_Pareto and profile.support(a,b) > 0 and profile.support(b,a) == 0:
                 Pareto_dominated.add(b)     
 
-    if type(prof) == ProfileWithTies and use_extended_strict_preferences:
+    if type(profile) == ProfileWithTies and use_extended_strict_preferences:
         if not currently_using_extended_strict_preferences:
-            prof.use_strict_preference()
+            profile.use_strict_preference()
 
     return sorted(list(set(candidates) - Pareto_dominated))
     
@@ -156,7 +163,14 @@ def kemeny_young_rankings(profile, curr_cands = None):
     return _kemeny_young_rankings(list(rankings), list(profile._rcounts), candidates)
 
 
-@vm(name = "Kemeny-Young")
+kemeny_young_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+@vm(name = "Kemeny-Young",
+    properties = kemeny_young_properties,
+    input_types = [ElectionTypes.PROFILE,ElectionTypes.PROFILE_WITH_TIES,  ElectionTypes.MARGIN_GRAPH])
 def kemeny_young(edata, curr_cands = None, algorithm = "marginal"): 
     """A Kemeny-Young ranking is a ranking that maximizes the sum of the margins of pairs of candidates in the ranking. Equivalently, a Kemeny-Young ranking is a ranking that minimizes the sum of the Kendall tau distances to the voters' rankings. The Kemeny-Young winners are the candidates that are ranked first by some Kemeny-Young ranking.
 
@@ -223,8 +237,14 @@ def kemeny_young(edata, curr_cands = None, algorithm = "marginal"):
     
     return sorted(list(set([r[0] for r in ky_rankings])))
 
-
-@vm("Preliminary Weighted Condorcet")
+preliminary_weighted_condorcet_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+@vm("Preliminary Weighted Condorcet",
+    properties = preliminary_weighted_condorcet_properties,
+    input_types = [ElectionTypes.PROFILE])
 def preliminary_weighted_condorcet(prof, curr_cands = None, show_orders = False, require_positive_plurality_score = False):
     """The preliminary version of the Weighted Condorcet Rule in Tideman's book, Collective Decisions and Voting (p. 223). The winners are the candidates ranked first by some linear order of the candidates with highest score, where the score of an order (c_1,...,c_n) is the sum over all i<j of the margin of c_i vs. c_j multiplied by the plurality scores of c_i and c_j. 
     
@@ -272,7 +292,14 @@ def preliminary_weighted_condorcet(prof, curr_cands = None, show_orders = False,
 
 ### Bucklin
 
-@vm(name = "Bucklin")
+bucklin_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=False,
+    pareto_dominance=True,
+)
+@vm(name = "Bucklin",
+    properties = bucklin_properties,
+    input_types = [ElectionTypes.PROFILE])
 def bucklin(profile, curr_cands = None): 
     """If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes.  Return the candidates with the greatest overall score.  
     
@@ -375,8 +402,14 @@ def bucklin_with_explanation(profile, curr_cands = None):
     return sorted([c for c in candidates if cand_scores[c] >= max_score]), cand_scores
 
 
-
-@vm(name = "Simplified Bucklin")
+simplified_bucklin_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=False,
+    pareto_dominance=True,
+)
+@vm(name = "Simplified Bucklin",
+    properties = simplified_bucklin_properties,
+    input_types = [ElectionTypes.PROFILE])
 def simplified_bucklin(profile, curr_cands = None): 
     """If a candidate has a strict majority of first-place votes, then that candidate is the winner. If no such candidate exists, then check the candidates that are ranked first or second.  If a candidate has a strict majority of first- or second-place voters, then that candidate is the winner. If no such winner is found move on to the 3rd, 4th, etc. place votes. 
 
@@ -477,8 +510,14 @@ def simplified_bucklin_with_explanation(profile, curr_cands = None):
             
     return sorted([c for c in candidates if cand_scores[c] >= strict_maj_size]), cand_scores
 
-
-@vm(name = "Weighted Bucklin")
+weighted_bucklin_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=None,
+    pareto_dominance=True,
+)
+@vm(name = "Weighted Bucklin",
+    properties = weighted_bucklin_properties,
+    input_types = [ElectionTypes.PROFILE])
 def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score = lambda num_cands, rank: (num_cands - rank)/ (num_cands - 1) if num_cands > 1 else 1): 
     """The Weighted Bucklin procedure, studied by D. Marc Kilgour, Jean-Charles Grégoire, and Angèle Foley. The k-th Weighted Bucklin score of a candidate c is the sum for j \leq k of the product of score(num_cands,j) and the number of voters who rank c in j-th place. Compute higher-order Weighted Bucklin scores until reaching a k such that some candidate's k-th Weighted Bucklin score is at least half the number of voters (or the strict majority size if strict_threshold = True). Then return the candidates with maximal k-th Weighted Bucklin score. Bucklin is the special case where strict_threshold = True and score = lambda num_cands, rank: 1.
     
@@ -532,8 +571,14 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
 
     return sorted([c for c in candidates if cand_scores[c] >= max_score])
 
-
-@vm(name = "Bracket Voting")
+bracket_voting_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+@vm(name = "Bracket Voting",
+    properties = bracket_voting_properties,
+    input_types = [ElectionTypes.PROFILE])
 def bracket_voting(profile, curr_cands = None, seed = None):
     """The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
 
@@ -598,7 +643,14 @@ def bracket_voting(profile, curr_cands = None, seed = None):
 
     return [winner]
 
-@vm(name = "Superior Voting")
+superior_voting_properties = VotingMethodProperties(
+    condorcet_winner=False,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+@vm(name = "Superior Voting",
+    properties = superior_voting_properties,
+    input_types = [ElectionTypes.PROFILE])
 def superior_voting(profile, curr_cands = None):
     """One candidate is superior to another if more ballots rank the first candidate above the second than vice versa. A candidate earns a point from a ballot if they are ranked first on that ballot or they are superior to the candidate ranked first on that ballot. The candidate with the most points wins.
 
@@ -627,15 +679,3 @@ def superior_voting(profile, curr_cands = None):
     winners = [cand for cand in curr_cands if points[cand] == max_score]
 
     return winners
-
-other_vms = [
-    kemeny_young, 
-    pareto,
-    preliminary_weighted_condorcet,
-    majority, 
-    bucklin,
-    simplified_bucklin,
-    weighted_bucklin,
-    bracket_voting,
-    superior_voting
-]

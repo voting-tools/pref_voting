@@ -18,8 +18,15 @@ import math
 from itertools import product, permutations, combinations, chain
 import networkx as nx
 import matplotlib.pyplot as plt
+from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
 
-@vm(name = "Condorcet")
+condorcet_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=False,
+    pareto_dominance=False,)
+@vm(name = "Condorcet",
+    properties = condorcet_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def condorcet(edata, curr_cands = None):
     """
     Return the Condorcet winner if one exists, otherwise return all the candidates.  A Condorcet winner is a candidate :math:`c` that is majority preferred to every other candidate. 
@@ -65,8 +72,13 @@ def condorcet(edata, curr_cands = None):
     
     return [cond_winner] if cond_winner is not None else sorted(candidates)
 
-
-@vm(name = "Copeland")
+copeland_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Copeland",
+    properties = copeland_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def copeland(edata, curr_cands = None):
     """The Copeland score for c is the number of candidates that c is majority preferred to minus the number of candidates majority preferred to c.  The Copeland winners are the candidates with the maximum Copeland score in the profile restricted to ``curr_cands``. 
 
@@ -146,7 +158,14 @@ def copeland_ranking(edata, curr_cands=None, local=True, tie_breaking=None):
 
     return copeland_ranking
 
-@vm(name = "Llull")
+
+llull_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Llull",
+    properties = llull_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def llull(edata, curr_cands = None):
     """The Llull score for a candidate :math:`c` is the number of candidates that :math:`c` is weakly majority preferred to.  This is equivalent to calculating the Copeland scores for a candidate :math:`c` with 1 point for each candidate that :math:`c` is majority preferred to, 1/2 point for each candidate that :math:`c` is tied with, and 0 points for each candidate that is majority preferred to :math:`c`.  The Llull winners are the candidates with the maximum Llull score in the profile restricted to ``curr_cands``. 
 
@@ -205,8 +224,13 @@ def right_covers(dom, c1, c2):
       
     return dom[c2].issubset(dom[c1])
 
-
-@vm(name = "Uncovered Set")
+uc_gill_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Uncovered Set",
+    properties = uc_gill_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def uc_gill(edata, curr_cands = None): 
     """Uncovered Set (Gillies version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election if :math:`a` is majority preferred to :math:`b` and :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. 
     
@@ -297,8 +321,13 @@ def uc_gill_defeat(edata, curr_cands = None):
                     defeat.add_edge(c2, c1)
     return defeat
 
-
-@vm(name = "Uncovered Set - Fishburn")
+uc_fish_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Uncovered Set - Fishburn",
+    properties = uc_fish_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def uc_fish(edata, curr_cands = None): 
     """Uncovered Set (Fishburn version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` defeats :math:`b` in the election :math:`a` left covers :math:`b`: i.e., for all :math:`c`, if :math:`c` is majority preferred to :math:`a`,  then :math:`c` majority preferred to :math:`b`. The winners are the set of candidates who are undefeated in the election restricted to ``curr_cands``. 
     
@@ -388,8 +417,13 @@ def uc_fish_defeat(edata, curr_cands = None):
                     defeat.add_edge(c2, c1)
     return defeat
 
-
-@vm(name = "Uncovered Set - Bordes")
+uc_bordes_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Uncovered Set - Bordes",
+    properties = uc_fish_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def uc_bordes(edata, curr_cands = None): 
     """Uncovered Set (Bordes version):  Given candidates :math:`a` and :math:`b`, say that :math:`a` Bordes covers :math:`b` if :math:`a` is majority preferred to :math:`b` and for all :math:`c`, if :math:`c` is majority preferred or tied with :math:`a`, then :math:`c` is majority preferred to or tied with :math:`b`. The winners are the set of candidates who are not Bordes covered in the election restricted to ``curr_cands``. 
     
@@ -446,7 +480,13 @@ def uc_bordes(edata, curr_cands = None):
             uc_set.append(c1)
     return list(sorted(uc_set))  
 
-@vm(name = "Uncovered Set - McKelvey")
+uc_mckelvey_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Uncovered Set - McKelvey",
+    properties = uc_fish_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def uc_mckelvey(edata, curr_cands = None): 
     """Uncovered Set (McKelvey version):  Given candidates :math:`a` and :math:`b`, say that  :math:`a` McKelvey covers :math:`b` if a Gillies covers :math:`b` and :math:`a` Bordes covers :math:`b`. The winners are the set of candidates who are not McKelvey covered in the election restricted to ``curr_cands``. 
     
@@ -462,8 +502,7 @@ def uc_mckelvey(edata, curr_cands = None):
         :func:`pref_voting.c1_methods.uc_gill`, :func:`pref_voting.c1_methods.uc_fish`, :func:`pref_voting.c1_methods.uc_bordes`
 
     :Example: 
-        
-        
+         
     .. plot::  margin_graphs_examples/mg_ex_uncovered_sets.py
         :context: reset  
         :include-source: True
@@ -502,7 +541,13 @@ def uc_mckelvey(edata, curr_cands = None):
             uc_set.append(c1)
     return list(sorted(uc_set))      
 
-@vm(name = "Top Cycle")
+top_cycle_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Top Cycle",
+    properties = top_cycle_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def top_cycle(edata, curr_cands = None):
     """The smallest set of candidates such that every candidate inside the set is majority preferred to every candidate outside the set.  
     
@@ -558,8 +603,11 @@ def top_cycle(edata, curr_cands = None):
 # Create some aliases for Top Cycle
 top_cycle.set_name("GETCHA")
 getcha = copy.deepcopy(top_cycle)
+getcha.skip_registration = True
+
 top_cycle.set_name("Smith Set")
 smith_set = copy.deepcopy(top_cycle)
+smith_set.skip_registration = True
 
 # reset the name Top Cycle
 top_cycle.set_name("Top Cycle")
@@ -594,8 +642,13 @@ def top_cycle_defeat(edata, curr_cands = None):
     defeat.add_edges_from([(a, b) for a in candidates for b in candidates if a != b and a in smith_set and b not in smith_set])
     return defeat
 
-
-@vm(name = "GOCHA")
+gocha_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "GOCHA",
+    properties = gocha_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def gocha(edata, curr_cands = None):
     """The GOCHA set (also known as the Schwartz set) is the set of all candidates x such that if y can reach x in the transitive closer of the majority relation, then x can reach y in the transitive closer of the majority relation.
       
@@ -650,6 +703,7 @@ def gocha(edata, curr_cands = None):
 # Create some aliases for GOCHA
 gocha.set_name("Schwartz Set")
 schwartz_set = copy.deepcopy(gocha)
+schwartz_set.skip_registration = True
 
 # reset the name GETCHA
 gocha.set_name("GOCHA")
@@ -673,7 +727,13 @@ def is_subsequence(x, y):
     it = iter(y)
     return all(any(c == ch for c in it) for ch in x)
 
-@vm(name = "Banks")
+banks_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Banks",
+    properties = banks_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def banks(edata, curr_cands = None): 
     """ Say that a *chain* in majority graph is a subset of candidates that is linearly ordered by the majority relation. Then a candidate :math:`a` if :math:`a` is the maximum element with respect to the majority relation of some maximal chain in the majority graph.
 
@@ -854,8 +914,13 @@ def slater_rankings(edata, curr_cands = None):
             rankings.append(lin_order)
     return rankings, min_dist
 
-        
-@vm(name = "Slater")
+slater_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Slater",
+    properties = slater_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def slater(edata, curr_cands = None): 
     """A Slater ranking is a linear order :math:`R` of the candidates that minimizes the number of edges in the majority graph we have to turn around before we obtain :math:`R`.   A candidate is a Slater winner if the candidate is the top element of some Slater ranking.
 
@@ -896,8 +961,13 @@ def slater(edata, curr_cands = None):
     
     return sorted(list(set([r[0] for r in rankings])))
 
-
-@vm(name="Bipartisan Set")
+bipartisan_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,)
+@vm(name = "Bipartisan Set",
+    properties = bipartisan_properties,
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def bipartisan(edata, curr_cands = None, threshold = 0.0000001): 
     """The Bipartisan Set is the support of the (chosen) C1 maximal lottery.
 
@@ -911,20 +981,6 @@ def bipartisan(edata, curr_cands = None, threshold = 0.0000001):
 
     ml = c1_maximal_lottery(edata, curr_cands=curr_cands)
     return sorted([c for c in ml.keys() if  ml[c] > threshold])
-
-
-c1_vms = [
-    banks,
-    condorcet,
-    copeland,
-    llull,
-    uc_gill,
-    uc_fish,
-    uc_bordes,
-    uc_mckelvey,
-    top_cycle,
-    gocha,
-]
 
 c1_swf = [
     copeland_ranking

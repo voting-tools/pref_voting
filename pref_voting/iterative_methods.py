@@ -16,6 +16,8 @@ from pref_voting.social_welfare_function import swf
 import copy
 from itertools import permutations, product
 import numpy as np
+from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
+
 
 def _instant_runoff_basic(profile,curr_cands = None):
     "The basic implementation of instant runoff"
@@ -65,7 +67,14 @@ def _instant_runoff_recursive(profile, curr_cands = None):
     else:
         return _instant_runoff_recursive(profile, [c for c in candidates if c not in lowest_first_place_votes])
 
-@vm(name = "Instant Runoff")
+irv_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=False,
+    pareto_dominance=True, 
+    )
+@vm(name = "Instant Runoff",
+    properties=irv_properties,
+    input_types=[ElectionTypes.PROFILE])
 def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
     """
     If there is a majority winner then that candidate is the winner. If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters. Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  
@@ -156,7 +165,14 @@ def instant_runoff_ranking(profile, curr_cands = None):
 
         return ranking
 
-@vm(name = "Instant Runoff TB")
+irv_tb_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Instant Runoff TB",
+    properties=irv_tb_properties,
+    input_types=[ElectionTypes.PROFILE])
 def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
     """Instant Runoff (``instant_runoff``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.
 
@@ -224,8 +240,14 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None):
      
     return sorted(winners)
 
-
-@vm(name = "Instant Runoff PUT")
+irv_put_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Instant Runoff PUT",
+    properties=irv_put_properties,
+    input_types=[ElectionTypes.PROFILE])
 def instant_runoff_put(profile, curr_cands = None):
     """
     Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with a minimal number of first-place votes such that after removing y from the profile, x is an IRV-PUT winner.
@@ -388,8 +410,14 @@ def instant_runoff_with_explanation(profile, curr_cands = None):
      
     return sorted(winners), elims_list
 
-
-@vm(name="Instant Runoff")
+irv_truncated_lo_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=False,
+    pareto_dominance=None, 
+    )
+@vm(name="Instant Runoff",
+    properties=irv_truncated_lo_properties,
+    input_types=[ElectionTypes.TRUNCATED_LINEAR_PROFILE])
 def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = True): 
     """
     Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes. 
@@ -480,7 +508,14 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
     
     return sorted([c for c in pl_scores.keys() if pl_scores[c] == max_pl_score])
 
-@vm(name="Bottom-Two-Runoff Instant Runoff")
+bottom_two_runoff_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=False,
+    pareto_dominance=True, 
+    )
+@vm(name="Bottom-Two-Runoff Instant Runoff",
+    properties=bottom_two_runoff_properties,
+    input_types=[ElectionTypes.PROFILE])
 def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
     """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. 
     
@@ -530,7 +565,14 @@ def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
     else:
         return bottom_two_runoff_instant_runoff(profile, [cand for cand in candidates if cand not in set(cands_to_remove)])
 
-@vm(name="Bottom-Two-Runoff Instant Runoff PUT")
+bottom_two_runoff_put_properties = VotingMethodProperties(
+    condorcet_winner=None, 
+    condorcet_loser=False,
+    pareto_dominance=None, 
+    )
+@vm(name="Bottom-Two-Runoff Instant Runoff PUT",
+    properties=bottom_two_runoff_put_properties,
+    input_types=[ElectionTypes.PROFILE])
 def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     """Find the two candidates with the lowest two plurality scores, remove the one who loses head-to-head to the other, and repeat until a single candidate remains. Parallel-universe tiebreaking is used to break ties for lowest or second lowest plurality scores. 
 
@@ -573,7 +615,15 @@ def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     
     return sorted(set(winners))
     
-@vm(name = "PluralityWRunoff PUT")
+
+pl_w_runoff_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=True,
+    pareto_dominance=None, 
+    )
+@vm(name = "PluralityWRunoff PUT",
+    properties=pl_w_runoff_properties,
+    input_types=[ElectionTypes.PROFILE])
 def plurality_with_runoff_put(profile, curr_cands = None):
     """If there is a majority winner then that candidate is the Plurality with Runoff winner. Otherwise hold a runoff between the top two candidates: the candidate with the most first place votes and the candidate with the 2nd most first place votes (or perhaps tied for the most first place votes). In the case of multiple candidates tied for the most or 2nd most first place votes, use parallel-universe tiebreaking: a candidate is a Plurality with Runoff winner if it is a winner in some runoff as described. If the candidates are all tied for the most first place votes, then all candidates are winners.
         
@@ -680,7 +730,14 @@ def plurality_with_runoff_put_with_explanation(profile, curr_cands = None):
     
     return sorted(list(set(winners))), list(all_runoff_pairs)
 
-@vm(name = "Coombs")
+coombs_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Coombs",
+    properties=coombs_properties,
+    input_types=[ElectionTypes.PROFILE])
 def coombs(profile, curr_cands = None):
     """If there is a majority winner then that candidate is the Coombs winner.   If there is no majority winner, then remove all candidates that are ranked last by the greatest number of voters.  Continue removing candidates with the most last-place votes until there is a candidate with a majority of first place votes.  
     
@@ -745,8 +802,14 @@ def coombs(profile, curr_cands = None):
 
     return sorted(winners)
 
-
-@vm(name = "Coombs TB")
+coombs_tb_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Coombs TB",
+    properties=coombs_tb_properties,
+    input_types=[ElectionTypes.PROFILE])
 def coombs_tb(profile, curr_cands = None, tie_breaker=None):
     """
     Coombs with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,....,num_cands-1.
@@ -816,7 +879,14 @@ def coombs_tb(profile, curr_cands = None, tie_breaker=None):
 
     return sorted(winners)
 
-@vm(name = "Coombs PUT")
+coombs_put_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Coombs PUT",
+    properties=coombs_put_properties,
+    input_types=[ElectionTypes.PROFILE])
 def coombs_put(profile, curr_cands = None):
     """Coombs with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the Coombs-PUT winner; otherwise a candidate x is a Coombs-PUT winner if there is some candidate y with a maximal number of last-place votes such that after removing y from the profile, x is a Coombs-PUT winner.
     
@@ -948,7 +1018,14 @@ def coombs_with_explanation(profile, curr_cands = None):
 
     return sorted(winners), elims_list
 
-@vm(name = "Baldwin")
+baldwin_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Baldwin",
+    properties=baldwin_properties,
+    input_types=[ElectionTypes.PROFILE])
 def baldwin(profile, curr_cands = None):
     """Iteratively remove all candidates with the lowest Borda score until a single candidate remains.  If, at any stage, all  candidates have the same Borda score,  then all (remaining) candidates are winners.
 
@@ -1015,7 +1092,14 @@ def baldwin(profile, curr_cands = None):
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
     return sorted(winners)
 
-@vm(name = "Baldwin TB")
+baldwin_tb_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Baldwin TB",
+    properties=coombs_tb_properties,
+    input_types=[ElectionTypes.PROFILE])
 def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
     """
     Baldwin with a fixed tie-breaking rule: The tie-breaking rule is any linear order (i.e., list) of the candidates.  The default rule is to order the candidates as follows: 0,....,num_cands-1.
@@ -1098,7 +1182,14 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
     return sorted(winners)
 
-@vm(name = "Baldwin PUT")
+baldwin_put_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Baldwin PUT",
+    properties=baldwin_put_properties,
+    input_types=[ElectionTypes.PROFILE])
 def baldwin_put(profile, curr_cands=None):
     """Baldwin with parallel universe tie-breaking (PUT), defined recursively: if there is a single candidate in the profile, that candidate wins; otherwise a candidate x is a Baldwin-PUT winner if there is some candidate y with a minimal Borda score such that after removing y from the profile, x is a Baldwin-PUT winner.
     
@@ -1238,7 +1329,14 @@ def baldwin_with_explanation(profile, curr_cands = None):
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
     return sorted(winners), elims_list
 
-@vm(name = "Strict Nanson")
+strict_nanson_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Strict Nanson",
+    properties=strict_nanson_properties,
+    input_types=[ElectionTypes.PROFILE])
 def strict_nanson(profile, curr_cands = None):
     """Iteratively remove all candidates with the  Borda score strictly below the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.
 
@@ -1381,8 +1479,14 @@ def strict_nanson_with_explanation(profile, curr_cands = None):
             
     return winners, elim_list
 
-
-@vm(name = "Weak Nanson")
+weak_nanson_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=True,
+    pareto_dominance=True, 
+    )
+@vm(name = "Weak Nanson",
+    properties=weak_nanson_properties,
+    input_types=[ElectionTypes.PROFILE])
 def weak_nanson(profile, curr_cands = None):
     """Iteratively remove all candidates with Borda score less than or equal the average Borda score until one candidate remains.  If, at any stage, all  candidates have the same Borda score, then all (remaining) candidates are winners.
 
@@ -1547,7 +1651,14 @@ def weak_nanson_with_explanation(profile, curr_cands = None):
     return winners, elim_list
 
 
-@vm(name = "Iterated Removal Condorcet Loser")
+it_condorcet_loser_properties = VotingMethodProperties(
+    condorcet_winner=False, 
+    condorcet_loser=True,
+    pareto_dominance=False, 
+    )
+@vm(name = "Iterated Removal Condorcet Loser",
+    properties=it_condorcet_loser_properties,
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def iterated_removal_cl(edata, curr_cands = None):
     """
     Iteratively remove candidates that are Condorcet losers until there are no Condorcet losers.   A candidate :math:`c` is a **Condorcet loser** when every other candidate is majority preferred to :math:`c`. 
@@ -1643,7 +1754,14 @@ def _remove_worst_losers(edata,curr_cands,score_method):
     else:
         return [c for c in curr_cands if c not in worst_losers]
 
-@vm(name = "Raynaud")
+raynaud_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=False,
+    pareto_dominance=True, 
+    )
+@vm(name = "Raynaud",
+    properties=raynaud_properties,
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def raynaud(edata, curr_cands=None, score_method = "margins"):
     """Iteratively remove the candidate(s) whose worst loss is biggest, unless all candidates have the same worst loss. See https://electowiki.org/wiki/Raynaud.
     
@@ -1662,7 +1780,14 @@ def raynaud(edata, curr_cands=None, score_method = "margins"):
         new_cands = _remove_worst_losers(edata,candidates,score_method)
     return sorted(candidates)
 
-@vm(name = "Benham")
+benham_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=False,
+    pareto_dominance=True, 
+    )
+@vm(name = "Benham",
+    properties=benham_properties,
+    input_types=[ElectionTypes.PROFILE])
 def benham(profile, curr_cands = None):
     """
     As long as the profile has no Condorcet winner, eliminate the candidate with the lowest plurality score.
@@ -1714,8 +1839,14 @@ def benham(profile, curr_cands = None):
 
     return sorted(winners)
 
-
-@vm(name = "Benham TB")
+benham_tb_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Benham TB",
+    properties=benham_tb_properties,
+    input_types=[ElectionTypes.PROFILE])
 def benham_tb(profile, curr_cands = None, tie_breaker = None):
     """Benham (``benham``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.
 
@@ -1766,7 +1897,14 @@ def benham_tb(profile, curr_cands = None, tie_breaker = None):
     return sorted(winners)
 
 
-@vm(name = "Benham PUT")
+benham_tb_properties = VotingMethodProperties(
+    condorcet_winner=True, 
+    condorcet_loser=None,
+    pareto_dominance=True, 
+    )
+@vm(name = "Benham PUT",
+    properties=benham_tb_properties,
+    input_types=[ElectionTypes.PROFILE])
 def benham_put(profile, curr_cands = None):
     """Benham (:func:`benham`) with parallel universe tie-breaking (PUT), defined recursively: if there is a Condorcet winner, that candidate is the Benham-PUT winner; otherwise a candidate x is a Benham-PUT winner if there is some candidate y with minimal plurality score such that after removing y from the profile, x is a Benham-PUT winner.
     
@@ -1854,8 +1992,23 @@ def tideman_alternative(vm):
 
     return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
 
+ta_smith_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
 tideman_alternative_smith = tideman_alternative(top_cycle)
+tideman_alternative_smith.properties = ta_smith_properties
+tideman_alternative_smith.input_types = [ElectionTypes.PROFILE]
+
+ta_schwartz_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
 tideman_alternative_schwartz = tideman_alternative(gocha)
+tideman_alternative_schwartz.properties = ta_schwartz_properties
+tideman_alternative_schwartz.input_types = [ElectionTypes.PROFILE]
 
 def tideman_alternative_put(vm):
     """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. Parallel-universe tiebreaking is used when there are multiple candidates with the fewest first-place votes.
@@ -1891,10 +2044,34 @@ def tideman_alternative_put(vm):
 
     return VotingMethod(_ta, name=f"Tideman Alternative {vm.name} PUT")
 
-tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
-tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
 
-@vm(name = "Woodall")
+ta_smith_put_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
+tideman_alternative_smith_put.properties = ta_smith_put_properties
+tideman_alternative_smith_put.input_types = [ElectionTypes.PROFILE]
+
+ta_schwartz_put_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
+tideman_alternative_schwartz_put.properties = ta_schwartz_put_properties
+tideman_alternative_schwartz_put.input_types = [ElectionTypes.PROFILE]
+
+
+woodall_properties = VotingMethodProperties(
+    condorcet_winner=True,
+    condorcet_loser=True,
+    pareto_dominance=True,
+)
+@vm(name = "Woodall",
+    properties=woodall_properties,
+    input_types=[ElectionTypes.PROFILE])
 def woodall(profile, curr_cands = None):
     """
     If there is a single member of the Smith Set (i.e., a Condorcet winner) then that candidate is the winner.  If there the Smith Set contains more than one candidate, then remove all candidates that are ranked first by the fewest number of voters.  Continue removing candidates with the fewest number first-place votes until there is a single member of the originally Smith Set remaining.  
@@ -1955,7 +2132,14 @@ def woodall(profile, curr_cands = None):
 
     return sorted(winners)
 
-@vm(name = "Knockout Voting")
+knockout_properties = VotingMethodProperties(
+    condorcet_winner=None,
+    condorcet_loser=None,
+    pareto_dominance=None,
+)
+@vm(name = "Knockout Voting",
+    properties=knockout_properties,
+    input_types=[ElectionTypes.PROFILE])
 def knockout(profile, curr_cands=None):
     """Find the two candidates in curr_cands with the lowest and second lowest Borda scores among any candidates in curr_cands. Then remove from curr_cands whichever one loses to the other in a head-to-head majority comparison. Repeat this process, always using the original Borda score (i.e., the Borda scores calculated with respect to all candidates in the profile, not with respect to curr_cands as for Baldwin and Nanson) until only one candidate remains in curr_cands. Parallel universe tie-breaking (PUT) is used when there are ties in lowest or second lowest Borda scores.
 
@@ -2019,35 +2203,6 @@ def knockout(profile, curr_cands=None):
     return sorted(set(winners))
 
     
-iterated_vms = [
-    instant_runoff,
-    instant_runoff_tb,
-    instant_runoff_put,
-    #hare,
-    #ranked_choice,
-    bottom_two_runoff_instant_runoff,
-    bottom_two_runoff_instant_runoff_put,
-    benham,
-    benham_put,
-    benham_tb,
-    plurality_with_runoff_put,
-    coombs,
-    coombs_tb,
-    coombs_put,
-    baldwin,
-    baldwin_tb,
-    baldwin_put,
-    strict_nanson,
-    weak_nanson,
-    iterated_removal_cl,
-    raynaud,
-    tideman_alternative_smith,
-    tideman_alternative_smith_put,
-    tideman_alternative_schwartz,
-    tideman_alternative_schwartz_put,
-    woodall,
-    knockout
-]
 
 iterated_vms_with_explanation = [
     instant_runoff_with_explanation,

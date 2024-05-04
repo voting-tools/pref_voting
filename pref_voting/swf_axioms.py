@@ -115,12 +115,12 @@ def has_core_support_violation(prof,swf,verbose=False):
                 if not restricted_prof.majority_prefers(x,y):
                     if verbose:
                         print(f"Core support violation by {swf} for {x} relative to {y}:")
-                        print(prof)
+                        print(prof.anonymize())
                         prof.display_margin_graph()
                         print("Social ranking:",social_ranking)
                         print(f"Major candidates relative to {y}:",maj_cand_for_y)
                         print(f"Profile restricted to voters in core support for {x} relative to {y} and for {y} relative to {y}:")
-                        print(restricted_prof)
+                        print(restricted_prof.anonymize())
                         restricted_prof.display_margin_graph()
                     return True
     return False
@@ -156,12 +156,12 @@ def find_all_core_support_violations(prof,swf,verbose=False):
                 if not restricted_prof.majority_prefers(x,y):
                     if verbose:
                         print(f"Core support violation by {swf} for {x} relative to {y}:")
-                        print(prof)
+                        print(prof.anonymize())
                         prof.display_margin_graph()
                         print("Social ranking:",social_ranking)
                         print(f"Major candidates relative to {y}:",maj_cand_for_y)
                         print(f"Profile restricted to voters in core support for {x} relative to {y} and for {y} relative to {y}:")
-                        print(restricted_prof)
+                        print(restricted_prof.anonymize())
                         restricted_prof.display_margin_graph()
                     violations.append((x,y))
     return violations
