@@ -1574,7 +1574,8 @@ def stable_voting(
 essential_set_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="Essential Set",
     properties=essential_set_properties,
