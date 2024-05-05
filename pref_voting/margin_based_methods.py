@@ -8,6 +8,7 @@
 '''
 
 from pref_voting.voting_method import  *
+from pref_voting.c1_methods import gocha
 from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph 
 from pref_voting.probabilistic_methods import  maximal_lottery, c1_maximal_lottery
 from pref_voting.helper import get_mg, SPO
@@ -160,7 +161,6 @@ def _beat_path_basic(edata,
         A sorted list of candidates. 
 
     """
-    
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function
     
@@ -180,7 +180,6 @@ def _beat_path_basic(edata,
         if all([beat_paths_weights[c][c2] >= beat_paths_weights[c2][c] for c2 in candidates  if c2 != c]):
             winners.append(c)
     return sorted(list(winners))
-
 
 def _beat_path_floyd_warshall(
         edata, 
@@ -222,12 +221,49 @@ def _beat_path_floyd_warshall(
                     winners[i] = False
     return sorted([c for c in candidates if winners[c]])
 
+def _schwartz_sequential_dropping(edata, curr_cands = None, strength_function = None):
+
+    """The Schwartz Sequential Dropping algorithm. See https://en.wikipedia.org/wiki/Schulze_method#Ties_and_alternative_implementations.
+    
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+    """
+
+    strength_function = edata.margin if strength_function is None else strength_function
+
+    mg = edata if isinstance(edata, MarginGraph) else edata.margin_graph()
+    schwartz = gocha(mg, curr_cands = curr_cands)
+
+    if len(schwartz) == 1:
+        return schwartz
+    
+    pos_schwartz_strengths = [strength_function(c,d) for c in schwartz for d in schwartz if strength_function(c,d) > 0]
+
+    if len(pos_schwartz_strengths) == 0:
+        return sorted(schwartz)
+
+    max_schwartz_strength = max(pos_schwartz_strengths)
+    min_schwartz_strength = min(pos_schwartz_strengths)
+
+    if max_schwartz_strength == min_schwartz_strength:
+        return sorted(schwartz)
+    
+    else:
+        new_mg = MarginGraph(schwartz,[(c,d, strength_function(c,d)) for c in schwartz for d in schwartz if strength_function(c,d) > min_schwartz_strength])
+        return _schwartz_sequential_dropping(new_mg, schwartz)
+
 bp_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True,
     positive_involvement=False, 
     )
+
 @vm(name="Beat Path",
     properties=bp_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
@@ -240,13 +276,13 @@ def beat_path(
     """For candidates :math:`a` and :math:`b`, a **path** from :math:`a` to :math:`b` is a sequence 
     :math:`x_1, \ldots, x_n` of distinct candidates  with  :math:`x_1=a` and :math:`x_n=b` such that 
     for :math:`1\leq k\leq n-1`, :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The **strength of a path**
-    is the minimal margin along that path.  Say that :math:`a` defeats :math:`b` according to Beat Path if the the strength of the strongest path from :math:`a` to :math:`b` is greater than the strength of the strongest path from :math:`b` to :math:`a`. Then, the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule. 
+    is the minimal margin along that path.  Say that :math:`a` defeats :math:`b` according to Beat Path if the the strength of the strongest path from :math:`a` to :math:`b` is greater than the strength of the strongest path from :math:`b` to :math:`a`. Then the candidates that are undefeated according to Beat Path are the winners.  Also known as the Schulze Rule. 
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
-        algorithm (str): Specify which algorithm to use.  Options are 'floyd_warshall' (the default) and 'basic'.
+        algorithm (str): Specify which algorithm to use.  Options are 'floyd_warshall' (the default), 'basic', and 'schwartz_sequential_dropping'.
 
     Returns: 
         A sorted list of candidates. 
@@ -286,6 +322,8 @@ def beat_path(
         return _beat_path_floyd_warshall(edata, curr_cands = curr_cands, strength_function = strength_function)
     elif algorithm == 'basic':
         return _beat_path_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
+    elif algorithm == 'schwartz_sequential_dropping':
+        return _schwartz_sequential_dropping(edata, curr_cands = curr_cands, strength_function = strength_function)
     else:
         raise ValueError("Invalid algorithm specified.")
 
