@@ -71,6 +71,7 @@ irv_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
     pareto_dominance=True, 
+    positive_involvement=True,
     )
 @vm(name = "Instant Runoff",
     properties=irv_properties,
@@ -244,6 +245,7 @@ irv_put_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=None,
     pareto_dominance=True, 
+    positive_involvement=True,
     )
 @vm(name = "Instant Runoff PUT",
     properties=irv_put_properties,
@@ -512,6 +514,7 @@ bottom_two_runoff_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=False,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name="Bottom-Two-Runoff Instant Runoff",
     properties=bottom_two_runoff_properties,
@@ -569,6 +572,7 @@ bottom_two_runoff_put_properties = VotingMethodProperties(
     condorcet_winner=None, 
     condorcet_loser=False,
     pareto_dominance=None, 
+    positive_involvement=False,
     )
 @vm(name="Bottom-Two-Runoff Instant Runoff PUT",
     properties=bottom_two_runoff_put_properties,
@@ -620,6 +624,7 @@ pl_w_runoff_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=True,
     pareto_dominance=None, 
+    positive_involvement=True,
     )
 @vm(name = "PluralityWRunoff PUT",
     properties=pl_w_runoff_properties,
@@ -734,6 +739,7 @@ coombs_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Coombs",
     properties=coombs_properties,
@@ -806,6 +812,7 @@ coombs_tb_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=None,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Coombs TB",
     properties=coombs_tb_properties,
@@ -883,6 +890,7 @@ coombs_put_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=None,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Coombs PUT",
     properties=coombs_put_properties,
@@ -1022,6 +1030,7 @@ baldwin_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Baldwin",
     properties=baldwin_properties,
@@ -1096,6 +1105,7 @@ baldwin_tb_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Baldwin TB",
     properties=coombs_tb_properties,
@@ -1186,6 +1196,7 @@ baldwin_put_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Baldwin PUT",
     properties=baldwin_put_properties,
@@ -1333,6 +1344,7 @@ strict_nanson_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Strict Nanson",
     properties=strict_nanson_properties,
@@ -1483,6 +1495,7 @@ weak_nanson_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name = "Weak Nanson",
     properties=weak_nanson_properties,
@@ -1655,6 +1668,7 @@ it_condorcet_loser_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=True,
     pareto_dominance=False, 
+    positive_involvement=False,
     )
 @vm(name = "Iterated Removal Condorcet Loser",
     properties=it_condorcet_loser_properties,
@@ -1757,7 +1771,8 @@ def _remove_worst_losers(edata,curr_cands,score_method):
 raynaud_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=False,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False,
     )
 @vm(name = "Raynaud",
     properties=raynaud_properties,
@@ -1783,7 +1798,8 @@ def raynaud(edata, curr_cands=None, score_method = "margins"):
 benham_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=False,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    benham=False, 
     )
 @vm(name = "Benham",
     properties=benham_properties,
@@ -1842,7 +1858,8 @@ def benham(profile, curr_cands = None):
 benham_tb_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=None,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False,
     )
 @vm(name = "Benham TB",
     properties=benham_tb_properties,
@@ -1900,7 +1917,8 @@ def benham_tb(profile, curr_cands = None, tie_breaker = None):
 benham_tb_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=None,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False,
     )
 @vm(name = "Benham PUT",
     properties=benham_tb_properties,
@@ -1996,6 +2014,7 @@ ta_smith_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 tideman_alternative_smith = tideman_alternative(top_cycle)
 tideman_alternative_smith.properties = ta_smith_properties
@@ -2005,6 +2024,7 @@ ta_schwartz_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 tideman_alternative_schwartz = tideman_alternative(gocha)
 tideman_alternative_schwartz.properties = ta_schwartz_properties
@@ -2049,6 +2069,7 @@ ta_smith_put_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
 tideman_alternative_smith_put.properties = ta_smith_put_properties
@@ -2058,6 +2079,7 @@ ta_schwartz_put_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
 tideman_alternative_schwartz_put.properties = ta_schwartz_put_properties
@@ -2068,6 +2090,7 @@ woodall_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Woodall",
     properties=woodall_properties,
@@ -2136,6 +2159,7 @@ knockout_properties = VotingMethodProperties(
     condorcet_winner=None,
     condorcet_loser=None,
     pareto_dominance=None,
+    positive_involvement=False,
 )
 @vm(name = "Knockout Voting",
     properties=knockout_properties,

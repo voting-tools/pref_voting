@@ -19,7 +19,8 @@ from pref_voting.voting_method_properties import VotingMethodProperties, Electio
 minimax_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=False,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=True, 
     )
 @vm(name = "Minimax",
     properties=minimax_properties,
@@ -224,7 +225,8 @@ def _beat_path_floyd_warshall(
 bp_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="Beat Path",
     properties=bp_properties,
@@ -421,7 +423,8 @@ def _split_cycle_floyd_warshall(
 sc_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=True, 
     )
 @vm(name="Split Cycle",
     properties=sc_properties,
@@ -697,7 +700,8 @@ def _ranked_pairs_basic(
 rp_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="Ranked Pairs",
     properties=rp_properties,
@@ -903,7 +907,8 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
 rp_tb_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="Ranked Pairs TB",
     properties=rp_tb_properties,
@@ -980,6 +985,7 @@ rp_zt_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
     pareto_dominance=True, 
+    positive_involvement=False,
     )
 @vm(name="Ranked Pairs ZT",
     properties=rp_zt_properties,
@@ -1026,7 +1032,8 @@ def ranked_pairs_zt(
 river_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="River",
     properties=river_properties,
@@ -1175,7 +1182,8 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
 rp_tb_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="River TB",
     properties=rp_tb_properties,
@@ -1226,7 +1234,8 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
 river_zt_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name="River ZT",
     properties=river_zt_properties,
@@ -1350,7 +1359,8 @@ def _simple_stable_voting_basic(edata, curr_cands = None, strength_function = No
 ssv_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name = "Simple Stable Voting",
     properties = ssv_properties,
@@ -1507,7 +1517,8 @@ def _stable_voting_basic(
 sv_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False,  
     )
 @vm(name = "Stable Voting",
     properties = sv_properties,
@@ -1586,7 +1597,8 @@ def essential(edata, curr_cands = None, threshold = 0.0000001):
 weighted_covering_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=True, 
     )
 @vm(name="Weighted Covering",
     properties=weighted_covering_properties,
@@ -1631,7 +1643,8 @@ def weighted_covering(edata, curr_cands=None):
 loss_trimmer_properties = VotingMethodProperties(
     condorcet_winner=True, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=False, 
     )
 @vm(name = "Loss-Trimmer Voting",
     properties = loss_trimmer_properties,

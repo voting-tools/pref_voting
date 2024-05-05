@@ -17,7 +17,8 @@ from pref_voting.voting_method_properties import VotingMethodProperties, Electio
 pl_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=True, 
     )
 @vm(name = "Plurality", 
     properties=pl_properties, 
@@ -107,7 +108,8 @@ def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 borda_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=True,
-    pareto_dominance=True, 
+    pareto_dominance=True,
+    positive_involvement=True, 
     )
 @vm(name = "Borda",
     properties=borda_properties,
@@ -201,7 +203,8 @@ def borda_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 anti_plurality_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
-    pareto_dominance=False, 
+    pareto_dominance=False,
+    positive_involvement=True,
     )
 @vm(name = "Anti-Plurality",
     properties=anti_plurality_properties,
@@ -344,13 +347,14 @@ def create_scoring_method(score, name):
 
     return VotingMethod(_vm, name = name)
 
-dowdal_properties = VotingMethodProperties(
+dowdall_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
     pareto_dominance=True, 
+    positive_involvement=True,
     )
 @vm(name = "Dowdall",
-    properties=dowdal_properties,
+    properties=dowdall_properties,
     input_types=[ElectionTypes.PROFILE])
 def dowdall(profile, curr_cands = None):
     """The first-ranked candidate gets 1 point, the second-ranked candidate gets 1/2 point, the third-ranked candidate gets 1/3 point, and so on.  The Dowdall winners are the candidates with the greatest overall score in the profile restricted to ``curr_cands``.
@@ -372,7 +376,8 @@ def dowdall(profile, curr_cands = None):
 pos_neg_voting_properties = VotingMethodProperties(
     condorcet_winner=False, 
     condorcet_loser=False,
-    pareto_dominance=False, 
+    pareto_dominance=False,
+    positive_involvement=True, 
     )
 @vm(name="Positive-Negative Voting",
     properties=pos_neg_voting_properties,

@@ -23,7 +23,9 @@ from pref_voting.voting_method_properties import VotingMethodProperties, Electio
 condorcet_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=False,
-    pareto_dominance=False,)
+    pareto_dominance=False,
+    positive_involvement=False,
+    )
 @vm(name = "Condorcet",
     properties = condorcet_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
@@ -75,7 +77,9 @@ def condorcet(edata, curr_cands = None):
 copeland_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
-    pareto_dominance=True,)
+    pareto_dominance=True,
+    positive_involvement=False,
+    )
 @vm(name = "Copeland",
     properties = copeland_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
@@ -162,7 +166,9 @@ def copeland_ranking(edata, curr_cands=None, local=True, tie_breaking=None):
 llull_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
-    pareto_dominance=True,)
+    pareto_dominance=True,
+    positive_involvement=False,
+    )
 @vm(name = "Llull",
     properties = llull_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
@@ -228,6 +234,7 @@ uc_gill_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,)
+
 @vm(name = "Uncovered Set",
     properties = uc_gill_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
@@ -544,7 +551,9 @@ def uc_mckelvey(edata, curr_cands = None):
 top_cycle_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
-    pareto_dominance=True,)
+    pareto_dominance=True,
+    positive_involvement=False,
+    )
 @vm(name = "Top Cycle",
     properties = top_cycle_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
@@ -645,7 +654,9 @@ def top_cycle_defeat(edata, curr_cands = None):
 gocha_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
-    pareto_dominance=True,)
+    pareto_dominance=True,
+    positive_involvement=False,
+    )
 @vm(name = "GOCHA",
     properties = gocha_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
