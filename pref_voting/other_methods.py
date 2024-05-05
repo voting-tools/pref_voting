@@ -58,6 +58,7 @@ pareto_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=False,
     pareto_dominance=True,
+    positive_involvement = True,
 )
 @vm(name = "Pareto",
     properties = pareto_properties,
@@ -167,6 +168,7 @@ kemeny_young_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Kemeny-Young",
     properties = kemeny_young_properties,
@@ -241,6 +243,7 @@ preliminary_weighted_condorcet_properties = VotingMethodProperties(
     condorcet_winner=True,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm("Preliminary Weighted Condorcet",
     properties = preliminary_weighted_condorcet_properties,
@@ -296,6 +299,7 @@ bucklin_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=False,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Bucklin",
     properties = bucklin_properties,
@@ -406,6 +410,7 @@ simplified_bucklin_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=False,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Simplified Bucklin",
     properties = simplified_bucklin_properties,
@@ -514,6 +519,7 @@ weighted_bucklin_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=None,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Weighted Bucklin",
     properties = weighted_bucklin_properties,
@@ -575,6 +581,7 @@ bracket_voting_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Bracket Voting",
     properties = bracket_voting_properties,
@@ -647,6 +654,7 @@ superior_voting_properties = VotingMethodProperties(
     condorcet_winner=False,
     condorcet_loser=True,
     pareto_dominance=True,
+    positive_involvement=False,
 )
 @vm(name = "Superior Voting",
     properties = superior_voting_properties,

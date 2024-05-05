@@ -204,7 +204,7 @@ def weak_orders(A):
         yield {}
         return
     for k in range(1, len(A) + 1):
-        for B in itertools.combinations(A, k):
+        for B in combinations(A, k):
             for order in weak_orders(set(A) - set(B)):
                 new_order = {cand: rank + 1 for cand, rank in order.items()}
                 yield {**new_order, **{cand: 0 for cand in B}}
