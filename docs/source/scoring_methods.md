@@ -120,7 +120,15 @@ One problem with the above code is that the name of the scoring rule is "Scoring
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.scoring_methods.anti_plurality(profile, curr_cands = None)
+.. autofunction:: pref_voting.scoring_methods.anti_plurality
+
+```
+
+## Dowdall
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.scoring_methods.dowdall
 
 ```
 
