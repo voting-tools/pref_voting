@@ -8,6 +8,7 @@
 '''
 
 import functools
+import inspect
 import numpy as np
 from numba import jit # Remove until numba supports python 3.11
 import random
@@ -35,13 +36,35 @@ class VotingMethod(object):
         self.properties = properties
         self.input_types = input_types
         self.skip_registration = skip_registration
+        self.algorithm = None
+        
         functools.update_wrapper(self, vm)   
 
     def __call__(self, edata, curr_cands = None, **kwargs):
-
+        
         if (curr_cands is not None and len(curr_cands) == 0) or len(edata.candidates) == 0: 
             return []
-        return self.vm(edata, curr_cands = curr_cands, **kwargs)
+        
+        # Set the algorithm from self.algorithm if it's not already provided in kwargs
+        if 'algorithm' not in kwargs and self.algorithm is not None:
+            params = inspect.signature(self.vm).parameters
+            if 'algorithm' in params and params['algorithm'].kind in [inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD]:
+                kwargs['algorithm'] = self.algorithm
+
+        return self.vm(edata, curr_cands=curr_cands, **kwargs)
+
+    def set_algorithm(self, algorithm):
+        """
+        Set the algorithm for the voting method if 'algorithm' is an accepted keyword parameter.
+
+        Args:
+            algorithm: The algorithm to set for the voting method.
+        """
+        params = inspect.signature(self.vm).parameters
+        if 'algorithm' in params and params['algorithm'].kind in [inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD]:
+            self.algorithm = algorithm
+        else:
+            raise ValueError(f"The method {self.name} does not accept 'algorithm' as a parameter.")
     
     def choose(self, edata, curr_cands = None): 
         """

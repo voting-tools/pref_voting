@@ -8,7 +8,6 @@
 '''
 
 from pref_voting.voting_method import  *
-from pref_voting.c1_methods import gocha
 from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph 
 from pref_voting.probabilistic_methods import  maximal_lottery, c1_maximal_lottery
 from pref_voting.helper import get_mg, SPO
@@ -16,6 +15,9 @@ import math
 from itertools import product, permutations, combinations, chain
 import networkx as nx
 from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
+import multiprocessing as mp
+from multiprocessing import Pool
+from functools import partial
 
 minimax_properties = VotingMethodProperties(
     condorcet_winner=True, 
@@ -233,6 +235,7 @@ def _schwartz_sequential_dropping(edata, curr_cands = None, strength_function = 
     Returns: 
         A sorted list of candidates. 
     """
+    from pref_voting.c1_methods import gocha
 
     strength_function = edata.margin if strength_function is None else strength_function
 
@@ -401,7 +404,7 @@ def _split_cycle_basic(
         edata, 
         curr_cands = None, 
         strength_function = None):
-    """An implementation of Split Cycle based on the mathematical definition.  This is more efficient than the floyd_warshall implementation. 
+    """An implementation of Split Cycle based on the mathematical definition.   
     """
     strength_matrix, cand_to_cindex = edata.strength_matrix(curr_cands = curr_cands, strength_function=strength_function)
 
@@ -418,6 +421,41 @@ def _split_cycle_basic(
                 break
 
     return sorted(potential_winners)
+
+def _is_cand_split_cycle_defeated(a, strength_matrix):
+
+    for b in range(strength_matrix.shape[0]):
+        if strength_matrix[b][a] > strength_matrix[a][b] and not has_strong_path(strength_matrix, a,  b, strength_matrix[b][a]):
+            return True
+    return False
+
+
+def batch(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
+
+def process_batch_of_candidates(batch, strength_matrix):
+    results = []
+    for candidate in batch:
+        result = _is_cand_split_cycle_defeated(candidate, strength_matrix)
+        results.append(result)
+    return results
+
+def _split_cycle_basic_parallel(strength_matrix, num_cpus=4):
+
+    num_cands = strength_matrix.shape[0]
+    cands = list(range(num_cands))
+    batch_size = num_cands // num_cpus + (num_cands % num_cpus > 0)
+    candidate_batches = list(batch(cands, batch_size))
+    with Pool(num_cpus) as pool:
+        batch_args = [(batch, strength_matrix) 
+        for batch in candidate_batches]
+        results = pool.starmap(process_batch_of_candidates, batch_args)
+    # Flatten the list of results
+    sc_defeat_data = [item for sublist in results for item in sublist]
+
+    return sorted([c for c in cands if not sc_defeat_data[c]])
 
 def _split_cycle_floyd_warshall(
         edata, 
@@ -471,7 +509,8 @@ def split_cycle(
     edata, 
     curr_cands=None, 
     strength_function=None,
-    algorithm='basic'):
+    algorithm='basic',
+    num_cpus=4):
 
     """A **majority cycle** is a sequence :math:`x_1, \ldots ,x_n` of distinct candidates with :math:`x_1=x_n` such that for :math:`1 \leq k \leq n-1`,  :math:`x_k` is majority preferred to :math:`x_{k+1}`.  The Split Cycle winners are determined as follows:  
     
@@ -524,6 +563,12 @@ def split_cycle(
         return _split_cycle_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
     elif algorithm == 'floyd_warshall':
         return _split_cycle_floyd_warshall(edata, curr_cands = curr_cands, strength_function = strength_function)
+    elif algorithm == 'basic_parallel':
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_matrix, cand_to_cindex = edata.strength_matrix(curr_cands = curr_cands, strength_function=strength_function)
+        cindx_to_cand = {cand_to_cindex(c):c for c in curr_cands}
+        sc_ws = _split_cycle_basic_parallel(strength_matrix,num_cpus=num_cpus)
+        return sorted([cindx_to_cand[c] for c in sc_ws])
     else:
         raise ValueError("Invalid algorithm specified.")
 

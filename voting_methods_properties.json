@@ -1,0 +1,418 @@
+{
+    "Anti-Plurality": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": false,
+        "positive_involvement": true
+    },
+    "Baldwin": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Baldwin PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Baldwin TB": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Beat Path": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Benham": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": true
+    },
+    "Benham PUT": {
+        "condorcet_loser": null,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Benham TB": {
+        "condorcet_loser": null,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Blacks": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Borda": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Borda (for Truncated Profiles)": {
+        "condorcet_loser": null,
+        "condorcet_winner": null,
+        "pareto_dominance": null
+    },
+    "Borda-Minimax Faceoff": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Bottom-Two-Runoff Instant Runoff": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Bottom-Two-Runoff Instant Runoff PUT": {
+        "condorcet_loser": false,
+        "condorcet_winner": null,
+        "pareto_dominance": null,
+        "positive_involvement": false
+    },
+    "Bracket Voting": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Bucklin": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Condorcet": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": false,
+        "positive_involvement": false
+    },
+    "Condorcet IRV": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Condorcet IRV PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Condorcet Plurality": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Coombs": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Coombs PUT": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Coombs TB": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Copeland": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Copeland-Global-Borda": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Copeland-Local-Borda": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Daunou": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Dowdall": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Essential Set": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "GOCHA": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Hare PUT": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Instant Runoff": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": null
+    },
+    "Instant Runoff PUT": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Instant Runoff TB": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true
+    },
+    "Iterated Removal Condorcet Loser": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": false,
+        "positive_involvement": false
+    },
+    "Kemeny-Young": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Knockout Voting": {
+        "condorcet_loser": null,
+        "condorcet_winner": null,
+        "pareto_dominance": null,
+        "positive_involvement": false
+    },
+    "Loss-Trimmer Voting": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Minimax": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Pareto": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Plurality": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "PluralityWRunoff PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": null,
+        "positive_involvement": true
+    },
+    "Positive-Negative Voting": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": false,
+        "positive_involvement": true
+    },
+    "Preliminary Weighted Condorcet": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Ranked Choice PUT": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Ranked Pairs": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Ranked Pairs TB": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Ranked Pairs ZT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Raynaud": {
+        "condorcet_loser": false,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "River": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "River TB": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "River ZT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Simple Stable Voting": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Simplified Bucklin": {
+        "condorcet_loser": false,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Smith IRV": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Smith IRV PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Smith-Minimax": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Split Cycle": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Stable Voting": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Strict Nanson": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Superior Voting": {
+        "condorcet_loser": true,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Tideman Alternative GOCHA": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Tideman Alternative GOCHA PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Tideman Alternative Top Cycle": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Tideman Alternative Top Cycle PUT": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Top Cycle": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Weak Nanson": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Weighted Bucklin": {
+        "condorcet_loser": null,
+        "condorcet_winner": false,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    },
+    "Weighted Covering": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": true
+    },
+    "Woodall": {
+        "condorcet_loser": true,
+        "condorcet_winner": true,
+        "pareto_dominance": true,
+        "positive_involvement": false
+    }
+}

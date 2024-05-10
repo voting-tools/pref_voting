@@ -126,10 +126,13 @@ def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
 # Create some aliases for instant runoff
 instant_runoff.set_name("Hare")
 hare = copy.deepcopy(instant_runoff)
+hare.skip_registration = True
 instant_runoff.set_name("Ranked Choice")
 ranked_choice = copy.deepcopy(instant_runoff)
+ranked_choice.skip_registration = True
 instant_runoff.set_name("Alternative Vote")
 alternative_vote = copy.deepcopy(instant_runoff)
+alternative_vote.skip_registration = True
 
 # reset the name Instant Runoff
 instant_runoff.set_name("Instant Runoff")
