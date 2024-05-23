@@ -21,3 +21,4 @@ seaborn
 numba
 preflibtools
 prefsampling
+filelock
