@@ -14,19 +14,12 @@ from pref_voting.helper import get_mg, SPO
 import math
 from itertools import product, permutations, combinations, chain
 import networkx as nx
-from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
+from pref_voting.voting_method_properties import ElectionTypes
 import multiprocessing as mp
 from multiprocessing import Pool
 from functools import partial
 
-minimax_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=False,
-    pareto_dominance=True,
-    positive_involvement=True, 
-    )
 @vm(name = "Minimax",
-    properties=minimax_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH]
     )
 def minimax(edata, curr_cands = None, strength_function = None):   
@@ -260,15 +253,7 @@ def _schwartz_sequential_dropping(edata, curr_cands = None, strength_function = 
         new_mg = MarginGraph(schwartz,[(c,d, strength_function(c,d)) for c in schwartz for d in schwartz if strength_function(c,d) > min_schwartz_strength])
         return _schwartz_sequential_dropping(new_mg, schwartz)
 
-bp_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
-
 @vm(name="Beat Path",
-    properties=bp_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def beat_path(
     edata, 
@@ -496,14 +481,7 @@ def _split_cycle_floyd_warshall(
                     winners[i] = False
     return sorted([c for c in candidates if winners[c]])
 
-sc_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=True, 
-    )
 @vm(name="Split Cycle",
-    properties=sc_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def split_cycle(
     edata, 
@@ -780,14 +758,7 @@ def _ranked_pairs_basic(
     return sorted(list(set(winners)))
 
 
-rp_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="Ranked Pairs",
-    properties=rp_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def ranked_pairs(
     edata, 
@@ -987,14 +958,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         winners.append(maximal_elements(rp_defeat)[0])
     return rp_defeats
 
-rp_tb_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="Ranked Pairs TB",
-    properties=rp_tb_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def ranked_pairs_tb(
     edata, 
@@ -1064,14 +1028,7 @@ def ranked_pairs_tb(
 
     return sorted(list(set(winners)))
 
-rp_zt_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True, 
-    positive_involvement=False,
-    )
 @vm(name="Ranked Pairs ZT",
-    properties=rp_zt_properties,
     input_types=[ElectionTypes.PROFILE])
 def ranked_pairs_zt(
     profile, 
@@ -1112,14 +1069,7 @@ def ranked_pairs_zt(
     
     return ranked_pairs_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
 
-river_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="River",
-    properties=river_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def river(edata, curr_cands = None, strength_function = None):   
     """
@@ -1262,14 +1212,7 @@ def river_with_test(edata, curr_cands = None, strength_function = None):
                 winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
-rp_tb_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="River TB",
-    properties=rp_tb_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None):   
     """
@@ -1314,14 +1257,7 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
             winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
-river_zt_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="River ZT",
-    properties=river_zt_properties,
     input_types=[ElectionTypes.PROFILE])
 def river_zt(profile, curr_cands = None, strength_function = None):   
     """River where a fixed voter breaks any ties in the margins.  It is always the voter in position 0 that breaks the ties.  Since voters have strict preferences, this method is resolute.  
@@ -1439,14 +1375,7 @@ def _simple_stable_voting_basic(edata, curr_cands = None, strength_function = No
                                         sorted_matches = sorted_matches,
                                         mem_sv_winners = {})[0])
 
-ssv_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name = "Simple Stable Voting",
-    properties = ssv_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def simple_stable_voting(
     edata, 
@@ -1597,14 +1526,7 @@ def _stable_voting_basic(
                                  sorted_matches = sorted_matches,
                                  mem_sv_winners = {})[0])
 
-sv_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,  
-    )
 @vm(name = "Stable Voting",
-    properties = sv_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def stable_voting(
     edata, 
@@ -1654,14 +1576,7 @@ def stable_voting(
         raise ValueError("Invalid algorithm specified.")
     
 
-essential_set_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name="Essential Set",
-    properties=essential_set_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def essential(edata, curr_cands = None, threshold = 0.0000001): 
     """The Essential Set is the support of the (chosen) C2 maximal lottery.
@@ -1678,14 +1593,7 @@ def essential(edata, curr_cands = None, threshold = 0.0000001):
 
     return sorted([c for c in ml.keys() if ml[c] > threshold])
 
-weighted_covering_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=True, 
-    )
 @vm(name="Weighted Covering",
-    properties=weighted_covering_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def weighted_covering(edata, curr_cands=None): 
     """According to Weighted Covering, x defeats y if the margin of x over y is positive and for every other z, the margin of x over z is greater than or equal to the margin of y over z. 
@@ -1724,14 +1632,7 @@ def weighted_covering(edata, curr_cands=None):
 
     return sorted(uc_set)
 
-loss_trimmer_properties = VotingMethodProperties(
-    condorcet_winner=True, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False, 
-    )
 @vm(name = "Loss-Trimmer Voting",
-    properties = loss_trimmer_properties,
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def loss_trimmer(edata, curr_cands = None):
     """Iteratively eliminate the candidate with the largest sum of margins of loss until a Condorcet winner is found. In this version of the method, parallel-universe tiebreaking is used if there are multiple candidates with the largest sum of margins of loss.

@@ -547,6 +547,18 @@ class Profile(object):
             candidates = self.candidates, 
             cmap=self.cmap)
     
+    def to_utility_profile(self, seed=None): 
+        """Returns the profile as a UtilityProfile using the function Utility.from_linear_profile to generate the utility function.  
+        So, it assigns a random utility that represents the ranking. 
+        """
+
+        from pref_voting.mappings import Utility
+        from pref_voting.utility_profiles import UtilityProfile
+        
+        return UtilityProfile(
+            [Utility.from_linear_ranking(r, seed=(seed + idx if seed is not None else None)) for idx,r in enumerate(self.rankings)]
+        )
+    
     def to_latex(self, cmap = None, curr_cands = None):
         """Returns a string describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).
 

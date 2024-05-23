@@ -22,8 +22,7 @@ class VotingMethodProperties:
     Attributes:
         condorcet_consistent (bool): Indicates if the voting method always elects a Condorcet winner when one exists.
     """
-    def __init__(self, condorcet_winner=False, **kwargs):
-        self.condorcet_winner = condorcet_winner
+    def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
 

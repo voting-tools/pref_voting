@@ -12,6 +12,10 @@ import inspect
 import numpy as np
 from numba import jit # Remove until numba supports python 3.11
 import random
+import json
+from pref_voting.voting_method_properties import VotingMethodProperties
+from filelock import FileLock, Timeout
+import pkg_resources
 
 class VotingMethod(object): 
     """
@@ -27,17 +31,36 @@ class VotingMethod(object):
     def __init__(self, 
                  vm, 
                  name=None, 
-                 properties=None, 
                  input_types=None, 
-                 skip_registration=False): 
+                 skip_registration=False,                properties_file=None): 
         
         self.vm = vm
         self.name = name
+
+        # Determine the path to the properties file
+        if properties_file is None:
+            properties_file = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
+
+        # Get the properties of the voting method
+        try:
+            with open(properties_file, "r") as file:
+                vm_props = json.load(file)
+        except FileNotFoundError:
+            vm_props = {}
+        except Exception as e:
+            print(f"An error occurred while opening the properties file: {e}")
+            vm_props = {}
+
+        if name in vm_props:
+            properties = VotingMethodProperties(**vm_props[name])
+        else:
+            properties = VotingMethodProperties()
+
         self.properties = properties
         self.input_types = input_types
         self.skip_registration = skip_registration
         self.algorithm = None
-        
+
         functools.update_wrapper(self, vm)   
 
     def __call__(self, edata, curr_cands = None, **kwargs):
@@ -86,7 +109,7 @@ class VotingMethod(object):
         """
         Display the winning set of candidates.
         """
- 
+
         cmap = cmap if cmap is not None else edata.cmap
 
         ws = self.__call__(edata, curr_cands = curr_cands, **kwargs)
@@ -102,15 +125,73 @@ class VotingMethod(object):
 
         self.name = new_name
 
+    def add_property(self, prop, value):
+        """Add a property to the voting method."""
+
+        setattr(self.properties, prop, value)
+
+    def remove_property(self, prop):
+        """Remove a property from the voting method."""
+
+        delattr(self.properties, prop)
+
+    def load_properties(self, filename=None):
+        """Load the properties of the voting method from a JSON file."""
+        
+        # Determine the path to the properties file
+        if filename is None:
+            filename = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
+
+        lock = FileLock(f"{filename}.lock")
+        with lock:
+            try:
+                with open(filename, 'r') as file:
+                    vm_props = json.load(file)
+            except FileNotFoundError:
+                vm_props = {}
+
+            if self.name in vm_props:
+                self.properties = VotingMethodProperties(**vm_props[self.name])
+            else:
+                self.properties = VotingMethodProperties()
+
+    def save_properties(self, filename=None, timeout=10):
+        """Save the properties of the voting method to a JSON file."""
+
+        # Determine the path to the properties file
+        if filename is None:
+            filename = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
+
+        lock = FileLock(f"{filename}.lock", timeout=timeout)
+        try:
+            with lock:
+                try:
+                    with open(filename, 'r') as file:
+                        vm_props = json.load(file)
+                except FileNotFoundError:
+                    vm_props = {}
+
+                vm_props[self.name] = self.properties.__dict__
+
+                with open(filename, 'w') as file:
+                    json.dump(vm_props, file, indent=4, sort_keys=True)
+        except Timeout:
+            print(f"Could not acquire the lock within {timeout} seconds.")
+
     def __str__(self): 
         return f"{self.name}"
 
-def vm(name=None, properties=None, input_types=None, skip_registration=False):
+def vm(name=None, 
+       input_types=None, 
+       skip_registration=False):
     """
     A decorator used when creating a voting method. 
     """
     def wrapper(f):
-        return VotingMethod(f, name=name, properties=properties, input_types=input_types, skip_registration=skip_registration)
+        return VotingMethod(f, 
+                            name=name,
+                            input_types=input_types, 
+                            skip_registration=skip_registration)
     return wrapper
 
 @jit(nopython=True, fastmath=True)

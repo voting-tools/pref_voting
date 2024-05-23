@@ -18,14 +18,7 @@ from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
 
-daunou_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Daunou",
-    properties = daunou_properties,
     input_types = [ElectionTypes.PROFILE])
 def daunou(profile, curr_cands=None):
     """Implementation of Daunou's voting method as described in the paper: https://link.springer.com/article/10.1007/s00355-020-01276-w
@@ -67,14 +60,7 @@ def daunou(profile, curr_cands=None):
     return sorted(winners)
 
 
-blacks_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Blacks",
-    properties = blacks_properties,
     input_types = [ElectionTypes.PROFILE])
 def blacks(profile, curr_cands=None):
     """If a Condorcet winner exists return that winner. Otherwise, return the Borda winning set.
@@ -113,14 +99,7 @@ def blacks(profile, curr_cands=None):
 
     return winners
 
-smith_irv_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Smith IRV",
-    properties = smith_irv_properties,
     input_types = [ElectionTypes.PROFILE])
 def smith_irv(profile, curr_cands=None):
     """After restricting to the Smith Set, return the Instant Runoff winner.
@@ -154,14 +133,7 @@ def smith_irv(profile, curr_cands=None):
 
     return instant_runoff(profile, curr_cands=smith)
 
-smith_irv_put_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Smith IRV PUT",
-    properties = smith_irv_put_properties,
     input_types = [ElectionTypes.PROFILE])
 def smith_irv_put(profile, curr_cands=None):
     """After restricting to the Smith Set, return the Instant Runoff winner.
@@ -195,15 +167,7 @@ def smith_irv_put(profile, curr_cands=None):
 
     return instant_runoff_put(profile, curr_cands=smith)
 
-condorcet_irv_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
-
 @vm(name = "Condorcet IRV",
-    properties = condorcet_irv_properties,
     input_types = [ElectionTypes.PROFILE])
 def condorcet_irv(profile, curr_cands=None):
     """If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff winners.
@@ -239,14 +203,7 @@ def condorcet_irv(profile, curr_cands=None):
     else:
         return instant_runoff(profile, curr_cands=curr_cands)
 
-condorcet_irv_put_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Condorcet IRV PUT",
-    properties = condorcet_irv_put_properties,
     input_types = [ElectionTypes.PROFILE])
 def condorcet_irv_put(profile, curr_cands=None):
     """If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff put winners.
@@ -334,14 +291,7 @@ def _compose(vm1, vm2):
 
     return _vm
 
-condorcet_plurality_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=False,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name = "Condorcet Plurality",
-    properties = condorcet_plurality_properties,
     input_types = [ElectionTypes.PROFILE])
 def condorcet_plurality(profile, curr_cands = None):
     """Return the Condorcet winner if one exists, otherwise return the plurality winners.
@@ -358,14 +308,7 @@ def condorcet_plurality(profile, curr_cands = None):
     return _compose(condorcet, plurality)(profile, curr_cands=curr_cands)
 
 
-smith_minimax_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=True,
-    )
 @vm(name="Smith-Minimax",
-    properties=smith_minimax_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def smith_minimax(edata, curr_cands = None):
     """Return the Minimax winner after restricting to the Smith set.
@@ -381,14 +324,7 @@ def smith_minimax(edata, curr_cands = None):
 
     return _compose(top_cycle, minimax)(edata, curr_cands=curr_cands)
 
-copeland_local_borda_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name="Copeland-Local-Borda",
-    properties=copeland_local_borda_properties,
     input_types=[ElectionTypes.PROFILE,  ElectionTypes.MARGIN_GRAPH])
 def copeland_local_borda(edata, curr_cands = None):
     """Return the Borda winner after restricting to the Copeland winners.
@@ -430,14 +366,7 @@ def voting_method_with_scoring_tiebreaker(vm, score, name):
 
     return _vm 
 
-copeland_global_borda_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name="Copeland-Global-Borda",
-    properties=copeland_global_borda_properties,
     input_types=[ElectionTypes.PROFILE])
 def copeland_global_borda(profile, curr_cands=None):
     """From the Copeland winners, return the candidate with the largest *global* Borda score.
@@ -523,14 +452,7 @@ def _faceoff(vm1, vm2):
 
     return _vm
 
-borda_minimax_faceoff_properties = VotingMethodProperties(
-    condorcet_winner=True,
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=False,
-    )
 @vm(name="Borda-Minimax Faceoff",
-    properties=borda_minimax_faceoff_properties,
     input_types=[ElectionTypes.PROFILE])
 def borda_minimax_faceoff(edata, curr_cands=None):
     """If the Borda and Minimax winners are the same, return that set of winners. Otherwise, for each choice of a Borda winner A and Minimax winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).

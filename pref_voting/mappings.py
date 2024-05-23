@@ -463,6 +463,32 @@ class Utility(_Mapping):
 
         return sum([prob[x] * self.util(x) for x in self.domain if x in prob.keys() and self.has_utility(x)])
 
+    @classmethod
+    def from_linear_ranking(cls, ranking, seed=None):
+        """
+        Return a utility function that represents the linear ranking.
+
+        Parameters:
+        ranking (List[int]): A list representing the linear ranking.
+        seed (Optional[int]): An optional seed for random number generation.
+
+        Returns:
+        Utility: An instance of the Utility class.
+        """
+
+        if not (isinstance(ranking, list) or isinstance(ranking, tuple)):
+            raise ValueError("Ranking must be a list.")
+        if not len(set(ranking)) == len(ranking):
+            raise ValueError("Ranking must be a list of unique numbers.")
+
+        num_cands = len(ranking)
+        rng = np.random.default_rng(seed)
+        
+        utilities = sorted(rng.random(size=num_cands), reverse=True)
+        u_dict = {c: u for c, u in zip(ranking, utilities)}
+
+        return cls(u_dict)
+
     def __str__(self):
         return self.display_str("U")
 

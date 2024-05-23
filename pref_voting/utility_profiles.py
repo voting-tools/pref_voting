@@ -58,11 +58,14 @@ class UtilityProfile(object):
             ucounts
         ), "The number of utilities much be the same as the number of ucounts"
 
-        self.domain = (
-            sorted(domain)
-            if domain is not None
-            else sorted(list(set([x for u in utilities for x in u.keys()])))
-        )
+        _domain = domain if domain is not None else []
+        for u in utilities:
+            if isinstance(u, dict):
+                _domain += [x for x in u.keys() if x not in _domain]
+            elif isinstance(u, Utility):
+                _domain += [x for x in u.domain if x not in _domain]
+
+        self.domain = sorted(list(set(_domain)))
         """The domain of the profile. """
 
         self.cmap = cmap if cmap is not None else {c: str(c) for c in self.domain}

@@ -12,16 +12,9 @@ from pref_voting.rankings import Ranking, break_ties_alphabetically
 from pref_voting.voting_method import _num_rank_last 
 from pref_voting.profiles import _find_updated_profile, _num_rank
 from pref_voting.weighted_majority_graphs import MarginGraph
-from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
+from pref_voting.voting_method_properties import  ElectionTypes
 
-pl_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=False,
-    pareto_dominance=True,
-    positive_involvement=True, 
-    )
 @vm(name = "Plurality", 
-    properties=pl_properties, 
     input_types=[ElectionTypes.PROFILE, 
                  ElectionTypes.TRUNCATED_LINEAR_PROFILE])
 def plurality(profile, curr_cands = None):
@@ -105,14 +98,7 @@ def plurality_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 
     return p_ranking
 
-borda_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=True,
-    pareto_dominance=True,
-    positive_involvement=True, 
-    )
 @vm(name = "Borda",
-    properties=borda_properties,
     input_types=[ElectionTypes.PROFILE, ElectionTypes.MARGIN_GRAPH])
 def borda(edata, curr_cands = None, algorithm = "positional"):
     """The **Borda score** of a candidate is calculated as follows: If there are :math:`m` candidates, then the Borda score of candidate :math:`c` is :math:`\sum_{r=1}^{m} (m - r) * Rank(c,r)` where :math:`Rank(c,r)` is the number of voters that rank candidate :math:`c` in position :math:`r`. The Borda winners are the candidates with the largest Borda score in the ``profile`` restricted to ``curr_cands``. 
@@ -200,14 +186,7 @@ def borda_ranking(profile, curr_cands=None, local=True, tie_breaking=None):
 
     return b_ranking
 
-anti_plurality_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=False,
-    pareto_dominance=False,
-    positive_involvement=True,
-    )
 @vm(name = "Anti-Plurality",
-    properties=anti_plurality_properties,
     input_types=[ElectionTypes.PROFILE])
 def anti_plurality(profile, curr_cands = None):
     """The **Anti-Plurality score** of a candidate $c$ is the number of voters that rank $c$ in last place.  The Anti-Plurality winners are the candidates with the smallest Anti-Plurality score in the ``profile`` restricted to ``curr_cands``. 
@@ -347,14 +326,7 @@ def create_scoring_method(score, name):
 
     return VotingMethod(_vm, name = name)
 
-dowdall_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=False,
-    pareto_dominance=True, 
-    positive_involvement=True,
-    )
 @vm(name = "Dowdall",
-    properties=dowdall_properties,
     input_types=[ElectionTypes.PROFILE])
 def dowdall(profile, curr_cands = None):
     """The first-ranked candidate gets 1 point, the second-ranked candidate gets 1/2 point, the third-ranked candidate gets 1/3 point, and so on.  The Dowdall winners are the candidates with the greatest overall score in the profile restricted to ``curr_cands``.
@@ -373,14 +345,7 @@ def dowdall(profile, curr_cands = None):
 
     return scoring_rule(profile, curr_cands = curr_cands, score = lambda num_cands, rank: 1 / rank)
 
-pos_neg_voting_properties = VotingMethodProperties(
-    condorcet_winner=False, 
-    condorcet_loser=False,
-    pareto_dominance=False,
-    positive_involvement=True, 
-    )
 @vm(name="Positive-Negative Voting",
-    properties=pos_neg_voting_properties,
     input_types=[ElectionTypes.PROFILE])
 def positive_negative_voting(profile, curr_cands = None):
     """The **Positive-Negative Voting** method is a scoring rule where each voter assigns a score of 1 to their top-ranked candidate and a score of -1 to their bottom-ranked candidate.  See https://onlinelibrary.wiley.com/doi/10.1111/ecin.12929 for more information.
@@ -482,13 +447,7 @@ def non_domination_borda_scores(profile):
                     for r,c in zip(*profile.rankings_counts)]) for cand in profile.candidates}
 
 
-borda_prof_with_ties_properties = VotingMethodProperties(
-    condorcet_winner=None, 
-    condorcet_loser=None,
-    pareto_dominance=None, 
-    )
 @vm(name="Borda (for Truncated Profiles)",
-    properties=borda_prof_with_ties_properties,
     input_types=[ElectionTypes.TRUNCATED_LINEAR_PROFILE])
 def borda_for_profile_with_ties(
     profile, 

@@ -105,6 +105,9 @@ class VotingMethodRegistry:
 
         return found_methods
 
+    def __len__(self):
+        return len(self.methods)
+    
     def __iter__(self):
         self._iter = iter(method_details['method'] for method_details in self.methods.values())
         return self
