@@ -147,6 +147,14 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+### Tideman's Alterantive GOCHA
+    
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.tideman_alternative_gocha
+
+```
+
 ## Coombs
 
 ```{eval-rst}

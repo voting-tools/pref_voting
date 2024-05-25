@@ -10,7 +10,7 @@ from pref_voting.voting_method import  *
 from pref_voting.voting_method import _num_rank_last, _num_rank_first
 from pref_voting.profiles import  _borda_score, _find_updated_profile
 from pref_voting.margin_based_methods import split_cycle, minimax_scores
-from pref_voting.c1_methods import top_cycle, gocha
+from pref_voting.c1_methods import top_cycle, gocha 
 from pref_voting.rankings import Ranking
 from pref_voting.social_welfare_function import swf
 import copy
@@ -1872,16 +1872,17 @@ def tideman_alternative(vm):
             
         else:
             return _ta(profile, curr_cands = [c for c in candidates if not c in cands_to_remove])
-
+        
+    _ta.__name__ = f"tideman_alternative_{vm.__name__}"
     return VotingMethod(_ta, name=f"Tideman Alternative {vm.name}")
 
 tideman_alternative_smith = tideman_alternative(top_cycle)
 tideman_alternative_smith.load_properties()
 tideman_alternative_smith.input_types = [ElectionTypes.PROFILE]
 
-tideman_alternative_schwartz = tideman_alternative(gocha)
-tideman_alternative_schwartz.load_properties()
-tideman_alternative_schwartz.input_types = [ElectionTypes.PROFILE]
+tideman_alternative_gocha = tideman_alternative(gocha)
+tideman_alternative_gocha.load_properties()
+tideman_alternative_gocha.input_types = [ElectionTypes.PROFILE]
 
 def tideman_alternative_put(vm):
     """Given a voting method vm, returns a voting method that restricts the profile to the set of vm winners, then eliminates the candidate with the fewest first-place votes, and then repeats until there is only one vm winner. Parallel-universe tiebreaking is used when there are multiple candidates with the fewest first-place votes.
@@ -1914,7 +1915,8 @@ def tideman_alternative_put(vm):
                 winners = winners + additional_winners
 
         return sorted(set(winners))
-
+    
+    _ta.__name__ = f"tideman_alternative_{vm.__name__}_put"
     return VotingMethod(_ta, name=f"Tideman Alternative {vm.name} PUT")
 
 
@@ -1922,9 +1924,9 @@ tideman_alternative_smith_put = tideman_alternative_put(top_cycle)
 tideman_alternative_smith_put.load_properties()
 tideman_alternative_smith_put.input_types = [ElectionTypes.PROFILE]
 
-tideman_alternative_schwartz_put = tideman_alternative_put(gocha)
-tideman_alternative_schwartz_put.load_properties()
-tideman_alternative_schwartz_put.input_types = [ElectionTypes.PROFILE]
+tideman_alternative_gocha_put = tideman_alternative_put(gocha)
+tideman_alternative_gocha_put.load_properties()
+tideman_alternative_gocha_put.input_types = [ElectionTypes.PROFILE]
 
 
 @vm(name = "Woodall",

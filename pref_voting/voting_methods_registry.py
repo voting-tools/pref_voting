@@ -105,6 +105,11 @@ class VotingMethodRegistry:
 
         return found_methods
 
+    def method_type(self, method_name):
+        return self.methods[method_name]['method_type']
+    def file_location(self, method_name):
+        return self.methods[method_name]['file_location']
+    
     def __len__(self):
         return len(self.methods)
     
@@ -121,6 +126,8 @@ import pref_voting.scoring_methods
 voting_methods.discover_methods(pref_voting.scoring_methods)
 import pref_voting.iterative_methods 
 voting_methods.discover_methods(pref_voting.iterative_methods)
+import pref_voting.c1_methods 
+voting_methods.discover_methods(pref_voting.c1_methods)
 import pref_voting.margin_based_methods 
 voting_methods.discover_methods(pref_voting.margin_based_methods)
 import pref_voting.combined_methods 

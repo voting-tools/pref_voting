@@ -155,6 +155,11 @@ class VotingMethod(object):
             else:
                 self.properties = VotingMethodProperties()
 
+    def has_property(self, prop):
+        """Check if the voting method has a property."""
+
+        return self.properties[prop]
+    
     def save_properties(self, filename=None, timeout=10):
         """Save the properties of the voting method to a JSON file."""
 

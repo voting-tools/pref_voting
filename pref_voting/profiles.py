@@ -727,3 +727,25 @@ class Profile(object):
         
         return tabulate([[self.cmap[c] for c in cs] for cs in self._rankings.transpose()], self._rcounts, tablefmt="pretty")    
 
+    def __getstate__(self):
+        """Return the state of the object for pickling."""
+        state = self.__dict__.copy()
+        # Remove derived attributes that can be recomputed
+        del state['_ranks']
+        del state['_tally']
+        del state['cand_to_cindex']
+        del state['cindex_to_cand']
+        return state
+
+    def __setstate__(self, state):
+        """Restore the state of the object from pickling."""
+        self.__dict__.update(state)
+        # Recompute derived attributes
+        self._ranks = np.array([[np.where(_r == c)[0][0] + 1 
+                                 for c in self.candidates] 
+                                 for  _r in self._rankings])
+        self._tally = np.array([[_support(self._ranks, self._rcounts, c1, c2) 
+                                 for c2 in self.candidates] 
+                                 for c1 in self.candidates ])
+        self.cand_to_cindex = lambda c: c
+        self.cindex_to_cand = lambda i: i

@@ -27,11 +27,14 @@ class VotingMethodProperties:
             setattr(self, key, value)
 
     def satisfied(self):
-        return [key for key, value in self.__dict__.items() if value==True]
+        return [key for key, value in self.__dict__.items() if value is True]
     
     def violated(self):
-        return [key for key, value in self.__dict__.items() if value==False]
+        return [key for key, value in self.__dict__.items() if value is False]
+
+    def __getitem__(self, prop):
+        return self.__dict__.get(prop, None)
 
     def __str__(self):
-        properties = [f"{key}: {'Satisfied' if value==True else ('Violated' if value==False else 'N/A')}" for key, value in self.__dict__.items()]
+        properties = [f"{key}: {'Satisfied' if value is True else ('Violated' if value is False else 'N/A')}" for key, value in self.__dict__.items()]
         return "\n".join(properties)
