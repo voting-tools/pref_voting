@@ -335,7 +335,7 @@
         "condorcet_loser": true,
         "condorcet_winner": true,
         "pareto_dominance": true,
-        "positive_involvement": true
+        "positive_involvement": false
     },
     "Split Cycle": {
         "condorcet_loser": true,
