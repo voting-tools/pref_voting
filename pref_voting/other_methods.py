@@ -15,7 +15,7 @@ from pref_voting.weighted_majority_graphs import MarginGraph
 from itertools import combinations, permutations
 from pref_voting.voting_method_properties import ElectionTypes
 from pref_voting.rankings import Ranking
-
+from pref_voting.social_welfare_function import swf
 import numpy as np
 
 @vm(name = "Majority",

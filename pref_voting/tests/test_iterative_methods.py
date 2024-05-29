@@ -165,14 +165,14 @@ import pytest
         'profile_single_voter': [0],
         'profile_single_voter_curr_cands': [0]
         }),
-    (tideman_alternative_schwartz, {
+    (tideman_alternative_gocha, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
         'linear_profile_0_curr_cands': [1],
         'profile_single_voter': [0],
         'profile_single_voter_curr_cands': [0]
         }),
-    (tideman_alternative_schwartz_put, {
+    (tideman_alternative_gocha_put, {
         'condorcet_cycle': [0, 1, 2], 
         'linear_profile_0': [0], 
         'linear_profile_0_curr_cands': [1],
