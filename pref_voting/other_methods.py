@@ -659,7 +659,8 @@ def bt_mle(pmat, max_iter=100):
 def bradley_terry(prof, curr_cands = None, threshold = .00001):
     """The Bradley-Terry model is a probabilistic model for pairwise comparisons. In this model, the probability that a voter prefers candidate i to candidate j is given by p_{i,j} = v_i / (v_i + v_j), where v_i is the strength of candidate i. Given a profile, we take p_{i,j} to be the proportion of voters who prefer candidate i to candidate j. We then estimate the strength of each candidate using maximum likelihood estimation. The winning candidates are those whose estimated strength is within +/- threshold of the maximum strength.
 
-    For profiles of linear ballots, this is equivalent to Borda.
+    .. note::
+        For profiles of linear ballots, this is equivalent to Borda (see Theorem 3.1 of https://arxiv.org/abs/2312.08358).
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -691,7 +692,8 @@ def bradley_terry(prof, curr_cands = None, threshold = .00001):
 def bradley_terry_ranking(prof, curr_cands = None, threshold = .00001):
     """The Bradley-Terry model is a probabilistic model for pairwise comparisons. In this model, the probability that a voter prefers candidate i to candidate j is given by p_{i,j} = v_i / (v_i + v_j), where v_i is the strength of candidate i. Given a profile, we take p_{i,j} to be the proportion of voters who prefer candidate i to candidate j. We then estimate the strength of each candidate using maximum likelihood estimation. Finally, the candidates are ranked in decreasing order of their estimated strength (where candidates whose estimated strength is within +/- threshold of each other are considered tied).
 
-    For profiles of linear ballots, this is equivalent to Borda.
+    .. note::
+        For profiles of linear ballots, this is equivalent to Borda (see Theorem 3.1 of https://arxiv.org/abs/2312.08358).
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
