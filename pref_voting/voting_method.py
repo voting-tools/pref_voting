@@ -16,6 +16,8 @@ import json
 from pref_voting.voting_method_properties import VotingMethodProperties
 from filelock import FileLock, Timeout
 import pkg_resources
+import glob
+import os
 
 class VotingMethod(object): 
     """
@@ -160,6 +162,21 @@ class VotingMethod(object):
 
         return self.properties[prop]
     
+    def get_properties(self): 
+        """Return the properties of the voting method."""
+        
+        return {
+            "satisfied": [prop 
+                          for prop, val in self.properties.items() 
+                          if val is True],
+            "violated": [prop 
+                         for prop, val in self.properties.items() 
+                         if val is False],
+            "na": [prop 
+                   for prop, val in self.properties.items() 
+                   if val is None]
+                }
+
     def save_properties(self, filename=None, timeout=10):
         """Save the properties of the voting method to a JSON file."""
 
@@ -182,6 +199,47 @@ class VotingMethod(object):
                     json.dump(vm_props, file, indent=4, sort_keys=True)
         except Timeout:
             print(f"Could not acquire the lock within {timeout} seconds.")
+
+    def get_violation_witness(self, prop):
+        """Return the election that witnesses a violation of prop."""
+
+        from pref_voting.profiles import Profile
+
+        if self.properties[prop]:
+            print(f"{self.name} satisfies {prop}, no election returned.")
+            return None
+        elif self.properties[prop] is None:
+            print(f"{self.name} does not have a value for {prop}, no election returned.")
+            return None
+        else:
+            dir = pkg_resources.resource_filename('pref_voting', f'data/examples/{prop}/')
+            for f in glob.glob(f"{dir}*"):
+                fname = os.path.basename(f)
+                is_min = fname.startswith("minimal_")
+                if is_min and fname.startswith(f"minimal_{self.name.replace(' ', '_')}"): 
+                    print(f"Minimal election for a violation of {prop} found.")
+                    return Profile.from_preflib(f)
+                elif not is_min and fname.startswith(f"{self.name.replace(' ', '_')}"):
+                    return Profile.from_preflib(f)
+            print(f"No election found illustrating the violation of {prop}.")
+            return None
+
+    def check_property(self, prop, include_counterexample=True): 
+        """Check if the voting method satisfies a property."""
+        from pref_voting.axioms import axioms_dict
+
+        if not self.properties[prop]: 
+            print(f"{self.name} does not satisfy {prop}")
+            if include_counterexample:
+                if prop in axioms_dict:
+                    #prof = prof
+                    axioms_dict[prop].counterexample(self)
+
+        elif self.properties[prop] is None: 
+            print(f"{self.name} does not have a value for {prop}")
+        
+        else:
+            print(f"{self.name} satisfies {prop}")
 
     def __str__(self): 
         return f"{self.name}"

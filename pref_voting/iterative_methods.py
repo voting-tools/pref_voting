@@ -79,7 +79,7 @@ def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
-        algorithm (str, optiona): The algorithm to use.  Options are "basic" and "recursive".  The default is "basic".
+        algorithm (str, optional): The algorithm to use.  Options are "basic" and "recursive".  The default is "basic".
 
     Returns: 
         A sorted list of candidates
@@ -126,6 +126,7 @@ ranked_choice.skip_registration = True
 instant_runoff.set_name("Alternative Vote")
 alternative_vote = copy.deepcopy(instant_runoff)
 alternative_vote.skip_registration = True
+
 
 # reset the name Instant Runoff
 instant_runoff.set_name("Instant Runoff")
@@ -311,8 +312,10 @@ def instant_runoff_put(profile, curr_cands = None):
 # Create some aliases for instant runoff
 instant_runoff_put.set_name("Hare PUT")
 hare_put = copy.deepcopy(instant_runoff_put)
+hare_put.skip_registration = True
 instant_runoff_put.set_name("Ranked Choice PUT")
 ranked_choice_put = copy.deepcopy(instant_runoff_put)
+ranked_choice_put.skip_registration = True
 
 # reset the name Instant Runoff
 instant_runoff_put.set_name("Instant Runoff PUT")
@@ -395,7 +398,7 @@ def instant_runoff_with_explanation(profile, curr_cands = None):
      
     return sorted(winners), elims_list
 
-@vm(name="Instant Runoff",
+@vm(name="Instant Runoff (Truncated Linear Orders)",
     input_types=[ElectionTypes.TRUNCATED_LINEAR_PROFILE])
 def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = True): 
     """

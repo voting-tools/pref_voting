@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pref_voting",                   
-    version="1.3.8",     
+    version="1.3.11",     
     author="Eric Pacuit",
     author_email='epacuit@umd.edu',      
     description="pref_voting is a Python packaging that contains tools to reason about election profiles and margin graphs, and implementations of a variety of preferential voting methods.",
@@ -17,7 +17,6 @@ setuptools.setup(
     package_data={
         'pref_voting': ['data/voting_methods_properties.json'],
     },
-
     license='MIT',
     url='https://github.com/voting-tools/pref_voting',
     classifiers=[
@@ -27,5 +26,11 @@ setuptools.setup(
     ],                                     
     python_requires='>=3.6',    
     py_modules=["pref_voting"],              
-    install_requires=[]                     
+    install_requires=[],
+    project_urls={
+        'Documentation': 'https://pref-voting.readthedocs.io/',
+        'Source': 'https://github.com/voting-tools/pref_voting',
+        'Tracker': 'https://github.com/voting-tools/pref_voting/issues',
+    },
+                   
 )

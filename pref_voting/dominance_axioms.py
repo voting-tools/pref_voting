@@ -80,13 +80,14 @@ pareto_dominance = Axiom(
     find_all_violations = find_all_pareto_dominance_violations, 
 )
 
-def has_condorcet_winner_violation(edata, vm, verbose=False):
+def has_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=False):
     """
     Returns True if there is a Condorcet winner in edata (a candidate that is majority preferred to every other candidate) that is not the unique winner according to vm.
     
     Args:
         edata (Profile, ProfileWithTies, MajorityGraph, or MarginGraph): the election data.
         vm (VotingMethod): A voting method to test.
+        only_resolute (bool, default=False): If True, only consider profiles in which there is a unique winner according to vm
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -97,26 +98,29 @@ def has_condorcet_winner_violation(edata, vm, verbose=False):
     cw = edata.condorcet_winner()
 
     ws = vm(edata)
-
+    
+    if only_resolute and len(ws) != 1: 
+        return False
     if cw is not None and ws != [cw]:
-        if verbose: 
-            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+        if verbose:
+            if isinstance(edata, (Profile, ProfileWithTies)):
                 edata.display_margin_graph()
-            else: 
+            else:
                 edata.display()
             print(edata.description())
             print(f"The Condorcet winner {cw} is not the unique winner: ")
             vm.display(edata)
-        return True 
+        return True
     return False
 
-def find_condorcet_winner_violation(edata, vm, verbose=False):
+def find_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=False):
     """
     Returns the Condorcet winner that is not the unique winner according to vm.
     
     Args:
         edata (Profile, ProfileWithTies, MajorityGraph, or MarginGraph): the election data.
         vm (VotingMethod): A voting method to test.
+        only_resolute (bool, default=False): If True, only consider profiles in which there is a unique winner according to vm.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -128,11 +132,14 @@ def find_condorcet_winner_violation(edata, vm, verbose=False):
 
     ws = vm(edata)
 
+    if only_resolute and len(ws) != 1: 
+        return list()
+
     if cw is not None and ws != [cw]:
         if verbose: 
-            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+            if isinstance(edata, (Profile, ProfileWithTies)):
                 edata.display_margin_graph()
-            else: 
+            else:
                 edata.display()
             print(edata.description())
             print(f"The Condorcet winner {cw} is not the unique winner: ")
@@ -145,7 +152,6 @@ condorcet_winner = Axiom(
     has_violation = has_condorcet_winner_violation,
     find_all_violations = find_condorcet_winner_violation, 
 )
-
 
 def has_condorcet_loser_violation(edata, vm, verbose=False):
     """

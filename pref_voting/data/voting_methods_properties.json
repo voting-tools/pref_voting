@@ -19,10 +19,11 @@
     },
     "Baldwin TB": {
         "condorcet_loser": null,
-        "condorcet_winner": false,
+        "condorcet_winner": true,
         "pareto_dominance": true,
         "positive_involvement": false
     },
+    "Banks": {},
     "Beat Path": {
         "condorcet_loser": true,
         "condorcet_winner": true,
@@ -46,6 +47,7 @@
         "pareto_dominance": true,
         "positive_involvement": false
     },
+    "Bipartisan Set": {},
     "Blacks": {
         "condorcet_loser": true,
         "condorcet_winner": true,
@@ -177,12 +179,6 @@
         "pareto_dominance": true,
         "positive_involvement": false
     },
-    "Hare PUT": {
-        "condorcet_loser": null,
-        "condorcet_winner": false,
-        "pareto_dominance": true,
-        "positive_involvement": true
-    },
     "Instant Runoff": {
         "condorcet_loser": false,
         "condorcet_winner": false,
@@ -217,6 +213,7 @@
         "pareto_dominance": null,
         "positive_involvement": false
     },
+    "Llull": {},
     "Loss-Trimmer Voting": {
         "condorcet_loser": true,
         "condorcet_winner": true,
@@ -258,12 +255,6 @@
         "condorcet_winner": true,
         "pareto_dominance": true,
         "positive_involvement": false
-    },
-    "Ranked Choice PUT": {
-        "condorcet_loser": null,
-        "condorcet_winner": false,
-        "pareto_dominance": true,
-        "positive_involvement": true
     },
     "Ranked Pairs": {
         "condorcet_loser": true,
@@ -319,6 +310,7 @@
         "pareto_dominance": true,
         "positive_involvement": false
     },
+    "Slater": {},
     "Smith IRV": {
         "condorcet_loser": true,
         "condorcet_winner": true,
@@ -391,6 +383,10 @@
         "pareto_dominance": true,
         "positive_involvement": false
     },
+    "Uncovered Set": {},
+    "Uncovered Set - Bordes": {},
+    "Uncovered Set - Fishburn": {},
+    "Uncovered Set - McKelvey": {},
     "Weak Nanson": {
         "condorcet_loser": true,
         "condorcet_winner": true,
