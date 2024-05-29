@@ -92,6 +92,16 @@ Other Methods
 
 ```
 
+## Bradley-Terry
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.bradley_terry
+
+.. autofunction:: pref_voting.other_methods.bradley_terry_ranking
+
+```
+
 
 
 

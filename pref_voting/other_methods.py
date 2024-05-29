@@ -2,7 +2,7 @@
     File: mg_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 12, 2022
-    Updated: October 24, 2023
+    Updated: May 28, 2024
     
     Implementations of 
 '''
@@ -14,6 +14,9 @@ from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MarginGraph
 from itertools import combinations, permutations
 from pref_voting.voting_method_properties import ElectionTypes
+from pref_voting.rankings import Ranking
+
+import numpy as np
 
 @vm(name = "Majority",
     skip_registration=True, # skip registration since majority may return an empty list
@@ -631,3 +634,98 @@ def superior_voting(profile, curr_cands = None):
     winners = [cand for cand in curr_cands if points[cand] == max_score]
 
     return winners
+
+def bt_mle(pmat, max_iter=100):
+    """Lucas Maystre's implementation of MLE for the Bradley-Terry model (https://datascience.stackexchange.com/questions/18828/from-pairwise-comparisons-to-ranking-python). 
+    
+    Note we change the interpretation of p_{i,j} to be the probability that i is preferred to j, rather than vice versa as in the original implementation.
+    """
+    n = pmat.shape[0]
+    wins = np.sum(pmat, axis=1)
+    params = np.ones(n, dtype=float)
+    for _ in range(max_iter):
+        tiled = np.tile(params, (n, 1))
+        combined = 1.0 / (tiled + tiled.T)
+        np.fill_diagonal(combined, 0)
+        nxt = wins / np.sum(combined, axis=0)
+        nxt = nxt / np.mean(nxt)
+        if np.linalg.norm(nxt - params, ord=np.inf) < 1e-6:
+            return nxt
+        params = nxt
+    raise RuntimeError('did not converge')
+
+@vm(name = "Bradley-Terry",
+    input_types = [ElectionTypes.PROFILE])
+def bradley_terry(prof, curr_cands = None, threshold = .00001):
+    """The Bradley-Terry model is a probabilistic model for pairwise comparisons. In this model, the probability that a voter prefers candidate i to candidate j is given by p_{i,j} = \frac{v_i}{v_i + v_j}, where v_i is the strength of candidate i. Given a profile, we take p_{i,j} to be the proportion of voters who prefer candidate i to candidate j. We then estimate the strength of each candidate using maximum likelihood estimation. The winning candidates are those whose estimated strength is within +/- threshold of the maximum strength.
+
+    For profile of linear ballots, this is equivalent to Borda.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        threshold (float, optional): The threshold for determining the winners. The winners are those whose estimated strength is within +/- threshold of the maximum strength.
+
+    Returns: 
+        A sorted list of candidates
+    """
+
+    curr_cands = prof.candidates if curr_cands is None else curr_cands
+    
+    prop_matrix = np.zeros((len(curr_cands), len(curr_cands)))
+
+    for i, c in enumerate(curr_cands):
+        for j, d in enumerate(curr_cands):
+            if i != j:
+                prop_matrix[i][j] = prof.support(c,d) / prof.num_voters
+
+    params = bt_mle(prop_matrix)
+
+    max_value = np.max(params)
+    winner_indices = np.where(np.abs(params - max_value) <= threshold)[0]
+    winners = [curr_cands[i] for i in winner_indices]
+
+    return sorted(winners)
+
+@swf(name = "Bradley-Terry Ranking")
+def bradley_terry_ranking(prof, curr_cands = None, threshold = .00001):
+    """The Bradley-Terry model is a probabilistic model for pairwise comparisons. In this model, the probability that a voter prefers candidate i to candidate j is given by p_{i,j} = \frac{v_i}{v_i + v_j}, where v_i is the strength of candidate i. Given a profile, we take p_{i,j} to be the proportion of voters who prefer candidate i to candidate j. We then estimate the strength of each candidate using maximum likelihood estimation. Finally, the candidates are ranked in decreasing order of their estimated strength (where candidates whose estimated strength is within +/- threshold of each other are considered tied).
+
+    For profile of linear ballots, this is equivalent to Borda.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        threshold (float, optional): The threshold for equivalence classes of candidates. 
+
+    Returns: 
+        A Ranking object.
+    """
+
+    curr_cands = prof.candidates if curr_cands is None else curr_cands
+    
+    support_matrix = np.zeros((len(curr_cands), len(curr_cands)))
+
+    for i, c in enumerate(curr_cands):
+        for j, d in enumerate(curr_cands):
+            if i != j:
+                support_matrix[i][j] = prof.support(c,d) / prof.num_voters
+
+    params = bt_mle(support_matrix)
+
+    ranking_dict = dict()
+    cands_assigned = list()
+    curr_ranking = 1
+
+    while len(cands_assigned) < len(curr_cands):
+
+        max_value = np.max([params[curr_cands.index(c)] for c in curr_cands if c not in cands_assigned])
+
+        for c in curr_cands:
+            if c not in cands_assigned and np.abs(params[curr_cands.index(c)] - max_value) <= threshold:
+                ranking_dict[c] = curr_ranking
+                cands_assigned.append(c)
+
+        curr_ranking += 1
+
+    return Ranking(ranking_dict)
