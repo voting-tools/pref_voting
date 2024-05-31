@@ -18,11 +18,14 @@ from pref_voting.rankings import Ranking
 
 import numpy as np
 
-@vm(name = "Majority",
+@vm(name = "Absolute Majority",
     skip_registration=True, # skip registration since majority may return an empty list
     input_types = [ElectionTypes.PROFILE])
-def majority(profile, curr_cands = None):
-    """The majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Returns the majority winner in the ``profile`` restricted to ``curr_cands``.
+def absolute_majority(profile, curr_cands = None):
+    """The absolute majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Otherwise returns the absolute majority winner in the ``profile`` restricted to ``curr_cands``.
+
+    ..note:
+        The term 'absolute majority' for this voting method comes from Charles Dodgson's famous pamplet of 1873, "A Discussion of the Various Methods of Procedure in Conducting Elections" (see I. McLean and A. Urken, *Classics of Social Choice*, 1995, p. 281, or A. D. Taylor, "Social Choice and the Mathematics of Manipulation," 2005, p. 11).
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
@@ -32,7 +35,7 @@ def majority(profile, curr_cands = None):
         A sorted list of candidates
 
     .. important:: 
-        Formally, this is *not* a voting method since the function might return an empty list (when there is no candidate with a strict majority of first place votes).  Also, if there is a majority winner, then that winner is unique. 
+        Formally, this is *not* a voting method since the function might return an empty list (when there is no candidate with a strict majority of first place votes).  Also, if there is an absolute majority winner, then that winner is unique. 
 
     :Example:
         .. exec_code::
@@ -53,9 +56,9 @@ def majority(profile, curr_cands = None):
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
     plurality_scores = profile.plurality_scores(curr_cands = curr_cands)
-    maj_winner = [c for c in curr_cands if plurality_scores[c] >= maj_size]
+    abs_maj_winner = [c for c in curr_cands if plurality_scores[c] >= maj_size]
 
-    return sorted(maj_winner)
+    return sorted(abs_maj_winner)
 
 @vm(name = "Pareto",
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
