@@ -18,7 +18,7 @@ def has_stability_for_winners_violation(edata, vm, verbose=False, strong_stabili
     If strong_stability is True, then A can be weakly majority preferred to B.
 
     .. note: 
-        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to a condition mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
+        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to an axiom mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -69,7 +69,7 @@ def find_all_stability_for_winners_violations(edata, vm, verbose=False, strong_s
     If strong_stability is True, then A can be weakly majority preferred to B.
 
     .. note: 
-        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to a condition mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
+        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to an axiom mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
     
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
