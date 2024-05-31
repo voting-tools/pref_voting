@@ -200,29 +200,41 @@ class VotingMethod(object):
         except Timeout:
             print(f"Could not acquire the lock within {timeout} seconds.")
 
-    def get_violation_witness(self, prop):
+    def get_violation_witness(self, prop, minimal_resolute=False, minimal=False):
         """Return the election that witnesses a violation of prop."""
 
         from pref_voting.profiles import Profile
 
+        elections = {
+            "minimal resolute": None,
+            "minimal": None,
+            "any": None
+        }
         if self.properties[prop]:
             print(f"{self.name} satisfies {prop}, no election returned.")
-            return None
+            return elections
         elif self.properties[prop] is None:
             print(f"{self.name} does not have a value for {prop}, no election returned.")
-            return None
+            return elections
         else:
             dir = pkg_resources.resource_filename('pref_voting', f'data/examples/{prop}/')
             for f in glob.glob(f"{dir}*"):
                 fname = os.path.basename(f)
                 is_min = fname.startswith("minimal_")
-                if is_min and fname.startswith(f"minimal_{self.name.replace(' ', '_')}"): 
+                is_min_resolute = fname.startswith("minimal_resolute")
+                found_it = False
+                if is_min_resolute and fname.startswith(f"minimal_resolute_{self.name.replace(' ', '_')}"): 
+                    print(f"Minimal resolute election for a violation of {prop} found.")
+                    elections["minimal resolute"] = Profile.from_preflib(f)
+                if is_min and not is_min_resolute and fname.startswith(f"minimal_{self.name.replace(' ', '_')}"):
                     print(f"Minimal election for a violation of {prop} found.")
-                    return Profile.from_preflib(f)
-                elif not is_min and fname.startswith(f"{self.name.replace(' ', '_')}"):
-                    return Profile.from_preflib(f)
-            print(f"No election found illustrating the violation of {prop}.")
-            return None
+                    elections["minimal"] = Profile.from_preflib(f)
+
+                elif not is_min and not is_min_resolute and  fname.startswith(f"{self.name.replace(' ', '_')}"):
+                    elections["any"] = Profile.from_preflib(f)
+            if all([v is None for v in elections.values()]):
+                print(f"No election found illustrating the violation of {prop}.")
+            return elections
 
     def check_property(self, prop, include_counterexample=True): 
         """Check if the voting method satisfies a property."""

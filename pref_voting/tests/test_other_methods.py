@@ -3,7 +3,7 @@ from pref_voting.profiles import Profile
 import pytest
 
 @pytest.mark.parametrize("voting_method, expected", [
-    (majority, {
+    (absolute_majority, {
         'condorcet_cycle': [], 
         'linear_profile_0': [0], 
         'linear_profile_0_curr_cands': [1]
