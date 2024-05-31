@@ -19,7 +19,7 @@ from pref_voting.social_welfare_function import swf
 import numpy as np
 
 @vm(name = "Absolute Majority",
-    skip_registration=True, # skip registration since majority may return an empty list
+    skip_registration=True, # skip registration since aboslute majority may return an empty list
     input_types = [ElectionTypes.PROFILE])
 def absolute_majority(profile, curr_cands = None):
     """The absolute majority winner is the candidate with a strict majority  of first place votes.  Returns an empty list if there is no candidate with a strict majority of first place votes. Otherwise returns the absolute majority winner in the ``profile`` restricted to ``curr_cands``.
@@ -41,15 +41,15 @@ def absolute_majority(profile, curr_cands = None):
         .. exec_code::
 
             from pref_voting.profiles import Profile
-            from pref_voting.other_methods import majority
+            from pref_voting.other_methods import absolute_majority
             
             prof1 = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]], [3, 1, 2])
             prof1.display()
-            majority.display(prof1)
+            absolute_majority.display(prof1)
 
             prof2 = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0]], [5, 1, 2])
             prof2.display()
-            majority.display(prof2)
+            absolute_majority.display(prof2)
 
     """
     maj_size = profile.strict_maj_size()
