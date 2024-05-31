@@ -5,10 +5,9 @@ Other Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.other_methods.majority
+.. autofunction:: pref_voting.other_methods.absolute_majority
 
 ```
-
 
 ## Kemeny-Young
 
