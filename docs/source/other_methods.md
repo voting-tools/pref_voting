@@ -1,7 +1,7 @@
 Other Methods
 =======================================
 
-## Majority
+## Absolute Majority
 
 ```{eval-rst}
 
