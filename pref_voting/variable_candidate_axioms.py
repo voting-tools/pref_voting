@@ -17,6 +17,9 @@ def has_stability_for_winners_violation(edata, vm, verbose=False, strong_stabili
 
     If strong_stability is True, then A can be weakly majority preferred to B.
 
+    .. note: 
+        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to a condition mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
+
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         vm (VotingMethod): A voting method to test.
@@ -64,6 +67,9 @@ def find_all_stability_for_winners_violations(edata, vm, verbose=False, strong_s
     Returns all violations of Stability for Winners (some candidate A wins without another candidate B in the election, A is majority preferred to B, but A loses when B is included in the election) for the given election data and voting method.
 
     If strong_stability is True, then A can be weakly majority preferred to B.
+
+    .. note: 
+        This axiom is studied in https://doi.org/10.1007/s11127-023-01042-3 and is closely related to a condition mentioned in https://doi.org/10.1016/0022-0531(83)90024-8.
     
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -123,6 +129,9 @@ def has_immunity_to_spoilers_violation(edata, vm, verbose=False, strong_immunity
 
     If strong_immunity is True, then A can be weakly majority preferred to B.
 
+    .. note: 
+        This axiom was introduced in https://doi.org/10.1007/s11127-023-01042-3.
+
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         vm (VotingMethod): A voting method to test.
@@ -170,6 +179,9 @@ def find_all_immunity_to_spoilers_violations(edata, vm, verbose=False, strong_im
     Returns all violations of Immunity to Spoilers (some candidate A wins without another candidate B in the election, A is majority preferred to B, but both A and B lose when B is included in the election) for the given election data and voting method.
 
     If strong_immunity is True, then A can be weakly majority preferred to B.
+
+    .. note: 
+        This axiom was introduced in https://doi.org/10.1007/s11127-023-01042-3.
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
