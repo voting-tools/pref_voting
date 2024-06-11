@@ -382,6 +382,32 @@ def copeland_global_borda(profile, curr_cands=None):
 
     return voting_method_with_scoring_tiebreaker(copeland, lambda num_cands, rank : num_cands - rank, "Copeland-Global-Borda")(profile, curr_cands=curr_cands)
 
+
+@vm(name="Copeland-Global-Minimax",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
+
+def copeland_global_minimax(edata, curr_cands=None):
+    """From the Copeland winners, return the candidates with the best *global* Minimax score.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any edata with a Margin method.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    copeland_ws = copeland(edata, curr_cands=curr_cands)
+
+    mm_scores = minimax_scores(edata, curr_cands=curr_cands)
+
+    best_score = max([mm_scores[c] for c in copeland_ws])
+
+    return sorted([c for c in copeland_ws if mm_scores[c] == best_score])
+
 def faceoff(vm1, vm2):
     """If the vm1 and vm2 winners are the same, return that set of winners. Otherwise, for each choice of a vm1 winner A and vm2 winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).
 
