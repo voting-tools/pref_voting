@@ -1,5 +1,5 @@
 '''
-    File: social_welfare_function.py
+    File: prob_voting_method.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: April 14, 2024
     
@@ -16,6 +16,9 @@ class ProbVotingMethod(object):
     Args:
         pvm (function): An implementation of a probabilistic voting method. The function should accept any type of profile, and a keyword parameter ``curr_cands`` to find the winner after restricting to ``curr_cands``. 
         name (string): The human-readable name of the social welfare function.
+
+    Returns:
+        A dictionary that represents the probability on the set of candidates.
 
     """
     def __init__(self, pvm, name = None): 

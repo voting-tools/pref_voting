@@ -955,7 +955,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
             if does_create_cycle(rp_defeat, e):
                 rp_defeat.remove_edge(e[0], e[1])
         rp_defeats.append(rp_defeat)
-        winners.append(maximal_elements(rp_defeat)[0])
+        #winners.append(maximal_elements(rp_defeat)[0])
     return rp_defeats
 
 @vm(name="Ranked Pairs TB",
@@ -1021,10 +1021,10 @@ def ranked_pairs_tb(
             
             # break ties using the lexicographic ordering on tuples given tb_ranking
             sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
-            for e0,e1,s in edges: 
+            for e0,e1,s in sorted_edges: 
                 if not rp_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]]:
                     rp_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
-            winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
+        winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
 
     return sorted(list(set(winners)))
 
@@ -1254,7 +1254,7 @@ def river_tb(edata, curr_cands = None, tie_breaker = None, strength_function = N
             for e0,e1,s in sorted_edges: 
                 if not rv_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]] and len(rv_defeat.preds[cand_to_cidx[e1]]) == 0:
                     rv_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
-            winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
+        winners.append(cidx_to_cand[rv_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
 @vm(name="River ZT",

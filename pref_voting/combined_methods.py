@@ -13,7 +13,7 @@ from pref_voting.iterative_methods import iterated_removal_cl, instant_runoff, i
 from pref_voting.profiles import _find_updated_profile, _num_rank
 
 from pref_voting.c1_methods import condorcet, smith_set, copeland, top_cycle
-from pref_voting.margin_based_methods import minimax
+from pref_voting.margin_based_methods import minimax, minimax_scores
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.voting_method_properties import VotingMethodProperties, ElectionTypes
@@ -385,7 +385,6 @@ def copeland_global_borda(profile, curr_cands=None):
 
 @vm(name="Copeland-Global-Minimax",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
-
 def copeland_global_minimax(edata, curr_cands=None):
     """From the Copeland winners, return the candidates with the best *global* Minimax score.
 

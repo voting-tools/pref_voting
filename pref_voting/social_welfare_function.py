@@ -16,6 +16,8 @@ class SocialWelfareFunction(object):
         swf (function): An implementation of a voting method. The function should accept any type of profile, and a keyword parameter ``curr_cands`` to find the winner after restricting to ``curr_cands``. 
         name (string): The Human-readable name of the social welfare function.
 
+    Returns:
+        A ranking (Ranking) of the candidates.
     """
     def __init__(self, swf, name = None): 
         
