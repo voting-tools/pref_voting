@@ -1,7 +1,7 @@
 """
     File: variable_candidate_axioms.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: November 18, 2023
+    Date: July 7, 2024
     
     Variable candidate axioms 
 """
@@ -391,9 +391,208 @@ IPDA = Axiom(
     find_all_violations = find_all_IPDA_violations,
 )
 
+def convex_sublists(list):
+    return [list[i:j] for i in range(len(list)) for j in range(i+1,len(list)+1)]
+
+def convex_proper_sublists(list):
+    return [list[i:j] for i in range(len(list)) for j in range(i+1,len(list))]
+
+def convex_nonsingleton_proper_sublists(list):
+    return [list[i:j] for i in range(len(list)) for j in range(i+2,len(list))]
+
+def is_convex_set(S,L):
+    if len(S) == 1:
+        return True
+    for sublist in convex_sublists(L):
+        if set(S) == set(sublist):
+            return True
+    return False
+
+def tideman_clone_sets(prof):
+    """Given a profile, returns all sets of clones according to Tideman's definition. A set C of candidates is a set of clones if no candidate outside of C appears in between two candidates in C in any ranking."""
+
+    rankings = prof.rankings
+    first_ranking = rankings[0]
+
+    _clone_sets = convex_nonsingleton_proper_sublists(first_ranking)
+    clone_sets = list(_clone_sets)
+
+    for clone_set in _clone_sets:
+        for r in rankings[1:]:
+            if not is_convex_set(set(clone_set),r):
+                clone_sets.remove(clone_set)
+                break
+                
+    return clone_sets   
+
+def has_independence_of_clones_violation(prof, vm, clone_def = "Tideman", conditions_to_check = "all", verbose = False):
+    """Independence of Clones: returns True if there is a set C of clones and a clone c in C such that removing c either (i) changes which non-clones (candidates not in C) win or (ii) changes whether any clone in C wins. We call (i) a violation of "non-clone choice is independent of clones" (NCIC) and call (ii) a violation of "clone choice is independent of clones" (CIC).
+
+    Args:
+        prof (Profile): the election data.
+        vm (VotingMethod): A voting method to test.
+        clone_def (str, default="Tideman"): The definition of clones. Currently only "Tideman" is supported.
+        conditions_to_check (str, default="all"): The conditions to check. If "all", then both NCIC and CIC are checked. If "NCIC", then only NCIC is checked. If "CIC", then only CIC is checked.
+        verbose (bool, default=False): If a violation is found, display the violation.
+    
+    """
+
+    if clone_def == "Tideman":
+        clone_sets = tideman_clone_sets(prof)
+
+    for clone_set in clone_sets:
+        
+        non_clones = [n for n in prof.candidates if n not in clone_set]
+
+        for c in clone_set:
+
+            cands_without_c = [d for d in prof.candidates if d != c]
+
+            for n in non_clones:
+
+                if conditions_to_check == "all" or conditions_to_check == "NCIC":
+
+                    if n in vm(prof) and not n in vm(prof,curr_cands = cands_without_c):
+                        if verbose:
+                            print("Non-clone choice is not independent of clones:")
+                            prof.display()
+                            print(prof.description())
+                            print("Clone set:",clone_set)
+                            print(f"{vm.name} winners in full profile: {vm(prof)}")
+                            print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                            print(f"The non-clone {n} wins with the clone {c} included but loses when the clone is removed.")
+                        return True
+                    
+                    if n not in vm(prof) and n in vm(prof,curr_cands = cands_without_c):
+                        if verbose:
+                            print("Non-clone choice is not independent of clones:")
+                            prof.display()
+                            print(prof.description())
+                            print("Clone set:",clone_set)
+                            print(f"{vm.name} winners in full profile: {vm(prof)}")
+                            print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                            print(f"The non-clone {n} loses with the clone {c} included but wins when the clone is removed.")
+                        return True
+                    
+            if conditions_to_check == "all" or conditions_to_check == "CIC":
+
+                if len([c for c in vm(prof) if c in clone_set]) > 0 and len([c for c in vm(prof, cands_without_c) if c in clone_set]) == 0:
+                    if verbose:
+                        print("Clone choice is not independent of clones:")
+                        prof.display()
+                        print(prof.description())
+                        print("Clone set:",clone_set)
+                        print(f"{vm.name} winners in full profile: {vm(prof)}")
+                        print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                        print(f"A clone wins with the clone {c} included but no clone wins when {c} is removed.")
+                    return True
+                
+                if len([c for c in vm(prof) if c in clone_set]) == 0 and len([c for c in vm(prof, cands_without_c) if c in clone_set]) > 0:
+                    if verbose:
+                        print("Clone choice is not independent of clones:")
+                        prof.display()
+                        print(prof.description())
+                        print("Clone set:",clone_set)
+                        print(f"{vm.name} winners in full profile: {vm(prof)}")
+                        print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                        print(f"No clone wins with the clone {c} included but a clone wins when {c} is removed.")
+                    return True
+    
+    return False
+
+def find_all_independence_of_clones_violations(prof, vm, clone_def = "Tideman", conditions_to_check = "all", verbose = False):
+        """Returns all violations of Independence of Clones for the given election data and voting method.
+        
+        Args:
+            prof (Profile): the election data.
+            vm (VotingMethod): A voting method to test.
+            clone_def (str, default="Tideman"): The definition of clones. Currently only "Tideman" is supported.
+            conditions_to_check (str, default="all"): The conditions to check. If "all", then both NCIC and CIC are checked. If "NCIC", then only NCIC is checked. If "CIC", then only CIC is checked.
+            verbose (bool, default=False): If a violation is found, display the violation.
+        
+        Returns:
+            List whose elements are either triples of the form (clone_set,clone,non-clone) or pairs of the form (clone_set,clone). If the triple (clone_set,clone,non-clone) is returned, then non-clone choice is not independent ot clones. If the pair (clone_set,clone) is returned, then clone choice is not independent of clones.
+        """
+    
+        if clone_def == "Tideman":
+            clone_sets = tideman_clone_sets(prof)
+    
+        violations = list()
+    
+        for clone_set in clone_sets:
+            
+            non_clones = [n for n in prof.candidates if n not in clone_set]
+    
+            for c in clone_set:
+    
+                cands_without_c = [d for d in prof.candidates if d != c]
+    
+                for n in non_clones:
+    
+                    if conditions_to_check == "all" or conditions_to_check == "NCIC":
+    
+                        if n in vm(prof) and not n in vm(prof,curr_cands = cands_without_c):
+                            violations.append((clone_set,c,n))
+                            if verbose:
+                                print("Non-clone choice is not independent of clones:")
+                                prof.display()
+                                print(prof.description())
+                                print("Clone set:",clone_set)
+                                print(f"{vm.name} winners in full profile: {vm(prof)}")
+                                print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                                print(f"The non-clone {n} wins with the clone {c} included but loses when the clone is removed.")
+                                print("")
+                        
+                        if n not in vm(prof) and n in vm(prof,curr_cands = cands_without_c):
+                            violations.append((clone_set,c,n))
+                            if verbose:
+                                print("Non-clone choice is not independent of clones:")
+                                prof.display()
+                                print(prof.description())
+                                print("Clone set:",clone_set)
+                                print(f"{vm.name} winners in full profile: {vm(prof)}")
+                                print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                                print(f"The non-clone {n} loses with the clone {c} included but wins when the clone is removed.")
+                                print("")
+                        
+                if conditions_to_check == "all" or conditions_to_check == "CIC":
+    
+                    if len([c for c in vm(prof) if c in clone_set]) > 0 and len([c for c in vm(prof, cands_without_c) if c in clone_set]) == 0:
+                        violations.append((clone_set,c))
+                        if verbose:
+                            print("Clone choice is not independent of clones:")
+                            prof.display()
+                            print(prof.description())
+                            print("Clone set:",clone_set)
+                            print(f"{vm.name} winners in full profile: {vm(prof)}")
+                            print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                            print(f"A clone wins with the clone {c} included but no clone wins when {c} is removed.")
+                            print("")
+
+                    if len([c for c in vm(prof) if c in clone_set]) == 0 and len([c for c in vm(prof, cands_without_c) if c in clone_set]) > 0:
+                        violations.append((clone_set,c))
+                        if verbose:
+                            print("Clone choice is not independent of clones:")
+                            prof.display()
+                            print(prof.description())
+                            print("Clone set:",clone_set)
+                            print(f"{vm.name} winners in full profile: {vm(prof)}")
+                            print(f"{vm.name} winners without clone {c}: {vm(prof,curr_cands = cands_without_c)}")
+                            print(f"No clone wins with the clone {c} included but a clone wins when {c} is removed.")
+                            print("")
+
+        return violations
+
+independence_of_clones = Axiom(
+    "Independence of Clones",
+    has_violation = has_independence_of_clones_violation,
+    find_all_violations = find_all_independence_of_clones_violations,
+)
+
 variable_candidate_axioms = [
     stability_for_winners,
     immunity_to_spoilers,
     ISDA,
     IPDA,
+    independence_of_clones
 ]

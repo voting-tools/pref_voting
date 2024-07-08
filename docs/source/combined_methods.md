@@ -89,6 +89,13 @@ Combined Methods
 
 ```
 
+## Copeland-Global-Minimax
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.copeland_global_minimax
+
+```
 
 
 

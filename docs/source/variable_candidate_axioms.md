@@ -41,3 +41,13 @@ Variable Candidate Axioms
 .. autofunction:: pref_voting.variable_candidate_axioms.find_all_IPDA_violations
 
 ```
+
+## Independence of Clones
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_candidate_axioms.has_independence_of_clones_violation
+
+.. autofunction:: pref_voting.variable_candidate_axioms.find_all_independence_of_clones_violations
+
+```
