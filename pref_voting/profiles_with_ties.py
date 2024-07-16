@@ -351,21 +351,38 @@ class ProfileWithTies(object):
             else int(ceil(float(self.num_voters) / 2))
         )
 
-    def plurality_scores(self, curr_cands = None): 
+    def plurality_scores(self, curr_cands=None):
         """
-        Return the Plurality Scores of the candidates given that each voter ranks a single candidate in first place.  
+        Return the Plurality Scores of the candidates, assuming that each voter ranks a single candidate in first place.
+
+        Parameters:
+        - curr_cands: List of current candidates to consider. If None, use all candidates.
+
+        Returns:
+        - Dictionary with candidates as keys and their plurality scores as values.
+
+        Raises:
+        - ValueError: If any voter ranks multiple candidates in first place.
         """
-        
-        curr_cands = curr_cands if curr_cands is not None else self.candidates
-        
-        if any([len(r.first(cs=curr_cands)) > 1 for r in self._rankings]): 
-            print("Error: Cannot find the plurality scores unless all voters rank a unique candidate in first place.")
-            return {}
-        
+
+        if curr_cands is None:
+            curr_cands = self.candidates
+
+        # Check if any voter ranks multiple candidates in first place
+        if any(len(r.first(cs=curr_cands)) > 1 for r in self._rankings):
+            raise ValueError("Cannot find the plurality scores unless all voters rank a unique candidate in first place.")
+
         rankings, rcounts = self.rankings_counts
-        
-        return {cand: sum([c for r, c in zip(rankings, rcounts) if [cand] == r.first(cs=curr_cands)]) 
-                for cand in curr_cands}
+
+        plurality_scores = {cand: 0 for cand in curr_cands}
+
+        for ranking, count in zip(rankings, rcounts):
+            first_place_candidates = ranking.first(cs=curr_cands)
+            if len(first_place_candidates) == 1:
+                cand = first_place_candidates[0]
+                plurality_scores[cand] += count
+
+        return plurality_scores
 
     def plurality_scores_ignoring_overvotes(self, curr_cands=None): 
         """
@@ -386,6 +403,52 @@ class ProfileWithTies(object):
         restricted_prof = self.remove_candidates([c for c in self.candidates if c not in curr_cands])
         return borda_score_fnc(restricted_prof)
 
+    def tops_scores(
+            self, 
+            curr_cands=None, 
+            score_type='approval'):
+        """
+        Return the tops scores of the candidates. 
+
+        Parameters:
+        - curr_cands: List of current candidates to consider. If None, use all candidates.
+        - score_type: Type of tops score to compute. Options are 'approval' or 'split'.
+
+        Returns:
+        - Dictionary with candidates as keys and their tops scores as values.
+        """
+
+        if curr_cands is None:
+            curr_cands = self.candidates
+
+        rankings, rcounts = self.rankings_counts
+
+        if score_type not in {'approval', 'split'}:
+            raise ValueError("Invalid score_type specified. Use 'approval' or 'split'.")
+
+        tops_scores = {cand: 0 for cand in curr_cands}
+
+        if score_type == 'approval':
+            for ranking, count in zip(rankings, rcounts):
+                for cand in curr_cands:
+                    if ranking.first(cs=curr_cands) == cand:
+                        tops_scores[cand] += count
+
+        elif score_type == 'split':
+            first_place_counts = {cand: 0 for cand in curr_cands}
+            for ranking, count in zip(rankings, rcounts):
+                for cand in curr_cands:
+                    if ranking.first(cs=curr_cands) == cand:
+                        first_place_counts[cand] += count
+
+            for cand in curr_cands:
+                if first_place_counts[cand] > 0:
+                    tops_scores[cand] = 1 / first_place_counts[cand]
+                else:
+                    tops_scores[cand] = 0
+
+        return tops_scores
+        
     def remove_empty_rankings(self): 
         """
         Remove the empty rankings from the profile. 
