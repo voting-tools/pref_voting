@@ -547,6 +547,26 @@ class Profile(object):
             candidates = self.candidates, 
             cmap=self.cmap)
     
+    def randomly_truncate(self, truncation_prob_list = None):
+        """Given a truncation_prob_list that determines the probability that a ballot will be truncated at each position,
+        return the randomly truncated profile. 
+        
+        If truncation_prob_list is None, then the truncation probability distribution is uniform."""
+
+        if truncation_prob_list is None:
+            truncation_prob_list = [1/self.num_cands]*self.num_cands
+
+        truncated_ballots = []
+
+        for ranking, count in zip(*self.rankings_counts):
+            for ranking_instance in range(count):
+                random_number_of_cands_ranked = np.random.choice(range(1,self.num_cands+1), p=truncation_prob_list)
+                truncated_ranking = ranking[:random_number_of_cands_ranked]
+                new_ballot = {cand: ranking[cand] for cand in truncated_ranking}
+                truncated_ballots.append(new_ballot)
+
+        return ProfileWithTies(truncated_ballots)
+    
     def to_utility_profile(self, seed=None): 
         """Returns the profile as a UtilityProfile using the function Utility.from_linear_profile to generate the utility function.  
         So, it assigns a random utility that represents the ranking. 
