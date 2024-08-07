@@ -9,7 +9,7 @@ We have three types of collective decision procedures:
 
 We further categorize collective decision procedures based on the input from the voters: 
 
-  1. Ordinal procedures take as input a [Profile](profiles.md#profile-class), [ProfilesWithTies](profiles_with_ties.md), [MajorityGraph](weighted_majority_graphs.md#majoritygraph-class), [MarginGraph](weighted_majority_graphs.md#margingraph-class), and/or [SupportGraph](weighted_majority_graphs.md#supportgraph-class). These procedures are discussed in the following: 
+  1. Ordinal procedures take as input one or more of the following types of edata: [Profile](profiles.md#profile-class), [ProfilesWithTies](profiles_with_ties.md), [MajorityGraph](weighted_majority_graphs.md#majoritygraph-class), [MarginGraph](weighted_majority_graphs.md#margingraph-class), and [SupportGraph](weighted_majority_graphs.md#supportgraph-class). These procedures are discussed in the following: 
 
       * [Positional Scoring Rules](scoring_methods.md)
       * [Iterative Methods](iterative_methods.md)
