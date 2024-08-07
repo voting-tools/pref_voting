@@ -601,6 +601,50 @@ class MarginGraph(MajorityGraph):
 
         return g
 
+    def debord_profile(self): 
+        """
+        Find a profile that generates the margin graph using the algorithm from Debord's (1987) proof.
+        """
+        
+        from pref_voting.profiles import Profile
+    
+        candidates = self.candidates
+
+        ranks = list()
+        rcounts = list()
+
+        if all([w % 2 == 0 for _,_,w in self.edges]):
+            for c1, c2, w in self.edges:
+                other_cands = [c for c in candidates if c != c1 and c != c2]
+
+                lin_ord1 = sorted(other_cands)
+                lin_ord2 = sorted(other_cands, reverse=True)
+
+                ranks.append([c1, c2] + lin_ord1)
+                rcounts.append(w//2)
+                ranks.append(lin_ord2 + [c1, c2])
+                rcounts.append(w//2)
+            return Profile(ranks, rcounts, cmap=self.cmap)
+        
+        elif all([w % 2 == 1 for _,_,w in self.edges]): # all weights are odd
+            single_prof = Profile([sorted(candidates)], [1])
+
+            for c1, c2, w in self.edges:
+                other_cands = [c for c in candidates if c != c1 and c != c2]
+                lin_ord1 = sorted(other_cands)
+                lin_ord2 = sorted(other_cands, reverse=True)
+                if w-single_prof.margin(c1, c2) > 0:
+                    ranks.append([c1, c2] + lin_ord1)
+                    rcounts.append((w-single_prof.margin(c1, c2))//2)
+                    ranks.append(lin_ord2 + [c1, c2])
+                    rcounts.append((w-single_prof.margin(c1, c2))//2)
+            ranks.append(sorted(candidates))
+            rcounts.append(1)
+            return Profile(ranks, rcounts, cmap=self.cmap)
+        else: 
+            print("Cannot find a Profile since the weights do not all have the same parity.")
+            return None
+        
     def minimal_profile(self): 
         """
         Use an integer linear program to find a minimal profile generating the margin graph. 
