@@ -1,10 +1,9 @@
 '''
-    File: mg_methods.py
+    File: other_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 12, 2022
     Updated: May 28, 2024
-    
-    Implementations of 
+
 '''
 
 from pref_voting.voting_method import *
