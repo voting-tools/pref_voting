@@ -431,21 +431,14 @@ class ProfileWithTies(object):
         if score_type == 'approval':
             for ranking, count in zip(rankings, rcounts):
                 for cand in curr_cands:
-                    if ranking.first(cs=curr_cands) == cand:
+                    if cand in ranking.first(cs=curr_cands):
                         tops_scores[cand] += count
 
         elif score_type == 'split':
-            first_place_counts = {cand: 0 for cand in curr_cands}
             for ranking, count in zip(rankings, rcounts):
                 for cand in curr_cands:
-                    if ranking.first(cs=curr_cands) == cand:
-                        first_place_counts[cand] += count
-
-            for cand in curr_cands:
-                if first_place_counts[cand] > 0:
-                    tops_scores[cand] = 1 / first_place_counts[cand]
-                else:
-                    tops_scores[cand] = 0
+                    if cand in ranking.first(cs=curr_cands):
+                        tops_scores[cand] += count * 1/len(ranking.first(cs=curr_cands))
 
         return tops_scores
         

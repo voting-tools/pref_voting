@@ -233,14 +233,27 @@ def test_strict_maj_size(test_profile_with_ties, condorcet_cycle_profile_with_ti
     assert condorcet_cycle_profile_with_ties.strict_maj_size() == 2
 
 def test_plurality_scores(test_profile_with_ties, condorcet_cycle_profile_with_ties):
-    assert test_profile_with_ties.plurality_scores() == {}
+    with pytest.raises(ValueError) as excinfo:
+        test_profile_with_ties.plurality_scores() == {}
+    assert excinfo.value.args[0] == "Cannot find the plurality scores unless all voters rank a unique candidate in first place."
     assert condorcet_cycle_profile_with_ties.plurality_scores() == {0:1, 1:1, 2:1}
     assert condorcet_cycle_profile_with_ties.plurality_scores(curr_cands=[0, 2]) == {0:1, 2:2}
 
 def test_plurality_scores_ignoring_overvotes(test_profile_with_ties, condorcet_cycle_profile_with_ties):
+
     assert test_profile_with_ties.plurality_scores_ignoring_overvotes() == {0:2, 1:3, 2:0}
     assert condorcet_cycle_profile_with_ties.plurality_scores_ignoring_overvotes() == {0:1, 1:1, 2:1}
     assert condorcet_cycle_profile_with_ties.plurality_scores_ignoring_overvotes(curr_cands=[0, 2]) == {0:1, 2:2}
+
+def test_tops_scores(test_profile_with_ties, condorcet_cycle_profile_with_ties):
+    assert test_profile_with_ties.tops_scores() == {0:3, 1:3, 2:1}
+    assert condorcet_cycle_profile_with_ties.tops_scores() == {0:1, 1:1, 2:1}
+    assert condorcet_cycle_profile_with_ties.tops_scores(curr_cands=[0, 2]) == {0:1, 2:2}
+
+def test_tops_scores_split(test_profile_with_ties, condorcet_cycle_profile_with_ties):
+    assert test_profile_with_ties.tops_scores(score_type="split") == {0: 2.5, 1: 3.0, 2: 0.5}
+    assert condorcet_cycle_profile_with_ties.tops_scores(score_type="split") == {0:1, 1:1, 2:1}
+    assert condorcet_cycle_profile_with_ties.tops_scores(curr_cands=[0, 2], score_type="split") == {0:1, 2:2}
 
 def test_borda_scores(test_profile_with_ties, condorcet_cycle_profile_with_ties):
     assert test_profile_with_ties.borda_scores() == {0: -1, 1: 4, 2: -3}

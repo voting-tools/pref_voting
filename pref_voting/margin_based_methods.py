@@ -846,7 +846,7 @@ def ranked_pairs_with_test(
 
     :Example: 
 
-    .. plot::  margin_graphs_examples/mg_ex_rp_with_test.py
+    .. plot::  margin_graphs_examples/mg_ex_rp_with_t.py
         :context: reset  
         :include-source: True
 

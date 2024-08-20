@@ -66,9 +66,9 @@ def test_scoring_rule(condorcet_cycle, linear_profile_0):
 
 def test_plurality_on_profiles_with_ties(profile_with_ties, profile_with_ties_linear_0):
     assert plurality(profile_with_ties_linear_0) == [0]
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         plurality(profile_with_ties)
-    assert "Cannot calculate plurality scores." in str(excinfo.value)
+    assert "Cannot find the plurality scores unless all voters rank a unique candidate in first place." in str(excinfo.value)
 
 def test_borda_on_profiles_with_ties(profile_with_ties, profile_with_ties_linear_0):
     assert borda_for_profile_with_ties(profile_with_ties_linear_0) == [0]
@@ -90,9 +90,9 @@ def test_plurality_ranking(condorcet_cycle, linear_profile_0, profile_with_ties,
     assert plurality_ranking(condorcet_cycle, tie_breaking='alphabetic') == Ranking({0:1, 1:2, 2:3})
     assert plurality_ranking(linear_profile_0) == Ranking({0:1, 1:3, 2:2})
     assert plurality_ranking(profile_with_ties_linear_0) == Ranking({0:1, 1:3, 2:2})
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         plurality_ranking(profile_with_ties)
-    assert "Cannot calculate plurality scores." in str(excinfo.value)
+    assert "Cannot find the plurality scores unless all voters rank a unique candidate in first place." in str(excinfo.value)
  
 def test_plurality_ranking_curr_cands(condorcet_cycle, linear_profile_0, profile_with_ties_linear_0):
     assert plurality_ranking(condorcet_cycle, curr_cands=[1, 2], local=False) == Ranking({1:1, 2:1})
