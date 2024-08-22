@@ -912,7 +912,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
-        A networkx DiGraph representing the Ranked Pairs defeat relation. 
+        A list of networkx DiGraphs representing the Ranked Pairs defeat relations. 
 
     .. seealso::
 
@@ -925,7 +925,6 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         :include-source: True
 
     .. exec_code::
-
 
         from pref_voting.weighted_majority_graphs import MarginGraph
         from pref_voting.margin_based_methods import ranked_pairs_defeats
@@ -941,8 +940,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
     candidates = edata.candidates if curr_cands is None else curr_cands    
     strength_function = edata.margin if strength_function is None else strength_function    
 
-    w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
-    winners = list()            
+    w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]         
     strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
     sorted_edges = [[e for e in w_edges if e[2] == s] for s in strengths]
     tbs = product(*[permutations(edges) for edges in sorted_edges])
@@ -955,7 +953,6 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
             if does_create_cycle(rp_defeat, e):
                 rp_defeat.remove_edge(e[0], e[1])
         rp_defeats.append(rp_defeat)
-        #winners.append(maximal_elements(rp_defeat)[0])
     return rp_defeats
 
 @vm(name="Ranked Pairs TB",
@@ -968,10 +965,12 @@ def ranked_pairs_tb(
     """
     Ranked Pairs with a fixed linear order on the candidates to break any ties in the margins.   
     Since the tie_breaker is a linear order, this method is resolute.   
+    If no tie_breaker is provided, then the tie_breaker is the sorted list of candidates.
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
-        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``.
+        tie_breaker (List): A linear order on the candidates to break any ties in the margins. If not provided, then the tie_breaker is the sorted list of candidates.
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
 
     Returns: 
@@ -1068,6 +1067,56 @@ def ranked_pairs_zt(
     tb_ranking = tuple([c for c in list(profile._rankings[0]) if c in candidates])
     
     return ranked_pairs_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
+
+@vm(name="Ranked Pairs Defeat TB",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
+def ranked_pairs_defeat_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None, return_list = False):
+    """
+    Returns the Ranked Pairs defeat relation produced by the Ranked Pairs algorithm with a fixed tie-breaker.
+
+    If no tie_breaker is provided, then the tie_breaker is the sorted list of candidates.
+
+    If return_list is True, then return the defeat relation as a list instead of a DiGraph.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        tie_breaker (List): A linear order on the candidates to break any ties in the margins. If not provided, then the tie_breaker is the sorted list of candidates.
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders.
+        return_list (bool, optional): If True, then return a list. If False, return a networkx DiGraph.
+
+    Returns:
+        A networkx DiGraph representing the Ranked Pairs defeat relation. 
+    
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands    
+    cidx_to_cand = {cidx: c for cidx, c in enumerate(candidates)}  
+    cand_to_cidx = {c: cidx for cidx, c in enumerate(candidates)}  
+
+    strength_function = edata.margin if strength_function is None else strength_function
+    
+    tb_ranking = tie_breaker if tie_breaker is not None else sorted(list(candidates))
+
+    w_edges = [(c1, c2, strength_function(c1, c2)) for c1 in candidates for c2 in candidates 
+                if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))]
+              
+    strengths = sorted(list(set([e[2] for e in w_edges])), reverse=True)
+    
+    rp_defeat = SPO(len(candidates))
+
+    for s in strengths: 
+        edges = [e for e in w_edges if e[2] == s] 
+        # break ties using the lexicographic ordering on tuples given tb_ranking
+        sorted_edges = sorted(edges, key = lambda e: (tb_ranking.index(e[0]), tb_ranking.index(e[1])), reverse=False)
+        for e0,e1,s in sorted_edges: 
+            if not rp_defeat.P[cand_to_cidx[e1]][cand_to_cidx[e0]]:
+                rp_defeat.add(cand_to_cidx[e0],cand_to_cidx[e1])
+
+    if return_list:
+        return rp_defeat.to_list(cmap = cidx_to_cand)
+    else:
+        return rp_defeat.to_networkx(cmap = cidx_to_cand)
 
 @vm(name="River",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
