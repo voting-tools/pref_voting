@@ -198,6 +198,78 @@ class SPO(object):
             self.preds[b].append(a)
             self.succs[a].append(b)
 
+    def to_numpy(self):
+        """Return the partial order matrix P as a numpy array."""
+        return self.P
+    
+    def to_networkx(self, cmap=None):
+        """Convert the SPO to a networkx DiGraph.
+        
+        Args:
+            cmap (dict): A dictionary mapping each number to a candidate name. If None, the identity map is used.
+        
+        Returns:
+            nx.DiGraph: The resulting directed graph with nodes labeled according to cmap if provided.
+        """
+        G = nx.DiGraph()
+
+        # Determine node labels based on cmap
+        if cmap is not None:
+            node_labels = {i: cmap[i] for i in self.objects}
+        else:
+            node_labels = {i: i for i in self.objects}
+
+        # Add nodes with labels
+        G.add_nodes_from(node_labels.values())
+
+        # Add edges based on the partial order matrix
+        for a in range(self.n):
+            for b in range(self.n):
+                if self.P[a][b]:
+                    G.add_edge(node_labels[a], node_labels[b])
+
+        return G
+    
+    def to_list(self, cmap=None):
+        """If the SPO is a linear order, return a list representing the order.
+        
+        The list will contain candidate names based on the cmap if provided; otherwise, it will
+        contain the numbers. 
+        
+        Returns None if the SPO is not a linear order.
+
+        Args:
+            cmap (dict): A dictionary mapping each number to a candidate name. If None, the identity map is used.
+        """
+        # Check if the SPO is a strict linear order
+        for i in range(self.n):
+            for j in range(i + 1, self.n):
+                if not (self.P[i][j] or self.P[j][i]):
+                    return None  # i and j are not comparable
+
+        # Create the linear order list by topologically sorting the nodes
+        linear_order = []
+        visited = [False] * self.n
+
+        def visit(node):
+            if not visited[node]:
+                visited[node] = True
+                for successor in self.succs[node]:
+                    visit(successor)
+                linear_order.append(node)
+
+        for node in self.objects:
+            visit(node)
+
+        # Reverse to get the correct order
+        linear_order = linear_order[::-1]
+
+        # If cmap is provided, map the numbers to candidate names
+        if cmap is not None:
+            linear_order = [cmap[node] for node in linear_order]
+        
+        return linear_order
+
 def weak_orders(A):
     """A generator for all weak orders on A"""
     if not A:
