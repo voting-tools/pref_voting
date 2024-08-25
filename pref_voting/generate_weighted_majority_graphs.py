@@ -355,8 +355,8 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
 
     for ceot in tqdm(list(_enumerate_ceots_as_edgelist(num_cands))):
 
-        # The sorted list of Copeland scores will be a useful invariant for isomorphism checking below.
-        copeland_scores = tuple(sorted([len([edge for edge in ceot if edge[0] == i]) for i in range(num_cands)]))
+        # The sorted list of number of wins by each candidate will be a useful invariant for isomorphism checking below.
+        win_vector = tuple(sorted([len([edge for edge in ceot if edge[0] == i]) for i in range(num_cands)]))
         
         # Given ceot, we will generate many cweots as follows:
 
@@ -390,9 +390,9 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
                         cweot.append(s[:n])
                         s=s[n:]
 
-                # If we are considering weak tournaments in this case, we remove the last tied group of edges and update the Copeland scores accordingly.
+                # If we are considering weak tournaments in this case, we remove the last tied group of edges and compute the sorted win-loss vector.
                 if consider_weak_tourns:
-                    updated_copeland_scores = tuple(sorted([len([edge for edge in ceot if edge[0] == i and edge not in cweot[-1]]) for i in range(num_cands)]))
+                    win_loss_vector = tuple(sorted([(len([edge for edge in ceot if edge[0] == i and edge not in cweot[-1]]),len([edge for edge in ceot if edge[1] == i and edge not in cweot[-1]])) for i in range(num_cands)]))
                     cweot = cweot[:-1]
                     
                 G = nx.DiGraph()
@@ -413,7 +413,7 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
 
                 if not consider_weak_tourns:
 
-                    invariant = (copeland_scores, tie_sizes)
+                    invariant = (win_vector, tie_sizes)
                     
                     if invariant not in cweots.keys():
                         cweots[invariant] = []
@@ -429,7 +429,7 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
 
                 if consider_weak_tourns:
 
-                    invariant = (updated_copeland_scores, tie_sizes)
+                    invariant = (win_loss_vector, tie_sizes)
 
                     if invariant not in cweots_with_absent_edges.keys():
                         cweots_with_absent_edges[invariant] = []
