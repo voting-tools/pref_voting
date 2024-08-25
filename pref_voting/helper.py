@@ -291,3 +291,76 @@ def weak_compositions(n, k):
         for i in range(n + 1):
             for comp in weak_compositions(n - i, k - 1):
                 yield [i] + comp
+
+def compositions(n):
+    """Generates all compositions of the integer n. Adapted from https://stackoverflow.com/questions/10244180/python-generating-integer-partitions."""
+
+    a = [0 for i in range(n + 1)]
+    k = 1
+    a[0] = 0
+    a[1] = n
+    while k != 0:
+        x = a[k - 1] + 1
+        y = a[k] - 1
+        k -= 1
+        while 1 <= y:
+            a[k] = x
+            x = 1
+            y -= x
+            k += 1
+        a[k] = x + y
+        yield a[:k + 1]
+
+def enumerate_compositions(int_list):
+    """Given a list of integers, enumerate all the compositions of the integers."""
+
+    first_int = int_list[0]
+
+    if len(int_list) == 1:
+        for composition in compositions(first_int):
+            yield [composition]
+
+    else:
+        for composition in compositions(first_int):
+            for comps in enumerate_compositions(int_list[1:]):
+                yield [composition] + comps
+
+def sublists(lst, length, x = None, partial_sublist = None): 
+    """Generate all sublists of lst of a specified length."""
+    
+    x = length if x is None else x
+    
+    partial_sublist = list() if partial_sublist is None else partial_sublist
+    
+    if len(partial_sublist) == length: 
+        yield partial_sublist
+        
+    for i,el in enumerate(lst):
+        
+        if i < x: 
+            
+            extended_partial_sublist = partial_sublist + [el]
+            x += 1
+            yield from sublists(lst[i+1::], length, x, extended_partial_sublist)
+
+def convex_lexicographic_sublists(l):
+    """Given a list l, return all convex sublists S such that S is already sorted lexicographically."""
+
+    cl_sublists = []
+    current_list = []
+
+    for idx, p in enumerate(l):
+        if current_list + [p] == sorted(current_list + [p]):
+            current_list = current_list + [p]
+
+            if idx == len(l)-1:
+                cl_sublists.append(current_list)
+
+        else:
+            cl_sublists.append(current_list)
+            current_list = [p]
+            
+            if idx == len(l) - 1:
+                cl_sublists.append(current_list)
+
+    return cl_sublists

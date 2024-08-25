@@ -11,6 +11,7 @@
 
 import networkx as nx
 from itertools import combinations
+from helper import sublists, compositions, enumerate_compositions, convex_lexicographic_sublists
 from pref_voting.weighted_majority_graphs import MarginGraph
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -220,7 +221,7 @@ def generate_edge_ordered_tournament_infinite_limit(num_candidates, cov_matrix =
     
     return MarginGraph(candidates, w_edges)
 
-## Generating Canonical MarginGraphs
+## Generating Canonical MarginGraphs without Tied Margins
 
 def _enumerate_ceots(num_cands, num_edges, partial_ceot, used_nodes, next_node):
 
@@ -298,7 +299,7 @@ def enumerate_canonical_edge_ordered_tournaments(num_cands, parity = "even"):
     Returns:
         A generator of ``MarginGraph`` for ``num_candidates``
         
-    .. warning:: It is only feasible to run this function for up to 5 candidates.    
+    .. warning:: It is only feasible to finish the enumeration for up to 5 candidates.    
 
     """
     
@@ -309,26 +310,10 @@ def enumerate_canonical_edge_ordered_tournaments(num_cands, parity = "even"):
                           [(e[0], e[1], 2 * (eidx + 1) if parity == "even" else 2 * eidx + 1) 
                            for eidx, e in enumerate(reversed(ceot))])
 
-def sublists(lst, length, x = None, partial_sublist = None): 
-    
-    x = length if x is None else x
-    
-    partial_sublist = list() if partial_sublist is None else partial_sublist
-    
-    if len(partial_sublist) == length: 
-        yield partial_sublist
-        
-    for i,el in enumerate(lst):
-        
-        if i < x: 
-            
-            extended_partial_sublist = partial_sublist + [el]
-            x += 1
-            yield from sublists(lst[i+1::], length, x, extended_partial_sublist)
             
 def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):  
     """
-    Enumerate all representatives from isomorphism classes of margin graphs with weights drawn from ``weight_domain``. 
+    Enumerate all representatives from isomorphism classes of uniquely-weighted margin graphs with weights drawn from ``weight_domain``. 
     
     Args:
         num_cands (int): the number of candidates
@@ -338,7 +323,7 @@ def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):
         A generator of ``MarginGraph`` for ``num_candidates``
         
 
-    .. warning:: It is only feasible to run this function for up to 5 candidates.    
+    .. warning:: It is only feasible to finish the enumeration for up to 5 candidates.    
 
     """
     
@@ -352,3 +337,140 @@ def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):
             yield MarginGraph(list(range(num_cands)), 
                               [(e[0], e[1], weight_list[eidx]) for eidx, e in enumerate(reversed(ceot))])
 
+
+## Generating Canonical MarginGraphs with Tied Margins
+
+def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
+    
+    #Enumerate each canonical weakly edge ordered tournament as a list of lists of tied edges.
+    #If include_weak_tournaments = True, then allow weak tournaments in which two nodes may have no edge between them.   
+    
+
+    def edge_match(e1, e2):
+        return e1['weight'] == e2['weight']
+
+    cweots = list()
+    cweots_as_graphs = list()
+
+    for ceot in tqdm(list(_enumerate_ceots_as_edgelist(num_cands))):
+        
+        # Given ceot, we will generate many cweots as follows:
+
+        # 1. Collect all the convex lexicographic sublists of ceot in order as [L1,...,Ln]. 
+        # It suffices to only consider convex lexicographic sublists because for any cweot, 
+        # we can obtain a ceot by breaking all ties between edges in a tied group lexicographically.
+
+        l_sublists = convex_lexicographic_sublists(ceot)
+
+        # 2. Within each L_i, we want to consider all ways of making consecutive edges tied.
+        # Such a way is given by a composition of the integer len(L_i). 
+        # Thus, we first iterate over all compositions of len(L_i),...,len(L_n).
+
+        int_list = [len(s) for s in l_sublists]
+
+        # 3. Since the above approach overgenerates cweots, we will check for isomorphism between adding a cweot to our list.
+
+        for compositions in enumerate_compositions(int_list):
+
+            cases = [False, True] if include_weak_tournaments else [False]
+
+            for include_weak_tournaments in cases:
+                
+                cweot = []
+
+                for idx, s in enumerate(l_sublists):
+                    
+                    composition = compositions[idx]
+    
+                    for n in composition:
+                        cweot.append(s[:n])
+                        s=s[n:]
+
+                if include_weak_tournaments:
+                    cweot = cweot[:-1]
+
+                G = nx.DiGraph()
+                weight = len(ceot)
+                for group in cweot:
+                    for edge in group:
+                        G.add_edge(edge[0], edge[1], weight=weight)
+                    weight = weight-1
+
+                add_graph = True
+                
+                # Check whether G1 is isomorphic to a cweot already generated
+                for idx, G2 in enumerate(cweots_as_graphs):
+                    cweot2 = cweots[idx]
+
+                    # A useful invariant is the list of the numbers of edges in each tied group in the cweot
+                    if [len(s) for s in cweot] == [len(s) for s in cweot2]: 
+                        if nx.is_isomorphic(G, G2, edge_match=edge_match):  
+                            add_graph = False
+                            break
+
+                if add_graph:   
+                    cweots.append(cweot)
+                    cweots_as_graphs.append(G)    
+                    yield cweot
+
+def enumerate_canonical_weakly_edge_ordered_tournaments(num_cands, parity = "even", include_weak_tournaments = True):  
+    """
+    A *canonical* weakly edge-ordered tournament (cweot) is a representative from an isomorphism class of  
+    weakly edge-ordered tournaments.  Enumerate all cweots for ``num_cands`` candidates, representing 
+    a cweot as a ``MarginGraph`` where the margins represent the order of the edges.
+
+    If include_weak_tournaments = True, then allow weak tournaments in which two nodes may have no edge between them.
+    
+    Args:
+        num_cands (int): the number of candidates
+        parity (str, optional): The parity of the margins, either 'even' or 'odd'.
+
+    Returns:
+        A generator of ``MarginGraph`` for ``num_candidates``
+        
+    .. warning:: It is only feasible to finish the enumeration for up to 4 candidates.    
+
+    """
+    
+    assert parity in ["odd", "even"], "parity must be either 'odd' or 'even'"
+    
+    for cweot in _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=include_weak_tournaments): 
+
+        weighted_edges = list()
+
+        for idx, group in enumerate(reversed(cweot)):
+            for e in group:
+                weighted_edge = (e[0], e[1], 2 * (idx + 1) if parity == "even" else 2 * idx + 1) 
+                weighted_edges.append(weighted_edge)
+
+        yield MarginGraph(list(range(num_cands)), weighted_edges)
+
+def enumerate_margin_graphs(num_cands, weight_domain, include_weak_tournaments = True):  
+    """
+    Enumerate all representatives from isomorphism classes of margin graphs with weights drawn from ``weight_domain``. 
+    
+    Args:
+        num_cands (int): the number of candidates
+        weight_domain (List[int]): The list of weights in the margin graph.
+        
+    Returns:
+        A generator of ``MarginGraph`` for ``num_candidates``
+        
+    .. warning:: It is only feasible to finish the enumeration for up to 4 candidates.    
+
+    """
+    
+    weight_domain = sorted(weight_domain)
+    
+    for cweot in _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments = include_weak_tournaments): 
+
+        for weight_list in sublists(weight_domain, len(cweot)):
+
+            weighted_edges = list()
+
+            for idx, group in enumerate(reversed(cweot)):
+                for e in group:
+                    weighted_edge = (e[0], e[1], weight_list[idx]) 
+                    weighted_edges.append(weighted_edge)
+            
+            yield MarginGraph(list(range(num_cands)), weighted_edges)
