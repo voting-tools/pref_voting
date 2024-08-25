@@ -198,6 +198,78 @@ class SPO(object):
             self.preds[b].append(a)
             self.succs[a].append(b)
 
+    def to_numpy(self):
+        """Return the partial order matrix P as a numpy array."""
+        return self.P
+    
+    def to_networkx(self, cmap=None):
+        """Convert the SPO to a networkx DiGraph.
+        
+        Args:
+            cmap (dict): A dictionary mapping each number to a candidate name. If None, the identity map is used.
+        
+        Returns:
+            nx.DiGraph: The resulting directed graph with nodes labeled according to cmap if provided.
+        """
+        G = nx.DiGraph()
+
+        # Determine node labels based on cmap
+        if cmap is not None:
+            node_labels = {i: cmap[i] for i in self.objects}
+        else:
+            node_labels = {i: i for i in self.objects}
+
+        # Add nodes with labels
+        G.add_nodes_from(node_labels.values())
+
+        # Add edges based on the partial order matrix
+        for a in range(self.n):
+            for b in range(self.n):
+                if self.P[a][b]:
+                    G.add_edge(node_labels[a], node_labels[b])
+
+        return G
+    
+    def to_list(self, cmap=None):
+        """If the SPO is a linear order, return a list representing the order.
+        
+        The list will contain candidate names based on the cmap if provided; otherwise, it will
+        contain the numbers. 
+        
+        Returns None if the SPO is not a linear order.
+
+        Args:
+            cmap (dict): A dictionary mapping each number to a candidate name. If None, the identity map is used.
+        """
+        # Check if the SPO is a strict linear order
+        for i in range(self.n):
+            for j in range(i + 1, self.n):
+                if not (self.P[i][j] or self.P[j][i]):
+                    return None  # i and j are not comparable
+
+        # Create the linear order list by topologically sorting the nodes
+        linear_order = []
+        visited = [False] * self.n
+
+        def visit(node):
+            if not visited[node]:
+                visited[node] = True
+                for successor in self.succs[node]:
+                    visit(successor)
+                linear_order.append(node)
+
+        for node in self.objects:
+            visit(node)
+
+        # Reverse to get the correct order
+        linear_order = linear_order[::-1]
+
+        # If cmap is provided, map the numbers to candidate names
+        if cmap is not None:
+            linear_order = [cmap[node] for node in linear_order]
+        
+        return linear_order
+
 def weak_orders(A):
     """A generator for all weak orders on A"""
     if not A:
@@ -219,3 +291,76 @@ def weak_compositions(n, k):
         for i in range(n + 1):
             for comp in weak_compositions(n - i, k - 1):
                 yield [i] + comp
+
+def compositions(n):
+    """Generates all compositions of the integer n. Adapted from https://stackoverflow.com/questions/10244180/python-generating-integer-partitions."""
+
+    a = [0 for i in range(n + 1)]
+    k = 1
+    a[0] = 0
+    a[1] = n
+    while k != 0:
+        x = a[k - 1] + 1
+        y = a[k] - 1
+        k -= 1
+        while 1 <= y:
+            a[k] = x
+            x = 1
+            y -= x
+            k += 1
+        a[k] = x + y
+        yield a[:k + 1]
+
+def enumerate_compositions(int_list):
+    """Given a list of integers, enumerate all the compositions of the integers."""
+
+    first_int = int_list[0]
+
+    if len(int_list) == 1:
+        for composition in compositions(first_int):
+            yield [composition]
+
+    else:
+        for composition in compositions(first_int):
+            for comps in enumerate_compositions(int_list[1:]):
+                yield [composition] + comps
+
+def sublists(lst, length, x = None, partial_sublist = None): 
+    """Generate all sublists of lst of a specified length."""
+    
+    x = length if x is None else x
+    
+    partial_sublist = list() if partial_sublist is None else partial_sublist
+    
+    if len(partial_sublist) == length: 
+        yield partial_sublist
+        
+    for i,el in enumerate(lst):
+        
+        if i < x: 
+            
+            extended_partial_sublist = partial_sublist + [el]
+            x += 1
+            yield from sublists(lst[i+1::], length, x, extended_partial_sublist)
+
+def convex_lexicographic_sublists(l):
+    """Given a list l, return all convex sublists S such that S is already sorted lexicographically."""
+
+    cl_sublists = []
+    current_list = []
+
+    for idx, p in enumerate(l):
+        if current_list + [p] == sorted(current_list + [p]):
+            current_list = current_list + [p]
+
+            if idx == len(l)-1:
+                cl_sublists.append(current_list)
+
+        else:
+            cl_sublists.append(current_list)
+            current_list = [p]
+            
+            if idx == len(l) - 1:
+                cl_sublists.append(current_list)
+
+    return cl_sublists
