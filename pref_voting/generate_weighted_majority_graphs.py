@@ -345,14 +345,18 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
     #Enumerate each canonical weakly edge ordered tournament as a list of lists of tied edges.
     #If include_weak_tournaments = True, then allow weak tournaments in which two nodes may have no edge between them.   
     
-
     def edge_match(e1, e2):
         return e1['weight'] == e2['weight']
 
-    cweots = list()
-    cweots_as_graphs = list()
+    cweots = dict() # For isomorphism checking, keep track of the cweots generated so far.
+    
+    if include_weak_tournaments:
+        cweots_with_absent_edges = dict() # For isomorphism checking, keep track of the cweots for which some edges are absent.
 
     for ceot in tqdm(list(_enumerate_ceots_as_edgelist(num_cands))):
+
+        # The sorted list of Copeland scores will be a useful invariant for isomorphism checking below.
+        copeland_scores = tuple(sorted([len([edge for edge in ceot if edge[0] == i]) for i in range(num_cands)]))
         
         # Given ceot, we will generate many cweots as follows:
 
@@ -368,13 +372,13 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
 
         int_list = [len(s) for s in l_sublists]
 
-        # 3. Since the above approach overgenerates cweots, we will check for isomorphism between adding a cweot to our list.
+        # 3. Since the above approach overgenerates cweots, we will check for isomorphism before adding a cweot to our list.
 
         for compositions in enumerate_compositions(int_list):
 
             cases = [False, True] if include_weak_tournaments else [False]
 
-            for include_weak_tournaments in cases:
+            for consider_weak_tourns in cases:
                 
                 cweot = []
 
@@ -386,9 +390,11 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
                         cweot.append(s[:n])
                         s=s[n:]
 
-                if include_weak_tournaments:
+                # If we are considering weak tournaments in this case, we remove the last tied group of edges and update the Copeland scores accordingly.
+                if consider_weak_tourns:
+                    updated_copeland_scores = tuple(sorted([len([edge for edge in ceot if edge[0] == i and edge not in cweot[-1]]) for i in range(num_cands)]))
                     cweot = cweot[:-1]
-
+                    
                 G = nx.DiGraph()
                 weight = len(ceot)
                 for group in cweot:
@@ -398,20 +404,44 @@ def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
 
                 add_graph = True
                 
-                # Check whether G1 is isomorphic to a cweot already generated
-                for idx, G2 in enumerate(cweots_as_graphs):
-                    cweot2 = cweots[idx]
+                # Next we check whether G is isomorphic to a cweot G2 already generated.
+                # We only need to check those cweots G2 that have (i) the same sorted Copeland scores and 
+                # (ii) the same list of numbers of edges in each tied group as G, 
+                # since these are necessary conditions for isomorphism.
 
-                    # A useful invariant is the list of the numbers of edges in each tied group in the cweot
-                    if [len(s) for s in cweot] == [len(s) for s in cweot2]: 
+                tie_sizes = tuple([len(s) for s in cweot])
+
+                if not consider_weak_tourns:
+
+                    invariant = (copeland_scores, tie_sizes)
+                    
+                    if invariant not in cweots.keys():
+                        cweots[invariant] = []
+              
+                    for idx, G2 in enumerate(cweots[invariant]):
+                        if nx.is_isomorphic(G, G2, edge_match=edge_match):  
+                            add_graph = False
+                            break 
+
+                    if add_graph:   
+                        cweots[invariant].append(G)    
+                        yield cweot
+
+                if consider_weak_tourns:
+
+                    invariant = (updated_copeland_scores, tie_sizes)
+
+                    if invariant not in cweots_with_absent_edges.keys():
+                        cweots_with_absent_edges[invariant] = []
+
+                    for idx, G2 in enumerate(cweots_with_absent_edges[invariant]):
                         if nx.is_isomorphic(G, G2, edge_match=edge_match):  
                             add_graph = False
                             break
 
-                if add_graph:   
-                    cweots.append(cweot)
-                    cweots_as_graphs.append(G)    
-                    yield cweot
+                    if add_graph:
+                        cweots_with_absent_edges[invariant].append(G)
+                        yield cweot
 
 def enumerate_canonical_weakly_edge_ordered_tournaments(num_cands, parity = "even", include_weak_tournaments = True):  
     """
