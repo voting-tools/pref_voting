@@ -347,7 +347,7 @@ def estimated_variance_of_sampling_dist(
     mean_for_each_experiment=None):
     # values_for_each_vm is a 2d numpy array
 
-    mean_for_each_experiment = np.nanmean(values_for_each_experiment, axis=1) if mean_for_each_experiment is not None else mean_for_each_experiment
+    mean_for_each_experiment = np.nanmean(values_for_each_experiment, axis=1) if mean_for_each_experiment is None else mean_for_each_experiment
 
     num_val_for_each_exp = np.sum(~np.isnan(values_for_each_experiment), axis=1)
     
@@ -359,6 +359,47 @@ def estimated_variance_of_sampling_dist(
             axis=1),
             np.nan
             )
+
+
+def binomial_confidence_interval(xs, confidence_level=0.95):
+    """
+    Calculate the exact confidence interval for a binomial proportion.
+
+    This function computes the confidence interval for the true proportion of successes
+    in a binary dataset using the exact binomial test. It is particularly useful for small sample sizes or when the normal approximation is not appropriate.
+
+    Parameters
+    ----------
+    xs : array-like
+        A sequence of binary observations (0 for failure, 1 for success).
+    confidence_level : float, optional
+        The confidence level for the interval, between 0 and 1. Default is 0.95.
+
+    Returns
+    -------
+    tuple of float
+        A tuple containing the lower and upper bounds of the confidence interval.
+
+    Examples
+    --------
+    >>> xs = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0]
+    >>> binomial_confidence_interval(xs)
+    (0.4662563841506048, 0.9337436158493953)
+
+    Notes
+    -----
+    - Uses the `binomtest` function from `scipy.stats` with the 'exact' method.
+    - Suitable for datasets where the normal approximation may not hold.
+
+    References
+    ----------
+    .. [1] "Binomial Test", SciPy v1.7.1 Manual, 
+       https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html
+    """
+    binom_ci = binomtest(int(np.sum(xs)), len(xs)).proportion_ci(
+        confidence_level=confidence_level, method='exact'
+    )
+    return (binom_ci.low, binom_ci.high)
 
 def estimated_std_error(values_for_each_experiment, mean_for_each_experiment=None):
     # values_for_each_vm is a 2d numpy array

@@ -35,6 +35,14 @@ Functions that can be used to compare and contrast voting methods.
 
 ```
 
+## Binomial Confidence Interval
+
+``` 
+
+.. autofunction:: pref_voting.analysis.binomial_confidence_interval
+
+```
+
 ## Means with Estimated Standard Error  
 
 
