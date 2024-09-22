@@ -10,6 +10,8 @@
 from pref_voting.generate_profiles import generate_profile
 from functools import partial
 from multiprocess import Pool, cpu_count
+from scipy.stats import binomtest
+
 import pandas as pd
 import numpy as np
 
