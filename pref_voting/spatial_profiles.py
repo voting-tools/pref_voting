@@ -17,9 +17,10 @@ class SpatialProfile(object):
         cand_pos (dict): A dictionary mapping each candidate to their position in the space.    
         voter_pos (dict): A dictionary mapping each voter to their position in the space.   
         num_dims (int): The number of dimensions in the space.  
+        cand_types (dict): A dictionary mapping each candidate to their type (e.g., party affiliation).
 
     """
-    def __init__(self, cand_pos, voter_pos):
+    def __init__(self, cand_pos, voter_pos, candidate_types=None):
 
         cand_dims = [len(v) for v in cand_pos.values()]
         voter_dims = [len(v) for v in voter_pos.values()]
@@ -35,6 +36,7 @@ class SpatialProfile(object):
         self.cand_pos = cand_pos
         self.voter_pos = voter_pos
         self.num_dims = len(list(cand_pos.values())[0]) 
+        self.candidate_types = candidate_types or {c:'unknown' for c in self.candidates}
 
     def voter_position(self, v): 
         """
@@ -48,6 +50,21 @@ class SpatialProfile(object):
         """
         return self.cand_pos[c]
     
+    def candidate_type(self, c):
+        """
+        Given a candidate c, returns their type.
+        """
+        return self.candidate_types[c]
+
+    def set_candidate_types(self, cand_types): 
+        """
+        Sets the types of each candidate.
+        """
+
+        assert set(cand_types.keys()) == set(self.candidates), "The candidate types must be specified for all candidates."
+
+        self.candidate_types = candidate_types
+
     def to_utility_profile(self, 
                            utility_function = None,
                            uncertainty_function=None,

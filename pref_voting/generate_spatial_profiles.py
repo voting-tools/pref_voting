@@ -70,7 +70,11 @@ def generate_spatial_profile(num_cands, num_voters, num_dims, cand_cov = None, v
 
     return profs[0] if num_profiles == 1 else profs
 
-def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profiles = 1):
+def generate_spatial_profile_polarized(
+    cand_clusters, 
+    voter_clusters, 
+    cluster_types = None, 
+    num_profiles = 1):
     """
     Generates a spatial profile with polarized clusters of candidates and voters.   
     
@@ -80,6 +84,9 @@ def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profil
         A list of tuples of the form (mean, covariance, number of candidates) for each cluster of candidates.
     voter_clusters : list
         A list of tuples of the form (mean, covariance, number of voters) for each cluster of voters.
+    cluster_types : dict, optional
+        A list of the same length as cand_cluster that associates each cluster to the type of candidate. The default is None.
+
     num_profiles : int, optional
         The number of profiles to generate. The default is 1.
 
@@ -89,10 +96,13 @@ def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profil
         A spatial profile with polarized clusters of candidates and voters.
     """
 
+    cluster_types = cluster_types if cluster_types is not None else list(range(len(cand_clusters)))
     cand_samples = list()
+    candidate_types = {}
     total_num_cands = 0
-    for cand_cluster in cand_clusters:
+    for cluster_idx, cand_cluster in enumerate(cand_clusters):
         cand_mean, cand_cov, num_cands = cand_cluster
+        candidate_types.update({cidx: cluster_types[cluster_idx] for cidx in range(total_num_cands, total_num_cands+num_cands)})
         total_num_cands += num_cands
         cluster_samples = np.random.multivariate_normal(cand_mean, cand_cov, 
                                                         size=(num_profiles,num_cands))
@@ -117,7 +127,8 @@ def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profil
     profs = [SpatialProfile({cidx: cand_samples[pidx][cidx]
                            for cidx in range(total_num_cands)},
                            {vidx: voter_samples[pidx][vidx]
-                            for vidx in range(total_num_voters)}) 
+                            for vidx in range(total_num_voters)}, 
+                            candidate_types=candidate_types) 
                             for pidx in range(num_profiles)]
     
     return profs[0] if num_profiles == 1 else profs
@@ -126,7 +137,8 @@ def generate_spatial_profile_polarized(cand_clusters, voter_clusters, num_profil
 def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
         cand_clusters, 
         num_voters,
-        voter_distributions, 
+        voter_distributions,
+        cluster_types = None, 
         num_profiles = 1):
     """
     Generates a spatial profile with polarized clusters of candidates and voters.   
@@ -139,6 +151,8 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
         The number of voters.
     voter_distributions : list
         A list of tuples of the form (mean, covariance, prob) for each distribution of voters, where prob is the probability that a voter is assigned to this cluster.
+    cluster_types : dict, optional
+        A list of the same length as cand_cluster that associates each cluster to the type of candidate. The default is None.
     num_profiles : int, optional
         The number of profiles to generate. The default is 1.
 
@@ -148,10 +162,13 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
         A spatial profile with polarized clusters of candidates and voters.
     """
 
+    cluster_types = cluster_types if cluster_types is not None else list(range(len(cand_clusters)))
     cand_samples = list()
+    candidate_types = {}
     total_num_cands = 0
     for cand_cluster in cand_clusters:
         cand_mean, cand_cov, num_cands = cand_cluster
+        candidate_types.update({cidx: cluster_types[cluster_idx] for cidx in range(total_num_cands, total_num_cands+num_cands)})
         total_num_cands += num_cands
         cluster_samples = np.random.multivariate_normal(cand_mean, cand_cov, size=(num_profiles,num_cands))
         if len(cand_samples) == 0:
@@ -174,7 +191,8 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
     profs = [SpatialProfile({cidx: cand_samples[pidx][cidx]
                            for cidx in range(total_num_cands)},
                            {vidx: all_potential_voters[voters_clusters_assignment[pidx][vidx]][pidx][vidx]
-                            for vidx in range(num_voters)}) 
+                            for vidx in range(num_voters)}, 
+                            candidate_types=candidate_types) 
                             for pidx in range(num_profiles)]
     
     return profs[0] if num_profiles == 1 else profs

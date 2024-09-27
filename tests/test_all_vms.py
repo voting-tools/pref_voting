@@ -7,6 +7,7 @@ def test_all_profile_vms():
     prof = Profile([[0, 1], [1, 0]], rcounts=[1, 2])
     for vm in voting_methods: 
         if ElectionTypes.PROFILE in vm.input_types:
+            print(vm.name)
             if vm.name != "Pareto":
                 assert vm(prof) == [1]
             else:
