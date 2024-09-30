@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.poetry]
 name = "pref_voting"
-version = "1.14.0"
+version = "1.14.1"
 description = "pref_voting is a Python package that contains tools to reason about elections and margin graphs, and implementations of voting methods."
 authors = ["Eric Pacuit <epacuit@umd.edu>"]
 license = "MIT"
@@ -16,7 +16,7 @@ homepage = "https://github.com/voting-tools/pref_voting"
 repository = "https://github.com/voting-tools/pref_voting"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.9"
 scipy = "^1.0.0"
 networkx = "^3.0"
 tabulate = "^0.9.0"
@@ -27,5 +27,7 @@ numba = "^0.58.0"
 ortools = "^9.8.0"
 prefsampling = "^0.1.16"
 filelock = "^3.12.2"
+preflibtools = "^2.0.22"
+seaborn = "^0.13.2"
 
 [tool.poetry.dev-dependencies]

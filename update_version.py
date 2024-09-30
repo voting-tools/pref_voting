@@ -5,7 +5,6 @@ from os import fdopen, remove
 import argparse
 
 init_file = './pref_voting/__init__.py'
-setup_file = './setup.py'
 pyproject_file = './pyproject.toml'
 conf_file = './docs/source/conf.py'
 
@@ -48,13 +47,6 @@ if check:
                 print(line)
                 versions.append(line.split("=")[1].strip().replace("'", ""))
 
-    print("setup.py: ")
-    with open(setup_file) as old_file:
-        for line in old_file:
-            if "version" in line:
-                print(line)
-                versions.append(line.split("=")[1].strip()[0:-1].replace('"',''))
-
     print("pyproject.toml: ")
     with open(pyproject_file) as old_file:
         for line in old_file:
@@ -81,8 +73,6 @@ else:
         exit()
     replace(pyproject_file, f'version = "{old_version}"', f'version = "{new_version}"')
     print("Updated pyproject.toml")
-    replace(setup_file, f'version="{old_version}"', f'version="{new_version}"')
-    print("Updated setup.py")
     replace(conf_file, f"release = '{old_version}'", f"release = '{new_version}'")
     print("Updated conf.py")
     replace(init_file, f"__version__ = '{old_version}'", f"__version__ = '{new_version}'")

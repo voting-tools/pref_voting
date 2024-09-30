@@ -166,7 +166,7 @@ def generate_spatial_profile_polarized_cands_randomly_polarized_voters(
     cand_samples = list()
     candidate_types = {}
     total_num_cands = 0
-    for cand_cluster in cand_clusters:
+    for cluster_idx, cand_cluster in enumerate(cand_clusters):
         cand_mean, cand_cov, num_cands = cand_cluster
         candidate_types.update({cidx: cluster_types[cluster_idx] for cidx in range(total_num_cands, total_num_cands+num_cands)})
         total_num_cands += num_cands
