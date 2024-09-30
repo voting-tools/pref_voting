@@ -72,7 +72,7 @@ To ensure that the package is working correctly, you can run the test suite usin
 - **Python 3.8 or higher**: Ensure you have a compatible version of Python installed.
 - **`pytest`**: Install `pytest` if it's not already installed.
 
-### Using Poetry
+### Running the tests
 
 If you are using **Poetry** to manage your dependencies, run the tests with:
 
