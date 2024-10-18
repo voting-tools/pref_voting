@@ -55,6 +55,29 @@ prof = generate_profile(3, 4) # prof is a Profile object with 3 candidates and 4
 prof = generate_profile(3, 4, probmod = "IAC") # prof is a Profile object with 3 candidates and 4 voters 
 ```
 
+The `Profile` class has a number of methods that can be used to analyze the profile. For example, to determine the margin of victory between two candidates, the plurality scores, the Copeland scores, the Borda scores, the Condorcet winner, the weak Condorcet winner, and the Condorcet loser, and whether the profile is uniquely weighted, use the following code:
+
+```python
+
+prof = Profile([
+    [2, 1, 0, 3], 
+    [3, 2, 0, 1], 
+    [3, 1, 0, 2]], 
+    rcounts=[2, 2, 3])
+
+prof.display()
+
+print(f"The margin of 1 over 3 is {prof.margin(1, 3)}")
+print(f"The Plurality scores are {prof.plurality_scores()}")
+print(f"The Copeland scores are {prof.copeland_scores()}")
+print(f"The Borda scores are {prof.borda_scores()}")
+print(f"The Condorcet winner is {prof.condorcet_winner()}")
+print(f"The weak Condorcet winner is {prof.weak_condorcet_winner()}")
+print(f"The Condorcet loser is {prof.condorcet_loser()}")
+print(f"The profile is uniquely weighted: {prof.is_uniquely_weighted()}")
+
+```
+
 To use one of the many voting methods, import the function from `pref_voting.voting_methods` and apply it to the profile: 
 
 ```python
@@ -63,13 +86,14 @@ from pref_voting.voting_methods import *
 
 prof = generate_profile(3, 4) # create a profile with 3 candidates and 4 voters
 split_cycle(prof) # returns the sorted list of winning candidates
-split_cycle.display(prof) # display the winning candidates
+split_cycle.display(prof) # displays the winning candidates
 
 ```
 
+Additional notebooks that demonstrate how to use the package can be found in the [howto directory](https://github.com/voting-tools/pref_voting/tree/main/howto)
+
 Consult the documentation [https://pref-voting.readthedocs.io](https://pref-voting.readthedocs.io) for a complete overview of the package. 
 
-Additional notebooks that demonstrate how to use the package can be found in the [howto directory](https://github.com/voting-tools/pref_voting/tree/main/howto)
 
 ## Testing
  

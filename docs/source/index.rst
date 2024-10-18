@@ -35,6 +35,9 @@ Related resources
 
 - Votelib (https://github.com/simberaj/votelib) - Another Python package that implements a number of voting methods (includes multiwinner methods and some grading systems such as Approval Voting and Majority Judgement).
 
+
+See [https://comsoc-community.org/tools](https://comsoc-community.org/tools) for an overivew of tools for computational social choice.
+
 Contents
 -----------------
 
