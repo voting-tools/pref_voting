@@ -22,7 +22,7 @@ copyright = '2023, Wes Holliday and Eric Pacuit'
 author = 'Wes Holliday and Eric Pacuit'
 
 # The full version, including alpha/beta/rc tags
-release = '1.14.2'
+release = '1.14.4'
 
 
 # -- General configuration ---------------------------------------------------

@@ -38,6 +38,20 @@ class SpatialProfile(object):
         self.num_dims = len(list(cand_pos.values())[0]) 
         self.candidate_types = candidate_types or {c:'unknown' for c in self.candidates}
 
+    @property
+    def num_cands(self): 
+        """
+        Returns the number of candidates in the profile.
+        """
+        return len(self.candidates)
+
+    @property
+    def num_voters(self):
+        """
+        Returns the number of voters in the profile.
+        """
+        return len(self.voters) 
+    
     def voter_position(self, v): 
         """
         Given a voter v, returns their position in the space.

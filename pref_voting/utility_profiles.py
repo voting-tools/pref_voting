@@ -91,6 +91,11 @@ class UtilityProfile(object):
         return self.domain
     
     @property
+    def num_cands(self): 
+        """Return the number of candidates in the profile."""
+        return len(self.candidates)
+    
+    @property
     def utilities_counts(self):
         """Returns the utilities and the counts of each utility."""
 

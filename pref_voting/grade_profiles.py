@@ -116,6 +116,11 @@ class GradeProfile(object):
 
         return any([g.has_grade(c) for g in self._grades])
 
+    @property
+    def num_cands(self):
+        """Return the number of candidates in the profile."""
+        return len(self.candidates)
+    
     def margin(self, c1, c2, use_extended=False): 
         """
         Return the margin of ``c1`` over ``c2``.  If ``c1`` is not assigned a grade by any voter, return None.
