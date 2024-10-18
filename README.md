@@ -1,6 +1,15 @@
 pref_voting
 ==========
 
+> [!NOTE]
+> - [**Documentation**](https://pref-voting.readthedocs.io/)
+> - [**Installation**](https://pref-voting.readthedocs.io/en/latest/installation.html)  
+> - [**Example Notebooks**](https://github.com/voting-tools/pref_voting/tree/main/howto)  
+> - [**Example Elections**](https://github.com/voting-tools/election-analysis)
+> - [**► pref_voting web app**](https://pref.tools/pref_voting/)
+
+See the [COMSOC community page](https://comsoc-community.org/tools) for an overview of other software tools related to Computational Social Choice.
+
 ## Installation
 
 The package can be installed using the ``pip3`` package manager:
@@ -11,10 +20,7 @@ pip3 install pref_voting
 
 Note: If you have both Python 2 and Python 3 installed on your system, make sure to use ``pip3`` instead of pip to install packages for Python 3. Alternatively, you can use ``python3 -m pip`` to ensure you're using the correct version of pip. If you have modified your system's defaults or soft links, adjust accordingly.
 
-
-## Documentation
-
-Online documentation is available at [https://pref-voting.readthedocs.io](https://pref-voting.readthedocs.io).
+See the [installation guide](https://pref-voting.readthedocs.io/en/latest/installation.html) for more detailed instructions.
 
 ## Example Usage
 
@@ -30,7 +36,7 @@ rankings = [
     (1, 2, 0, 3), 
     (1, 3, 2, 0)]
 
-rcounts = [5, 3, 2, 4, 3] # 5 voters submitted the first ranking ((0, 1, 2, 3)), 3 voters submitted the second ranking, and so on.
+rcounts = [5, 3, 2, 4, 3] # 5 voters submitted the first ranking (0, 1, 2, 3), 3 voters submitted the second ranking, and so on.
 
 prof = Profile(rankings, rcounts=rcounts)
 
@@ -63,13 +69,15 @@ split_cycle.display(prof) # display the winning candidates
 
 Consult the documentation [https://pref-voting.readthedocs.io](https://pref-voting.readthedocs.io) for a complete overview of the package. 
 
+Additional notebooks that demonstrate how to use the package can be found in the [howto directory](https://github.com/voting-tools/pref_voting/tree/main/howto)
+
 ## Testing
  
 To ensure that the package is working correctly, you can run the test suite using [pytest](https://docs.pytest.org/en/stable/). The test files are located in the `tests` directory. Follow the instructions below based on your setup.
 
 ### Prerequisites
 
-- **Python 3.8 or higher**: Ensure you have a compatible version of Python installed.
+- **Python 3.9 or higher**: Ensure you have a compatible version of Python installed.
 - **`pytest`**: Install `pytest` if it's not already installed.
 
 ### Running the tests
@@ -92,6 +100,10 @@ For more detailed output, add the -v or --verbose flag:
 ```bash
 pytest -v
 ```
+
+## Contributing
+
+If you would like to contribute to the project, please see the [contributing guidelines](CONTRIBUTING.md).
 
 ## Questions?
 
