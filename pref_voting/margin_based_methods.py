@@ -899,9 +899,11 @@ def ranked_pairs_with_test(
                 winners.append(cidx_to_cand[rp_defeat.initial_elements()[0]])
     return sorted(list(set(winners)))
 
-def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):   
+def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None, add_reverse_of_removed_edges = False):   
     """
     Returns the Ranked Pairs defeat relations produced by the Ranked Pairs algorithm. 
+
+    If add_reverse_of_removed_edges is True, we add the reverse of any majority edge that is removed during the Ranked Pairs algorithm. Otherwise, we do not add the reverse of any majority edge that is removed.
 
     .. important::
         Unlike the other functions that return a single defeat relation, this returns a list of defeat relations. 
@@ -949,11 +951,13 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None):
         edges = flatten(tb)
         rp_defeat = nx.DiGraph() 
         for e in edges: 
-            rp_defeat.add_edge(e[0], e[1], weight=e[2])
+            rp_defeat.add_edge(e[0], e[1])
             if does_create_cycle(rp_defeat, e):
                 rp_defeat.remove_edge(e[0], e[1])
+                if add_reverse_of_removed_edges:
+                    rp_defeat.add_edge(e[1], e[0])
+
         rp_defeats.append(rp_defeat)
-    return rp_defeats
 
 @vm(name="Ranked Pairs TB",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
