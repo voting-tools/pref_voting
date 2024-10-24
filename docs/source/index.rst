@@ -55,6 +55,7 @@ Contents
    ballots
    profiles
    profiles_with_ties
+   pairwise_profiles
    grade_profiles
    utility_profiles
    spatial_profiles

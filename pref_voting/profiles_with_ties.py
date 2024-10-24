@@ -858,15 +858,23 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         cmap = self.cmap if cmap is None else cmap
         curr_cands = self.candidates if curr_cands is None else curr_cands
 
-        latex = "\\begin{tabular}{" + "c" * len(self._rankings) + "}\n"
+        prof = copy.deepcopy(self)
+        prof.remove_empty_rankings()
+
+        _rankings = copy.deepcopy(prof._rankings)
+        if len(_rankings) == 0:
+            return ""
+        _rankings = [r.normalize_ranks() or r for r in _rankings ]
+
+        latex = "\\begin{tabular}{" + "c" * len(_rankings) + "}\n"
         latex += " & ".join(["$" + str(count) + "$" for count in self.rcounts]) + "\\\\\n"
         latex += "\\hline\n"
 
-        max_rank = max(max(ranking.rmap.values()) for ranking in self._rankings)
+        max_rank = max(max(ranking.rmap.values()) for ranking in _rankings)
 
         for rank in range(1, max_rank + 1):
             row = []
-            for ranking in self._rankings:
+            for ranking in _rankings:
                 tied_cands = sorted([cmap[c] for c in curr_cands if c in ranking.rmap and ranking.rmap[c] == rank])
                 if tied_cands:
                     row.append("$" + ",".join(tied_cands) + "$")
@@ -875,7 +883,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
                     if prev_cands:
                         row.append(" ")
                     else:
-                        row.append("\\cdots")
+                        row.append("$\\cdots$")
             latex += " & ".join(row) + "\\\\\n"
 
         latex += "\\end{tabular}"

@@ -1,4 +1,4 @@
-from pref_voting.pairwise_profiles import PairwiseComparisons
+from pref_voting.pairwise_profiles import PairwiseBallot
 from io import StringIO
 from contextlib import redirect_stdout
 import pytest
@@ -11,7 +11,7 @@ def sample_comparisons():
         (("A", "C"), ("C",)),
         (("B", "C"), ("B",))
     ]
-    return PairwiseComparisons(comparisons, cmap={"A": "Candidate A", "B": "Candidate B", "C": "Candidate C"})
+    return PairwiseBallot(comparisons, cmap={"A": "Candidate A", "B": "Candidate B", "C": "Candidate C"})
 
 def test_initialization(sample_comparisons):
     assert sample_comparisons.is_coherent()

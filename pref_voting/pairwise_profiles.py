@@ -25,10 +25,10 @@ import os
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-class PairwiseComparisons:
+class PairwiseBallot:
     
     def __init__(self, comparisons, candidates=None, cmap=None):
-        """Constructor method for PairwiseComparisons.
+        """Constructor method for PairwiseBallot.
 
         Args:
             comparisons (list): List of tuples, lists, or sets representing pairwise comparisons.
@@ -179,14 +179,14 @@ class PairwiseProfile:
     r"""An anonymous profile of pairwise comparisons.   
 
     Arguments: 
-        pairwise_comparisons: List of comparisons or PairwiseComparisons instances.
+        pairwise_comparisons: List of comparisons or PairwiseBallot instances.
     """
 
     def __init__(self, pairwise_comparisons, candidates=None, rcounts=None, cmap=None):
         """Constructor method for PairwiseProfile.
 
         Args:
-            pairwise_comparisons (list): List of comparisons or PairwiseComparisons instances.
+            pairwise_comparisons (list): List of lists of pairwise comparisons,  or list of PairwiseBallot instances.
             candidates (list or set, optional): List of candidates. Defaults to None.
             rcounts (list, optional): List of counts for each comparison. Defaults to None.
             cmap (dict, optional): Mapping of candidates to their names. Defaults to None.
@@ -194,10 +194,10 @@ class PairwiseProfile:
         self._pairwise_comparisons = []
         
         for comps in pairwise_comparisons:
-            if isinstance(comps, PairwiseComparisons):
+            if isinstance(comps, PairwiseBallot):
                 self._pairwise_comparisons.append(comps)
             else:
-                self._pairwise_comparisons.append(PairwiseComparisons(comps, candidates=candidates))
+                self._pairwise_comparisons.append(PairwiseBallot(comps, candidates=candidates))
         
         if candidates is None:
             candidates = {c for pc in self._pairwise_comparisons for c in pc.candidates}

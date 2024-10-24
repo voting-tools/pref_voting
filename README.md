@@ -4,7 +4,7 @@ pref_voting
 > [!NOTE]
 > - [**Documentation**](https://pref-voting.readthedocs.io/)
 > - [**Installation**](https://pref-voting.readthedocs.io/en/latest/installation.html)  
-> - [**Example Notebooks**](https://github.com/voting-tools/pref_voting/tree/main/howto)  
+> - [**Example Notebooks**](https://github.com/voting-tools/pref_voting/tree/main/examples)  
 > - [**Example Elections**](https://github.com/voting-tools/election-analysis)
 > - [**► pref_voting web app**](https://pref.tools/pref_voting/)
 
@@ -90,7 +90,9 @@ split_cycle.display(prof) # displays the winning candidates
 
 ```
 
-Additional notebooks that demonstrate how to use the package can be found in the [howto directory](https://github.com/voting-tools/pref_voting/tree/main/howto)
+Additional notebooks that demonstrate how to use the package can be found in the [examples directory](https://github.com/voting-tools/pref_voting/tree/main/examples)
+
+Some interesting political elections are analyzed using pref_voting in the [election-analysis repository](https://github.com/voting-tools/election-analysis).
 
 Consult the documentation [https://pref-voting.readthedocs.io](https://pref-voting.readthedocs.io) for a complete overview of the package. 
 

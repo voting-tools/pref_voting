@@ -2,14 +2,14 @@ import pytest
 import numpy as np
 
 from pref_voting.pairwise_profiles import PairwiseProfile
-from pref_voting.pairwise_profiles import PairwiseComparisons
+from pref_voting.pairwise_profiles import PairwiseBallot
 from pref_voting.weighted_majority_graphs import MarginGraph, MajorityGraph
 
 @pytest.fixture
 def sample_comparisons():
     comparisons1 = [({"A", "B"}, {"A"}), ({"A", "C"}, {"C"}), ({"B", "C"}, {"B"})]
     comparisons2 = [({"A", "B"}, {"B"}), ({"A", "C"}, {"A"}), ({"B", "C"}, {"C"})]
-    return [PairwiseComparisons(comparisons1), PairwiseComparisons(comparisons2)]
+    return [PairwiseBallot(comparisons1), PairwiseBallot(comparisons2)]
 
 @pytest.fixture
 def sample_profile(sample_comparisons):
