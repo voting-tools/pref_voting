@@ -958,6 +958,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None, add
                     rp_defeat.add_edge(e[1], e[0])
 
         rp_defeats.append(rp_defeat)
+    return rp_defeats
 
 @vm(name="Ranked Pairs TB",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
