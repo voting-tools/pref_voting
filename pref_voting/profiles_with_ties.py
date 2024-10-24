@@ -846,7 +846,40 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
             items_to_skip=items_to_skip,
             as_linear_profile=False,
             )
+    
+    def to_latex(self, cmap=None, curr_cands=None):
+        """
+        Returns a LaTeX table representation of the profile with ties.
 
+        :param cmap: Dictionary mapping candidates to their names/labels. If None, use self.cmap.
+        :param curr_cands: List of candidates to include in the table. If None, use all candidates.
+        :return: A string containing the LaTeX table.
+        """
+        cmap = self.cmap if cmap is None else cmap
+        curr_cands = self.candidates if curr_cands is None else curr_cands
+
+        latex = "\\begin{tabular}{" + "c" * len(self._rankings) + "}\n"
+        latex += " & ".join(["$" + str(count) + "$" for count in self.rcounts]) + "\\\\\n"
+        latex += "\\hline\n"
+
+        max_rank = max(max(ranking.rmap.values()) for ranking in self._rankings)
+
+        for rank in range(1, max_rank + 1):
+            row = []
+            for ranking in self._rankings:
+                tied_cands = sorted([cmap[c] for c in curr_cands if c in ranking.rmap and ranking.rmap[c] == rank])
+                if tied_cands:
+                    row.append("$" + ",".join(tied_cands) + "$")
+                else:
+                    prev_cands = [c for c in curr_cands if c in ranking.rmap and ranking.rmap[c] < rank]
+                    if prev_cands:
+                        row.append(" ")
+                    else:
+                        row.append("\\cdots")
+            latex += " & ".join(row) + "\\\\\n"
+
+        latex += "\\end{tabular}"
+        return latex
 
     def __eq__(self, other_prof): 
         """
