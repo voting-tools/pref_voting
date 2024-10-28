@@ -631,7 +631,7 @@ class Profile(object):
         Returns a string describing the profile.
         """
         rs, cs = self.rankings_counts
-        return f"Profile({[list(r) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
+        return f"Profile({[list([int(c) for c in r]) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
 
     def display(self, cmap=None, style="pretty", curr_cands=None):
         """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
