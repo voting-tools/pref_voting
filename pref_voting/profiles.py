@@ -514,6 +514,31 @@ class Profile(object):
         orig_names = {v:k  for k,v in new_names.items()}
         return Profile([[new_names[c] for c in r] for r in updated_rankings], rcounts=self._rcounts, cmap=self.cmap), orig_names
     
+    def apply_cand_permutation(self, perm):
+        r"""Apply a permutation of the candidates to all rankings in the profile.
+        :param perm: Dictionary mapping candidates to candidates, which must be a bijection
+        :type perm: dict[int: int]
+        :returns: A new Profile with rankings transformed according to the permutation
+        :rtype: Profile
+        :Example:
+        .. code-block:: python
+            prof = Profile([[2, 0, 1]], rcounts = [1])
+            new_prof = prof.apply_cand_permutation({0:1, 1:2, 2:0})
+            # new_prof has ranking [0, 1, 2]
+        .. note:: The permutation must be a bijection over all candidates in the profile.
+        """
+        # Validate permutation is bijective and uses valid candidates
+        assert all(c in self.candidates for c in perm.keys()), "All keys must be valid candidates"
+        assert all(c in self.candidates for c in perm.values()), "All values must be valid candidates"
+        assert len(set(perm.keys())) == len(set(perm.values())) == len(self.candidates), \
+            "Permutation must be a bijection on the set all candidates"
+
+        # Create new rankings by applying permutation
+        new_rankings = [[perm[c] for c in ranking] for ranking in self._rankings]
+
+        # Create new profile with transformed rankings
+        return Profile(new_rankings, rcounts=self._rcounts, cmap=self.cmap)
+    
     def anonymize(self): 
         """
         Return a profile which is the anonymized version of this profile. 
