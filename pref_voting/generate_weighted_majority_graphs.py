@@ -11,7 +11,7 @@
 
 import networkx as nx
 from itertools import combinations
-from helper import sublists, compositions, enumerate_compositions, convex_lexicographic_sublists
+from pref_voting.helper import sublists, compositions, enumerate_compositions, convex_lexicographic_sublists
 from pref_voting.weighted_majority_graphs import MarginGraph
 import numpy as np
 from scipy.stats import multivariate_normal

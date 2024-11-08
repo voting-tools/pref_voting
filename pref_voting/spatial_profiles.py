@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pref_voting.utility_functions import *
 from pref_voting.utility_profiles import UtilityProfile
-
 class SpatialProfile(object): 
     """
     A spatial profile is a set of candidates and voters in a multi-dimensional space.  Each voter and candidate is assigned vector of floats representing their position on each issue.
@@ -18,9 +17,10 @@ class SpatialProfile(object):
         cand_pos (dict): A dictionary mapping each candidate to their position in the space.    
         voter_pos (dict): A dictionary mapping each voter to their position in the space.   
         num_dims (int): The number of dimensions in the space.  
+        cand_types (dict): A dictionary mapping each candidate to their type (e.g., party affiliation).
 
     """
-    def __init__(self, cand_pos, voter_pos):
+    def __init__(self, cand_pos, voter_pos, candidate_types=None):
 
         cand_dims = [len(v) for v in cand_pos.values()]
         voter_dims = [len(v) for v in voter_pos.values()]
@@ -36,7 +36,22 @@ class SpatialProfile(object):
         self.cand_pos = cand_pos
         self.voter_pos = voter_pos
         self.num_dims = len(list(cand_pos.values())[0]) 
+        self.candidate_types = candidate_types or {c:'unknown' for c in self.candidates}
 
+    @property
+    def num_cands(self): 
+        """
+        Returns the number of candidates in the profile.
+        """
+        return len(self.candidates)
+
+    @property
+    def num_voters(self):
+        """
+        Returns the number of voters in the profile.
+        """
+        return len(self.voters) 
+    
     def voter_position(self, v): 
         """
         Given a voter v, returns their position in the space.
@@ -49,23 +64,69 @@ class SpatialProfile(object):
         """
         return self.cand_pos[c]
     
-    def to_utility_profile(self, utility_function = None):
+    def candidate_type(self, c):
+        """
+        Given a candidate c, returns their type.
+        """
+        return self.candidate_types[c]
+
+    def set_candidate_types(self, cand_types): 
+        """
+        Sets the types of each candidate.
+        """
+
+        assert set(cand_types.keys()) == set(self.candidates), "The candidate types must be specified for all candidates."
+
+        self.candidate_types = candidate_types
+
+    def to_utility_profile(self, 
+                           utility_function = None,
+                           uncertainty_function=None,
+                           batch=False, 
+                           return_virtual_cand_positions=False):
         """
         Returns a utility profile corresponding to the spatial profile.  
         
         Args:
-            utility_function (optional, function): A function that takes two vectors and returns a float. The default utility function is the quadratic utility function.
-
+            utility_function (callable, optional): A function that takes two vectors and returns a float. The default utility function is the quadratic utility function.
+            uncertainty_function (callable, optional): A function that models uncertainty and returns covariance parameters.
+            batch (bool, optional): If True, generate positions in batches. Default is False.
+            return_virtual_cand_positions (bool, optional): If True, return virtual candidate positions. Default is False.
+            
         Returns:    
             UtilityProfile: A utility profile corresponding to the spatial profile.
-
+            (optional) Tuple[UtilityProfile, dict]: The utility profile and virtual candidate positions if `return_virtual_cand_positions` is True.
         """
-        utility_function = quadratic_utility if utility_function is None else utility_function 
+        import numpy as np
+        from pref_voting.generate_spatial_profiles import generate_covariance
 
-        return UtilityProfile([
-            {c:utility_function(self.voter_position(v), self.candidate_position(c)) 
-             for c in self.candidates} for v in self.voters
-            ])
+        utility_function = utility_function or quadratic_utility
+
+        if uncertainty_function is not None:
+            virtual_cand_positions = {}
+            for c in self.candidates:
+                if batch:
+                    covariance = generate_covariance(self.num_dims, *uncertainty_function(self, c, self.voters[0]))
+                    positions = np.random.multivariate_normal(self.candidate_position(c), covariance, size=len(self.voters))
+                else:
+                    positions = [np.random.multivariate_normal(self.candidate_position(c), generate_covariance(self.num_dims, *uncertainty_function(self, c, v))) for v in self.voters]
+                virtual_cand_positions[c] = positions
+            
+            utility_profile = [
+                {c: utility_function(self.voter_position(v), virtual_cand_positions[c][vidx]) for c in self.candidates}
+                for vidx, v in enumerate(self.voters)
+            ]
+            
+            if return_virtual_cand_positions:
+                return UtilityProfile(utility_profile), virtual_cand_positions
+            else:
+                return UtilityProfile(utility_profile)
+        else:
+            utility_profile = [
+                {c: utility_function(np.array(self.voter_position(v)), np.array(self.candidate_position(c))) for c in self.candidates}
+                for v in self.voters
+            ]
+            return UtilityProfile(utility_profile)
     
     def to_string(self): 
         """

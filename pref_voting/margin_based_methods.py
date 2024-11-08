@@ -846,7 +846,7 @@ def ranked_pairs_with_test(
 
     :Example: 
 
-    .. plot::  margin_graphs_examples/mg_ex_rp_with_test.py
+    .. plot::  margin_graphs_examples/mg_ex_rp_with_t.py
         :context: reset  
         :include-source: True
 
@@ -958,6 +958,7 @@ def ranked_pairs_defeats(edata, curr_cands = None, strength_function = None, add
                     rp_defeat.add_edge(e[1], e[0])
 
         rp_defeats.append(rp_defeat)
+    return rp_defeats
 
 @vm(name="Ranked Pairs TB",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
@@ -1072,8 +1073,6 @@ def ranked_pairs_zt(
     
     return ranked_pairs_tb(profile, curr_cands = curr_cands, tie_breaker = tb_ranking, strength_function = strength_function)
 
-@vm(name="Ranked Pairs Defeat TB",
-    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
 def ranked_pairs_defeat_tb(edata, curr_cands = None, tie_breaker = None, strength_function = None, return_list = False):
     """
     Returns the Ranked Pairs defeat relation produced by the Ranked Pairs algorithm with a fixed tie-breaker.

@@ -108,6 +108,25 @@ def kendalltau_dist(rank_a, rank_b):
             tau += 1
     return tau
 
+def kendalltau_dist_for_rankings_with_ties(
+        candidates, 
+        ranking1, 
+        ranking2,
+        penalty=0.5):
+
+    tau = 0
+    for c1, c2 in combinations(candidates, 2):
+        # by definition of itertools.combinations, index_a[i] < index_a[j]
+        
+        if (ranking1.extended_strict_pref(c1, c2) and ranking2.extended_strict_pref(c2, c1)) or (ranking1.extended_strict_pref(c2, c1) and ranking2.extended_strict_pref(c1, c2)):
+            tau += 1
+        elif (ranking1.extended_strict_pref(c1, c2) and ranking2.extended_indiff(c1, c2)) or (ranking1.extended_strict_pref(c2, c1) and ranking2.extended_indiff(c1, c2)):
+            tau += penalty
+        elif (ranking1.extended_indiff(c1, c2) and ranking2.extended_strict_pref(c1, c2)) or (ranking1.extended_indiff(c1, c2) and ranking2.extended_strict_pref(c2, c1)) :
+            tau += penalty
+
+    return tau
+
 
 def _kemeny_young_rankings(rankings, rcounts, candidates): 
     

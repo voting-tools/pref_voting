@@ -1,7 +1,7 @@
 Generate Profiles
 =======================================
 
-# Sampling Profiles
+## Sampling Profiles
 
 We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.html) package to sample profiles from standard probability functions. There is a single function, ``generate_profile``, to interface with the prefsampling functions.  The following are the available probability models for generating profiles: 
 
@@ -317,7 +317,7 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 ```
 
 
-## Generate a Profile
+### Generate a Profile
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.get_rankings
@@ -329,37 +329,37 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 
 ```
 
-## Generate a Profile with groups
+### Generate a Profile with groups
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.generate_profile_with_groups
 
 ```
 
-## Generate a Profile with truncated linear orders
+### Generate a Profile with truncated linear orders
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.generate_truncated_profile
 
 ```
 
-## Generate a Profile for a given ordinal margin graph
+### Generate a Profile for a given ordinal margin graph
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.minimal_profile_from_edge_order
 
 ```
 
-# Enumerating profiles
+## Enumerating profiles
 
-## Enumerate anonymous profiles
+### Enumerate anonymous profiles
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile
 
 ```
 
-## Enumerate anonymous profiles with ties
+### Enumerate anonymous profiles with ties
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile_with_ties

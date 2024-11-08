@@ -275,6 +275,19 @@ class Ranking(object):
         """
         return tuple([tuple(self.cands_at_rank(r)) for r in self.ranks])
     
+    def to_weak_order(self, candidates):
+        """
+        Returns the ranking as a weak order over the candidates in the list ``candidates``.
+        """
+        max_rank = max(self.ranks)
+        new_ranks = self.rmap
+        for c in candidates:
+            if not self.is_ranked(c):
+                new_ranks[c] = max_rank + 1
+
+        new_cmap = {c: self.cmap[c] if c in self.cmap.keys() else f'{c}' for c in candidates}
+        return Ranking(new_ranks, cmap=new_cmap)
+    
     def display(self, cmap = None): 
         """
         Display the ranking vertically as a column of a table. 

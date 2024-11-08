@@ -21,7 +21,7 @@ The library is developed by Wes Holliday (http://wesholliday.net) and Eric Pacui
 Related resources
 ------------------------
 
-- abcvoting (https://abcvoting.readthedocs.io/) - Python library of approval based committee voting rules.
+- VoteKit (https://votekit.readthedocs.io/) - A Python package developed by the MGGG Redistricting Lab (https://mggg.org/) designed to facilitate the study of different election methods.
 
 - prefsampling (https://comsoc-community.github.io/prefsampling/) - A Python library for sampling from preference profiles with respect to different probability models.
 
@@ -31,7 +31,12 @@ Related resources
 
 - https://voting.ml/ - An online tool to study *maximal lotteries* (a Condorcet consistent probabilistic voting method).
 
+- abcvoting (https://abcvoting.readthedocs.io/) - Python library of approval based committee voting rules.
+
 - Votelib (https://github.com/simberaj/votelib) - Another Python package that implements a number of voting methods (includes multiwinner methods and some grading systems such as Approval Voting and Majority Judgement).
+
+
+See [https://comsoc-community.org/tools](https://comsoc-community.org/tools) for an overivew of tools for computational social choice.
 
 Contents
 -----------------
@@ -50,6 +55,7 @@ Contents
    ballots
    profiles
    profiles_with_ties
+   pairwise_profiles
    grade_profiles
    utility_profiles
    spatial_profiles

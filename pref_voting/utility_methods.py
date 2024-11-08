@@ -143,9 +143,11 @@ def nash_ranking(uprof, sq=None, curr_cands=None):
 
     sq = curr_cands[0] if sq is None else sq
 
-    items_to_rank = list(set([x for x in curr_cands if all([u(x) > u(sq) for u in uprof.utilities])] + [sq]))
+    items_to_rank = list(set([x for x in curr_cands if all([u(x) > u(sq) 
+                                                            for u in uprof.utilities])] + [sq]))
     
-    nash_utils = {x: np.prod([u(x) - u(sq) for u in uprof.utilities]) for x in items_to_rank}
+    nash_utils = {x: np.prod([u(x) - u(sq) for u in uprof.utilities]) 
+                  for x in items_to_rank}
     sorted_nash_utils = sorted(list(set(nash_utils.values())), reverse=True)
     
     return Ranking({x: nidx+1 
@@ -172,5 +174,5 @@ utilitarian_swfs = [
     relative_utilitarian_ranking,
     maximin_ranking,
     lexicographic_maximin_ranking,
-    nash_ranking
+   # nash_ranking
 ]

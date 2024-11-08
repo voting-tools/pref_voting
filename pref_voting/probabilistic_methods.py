@@ -109,3 +109,17 @@ def maximal_lottery(edata, curr_cands=None):
                             curr_cands=curr_cands, 
                             margin_transformation = lambda x: x)
 
+
+def create_probabilistic_method(vm):
+    """
+    Create a probabilistic voting method from a voting method.
+    """
+    
+    from pref_voting.voting_method import VotingMethod
+    if type(vm) != VotingMethod:
+        raise TypeError("vm must be a VotingMethod object")
+    
+    def _pvm(profile, curr_cands=None, **kwargs):
+        return vm.prob(profile, curr_cands=curr_cands, **kwargs)
+    
+    return ProbVotingMethod(_pvm, name=f'{vm.name} with Even Chance Tiebreaking')

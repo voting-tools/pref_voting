@@ -23,7 +23,6 @@ def _instant_runoff_basic(profile,curr_cands = None):
     "The basic implementation of instant runoff"
     # need the total number of all candidates in a profile to check when all candidates have been removed   
     num_cands = profile.num_cands 
-    
     candidates = profile.candidates if curr_cands is None else curr_cands
     cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
 

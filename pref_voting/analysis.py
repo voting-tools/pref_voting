@@ -9,7 +9,9 @@
 
 from pref_voting.generate_profiles import generate_profile
 from functools import partial
-from multiprocess import Pool, cpu_count
+from pathos.multiprocessing import ProcessingPool as Pool
+from scipy.stats import binomtest
+
 import pandas as pd
 import numpy as np
 
@@ -72,9 +74,10 @@ def find_profiles_with_different_winners(
     return profiles
 
 
-def record_condorcet_efficiency_data(vms, num_cands, num_voters, probmod, probmod_param, t):
 
-    prof = generate_profile(num_cands, num_voters, probmod=probmod, probmod_param=probmod_param)
+def record_condorcet_efficiency_data(vms, num_cands, num_voters, pm, t):
+
+    prof = pm(num_cands, num_voters)
     cw = prof.condorcet_winner()
 
     return {
@@ -82,14 +85,14 @@ def record_condorcet_efficiency_data(vms, num_cands, num_voters, probmod, probmo
         "cw_winner": {vm.name: cw is not None and [cw] == vm(prof) for vm in vms},
     }
 
-
 def condorcet_efficiency_data(
     vms,
     numbers_of_candidates=[3, 4, 5],
     numbers_of_voters=[4, 10, 20, 50, 100, 500, 1000],
-    probmods=["IC"],
-    probmod_params=None,
-    num_trials=10000,
+    prob_models = {"IC": lambda nc, nv: generate_profile(nc, nv)},
+    min_num_samples=1000,
+    max_num_samples=100_000,
+    min_error=0.01,
     use_parallel=True,
     num_cpus=12,
 ):
@@ -100,71 +103,88 @@ def condorcet_efficiency_data(
         vms (list(functions)): A list of voting methods,
         numbers_of_candidates (list(int), default = [3, 4, 5]): The numbers of candidates to check.
         numbers_of_voters (list(int), default = [5, 25, 50, 100]): The numbers of voters to check.
-        probmod (str, default="IC"): The probability model to be passed to the ``generate_profile`` method
-        num_trials (int, default=10000): The number of profiles to check for different winning sets.
+        probmod (dict, default="IC"): A dictionary with keys as the names of the probability models and values as functions that generate profiles.  Each function should accept a number of candidates and a number of voters. 
+        min_num_trials (int, default=1000): The minimum number of profiles to check.
+        max_num_trials (int, default=100_000): The maximum number of profiles to check.
+        min_error (float, default=0.01): The minimum error to allow in the 95% confidence interval.
         use_parallel (bool, default=True): If True, then use parallel processing.
         num_cpus (int, default=12): The number of (virtual) cpus to use if using parallel processing.
 
     """
 
-    probmod_params_list = [None]*len(probmods) if probmod_params is None else probmod_params
-
-    assert len(probmod_params_list) == len(probmods), "probmod_params must be a list of the same length as probmods"
-
     if use_parallel:
         pool = Pool(num_cpus)
 
     data_for_df = {
-        "vm": list(),
-        "num_cands": list(),
-        "num_voters": list(),
-        "probmod": list(),
-        "probmod_param":list(),
-        "num_trials": list(),
-        "percent_condorcet_winners": list(),
-        "condorcet_efficiency": list(),
+         "num_candidates": [],
+         "num_voters": [],
+         "prob_model": [],
+         "voting_method": [],
+         "condorcet_efficiency": [],
+         "error": [],
+         "num_samples": [],
+         "percent_condorcet_winner": [],
+         "percent_condorcet_winner_error": [],
+         "min_num_samples": list(),
+         "max_num_samples": list(),
+         "min_error": list(),
     }
-    for probmod,probmod_param in zip(probmods, probmod_params_list):
+    for pm_name, pm in prob_models.items():
         for num_cands in numbers_of_candidates:
             for num_voters in numbers_of_voters:
 
-                print(f"{num_cands} candidates, {num_voters} voters")
+                print(f"{pm_name}: {num_cands} candidates, {num_voters} voters")
+                
                 get_data = partial(
                     record_condorcet_efficiency_data,
                     vms,
                     num_cands,
                     num_voters,
-                    probmod,
-                    probmod_param
+                    pm
                 )
 
-                if use_parallel:
-                    data = pool.map(get_data, range(num_trials))
-                else:
-                    data = list(map(get_data, range(num_trials)))
-                num_cw = 0
-                num_choose_cw = {vm.name: 0 for vm in vms}
-                for d in data:
-                    if d["has_cw"]:
-                        num_cw += 1
-                        for vm in vms:
-                            num_choose_cw[vm.name] += int(d["cw_winner"][vm.name])
+                num_samples = 0
+                error_ranges = []
+                elect_condorcet_winner = {
+                    vm.name: [] for vm in vms
+                }
+                has_condorcet_winner = []
+                while num_samples < min_num_samples or (any([(err[1] - err[0]) > min_error for err in error_ranges]) and num_samples < max_num_samples):
+                    
+                    if use_parallel:
+                        data = pool.map(get_data, range(min_num_samples))
+                    else:
+                        data = list(map(get_data, range(min_num_samples)))
+
+                    for d in data:
+                        has_condorcet_winner.append(d["has_cw"])
+                        if d["has_cw"]:
+                            for vm in vms:
+                                elect_condorcet_winner[vm.name].append(d["cw_winner"][vm.name])
+
+                    error_ranges = [binomial_confidence_interval(elect_condorcet_winner[vm.name])  if len(elect_condorcet_winner[vm.name]) > 0 else (0, np.inf) for vm in vms]
+
+                    num_samples += min_num_samples
 
                 for vm in vms:
-                    data_for_df["vm"].append(vm.name)
-                    data_for_df["num_cands"].append(num_cands)
+                    data_for_df["num_candidates"].append(num_cands)
                     data_for_df["num_voters"].append(num_voters)
-                    data_for_df["probmod"].append(probmod)
-                    data_for_df["probmod_param"].append(probmod_param)
-                    data_for_df["num_trials"].append(num_trials)
-                    data_for_df["percent_condorcet_winners"].append(
-                        num_cw / num_trials
-                    )
-                    data_for_df["condorcet_efficiency"].append(
-                        num_choose_cw[vm.name] / num_cw
-                    )
+                    data_for_df["prob_model"].append(pm_name)
+                    data_for_df["voting_method"].append(vm.name)
+                    data_for_df["condorcet_efficiency"].append(np.mean(elect_condorcet_winner[vm.name]))
+                    err_interval = binomial_confidence_interval(elect_condorcet_winner[vm.name])
+                    data_for_df["error"].append(err_interval[1] - err_interval[0])
+                    data_for_df["num_samples"].append(num_samples)
+                    data_for_df["percent_condorcet_winner"].append(np.mean(has_condorcet_winner))
+                    err_interval = binomial_confidence_interval(has_condorcet_winner)
+                    data_for_df["percent_condorcet_winner_error"].append(err_interval[1] - err_interval[0])
+                    data_for_df["min_num_samples"].append(min_num_samples)
+                    data_for_df["max_num_samples"].append(max_num_samples)
+                    data_for_df["min_error"].append(min_error)
 
     return pd.DataFrame(data_for_df)
+
+
 
 def record_num_winners_data(vms, num_cands, num_voters, probmod, probmod_param, t):
 
@@ -347,7 +367,7 @@ def estimated_variance_of_sampling_dist(
     mean_for_each_experiment=None):
     # values_for_each_vm is a 2d numpy array
 
-    mean_for_each_experiment = np.nanmean(values_for_each_experiment, axis=1) if mean_for_each_experiment is not None else mean_for_each_experiment
+    mean_for_each_experiment = np.nanmean(values_for_each_experiment, axis=1) if mean_for_each_experiment is None else mean_for_each_experiment
 
     num_val_for_each_exp = np.sum(~np.isnan(values_for_each_experiment), axis=1)
     
@@ -359,6 +379,46 @@ def estimated_variance_of_sampling_dist(
             axis=1),
             np.nan
             )
+
+
+def binomial_confidence_interval(xs, confidence_level=0.95):
+    """
+    Calculate the exact confidence interval for a binomial proportion.
+
+    This function computes the confidence interval for the true proportion of successes in a binary dataset using the exact binomial test. It is particularly useful for small sample sizes or when the normal approximation is not appropriate.
+
+    Parameters
+    ----------
+    xs : array-like
+        A sequence of binary observations (0 for failure, 1 for success).
+    confidence_level : float, optional
+        The confidence level for the interval, between 0 and 1. Default is 0.95.
+
+    Returns
+    -------
+    tuple of float
+        A tuple containing the lower and upper bounds of the confidence interval.
+
+    Examples
+    --------
+    >>> xs = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0]
+    >>> binomial_confidence_interval(xs)
+    (0.4662563841506048, 0.9337436158493953)
+
+    Notes
+    -----
+    - Uses the `binomtest` function from `scipy.stats` with the 'exact' method.
+    - Suitable for datasets where the normal approximation may not hold.
+
+    References
+    ----------
+    .. [1] "Binomial Test", SciPy v1.7.1 Manual, 
+       https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html
+    """
+    binom_ci = binomtest(int(np.sum(xs)), len(xs)).proportion_ci(
+        confidence_level=confidence_level, method='exact'
+    )
+    return (binom_ci.low, binom_ci.high)
 
 def estimated_std_error(values_for_each_experiment, mean_for_each_experiment=None):
     # values_for_each_vm is a 2d numpy array
