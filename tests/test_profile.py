@@ -179,13 +179,14 @@ def test_apply_cand_permutation():
     prof = Profile([[0, 1, 2]], [1], cmap=cmap)
     perm = {0:1, 1:2, 2:0}
     new_prof = prof.apply_cand_permutation(perm)
+
     assert new_prof.cmap == cmap
 
     # Test invalid permutations
     prof = Profile([[0, 1, 2]], [1])
 
     # Not bijective (two candidates map to same value)
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
+    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
         prof.apply_cand_permutation({0:1, 1:1, 2:2})
 
     # Invalid candidate in keys
@@ -197,7 +198,7 @@ def test_apply_cand_permutation():
         prof.apply_cand_permutation({0:1, 1:2, 2:3})
 
     # Missing candidate
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
+    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
         prof.apply_cand_permutation({0:1, 1:2})
 
 def test_anonymize(): 
