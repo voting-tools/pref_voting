@@ -2076,6 +2076,9 @@ def plurality_veto(profile, curr_cands=None, voter_order=None):
 
     Returns:
         A sorted list of candidates
+
+    warning::
+        If no voter order is specified, the method uses the default order of voter rankings in the profile. Note that anonymizing a profile changes the order of voter rankings.
     """
     candidates = profile.candidates if curr_cands is None else curr_cands
 
@@ -2131,6 +2134,9 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
 
     Returns:
         tuple: A tuple containing (winner list, explanation string)
+
+    warning::
+        If no voter order is specified, the method uses the default order of voter rankings in the profile. Note that anonymizing a profile changes the order of voter rankings.
     """
     curr_cands = profile.candidates if curr_cands is None else curr_cands
     scores = profile.plurality_scores(curr_cands=curr_cands)
