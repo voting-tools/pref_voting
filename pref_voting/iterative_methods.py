@@ -2210,7 +2210,7 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
 @vm(name="Consensus Builder")
 def consensus_builder(profile, curr_cands=None, consensus_building_ranking=None, beta=0.5):
 
-    """Deterministic version of the Random Consensus Builder method from Charikar et al. (https://arxiv.org/abs/2306.17838).
+    """Deterministic version of the Random Consensus Builder due to Charikar et al. (https://arxiv.org/abs/2306.17838).
 
     The method processes candidates in reverse order of the consensus building ranking. When processing
     candidate i, it eliminates any candidate j above i in the consensus building ranking if a large enough fraction of voters (>= beta) prefer i to j. The winner is the last candidate that gets processed.
