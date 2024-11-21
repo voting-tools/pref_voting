@@ -2084,7 +2084,7 @@ def plurality_veto(profile, curr_cands=None, voter_order=None):
 
     # If no voter order specified, use default order
     if voter_order is None:
-        voter_order = list(range(len(profile.rankings)))
+        voter_order = list(range(profile.num_voters))
 
     # Track non-eliminated candidates and last remaining
     active_candidates = set(candidates)
@@ -2136,7 +2136,7 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
     scores = profile.plurality_scores(curr_cands=curr_cands)
 
     if voter_order is None:
-        voter_order = list(range(len(profile.rankings)))
+        voter_order = list(range(profile.num_voters))
 
     explanation = [
         "Initial plurality scores: " + str(dict(scores)),
