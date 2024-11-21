@@ -2206,6 +2206,54 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
         winners = sorted([c for c in curr_cands if scores[c] == max_score])
         explanation.append(f"Winners: {winners} (highest remaining scores)")
         return winners, "\\n".join(explanation)
+    
+@vm(name="Consensus Builder")
+def consensus_builder(profile, curr_cands=None, consensus_building_ranking=None, beta=0.5):
+
+    """Deterministic version of the Random Consensus Builder method from Charikar et al. (https://arxiv.org/abs/2306.17838).
+
+    The method processes candidates in reverse order of the consensus building ranking. When processing
+    candidate i, it eliminates any candidate j above i in the consensus building ranking if a large enough fraction of voters (>= beta) prefer i to j. The winner is the last candidate that gets processed.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders
+        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided.
+        consensus_building_ranking (List[int]): The ranking to use as the consensus builder. If not provided, uses the lexicographically first ranking of curr_cands.
+        beta (float): Threshold for elimination (default 0.5). When processing candidate i, eliminates a candidate j above i in the consensus building ranking if the proportion of voters preferring i to j is >= beta
+
+    Returns:
+        list: List containing the winning candidate
+    """
+
+    if curr_cands is None:
+        curr_cands = profile.candidates
+
+    if consensus_building_ranking is None:
+        consensus_building_ranking = sorted(curr_cands)
+
+    # all candidates in curr_cands must be in consensus_building_ranking
+    assert len([c for c in curr_cands if c not in consensus_building_ranking]) == 0
+
+    eliminated = set()
+    last_processed = None
+
+    for i in reversed(consensus_building_ranking):
+
+        if i not in curr_cands or i in eliminated:
+            continue
+
+        for j in consensus_building_ranking:
+            if j == i or j not in curr_cands or j in eliminated:
+                continue
+
+            if consensus_building_ranking.index(j) < consensus_building_ranking.index(i):
+                support_ratio = profile.support(i, j) / profile.num_voters
+                if support_ratio >= beta:
+                    eliminated.add(j)
+
+        last_processed = i
+
+    return [last_processed]
 
 iterated_vms_with_explanation = [
     instant_runoff_with_explanation,
