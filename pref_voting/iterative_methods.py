@@ -2057,7 +2057,149 @@ def knockout(profile, curr_cands=None):
 
     return sorted(set(winners))
 
-    
+@vm(name="Plurality Veto",
+    input_types=[ElectionTypes.PROFILE])
+def plurality_veto(profile, curr_cands=None, voter_order=None):
+    """Returns the winner using the Plurality Veto method of Kizilkaya and Kempe (https://arxiv.org/abs/2305.19632). 
+
+    The method works as follows:
+    1. Assign initial scores to candidates equal to their plurality scores
+    2. Process voters one by one in the given order
+    3. Each voter decrements the score of their bottom choice among non-eliminated candidates
+    4. A candidate is eliminated when their score reaches zero
+    5. The winner is the last remaining candidate
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in curr_cands
+        voter_order (List[int], optional): List of voters in the order to process them. If None, uses range(len(profile.rankings))
+
+    Returns:
+        A sorted list of candidates
+    """
+    candidates = profile.candidates if curr_cands is None else curr_cands
+
+    # Initialize scores as plurality scores
+    scores = profile.plurality_scores(curr_cands=candidates)
+
+    # If no voter order specified, use default order
+    if voter_order is None:
+        voter_order = list(range(len(profile.rankings)))
+
+    # Track non-eliminated candidates and last remaining
+    active_candidates = set(candidates)
+    last_remaining = None  # Track the last remaining candidate
+
+    # Process each voter
+    for voter in voter_order:
+        # Get remaining candidates with positive scores
+        remaining = {c for c in active_candidates if scores[c] > 0}
+        if not remaining:
+            # If all remaining candidates have 0 scores, return the last remaining
+            return [last_remaining] if last_remaining is not None else sorted(active_candidates)
+
+        # If only one candidate remains with positive score, they are the winner
+        if len(remaining) == 1:
+            return sorted(remaining)
+
+        # Get voter's bottom choice among remaining candidates
+        ranking = profile.rankings[voter]
+        # Find the last ranked candidate among remaining ones
+        bottom = next(c for c in reversed(ranking) if c in remaining)
+
+        # Decrement score
+        scores[bottom] -= 1
+        if scores[bottom] == 0:
+            active_candidates.remove(bottom)
+            last_remaining = bottom
+
+    # Return the last remaining candidate if there was one,
+    # otherwise return candidates with highest remaining score
+    if last_remaining is not None:
+        return [last_remaining]
+    else:
+        max_score = max(scores.values())
+        return sorted([c for c in candidates if scores[c] == max_score])
+
+def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
+    """Returns the winner using the Plurality Veto method, with a detailed explanation of the process.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to curr_cands
+        voter_order (List[int], optional): List of voters in the order to process them. If None, uses range(len(profile.rankings))
+
+    Returns:
+        tuple: A tuple containing (winner list, explanation string)
+    """
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+    scores = profile.plurality_scores(curr_cands=curr_cands)
+
+    if voter_order is None:
+        voter_order = list(range(len(profile.rankings)))
+
+    explanation = [
+        "Initial plurality scores: " + str(dict(scores)),
+    ]
+
+    # Note any candidates eliminated due to zero initial plurality scores
+    zero_initial = [c for c in curr_cands if scores[c] == 0]
+    if zero_initial:
+        explanation.append(f"Candidates eliminated due to zero initial plurality score: {sorted(zero_initial)}")
+    explanation.append("")  # Add blank line
+
+    active_candidates = set(curr_cands)
+    last_remaining = None
+
+    # Add initially eliminated candidates
+    for c in zero_initial:
+        active_candidates.remove(c)
+        last_remaining = c
+
+    for step, voter in enumerate(voter_order):
+        remaining = {c for c in active_candidates if scores[c] > 0}
+        if not remaining:
+            explanation.append("All remaining candidates have score 0")
+            if last_remaining is not None:
+                explanation.append(f"Winners are candidates [{last_remaining}] (highest remaining scores)")
+                return [last_remaining], "\\n".join(explanation)
+            else:
+                winners = sorted(active_candidates)
+                explanation.append(f"Winners are candidates {winners} (highest remaining scores)")
+                return winners, "\\n".join(explanation)
+
+        # If only one candidate remains with positive score, they are the winner
+        if len(remaining) == 1:
+            winners = sorted(remaining)
+            explanation.append(f"Only one candidate remains with positive score")
+            explanation.append(f"Winners: {winners} (highest remaining scores)")
+            return winners, "\\n".join(explanation)
+
+        ranking = profile.rankings[voter]
+        # Filter ranking to show only active candidates
+        active_ranking = [c for c in ranking if c in remaining]
+        bottom = next(c for c in reversed(ranking) if c in remaining)
+
+        explanation.append(f"Step {step + 1}:")
+        explanation.append(f"Voter {voter} (active candidates in ranking: {active_ranking}) vetoes {bottom}")
+
+        scores[bottom] -= 1
+        explanation.append(f"Scores after veto: {dict({c: s for c, s in scores.items() if c in remaining})}")
+
+        if scores[bottom] == 0:
+            active_candidates.remove(bottom)
+            last_remaining = bottom
+            explanation.append(f"Candidate {bottom} eliminated!")
+        explanation.append("")
+
+    if last_remaining is not None:
+        explanation.append(f"Winners: [{last_remaining}] (highest remaining scores)")
+        return [last_remaining], "\\n".join(explanation)
+    else:
+        max_score = max(scores.values())
+        winners = sorted([c for c in curr_cands if scores[c] == max_score])
+        explanation.append(f"Winners: {winners} (highest remaining scores)")
+        return winners, "\\n".join(explanation)
 
 iterated_vms_with_explanation = [
     instant_runoff_with_explanation,
@@ -2067,4 +2209,5 @@ iterated_vms_with_explanation = [
     strict_nanson_with_explanation,
     weak_nanson_with_explanation,
     iterated_removal_cl_with_explanation,
+    plurality_veto_with_explanation
 ]
