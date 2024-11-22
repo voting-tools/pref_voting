@@ -1668,7 +1668,7 @@ def weighted_covering(edata, curr_cands=None):
     for y in candidates:
         is_in_ucs = True
         for x in edata.dominators(y, curr_cands = curr_cands):
-            # check if y covers x, i.e., for every z, margin(x, z) >= margin(y, z)
+            # check if x covers y, i.e., for every z, margin(x, z) >= margin(y, z)
             covers = True
             for z in candidates:
                 if edata.margin(x, z) < edata.margin(y, z):
@@ -1683,6 +1683,49 @@ def weighted_covering(edata, curr_cands=None):
             uc_set.append(y)
 
     return sorted(uc_set)
+
+@vm(name="beta-Uncovered Set",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES]
+    )
+def beta_uncovered_set(edata, curr_cands = None, beta = 0.5):
+
+    """Another weighted version of the uncovered set (different from weighted_covering) due to Munagala and Wang (https://arxiv.org/abs/1905.01401, also see Section 5.2 of https://arxiv.org/abs/2306.17838).
+    
+    The beta-uncovered set is the set of candidates that are not beta-covered by any other candidate. Candidate x beta-covers a candidate y if (i) the fraction of voters who rank x above y is at least beta and (ii) for any candidate z, if the fraction of voters who rank z above x is at least beta, then the fraction of voters who rank z above y is at least beta.
+
+    Args:
+        edata (Profile, ProfileWithTies): Any election data that has a support method.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        beta (float, optional): The beta parameter. The default is 0.5.
+
+    Returns:
+        A sorted list of candidates.
+
+    """
+
+    candidates = edata.candidates if curr_cands is None else curr_cands
+
+    beta_uncovered_set = list()
+
+    for y in candidates:
+        is_in_bucs = True
+        for x in candidates:
+            if edata.support(x, y)/edata.num_voters >= beta:
+                # check if x beta-covers y, i.e., for every z, if the fraction of voters preferring z to x is at least beta, then the fraction of voters preferring z to y is at least beta
+                beta_covers = True
+                for z in candidates:
+                    if edata.support(z, x)/edata.num_voters >= beta and edata.support(z, y)/edata.num_voters < beta:
+                        beta_covers = False
+                        break
+            
+                if beta_covers:
+                    is_in_bucs = False
+                    break
+                
+        if is_in_bucs:
+            beta_uncovered_set.append(y)
+
+    return sorted(beta_uncovered_set)
 
 @vm(name = "Loss-Trimmer Voting",
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
