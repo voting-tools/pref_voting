@@ -159,3 +159,12 @@ def create_probabilistic_method(vm):
         return vm.prob(profile, curr_cands=curr_cands, **kwargs)
     
     return ProbVotingMethod(_pvm, name=f'{vm.name} with Even Chance Tiebreaking')
+
+def mixture(pvm1, pvm2, alpha):
+    """
+    Mixture of the two probabilistic voting methods pvm1 and pvm2 with mixing parameter alpha. With probability alpha, the output is the output of pvm1, and with probability 1-alpha, the output is the output of pvm2.
+    """
+    def _mixture(profile, curr_cands=None, **kwargs):
+        return {c: alpha * pvm1(profile, curr_cands=curr_cands, **kwargs)[c] + (1-alpha) * pvm2(profile, curr_cands=curr_cands, **kwargs)[c] for c in profile.candidates}
+    
+    return ProbVotingMethod(_mixture, name=f'Mixture of {pvm1.name} and {pvm2.name} with alpha={alpha}')
