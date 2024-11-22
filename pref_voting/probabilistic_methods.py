@@ -30,6 +30,7 @@ def random_dictator(profile, curr_cands = None):
 
     return {c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()}
 
+@pvm(name="Random Dictator on the Beta-Uncovered Set")
 def RaDiUS(profile, curr_cands = None, beta = 0.5):
     """
     Runs the Random Dictator method on the profile restricted to the beta-uncovered set, as proposed by Charikar et al. (https://arxiv.org/abs/2306.17838).
