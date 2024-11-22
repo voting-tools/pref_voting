@@ -1,13 +1,14 @@
 '''
     File: voting_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: June 3, 2023
+    Date: Nove 21, 2024
     
     Implementations of probabilistic voting methods.
 '''
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
+from pred_voting.iterative_methods import consensus_builder
 import random
 import nashpy as nash
 
@@ -108,6 +109,41 @@ def maximal_lottery(edata, curr_cands=None):
     return _maximal_lottery(edata, 
                             curr_cands=curr_cands, 
                             margin_transformation = lambda x: x)
+
+#@pvm(name="Random Consensus Builder")
+def random_consensus_builder(profile, curr_cands=None, beta=0.5):
+    """Random Consensus Builder (RCB) voting method due to Charikar et al. (https://arxiv.org/abs/2306.17838).
+
+    For each ranking type in the profile, runs the deterministic Consensus Builder voting method using that ranking
+    as the consensus building ranking. The probability of a candidate winning is proportional to the
+    number of voters with rankings that would make that candidate win when used as the consensus
+    building ranking.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders
+        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided.
+        beta (float): Threshold for elimination (default 0.5). When processing candidate i, eliminates a candidate j
+                    above i in the consensus building ranking if the proportion of voters preferring i to j is >= beta
+
+    Returns:
+        dict: Maps each candidate to their probability of winning under the RCB method
+"""
+    if curr_cands is None:
+        curr_cands = profile.candidates
+
+    # Count how many times each ranking type produces each winner
+    winner_counts = {c: 0 for c in curr_cands}
+
+    # Process each unique ranking type
+    for ranking_type in profile.ranking_types:
+        # Count number of voters with this ranking type
+        num_rankings_with_type = len([r for r in profile.rankings if r == ranking_type])
+        winner = consensus_builder(profile, curr_cands=curr_cands,consensus_building_ranking=ranking_type, beta=beta)[0]
+        winner_counts[winner] += num_rankings_with_type
+        total_count += num_rankings_with_type
+
+    # Convert counts to probabilities
+    return {c: count/profile.num_voters for c, count in winner_counts.items()}
 
 
 def create_probabilistic_method(vm):
