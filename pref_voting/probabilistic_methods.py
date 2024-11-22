@@ -8,7 +8,8 @@
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
-from pred_voting.iterative_methods import consensus_builder
+from pref_voting.iterative_methods import consensus_builder
+from pref_voting.C1_methods import beta_uncovered_set
 import random
 import nashpy as nash
 
@@ -29,6 +30,27 @@ def random_dictator(profile, curr_cands = None):
 
     return {c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()}
 
+def RaDiUS(profile, curr_cands = None, beta = 0.5):
+    """
+    Runs the Random Dictator method on the profile restricted to the beta-uncovered set, as proposed by Charikar et al. (https://arxiv.org/abs/2306.17838).
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders
+        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided. 
+
+    Returns:
+        dict: Maps each candidate to their probability of winning under the RaDiUS method.
+
+    """
+
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+    rd_dist = random_dictator(profile, curr_cands = beta_uncovered_set(profile, curr_cands = curr_cands, beta = beta))
+    
+    rd_dist.update({c:0 for c in curr_cands if c not in rd_dist.keys()})
+
+    return rd_dist
+
 @pvm(name="Proportional Borda")
 def pr_borda(profile, curr_cands=None): 
     '''Returns lottery over the candidates that is proportional to the Borda scores.
@@ -48,7 +70,7 @@ def pr_borda(profile, curr_cands=None):
 
 
 def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x: x):
-    '''Implementation of maximal lotteries.   See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
+    '''Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
     
     Returns a randomly chosen maximal lottery.
     '''
@@ -110,7 +132,7 @@ def maximal_lottery(edata, curr_cands=None):
                             curr_cands=curr_cands, 
                             margin_transformation = lambda x: x)
 
-#@pvm(name="Random Consensus Builder")
+@pvm(name="Random Consensus Builder")
 def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     """Random Consensus Builder (RCB) voting method due to Charikar et al. (https://arxiv.org/abs/2306.17838).
 
