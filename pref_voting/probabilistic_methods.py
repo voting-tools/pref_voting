@@ -8,7 +8,6 @@
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
-from pred_voting.iterative_methods import consensus_builder
 import random
 import nashpy as nash
 
@@ -110,7 +109,7 @@ def maximal_lottery(edata, curr_cands=None):
                             curr_cands=curr_cands, 
                             margin_transformation = lambda x: x)
 
-#@pvm(name="Random Consensus Builder")
+@pvm(name="Random Consensus Builder")
 def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     """Random Consensus Builder (RCB) voting method due to Charikar et al. (https://arxiv.org/abs/2306.17838).
 
@@ -128,6 +127,8 @@ def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     Returns:
         dict: Maps each candidate to their probability of winning under the RCB method
 """
+    from pref_voting.iterative_methods import consensus_builder
+
     if curr_cands is None:
         curr_cands = profile.candidates
 
