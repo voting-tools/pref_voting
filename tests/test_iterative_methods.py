@@ -194,6 +194,7 @@ import pytest
         'profile_single_voter_curr_cands': [0]
         }),
 ])
+
 def test_methods(
     voting_method, expected, 
     condorcet_cycle,
@@ -303,3 +304,20 @@ def test_iterated_removal_cl_with_explanation(condorcet_cycle, linear_profile_0)
     assert ws == [0,1,2]
     assert exp == []
 
+def test_plurality_veto():
+    """Test the plurality_veto method."""
+    # Test with a profile in which a candidate has zero initial plurality score
+    prof = Profile([[0, 1, 2], [0, 1, 2], [2, 1, 0]], rcounts=[1, 1, 1])
+    assert plurality_veto(prof) == [0]
+
+    # Test with different voter orders producing different winners
+    prof = Profile([[0, 1, 2], [0, 1, 2], [2, 1, 0], [2, 1, 0]], rcounts=[1, 1, 1, 1])
+    # Default order [0,1,2,3] yields winner 0
+    assert plurality_veto(prof) == [0]
+    # Reverse order [3,2,1,0] yields winner 2
+    voter_order = [3, 2, 1, 0]
+    assert plurality_veto(prof, voter_order=voter_order) == [2]
+
+    # Test with curr_cands parameter
+    prof = Profile([[0, 1, 2], [1, 0, 2], [2, 0, 1]], rcounts=[1, 1, 1])
+    assert plurality_veto(prof, curr_cands={0, 1}) == [0]
