@@ -70,8 +70,9 @@ def pr_borda(profile, curr_cands=None):
     return {c: borda_scores[c] / total_borda_scores for c in borda_scores.keys()}
 
 
-def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x: x):
-    '''Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
+def _maximal_lottery(edata, curr_cands=None, margin_transformation=lambda x: x):
+    '''
+    Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
     
     Returns a randomly chosen maximal lottery.
     '''
@@ -79,18 +80,25 @@ def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x:
     candidates = edata.candidates if curr_cands is None else curr_cands
     m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
 
-    A = np.array([[margin_transformation(m) for m in row] 
-                  for row in m_matrix])
+    A = np.array([[margin_transformation(m) for m in row] for row in m_matrix])
 
     # Create the game
     game = nash.Game(A)
     # Find the Nash Equilibrium with Vertex Enumeration
     equilibria = list(game.vertex_enumeration())
     if len(equilibria) == 0:
-        return {c: 1/len(candidates) for c in candidates}
+        return {c: 1 / len(candidates) for c in candidates}
     else:
         eq = random.choice(equilibria)
-        return {c: eq[0][cand_to_cidx(c)] for c in candidates}
+        eq_probs = eq[0]
+
+        # Clip small negative values and normalize
+        eq_probs = np.maximum(eq_probs, 0)  # Remove floating-point artifacts
+        if not np.isclose(sum(eq_probs), 1):  # Normalize if necessary
+            eq_probs /= sum(eq_probs)
+
+        # Return the result as a dictionary
+        return {c: eq_probs[cand_to_cidx(c)] for c in candidates}
 
 @pvm(name="C1 Maximal Lottery")
 def c1_maximal_lottery(edata, curr_cands=None): 
