@@ -181,3 +181,11 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 .. autofunction:: pref_voting.margin_based_methods.weighted_covering
 
 ```
+
+## Beta-Uncovered Set
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.beta_uncovered_set
+
+```
