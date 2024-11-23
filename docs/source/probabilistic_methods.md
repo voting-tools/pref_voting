@@ -9,6 +9,13 @@ Probabilistic Methods
 
 ```
 
+## Random Dictator on the Beta-Uncovered Set
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.probabilistic_methods.RaDiUS
+
+```
 
 
 ## Proportional Borda
@@ -36,3 +43,10 @@ Probabilistic Methods
 
 ```
 
+## Random Consensus Builder
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.probabilistic_methods.random_consensus_builder
+
+```

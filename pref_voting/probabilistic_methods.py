@@ -28,6 +28,28 @@ def random_dictator(profile, curr_cands = None):
 
     return {c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()}
 
+@pvm(name="Random Dictator on the Beta-Uncovered Set")
+def RaDiUS(profile, curr_cands = None, beta = 0.5):
+    """
+    Runs the Random Dictator method on the profile restricted to the beta-uncovered set, as proposed by Charikar et al. (https://arxiv.org/abs/2306.17838).
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders
+        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided. 
+
+    Returns:
+        dict: Maps each candidate to their probability of winning under the RaDiUS method.
+
+    """
+
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+    rd_dist = random_dictator(profile, curr_cands = beta_uncovered_set(profile, curr_cands = curr_cands, beta = beta))
+    
+    rd_dist.update({c:0 for c in curr_cands if c not in rd_dist.keys()})
+
+    return rd_dist
+
 @pvm(name="Proportional Borda")
 def pr_borda(profile, curr_cands=None): 
     '''Returns lottery over the candidates that is proportional to the Borda scores.
@@ -46,8 +68,9 @@ def pr_borda(profile, curr_cands=None):
     return {c: borda_scores[c] / total_borda_scores for c in borda_scores.keys()}
 
 
-def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x: x):
-    '''Implementation of maximal lotteries.   See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
+def _maximal_lottery(edata, curr_cands=None, margin_transformation=lambda x: x):
+    '''
+    Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
     
     Returns a randomly chosen maximal lottery.
     '''
@@ -55,18 +78,25 @@ def _maximal_lottery(edata, curr_cands = None, margin_transformation = lambda x:
     candidates = edata.candidates if curr_cands is None else curr_cands
     m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
 
-    A = np.array([[margin_transformation(m) for m in row] 
-                  for row in m_matrix])
+    A = np.array([[margin_transformation(m) for m in row] for row in m_matrix])
 
     # Create the game
     game = nash.Game(A)
     # Find the Nash Equilibrium with Vertex Enumeration
     equilibria = list(game.vertex_enumeration())
     if len(equilibria) == 0:
-        return {c: 1/len(candidates) for c in candidates}
+        return {c: 1 / len(candidates) for c in candidates}
     else:
         eq = random.choice(equilibria)
-        return {c: eq[0][cand_to_cidx(c)] for c in candidates}
+        eq_probs = eq[0]
+
+        # Clip small negative values and normalize
+        eq_probs = np.maximum(eq_probs, 0)  # Remove floating-point artifacts
+        if not np.isclose(sum(eq_probs), 1):  # Normalize if necessary
+            eq_probs /= sum(eq_probs)
+
+        # Return the result as a dictionary
+        return {c: eq_probs[cand_to_cidx(c)] for c in candidates}
 
 @pvm(name="C1 Maximal Lottery")
 def c1_maximal_lottery(edata, curr_cands=None): 
@@ -160,3 +190,12 @@ def create_probabilistic_method(vm):
         return vm.prob(profile, curr_cands=curr_cands, **kwargs)
     
     return ProbVotingMethod(_pvm, name=f'{vm.name} with Even Chance Tiebreaking')
+
+def mixture(pvm1, pvm2, alpha):
+    """
+    Mixture of the two probabilistic voting methods pvm1 and pvm2 with mixing parameter alpha. With probability alpha, the output is the output of pvm1, and with probability 1-alpha, the output is the output of pvm2.
+    """
+    def _mixture(profile, curr_cands=None, **kwargs):
+        return {c: alpha * pvm1(profile, curr_cands=curr_cands, **kwargs)[c] + (1-alpha) * pvm2(profile, curr_cands=curr_cands, **kwargs)[c] for c in profile.candidates}
+    
+    return ProbVotingMethod(_mixture, name=f'Mixture of {pvm1.name} and {pvm2.name} with alpha={alpha}')
