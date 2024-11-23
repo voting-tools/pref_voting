@@ -5,7 +5,7 @@ Stochastic Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.probabilistic_methods.random_consensus_builder_st
+.. autofunction:: pref_voting.stochastic_methods.random_consensus_builder_st
 
 ```
 
@@ -13,7 +13,7 @@ Stochastic Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.probabilistic_methods.MLRCB
+.. autofunction:: pref_voting.stochastic_methods.MLRCB
 
 ```
 
@@ -21,6 +21,6 @@ Stochastic Methods
 
 ```{eval-rst}
 
-.. autofunction:: pref_voting.probabilistic_methods.MLRaDiUS
+.. autofunction:: pref_voting.stochastic_methods.MLRaDiUS
 
 ```
