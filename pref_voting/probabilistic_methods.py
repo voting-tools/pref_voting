@@ -8,6 +8,8 @@
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
+
+
 import random
 import nashpy as nash
 
@@ -41,6 +43,7 @@ def RaDiUS(profile, curr_cands = None, beta = 0.5):
         dict: Maps each candidate to their probability of winning under the RaDiUS method.
 
     """
+    from pref_voting.C1_methods import beta_uncovered_set
 
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
