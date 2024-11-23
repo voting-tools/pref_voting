@@ -8,8 +8,6 @@
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
-from pref_voting.iterative_methods import consensus_builder
-from pref_voting.C1_methods import beta_uncovered_set
 import random
 import nashpy as nash
 
@@ -159,6 +157,8 @@ def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     Returns:
         dict: Maps each candidate to their probability of winning under the RCB method
 """
+    from pref_voting.iterative_methods import consensus_builder
+
     if curr_cands is None:
         curr_cands = profile.candidates
 

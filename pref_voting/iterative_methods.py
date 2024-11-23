@@ -2207,7 +2207,8 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
         explanation.append(f"Winners: {winners} (highest remaining scores)")
         return winners, "\\n".join(explanation)
     
-@vm(name="Consensus Builder")
+@vm(name="Consensus Builder",
+    input_types=[ElectionTypes.PROFILE])
 def consensus_builder(profile, curr_cands=None, consensus_building_ranking=None, beta=0.5):
 
     """Deterministic version of the Random Consensus Builder due to Charikar et al. (https://arxiv.org/abs/2306.17838).
