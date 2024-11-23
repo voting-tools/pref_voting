@@ -83,9 +83,9 @@ Contents
    combined_methods
    other_methods
    probabilistic_methods
+   stochastic_methods
    utility_methods
    grade_methods
-   
 
 .. toctree::
    :maxdepth: 2

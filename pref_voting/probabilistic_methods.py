@@ -159,6 +159,9 @@ def random_consensus_builder(profile, curr_cands=None, beta=0.5):
 
     Returns:
         dict: Maps each candidate to their probability of winning under the RCB method
+
+    .. seealso::
+        :meth:`pref_voting.stochastic_methods.random_consensus_builder_st`
 """
     from pref_voting.iterative_methods import consensus_builder
 

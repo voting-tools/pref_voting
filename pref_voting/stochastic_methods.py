@@ -26,6 +26,9 @@ def random_consensus_builder_st(profile, curr_cands=None, beta=0.5):
     Returns:
         A sorted list of candidates.
 
+    .. seealso::
+        :meth:`pref_voting.probabilistic_methods.random_consensus_builder`
+
     """
     consensus_building_ranking = random.choice(profile.rankings)
 
