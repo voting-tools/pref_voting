@@ -301,3 +301,28 @@ To illustrate the difference with respect to the second question, consider Insta
 
 
 ```
+
+## Plurality Veto
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.plurality_veto
+
+
+```
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.plurality_veto_with_explanation
+
+
+```
+
+## Consensus Builder
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.consensus_builder
+
+
+```
