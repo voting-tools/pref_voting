@@ -862,8 +862,10 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         prof.remove_empty_rankings()
 
         _rankings = copy.deepcopy(prof._rankings)
-        if len(_rankings) == 0:
+
+        if len(_rankings) == 0: # if there are no rankings, return an empty string
             return ""
+        
         _rankings = [r.normalize_ranks() or r for r in _rankings ]
 
         latex = "\\begin{tabular}{" + "c" * len(_rankings) + "}\n"

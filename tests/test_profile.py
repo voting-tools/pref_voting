@@ -179,13 +179,14 @@ def test_apply_cand_permutation():
     prof = Profile([[0, 1, 2]], [1], cmap=cmap)
     perm = {0:1, 1:2, 2:0}
     new_prof = prof.apply_cand_permutation(perm)
+
     assert new_prof.cmap == cmap
 
     # Test invalid permutations
     prof = Profile([[0, 1, 2]], [1])
 
     # Not bijective (two candidates map to same value)
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
+    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
         prof.apply_cand_permutation({0:1, 1:1, 2:2})
 
     # Invalid candidate in keys
@@ -197,49 +198,7 @@ def test_apply_cand_permutation():
         prof.apply_cand_permutation({0:1, 1:2, 2:3})
 
     # Missing candidate
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
-        prof.apply_cand_permutation({0:1, 1:2})
-
-def test_apply_cand_permutation():
-    # Test with a single ranking
-    prof = Profile([[2, 0, 1]], rcounts = [1])
-    perm = {0:1, 1:2, 2:0}
-    new_prof = prof.apply_cand_permutation(perm)
-    assert new_prof._rankings.tolist() == [[0, 1, 2]]
-    assert new_prof._rcounts.tolist() == [1]
-
-    # Test with multiple rankings and counts
-    prof = Profile([[0, 1, 2], [1, 2, 0]], rcounts = [2, 1])
-    perm = {0:2, 1:0, 2:1}
-    new_prof = prof.apply_cand_permutation(perm)
-    assert new_prof._rankings.tolist() == [[2, 0, 1], [0, 1, 2]]
-    assert new_prof._rcounts.tolist() == [2, 1]
-    assert new_prof.num_voters == 3
-
-    # Test preservation of cmap
-    cmap = {0: 'A', 1: 'B', 2: 'C'}
-    prof = Profile([[0, 1, 2]], [1], cmap=cmap)
-    perm = {0:1, 1:2, 2:0}
-    new_prof = prof.apply_cand_permutation(perm)
-    assert new_prof.cmap == cmap
-
-    # Test invalid permutations
-    prof = Profile([[0, 1, 2]], [1])
-
-    # Not bijective (two candidates map to same value)
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
-        prof.apply_cand_permutation({0:1, 1:1, 2:2})
-
-    # Invalid candidate in keys
-    with pytest.raises(AssertionError, match="All keys must be valid candidates"):
-        prof.apply_cand_permutation({0:1, 1:2, 3:0})
-
-    # Invalid candidate in values
-    with pytest.raises(AssertionError, match="All values must be valid candidates"):
-        prof.apply_cand_permutation({0:1, 1:2, 2:3})
-
-    # Missing candidate
-    with pytest.raises(AssertionError, match="Permutation must be a bijection over all candidates"):
+    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
         prof.apply_cand_permutation({0:1, 1:2})
 
 def test_anonymize(): 
