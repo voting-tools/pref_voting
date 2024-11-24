@@ -8,7 +8,7 @@
 
 from pref_voting.prob_voting_method import  *
 from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
-
+from scipy.optimize import linprog
 
 import random
 import nashpy as nash
@@ -70,8 +70,17 @@ def pr_borda(profile, curr_cands=None):
 
     return {c: borda_scores[c] / total_borda_scores for c in borda_scores.keys()}
 
+def clean_and_normalize(probs, threshold=1e-10):
+    # Set  negative or small positive values to zero
+    probs = np.where(probs < threshold, 0, probs)
+    
+    # Renormalize to ensure the probabilities sum to 1
+    total = np.sum(probs)
+    if total > 0:
+        probs /= total
+    return probs
 
-def _maximal_lottery(edata, curr_cands=None, margin_transformation=lambda x: x):
+def _maximal_lottery_enumeration(edata, curr_cands=None, margin_transformation=lambda x: x):
     '''
     Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
     
@@ -85,33 +94,89 @@ def _maximal_lottery(edata, curr_cands=None, margin_transformation=lambda x: x):
 
     # Create the game
     game = nash.Game(A)
-    # Find the Nash Equilibrium with Vertex Enumeration
-    equilibria = list(game.vertex_enumeration())
+    equilibria = []
+    try:
+        equilibria = list(game.vertex_enumeration())
+        #print("Vertex Enumeration found equilibria.")
+    except Exception as e:
+        print(f"Vertex Enumeration failed: {e}")
+
+    # Backup method 1: Support Enumeration
+    if not equilibria:
+        try:
+            equilibria = list(game.support_enumeration())
+            #print("Support Enumeration found equilibria.")
+        except Exception as e:
+            print(f"Support Enumeration failed: {e}")
+
     if len(equilibria) == 0:
         return {c: 1 / len(candidates) for c in candidates}
     else:
-        eq = random.choice(equilibria)
-        eq_probs = eq[0]
+        # average the  equilibria component-wise to get a single equilibrium
+        eq_probs = [np.mean([eq[0][idx] for eq in equilibria]) 
+                    for idx in range(len(candidates))]
 
-        # Clip small negative values and normalize
-        eq_probs = np.maximum(eq_probs, 0)  # Remove floating-point artifacts
-        if not np.isclose(sum(eq_probs), 1):  # Normalize if necessary
-            eq_probs /= sum(eq_probs)
-
+        eq_probs = clean_and_normalize(np.array(eq_probs))
+        
         # Return the result as a dictionary
         return {c: eq_probs[cand_to_cidx(c)] for c in candidates}
 
+
+def _maximal_lottery_lp(edata, curr_cands=None, margin_transformation=lambda x: x):
+    '''
+    Implementation of maximal lotteries using linear programming.
+    '''
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
+
+    A = np.array([[margin_transformation(m) for m in row] for row in m_matrix])
+
+    num_cands = len(candidates)
+    c = np.zeros(num_cands + 1)
+    c[-1] = -1  # Coefficient for v in the objective function (maximize v)
+
+    # Inequalities: A^T p - v * 1 >= 0 => A^T p - v * 1 - s = 0 (s >= 0)
+    # We need to convert this to the form: A_ub x <= b_ub
+
+    A_ub = np.hstack([-A.T, np.ones((num_cands, 1))])
+    b_ub = np.zeros(num_cands)
+
+    # Equalities: sum p_i = 1
+    A_eq = np.zeros((1, num_cands + 1))
+    A_eq[0, :num_cands] = 1
+    b_eq = np.array([1])
+
+    bounds = [(0, None)] * num_cands + [(None, None)]  # p_i >= 0, v free
+
+    res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method='highs')
+
+    if res.success:
+        eq_probs = res.x[:num_cands]
+        # Normalize to account for numerical errors
+        eq_probs = np.maximum(eq_probs, 0)
+        eq_probs /= np.sum(eq_probs)
+        return {c: eq_probs[cand_to_cidx(c)] for c in candidates}
+    else:
+        # If LP fails, default to uniform distribution
+        return {c: 1 / len(candidates) for c in candidates}
+
+
 @pvm(name="C1 Maximal Lottery")
-def c1_maximal_lottery(edata, curr_cands=None): 
+def c1_maximal_lottery(edata, curr_cands=None, algorithm='enumeration'): 
 
     '''Returns the C1 maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
     
     Args:   
         edata (Profile, MarginGraph): A Profile object.
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
+        algorithm (str): The algorithm to use. Either 'enumeration' or 'lp'. Defaults to 'enumeration'.
     
     Returns:
         dict: A dictionary mapping candidates to probabilities.
+
+    .. note::
+        The 'enumeration' algorithm averages over the extremal maximal lotteries.   The 'lp' is faster, but only returns a single maximal lottery (not necessarily the average)
+
     '''
 
     if type(edata) == MajorityGraph:
@@ -121,26 +186,40 @@ def c1_maximal_lottery(edata, curr_cands=None):
           
         edata = MarginGraph(candidates, [(c1, c2, 1) for c1, c2 in edata.edges if (c1 in candidates and c2 in candidates)])
 
-    return _maximal_lottery(edata, 
-                            curr_cands=curr_cands, 
-                            margin_transformation = np.sign)
+    if algorithm == 'enumeration':
+        return _maximal_lottery_enumeration(edata, curr_cands=curr_cands, margin_transformation = np.sign)
+        
+    elif algorithm == 'lp':
+        return _maximal_lottery_lp(edata, curr_cands=curr_cands, margin_transformation = np.sign)
+    else:
+        raise ValueError(f"Unknown algorithm: {algorithm}")
 
 @pvm(name="Maximal Lottery")
-def maximal_lottery(edata, curr_cands=None): 
+def maximal_lottery(edata, curr_cands=None, algorithm='lp'): 
     '''Returns the maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
     
     Args:   
         edata (Profile, MarginGraph): A Profile object.
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
-
+        algorithm (str): The algorithm to use. Either 'enumeration' or 'lp'. Defaults to 'enumeration'.
 
     Returns:
         dict: A dictionary mapping candidates to probabilities.
     
+    .. note::
+        The 'enumeration' algorithm averages over the extremal maximal lotteries.   The 'lp' is faster, but only returns a single maximal lottery (not necessarily the average)
+    
+    
     '''
-    return _maximal_lottery(edata, 
-                            curr_cands=curr_cands, 
-                            margin_transformation = lambda x: x)
+
+    if algorithm == 'enumeration':
+        return _maximal_lottery_enumeration(edata, curr_cands=curr_cands, margin_transformation = lambda x: x)
+    
+    elif algorithm == 'lp':
+        return _maximal_lottery_lp(edata, curr_cands=curr_cands, margin_transformation = lambda x: x)
+    else:
+        raise ValueError(f"Unknown algorithm: {algorithm}")
+
 
 @pvm(name="Random Consensus Builder")
 def random_consensus_builder(profile, curr_cands=None, beta=0.5):

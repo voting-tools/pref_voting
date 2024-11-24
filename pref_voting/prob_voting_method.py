@@ -8,6 +8,7 @@
 
 import functools
 import numpy as np
+import inspect
 
 class ProbVotingMethod(object): 
     """
@@ -25,6 +26,8 @@ class ProbVotingMethod(object):
         
         self.pvm = pvm
         self.name = name
+        self.algorithm = None
+
         functools.update_wrapper(self, pvm)   
 
     def __call__(self, edata, curr_cands = None, **kwargs):
@@ -76,6 +79,19 @@ class ProbVotingMethod(object):
         """Set the name of the social welfare function."""
 
         self.name = new_name
+
+    def set_algorithm(self, algorithm):
+        """
+        Set the algorithm for the voting method if 'algorithm' is an accepted keyword parameter.
+
+        Args:
+            algorithm: The algorithm to set for the voting method.
+        """
+        params = inspect.signature(self.pvm).parameters
+        if 'algorithm' in params and params['algorithm'].kind in [inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD]:
+            self.algorithm = algorithm
+        else:
+            raise ValueError(f"The method {self.name} does not accept 'algorithm' as a parameter.")
 
     def __str__(self): 
         return f"{self.name}"
