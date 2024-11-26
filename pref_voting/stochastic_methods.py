@@ -6,7 +6,7 @@
     Implementations of voting methods that output winners stochastically (unlike probabilistic methods, which output a probability distribution in the form of a dictionary).
 '''
 
-from pref_voting.voting_method import  *
+from pref_voting.voting_method import *
 from pref_voting.iterative_methods import consensus_builder
 from pref_voting.probabilistic_methods import maximal_lottery, RaDiUS
 import math
@@ -35,7 +35,7 @@ def random_consensus_builder_st(profile, curr_cands=None, beta=0.5):
     return consensus_builder(profile, curr_cands=curr_cands, consensus_building_ranking=consensus_building_ranking, beta=beta)
 
 @vm(name="Maximal Lotteries mixed with Random Consensus Builder")
-def MLRCB(profile, curr_cands=None, p = 1 / math.sqrt(2), B = math.sqrt(2) - 1.2):
+def MLRCB(profile, curr_cands=None, p = 1 / math.sqrt(2), B = math.sqrt(2) - 1/2):
 
     """With probability p, choose the winner from the Maximal Lotteries distribution. With probability 1-p, run the stochastic version of Random Consensus Builder with beta chosen uniformly from (1/2, B). Ths method comes from Theorem 4 of Charikar et al. (https://arxiv.org/abs/2306.17838).
 
