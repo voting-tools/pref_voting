@@ -137,4 +137,4 @@ Feel free to [send an email](https://pacuit.org/) if you have questions about th
 
 ## License
 
-[MIT](https://github.com/jontingvold/pyrankvote/blob/master/LICENSE.txt)
+[MIT](https://github.com/voting-tools/pref_voting/blob/main/LICENSE.txt)

@@ -43,7 +43,7 @@ def RaDiUS(profile, curr_cands = None, beta = 0.5):
         dict: Maps each candidate to their probability of winning under the RaDiUS method.
 
     """
-    from pref_voting.C1_methods import beta_uncovered_set
+    from pref_voting.margin_based_methods import beta_uncovered_set
 
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
