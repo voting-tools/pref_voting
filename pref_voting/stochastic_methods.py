@@ -14,7 +14,7 @@ import math
 @vm(name="Random Consensus Builder (Stochastic)")
 def random_consensus_builder_st(profile, curr_cands=None, beta=0.5):
 
-    """Version of the Random Consensus BUilder (RCB) voting method due to Charikar et al. (https://arxiv.org/abs/2306.17838) that actually chooses a winner stochastically rather than outputting a probability distribution.
+    """Version of the Random Consensus Builder (RCB) voting method due to Charikar et al. (https://arxiv.org/abs/2306.17838) that actually chooses a winner stochastically rather than outputting a probability distribution.
 
     Args:
 
@@ -27,6 +27,7 @@ def random_consensus_builder_st(profile, curr_cands=None, beta=0.5):
         A sorted list of candidates.
 
     .. seealso::
+        :meth:`pref_voting.iterative_methods.consensus_builder`
         :meth:`pref_voting.probabilistic_methods.random_consensus_builder`
 
     """

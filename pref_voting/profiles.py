@@ -224,7 +224,7 @@ class Profile(object):
         Returns a list of all the type of rankings in the profile as a list of tuples.
         """
         return list(set([tuple(r) for r in self._rankings]))
-
+    
     @property
     def rankings(self): 
         """
