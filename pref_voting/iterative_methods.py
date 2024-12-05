@@ -2224,6 +2224,10 @@ def consensus_builder(profile, curr_cands=None, consensus_building_ranking=None,
 
     Returns:
         list: List containing the winning candidate
+
+    .. seealso::
+        :meth:`pref_voting.probabilistic_methods.random_consensus_builder`
+        :meth:`pref_voting.stochastic_methods.random_consensus_builder_st`
     """
 
     if curr_cands is None:
