@@ -92,7 +92,7 @@ def condorcet_efficiency_data(
     prob_models = {"IC": lambda nc, nv: generate_profile(nc, nv)},
     min_num_samples=1000,
     max_num_samples=100_000,
-    min_error=0.01,
+    max_error=0.01,
     use_parallel=True,
     num_cpus=12,
 ):
@@ -106,7 +106,7 @@ def condorcet_efficiency_data(
         probmod (dict, default="IC"): A dictionary with keys as the names of the probability models and values as functions that generate profiles.  Each function should accept a number of candidates and a number of voters. 
         min_num_trials (int, default=1000): The minimum number of profiles to check.
         max_num_trials (int, default=100_000): The maximum number of profiles to check.
-        min_error (float, default=0.01): The minimum error to allow in the 95% confidence interval.
+        max_error (float, default=0.01): The maximum error to allow in the 95% confidence interval.
         use_parallel (bool, default=True): If True, then use parallel processing.
         num_cpus (int, default=12): The number of (virtual) cpus to use if using parallel processing.
 
@@ -127,7 +127,7 @@ def condorcet_efficiency_data(
          "percent_condorcet_winner_error": [],
          "min_num_samples": list(),
          "max_num_samples": list(),
-         "min_error": list(),
+         "max_error": list(),
     }
     for pm_name, pm in prob_models.items():
         for num_cands in numbers_of_candidates:
@@ -149,7 +149,7 @@ def condorcet_efficiency_data(
                     vm.name: [] for vm in vms
                 }
                 has_condorcet_winner = []
-                while num_samples < min_num_samples or (any([(err[1] - err[0]) > min_error for err in error_ranges]) and num_samples < max_num_samples):
+                while num_samples < min_num_samples or (any([(err[1] - err[0]) > max_error for err in error_ranges]) and num_samples < max_num_samples):
                     
                     if use_parallel:
                         data = pool.map(get_data, range(min_num_samples))
@@ -180,7 +180,7 @@ def condorcet_efficiency_data(
                     data_for_df["percent_condorcet_winner_error"].append(err_interval[1] - err_interval[0])
                     data_for_df["min_num_samples"].append(min_num_samples)
                     data_for_df["max_num_samples"].append(max_num_samples)
-                    data_for_df["min_error"].append(min_error)
+                    data_for_df["max_error"].append(max_error)
 
     return pd.DataFrame(data_for_df)
 
