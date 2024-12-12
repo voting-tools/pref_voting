@@ -21,5 +21,5 @@ Requirements:
 
 .. warning::
 
-    Since the package uses Numba, refer to the [Numba documentation for the latest supported Python version](https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information).
+    Since the package uses Numba, refer to the Numba documentation for the latest supported Python version: https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information.
 
