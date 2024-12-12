@@ -17,8 +17,9 @@ The package can be installed using the ``pip3`` package manager:
 ```bash
 pip3 install pref_voting
 ```
-
-Note: If you have both Python 2 and Python 3 installed on your system, make sure to use ``pip3`` instead of pip to install packages for Python 3. Alternatively, you can use ``python3 -m pip`` to ensure you're using the correct version of pip. If you have modified your system's defaults or soft links, adjust accordingly.
+**Notes**: 
+* Since the package uses Numba, refer to the [Numba documentation for the latest supported Python version](https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information).
+* If you have both Python 2 and Python 3 installed on your system, make sure to use ``pip3`` instead of pip to install packages for Python 3. Alternatively, you can use ``python3 -m pip`` to ensure you're using the correct version of pip. If you have modified your system's defaults or soft links, adjust accordingly.
 
 See the [installation guide](https://pref-voting.readthedocs.io/en/latest/installation.html) for more detailed instructions.
 

@@ -1,0 +1,1177 @@
+,probability_model,num_cands,num_voters,voting_method,other_vm,perc_diff
+0,Impartial Culture,3,10,Split Cycle,Split Cycle,0.0
+1,Impartial Culture,3,10,Split Cycle,Minimax,0.0
+2,Impartial Culture,3,10,Split Cycle,Copeland,0.1402
+3,Impartial Culture,3,10,Split Cycle,Plurality,0.3566
+4,Impartial Culture,3,10,Split Cycle,Borda,0.25824
+5,Impartial Culture,3,10,Split Cycle,Instant Runoff,0.19212
+6,Impartial Culture,3,10,Split Cycle,Coombs,0.14782
+7,Impartial Culture,3,10,Minimax,Split Cycle,0.0
+8,Impartial Culture,3,10,Minimax,Minimax,0.0
+9,Impartial Culture,3,10,Minimax,Copeland,0.1402
+10,Impartial Culture,3,10,Minimax,Plurality,0.3566
+11,Impartial Culture,3,10,Minimax,Borda,0.25824
+12,Impartial Culture,3,10,Minimax,Instant Runoff,0.19212
+13,Impartial Culture,3,10,Minimax,Coombs,0.14782
+14,Impartial Culture,3,10,Copeland,Split Cycle,0.1402
+15,Impartial Culture,3,10,Copeland,Minimax,0.1402
+16,Impartial Culture,3,10,Copeland,Copeland,0.0
+17,Impartial Culture,3,10,Copeland,Plurality,0.32408
+18,Impartial Culture,3,10,Copeland,Borda,0.12324
+19,Impartial Culture,3,10,Copeland,Instant Runoff,0.2111
+20,Impartial Culture,3,10,Copeland,Coombs,0.15584
+21,Impartial Culture,3,10,Plurality,Split Cycle,0.3566
+22,Impartial Culture,3,10,Plurality,Minimax,0.3566
+23,Impartial Culture,3,10,Plurality,Copeland,0.32408
+24,Impartial Culture,3,10,Plurality,Plurality,0.0
+25,Impartial Culture,3,10,Plurality,Borda,0.32444
+26,Impartial Culture,3,10,Plurality,Instant Runoff,0.20582
+27,Impartial Culture,3,10,Plurality,Coombs,0.39766
+28,Impartial Culture,3,10,Borda,Split Cycle,0.25824
+29,Impartial Culture,3,10,Borda,Minimax,0.25824
+30,Impartial Culture,3,10,Borda,Copeland,0.12324
+31,Impartial Culture,3,10,Borda,Plurality,0.32444
+32,Impartial Culture,3,10,Borda,Borda,0.0
+33,Impartial Culture,3,10,Borda,Instant Runoff,0.30722
+34,Impartial Culture,3,10,Borda,Coombs,0.25194
+35,Impartial Culture,3,10,Instant Runoff,Split Cycle,0.19212
+36,Impartial Culture,3,10,Instant Runoff,Minimax,0.19212
+37,Impartial Culture,3,10,Instant Runoff,Copeland,0.2111
+38,Impartial Culture,3,10,Instant Runoff,Plurality,0.20582
+39,Impartial Culture,3,10,Instant Runoff,Borda,0.30722
+40,Impartial Culture,3,10,Instant Runoff,Instant Runoff,0.0
+41,Impartial Culture,3,10,Instant Runoff,Coombs,0.28238
+42,Impartial Culture,3,10,Coombs,Split Cycle,0.14782
+43,Impartial Culture,3,10,Coombs,Minimax,0.14782
+44,Impartial Culture,3,10,Coombs,Copeland,0.15584
+45,Impartial Culture,3,10,Coombs,Plurality,0.39766
+46,Impartial Culture,3,10,Coombs,Borda,0.25194
+47,Impartial Culture,3,10,Coombs,Instant Runoff,0.28238
+48,Impartial Culture,3,10,Coombs,Coombs,0.0
+49,Impartial Culture,3,11,Split Cycle,Split Cycle,0.0
+50,Impartial Culture,3,11,Split Cycle,Minimax,0.0
+51,Impartial Culture,3,11,Split Cycle,Copeland,0.05354
+52,Impartial Culture,3,11,Split Cycle,Plurality,0.32534
+53,Impartial Culture,3,11,Split Cycle,Borda,0.16244
+54,Impartial Culture,3,11,Split Cycle,Instant Runoff,0.10858
+55,Impartial Culture,3,11,Split Cycle,Coombs,0.10286
+56,Impartial Culture,3,11,Minimax,Split Cycle,0.0
+57,Impartial Culture,3,11,Minimax,Minimax,0.0
+58,Impartial Culture,3,11,Minimax,Copeland,0.05354
+59,Impartial Culture,3,11,Minimax,Plurality,0.32534
+60,Impartial Culture,3,11,Minimax,Borda,0.16244
+61,Impartial Culture,3,11,Minimax,Instant Runoff,0.10858
+62,Impartial Culture,3,11,Minimax,Coombs,0.10286
+63,Impartial Culture,3,11,Copeland,Split Cycle,0.05354
+64,Impartial Culture,3,11,Copeland,Minimax,0.05354
+65,Impartial Culture,3,11,Copeland,Copeland,0.0
+66,Impartial Culture,3,11,Copeland,Plurality,0.3443
+67,Impartial Culture,3,11,Copeland,Borda,0.17502
+68,Impartial Culture,3,11,Copeland,Instant Runoff,0.11742
+69,Impartial Culture,3,11,Copeland,Coombs,0.11348
+70,Impartial Culture,3,11,Plurality,Split Cycle,0.32534
+71,Impartial Culture,3,11,Plurality,Minimax,0.32534
+72,Impartial Culture,3,11,Plurality,Copeland,0.3443
+73,Impartial Culture,3,11,Plurality,Plurality,0.0
+74,Impartial Culture,3,11,Plurality,Borda,0.34378
+75,Impartial Culture,3,11,Plurality,Instant Runoff,0.2988
+76,Impartial Culture,3,11,Plurality,Coombs,0.37216
+77,Impartial Culture,3,11,Borda,Split Cycle,0.16244
+78,Impartial Culture,3,11,Borda,Minimax,0.16244
+79,Impartial Culture,3,11,Borda,Copeland,0.17502
+80,Impartial Culture,3,11,Borda,Plurality,0.34378
+81,Impartial Culture,3,11,Borda,Borda,0.0
+82,Impartial Culture,3,11,Borda,Instant Runoff,0.20756
+83,Impartial Culture,3,11,Borda,Coombs,0.19072
+84,Impartial Culture,3,11,Instant Runoff,Split Cycle,0.10858
+85,Impartial Culture,3,11,Instant Runoff,Minimax,0.10858
+86,Impartial Culture,3,11,Instant Runoff,Copeland,0.11742
+87,Impartial Culture,3,11,Instant Runoff,Plurality,0.2988
+88,Impartial Culture,3,11,Instant Runoff,Borda,0.20756
+89,Impartial Culture,3,11,Instant Runoff,Instant Runoff,0.0
+90,Impartial Culture,3,11,Instant Runoff,Coombs,0.14638
+91,Impartial Culture,3,11,Coombs,Split Cycle,0.10286
+92,Impartial Culture,3,11,Coombs,Minimax,0.10286
+93,Impartial Culture,3,11,Coombs,Copeland,0.11348
+94,Impartial Culture,3,11,Coombs,Plurality,0.37216
+95,Impartial Culture,3,11,Coombs,Borda,0.19072
+96,Impartial Culture,3,11,Coombs,Instant Runoff,0.14638
+97,Impartial Culture,3,11,Coombs,Coombs,0.0
+98,Impartial Culture,3,1000,Split Cycle,Split Cycle,0.0
+99,Impartial Culture,3,1000,Split Cycle,Minimax,0.0
+100,Impartial Culture,3,1000,Split Cycle,Copeland,0.07726
+101,Impartial Culture,3,1000,Split Cycle,Plurality,0.28638
+102,Impartial Culture,3,1000,Split Cycle,Borda,0.13968
+103,Impartial Culture,3,1000,Split Cycle,Instant Runoff,0.08956
+104,Impartial Culture,3,1000,Split Cycle,Coombs,0.08826
+105,Impartial Culture,3,1000,Minimax,Split Cycle,0.0
+106,Impartial Culture,3,1000,Minimax,Minimax,0.0
+107,Impartial Culture,3,1000,Minimax,Copeland,0.07726
+108,Impartial Culture,3,1000,Minimax,Plurality,0.28638
+109,Impartial Culture,3,1000,Minimax,Borda,0.13968
+110,Impartial Culture,3,1000,Minimax,Instant Runoff,0.08956
+111,Impartial Culture,3,1000,Minimax,Coombs,0.08826
+112,Impartial Culture,3,1000,Copeland,Split Cycle,0.07726
+113,Impartial Culture,3,1000,Copeland,Minimax,0.07726
+114,Impartial Culture,3,1000,Copeland,Copeland,0.0
+115,Impartial Culture,3,1000,Copeland,Plurality,0.3186
+116,Impartial Culture,3,1000,Copeland,Borda,0.18478
+117,Impartial Culture,3,1000,Copeland,Instant Runoff,0.12424
+118,Impartial Culture,3,1000,Copeland,Coombs,0.12304
+119,Impartial Culture,3,1000,Plurality,Split Cycle,0.28638
+120,Impartial Culture,3,1000,Plurality,Minimax,0.28638
+121,Impartial Culture,3,1000,Plurality,Copeland,0.3186
+122,Impartial Culture,3,1000,Plurality,Plurality,0.0
+123,Impartial Culture,3,1000,Plurality,Borda,0.25308
+124,Impartial Culture,3,1000,Plurality,Instant Runoff,0.25922
+125,Impartial Culture,3,1000,Plurality,Coombs,0.33952
+126,Impartial Culture,3,1000,Borda,Split Cycle,0.13968
+127,Impartial Culture,3,1000,Borda,Minimax,0.13968
+128,Impartial Culture,3,1000,Borda,Copeland,0.18478
+129,Impartial Culture,3,1000,Borda,Plurality,0.25308
+130,Impartial Culture,3,1000,Borda,Borda,0.0
+131,Impartial Culture,3,1000,Borda,Instant Runoff,0.1828
+132,Impartial Culture,3,1000,Borda,Coombs,0.18374
+133,Impartial Culture,3,1000,Instant Runoff,Split Cycle,0.08956
+134,Impartial Culture,3,1000,Instant Runoff,Minimax,0.08956
+135,Impartial Culture,3,1000,Instant Runoff,Copeland,0.12424
+136,Impartial Culture,3,1000,Instant Runoff,Plurality,0.25922
+137,Impartial Culture,3,1000,Instant Runoff,Borda,0.1828
+138,Impartial Culture,3,1000,Instant Runoff,Instant Runoff,0.0
+139,Impartial Culture,3,1000,Instant Runoff,Coombs,0.15112
+140,Impartial Culture,3,1000,Coombs,Split Cycle,0.08826
+141,Impartial Culture,3,1000,Coombs,Minimax,0.08826
+142,Impartial Culture,3,1000,Coombs,Copeland,0.12304
+143,Impartial Culture,3,1000,Coombs,Plurality,0.33952
+144,Impartial Culture,3,1000,Coombs,Borda,0.18374
+145,Impartial Culture,3,1000,Coombs,Instant Runoff,0.15112
+146,Impartial Culture,3,1000,Coombs,Coombs,0.0
+147,Impartial Culture,3,1001,Split Cycle,Split Cycle,0.0
+148,Impartial Culture,3,1001,Split Cycle,Minimax,0.0
+149,Impartial Culture,3,1001,Split Cycle,Copeland,0.08818
+150,Impartial Culture,3,1001,Split Cycle,Plurality,0.27448
+151,Impartial Culture,3,1001,Split Cycle,Borda,0.12748
+152,Impartial Culture,3,1001,Split Cycle,Instant Runoff,0.08482
+153,Impartial Culture,3,1001,Split Cycle,Coombs,0.08412
+154,Impartial Culture,3,1001,Minimax,Split Cycle,0.0
+155,Impartial Culture,3,1001,Minimax,Minimax,0.0
+156,Impartial Culture,3,1001,Minimax,Copeland,0.08818
+157,Impartial Culture,3,1001,Minimax,Plurality,0.27448
+158,Impartial Culture,3,1001,Minimax,Borda,0.12748
+159,Impartial Culture,3,1001,Minimax,Instant Runoff,0.08482
+160,Impartial Culture,3,1001,Minimax,Coombs,0.08412
+161,Impartial Culture,3,1001,Copeland,Split Cycle,0.08818
+162,Impartial Culture,3,1001,Copeland,Minimax,0.08818
+163,Impartial Culture,3,1001,Copeland,Copeland,0.0
+164,Impartial Culture,3,1001,Copeland,Plurality,0.3134
+165,Impartial Culture,3,1001,Copeland,Borda,0.18208
+166,Impartial Culture,3,1001,Copeland,Instant Runoff,0.12504
+167,Impartial Culture,3,1001,Copeland,Coombs,0.1242
+168,Impartial Culture,3,1001,Plurality,Split Cycle,0.27448
+169,Impartial Culture,3,1001,Plurality,Minimax,0.27448
+170,Impartial Culture,3,1001,Plurality,Copeland,0.3134
+171,Impartial Culture,3,1001,Plurality,Plurality,0.0
+172,Impartial Culture,3,1001,Plurality,Borda,0.25572
+173,Impartial Culture,3,1001,Plurality,Instant Runoff,0.24524
+174,Impartial Culture,3,1001,Plurality,Coombs,0.32894
+175,Impartial Culture,3,1001,Borda,Split Cycle,0.12748
+176,Impartial Culture,3,1001,Borda,Minimax,0.12748
+177,Impartial Culture,3,1001,Borda,Copeland,0.18208
+178,Impartial Culture,3,1001,Borda,Plurality,0.25572
+179,Impartial Culture,3,1001,Borda,Borda,0.0
+180,Impartial Culture,3,1001,Borda,Instant Runoff,0.17116
+181,Impartial Culture,3,1001,Borda,Coombs,0.16978
+182,Impartial Culture,3,1001,Instant Runoff,Split Cycle,0.08482
+183,Impartial Culture,3,1001,Instant Runoff,Minimax,0.08482
+184,Impartial Culture,3,1001,Instant Runoff,Copeland,0.12504
+185,Impartial Culture,3,1001,Instant Runoff,Plurality,0.24524
+186,Impartial Culture,3,1001,Instant Runoff,Borda,0.17116
+187,Impartial Culture,3,1001,Instant Runoff,Instant Runoff,0.0
+188,Impartial Culture,3,1001,Instant Runoff,Coombs,0.14332
+189,Impartial Culture,3,1001,Coombs,Split Cycle,0.08412
+190,Impartial Culture,3,1001,Coombs,Minimax,0.08412
+191,Impartial Culture,3,1001,Coombs,Copeland,0.1242
+192,Impartial Culture,3,1001,Coombs,Plurality,0.32894
+193,Impartial Culture,3,1001,Coombs,Borda,0.16978
+194,Impartial Culture,3,1001,Coombs,Instant Runoff,0.14332
+195,Impartial Culture,3,1001,Coombs,Coombs,0.0
+196,Impartial Culture,4,10,Split Cycle,Split Cycle,0.0
+197,Impartial Culture,4,10,Split Cycle,Minimax,0.01718
+198,Impartial Culture,4,10,Split Cycle,Copeland,0.24312
+199,Impartial Culture,4,10,Split Cycle,Plurality,0.51326
+200,Impartial Culture,4,10,Split Cycle,Borda,0.37068
+201,Impartial Culture,4,10,Split Cycle,Instant Runoff,0.31596
+202,Impartial Culture,4,10,Split Cycle,Coombs,0.26522
+203,Impartial Culture,4,10,Minimax,Split Cycle,0.01718
+204,Impartial Culture,4,10,Minimax,Minimax,0.0
+205,Impartial Culture,4,10,Minimax,Copeland,0.23474
+206,Impartial Culture,4,10,Minimax,Plurality,0.51216
+207,Impartial Culture,4,10,Minimax,Borda,0.3642
+208,Impartial Culture,4,10,Minimax,Instant Runoff,0.315
+209,Impartial Culture,4,10,Minimax,Coombs,0.26356
+210,Impartial Culture,4,10,Copeland,Split Cycle,0.24312
+211,Impartial Culture,4,10,Copeland,Minimax,0.23474
+212,Impartial Culture,4,10,Copeland,Copeland,0.0
+213,Impartial Culture,4,10,Copeland,Plurality,0.46924
+214,Impartial Culture,4,10,Copeland,Borda,0.20184
+215,Impartial Culture,4,10,Copeland,Instant Runoff,0.32636
+216,Impartial Culture,4,10,Copeland,Coombs,0.26726
+217,Impartial Culture,4,10,Plurality,Split Cycle,0.51326
+218,Impartial Culture,4,10,Plurality,Minimax,0.51216
+219,Impartial Culture,4,10,Plurality,Copeland,0.46924
+220,Impartial Culture,4,10,Plurality,Plurality,0.0
+221,Impartial Culture,4,10,Plurality,Borda,0.47442
+222,Impartial Culture,4,10,Plurality,Instant Runoff,0.34826
+223,Impartial Culture,4,10,Plurality,Coombs,0.5633
+224,Impartial Culture,4,10,Borda,Split Cycle,0.37068
+225,Impartial Culture,4,10,Borda,Minimax,0.3642
+226,Impartial Culture,4,10,Borda,Copeland,0.20184
+227,Impartial Culture,4,10,Borda,Plurality,0.47442
+228,Impartial Culture,4,10,Borda,Borda,0.0
+229,Impartial Culture,4,10,Borda,Instant Runoff,0.40048
+230,Impartial Culture,4,10,Borda,Coombs,0.33986
+231,Impartial Culture,4,10,Instant Runoff,Split Cycle,0.31596
+232,Impartial Culture,4,10,Instant Runoff,Minimax,0.315
+233,Impartial Culture,4,10,Instant Runoff,Copeland,0.32636
+234,Impartial Culture,4,10,Instant Runoff,Plurality,0.34826
+235,Impartial Culture,4,10,Instant Runoff,Borda,0.40048
+236,Impartial Culture,4,10,Instant Runoff,Instant Runoff,0.0
+237,Impartial Culture,4,10,Instant Runoff,Coombs,0.42634
+238,Impartial Culture,4,10,Coombs,Split Cycle,0.26522
+239,Impartial Culture,4,10,Coombs,Minimax,0.26356
+240,Impartial Culture,4,10,Coombs,Copeland,0.26726
+241,Impartial Culture,4,10,Coombs,Plurality,0.5633
+242,Impartial Culture,4,10,Coombs,Borda,0.33986
+243,Impartial Culture,4,10,Coombs,Instant Runoff,0.42634
+244,Impartial Culture,4,10,Coombs,Coombs,0.0
+245,Impartial Culture,4,11,Split Cycle,Split Cycle,0.0
+246,Impartial Culture,4,11,Split Cycle,Minimax,0.00824
+247,Impartial Culture,4,11,Split Cycle,Copeland,0.11676
+248,Impartial Culture,4,11,Split Cycle,Plurality,0.44098
+249,Impartial Culture,4,11,Split Cycle,Borda,0.25846
+250,Impartial Culture,4,11,Split Cycle,Instant Runoff,0.21548
+251,Impartial Culture,4,11,Split Cycle,Coombs,0.2147
+252,Impartial Culture,4,11,Minimax,Split Cycle,0.00824
+253,Impartial Culture,4,11,Minimax,Minimax,0.0
+254,Impartial Culture,4,11,Minimax,Copeland,0.11938
+255,Impartial Culture,4,11,Minimax,Plurality,0.44154
+256,Impartial Culture,4,11,Minimax,Borda,0.26148
+257,Impartial Culture,4,11,Minimax,Instant Runoff,0.2159
+258,Impartial Culture,4,11,Minimax,Coombs,0.215
+259,Impartial Culture,4,11,Copeland,Split Cycle,0.11676
+260,Impartial Culture,4,11,Copeland,Minimax,0.11938
+261,Impartial Culture,4,11,Copeland,Copeland,0.0
+262,Impartial Culture,4,11,Copeland,Plurality,0.4576
+263,Impartial Culture,4,11,Copeland,Borda,0.27574
+264,Impartial Culture,4,11,Copeland,Instant Runoff,0.23106
+265,Impartial Culture,4,11,Copeland,Coombs,0.23204
+266,Impartial Culture,4,11,Plurality,Split Cycle,0.44098
+267,Impartial Culture,4,11,Plurality,Minimax,0.44154
+268,Impartial Culture,4,11,Plurality,Copeland,0.4576
+269,Impartial Culture,4,11,Plurality,Plurality,0.0
+270,Impartial Culture,4,11,Plurality,Borda,0.45162
+271,Impartial Culture,4,11,Plurality,Instant Runoff,0.36444
+272,Impartial Culture,4,11,Plurality,Coombs,0.49388
+273,Impartial Culture,4,11,Borda,Split Cycle,0.25846
+274,Impartial Culture,4,11,Borda,Minimax,0.26148
+275,Impartial Culture,4,11,Borda,Copeland,0.27574
+276,Impartial Culture,4,11,Borda,Plurality,0.45162
+277,Impartial Culture,4,11,Borda,Borda,0.0
+278,Impartial Culture,4,11,Borda,Instant Runoff,0.29552
+279,Impartial Culture,4,11,Borda,Coombs,0.26684
+280,Impartial Culture,4,11,Instant Runoff,Split Cycle,0.21548
+281,Impartial Culture,4,11,Instant Runoff,Minimax,0.2159
+282,Impartial Culture,4,11,Instant Runoff,Copeland,0.23106
+283,Impartial Culture,4,11,Instant Runoff,Plurality,0.36444
+284,Impartial Culture,4,11,Instant Runoff,Borda,0.29552
+285,Impartial Culture,4,11,Instant Runoff,Instant Runoff,0.0
+286,Impartial Culture,4,11,Instant Runoff,Coombs,0.2693
+287,Impartial Culture,4,11,Coombs,Split Cycle,0.2147
+288,Impartial Culture,4,11,Coombs,Minimax,0.215
+289,Impartial Culture,4,11,Coombs,Copeland,0.23204
+290,Impartial Culture,4,11,Coombs,Plurality,0.49388
+291,Impartial Culture,4,11,Coombs,Borda,0.26684
+292,Impartial Culture,4,11,Coombs,Instant Runoff,0.2693
+293,Impartial Culture,4,11,Coombs,Coombs,0.0
+294,Impartial Culture,4,1000,Split Cycle,Split Cycle,0.0
+295,Impartial Culture,4,1000,Split Cycle,Minimax,0.01598
+296,Impartial Culture,4,1000,Split Cycle,Copeland,0.14678
+297,Impartial Culture,4,1000,Split Cycle,Plurality,0.42532
+298,Impartial Culture,4,1000,Split Cycle,Borda,0.20542
+299,Impartial Culture,4,1000,Split Cycle,Instant Runoff,0.17244
+300,Impartial Culture,4,1000,Split Cycle,Coombs,0.17152
+301,Impartial Culture,4,1000,Minimax,Split Cycle,0.01598
+302,Impartial Culture,4,1000,Minimax,Minimax,0.0
+303,Impartial Culture,4,1000,Minimax,Copeland,0.1493
+304,Impartial Culture,4,1000,Minimax,Plurality,0.4208
+305,Impartial Culture,4,1000,Minimax,Borda,0.19898
+306,Impartial Culture,4,1000,Minimax,Instant Runoff,0.17154
+307,Impartial Culture,4,1000,Minimax,Coombs,0.17036
+308,Impartial Culture,4,1000,Copeland,Split Cycle,0.14678
+309,Impartial Culture,4,1000,Copeland,Minimax,0.1493
+310,Impartial Culture,4,1000,Copeland,Copeland,0.0
+311,Impartial Culture,4,1000,Copeland,Plurality,0.4706
+312,Impartial Culture,4,1000,Copeland,Borda,0.27202
+313,Impartial Culture,4,1000,Copeland,Instant Runoff,0.23194
+314,Impartial Culture,4,1000,Copeland,Coombs,0.23136
+315,Impartial Culture,4,1000,Plurality,Split Cycle,0.42532
+316,Impartial Culture,4,1000,Plurality,Minimax,0.4208
+317,Impartial Culture,4,1000,Plurality,Copeland,0.4706
+318,Impartial Culture,4,1000,Plurality,Plurality,0.0
+319,Impartial Culture,4,1000,Plurality,Borda,0.38484
+320,Impartial Culture,4,1000,Plurality,Instant Runoff,0.38646
+321,Impartial Culture,4,1000,Plurality,Coombs,0.4892
+322,Impartial Culture,4,1000,Borda,Split Cycle,0.20542
+323,Impartial Culture,4,1000,Borda,Minimax,0.19898
+324,Impartial Culture,4,1000,Borda,Copeland,0.27202
+325,Impartial Culture,4,1000,Borda,Plurality,0.38484
+326,Impartial Culture,4,1000,Borda,Borda,0.0
+327,Impartial Culture,4,1000,Borda,Instant Runoff,0.2612
+328,Impartial Culture,4,1000,Borda,Coombs,0.2587
+329,Impartial Culture,4,1000,Instant Runoff,Split Cycle,0.17244
+330,Impartial Culture,4,1000,Instant Runoff,Minimax,0.17154
+331,Impartial Culture,4,1000,Instant Runoff,Copeland,0.23194
+332,Impartial Culture,4,1000,Instant Runoff,Plurality,0.38646
+333,Impartial Culture,4,1000,Instant Runoff,Borda,0.2612
+334,Impartial Culture,4,1000,Instant Runoff,Instant Runoff,0.0
+335,Impartial Culture,4,1000,Instant Runoff,Coombs,0.26818
+336,Impartial Culture,4,1000,Coombs,Split Cycle,0.17152
+337,Impartial Culture,4,1000,Coombs,Minimax,0.17036
+338,Impartial Culture,4,1000,Coombs,Copeland,0.23136
+339,Impartial Culture,4,1000,Coombs,Plurality,0.4892
+340,Impartial Culture,4,1000,Coombs,Borda,0.2587
+341,Impartial Culture,4,1000,Coombs,Instant Runoff,0.26818
+342,Impartial Culture,4,1000,Coombs,Coombs,0.0
+343,Impartial Culture,4,1001,Split Cycle,Split Cycle,0.0
+344,Impartial Culture,4,1001,Split Cycle,Minimax,0.01548
+345,Impartial Culture,4,1001,Split Cycle,Copeland,0.16228
+346,Impartial Culture,4,1001,Split Cycle,Plurality,0.41708
+347,Impartial Culture,4,1001,Split Cycle,Borda,0.19434
+348,Impartial Culture,4,1001,Split Cycle,Instant Runoff,0.16608
+349,Impartial Culture,4,1001,Split Cycle,Coombs,0.16596
+350,Impartial Culture,4,1001,Minimax,Split Cycle,0.01548
+351,Impartial Culture,4,1001,Minimax,Minimax,0.0
+352,Impartial Culture,4,1001,Minimax,Copeland,0.16942
+353,Impartial Culture,4,1001,Minimax,Plurality,0.41356
+354,Impartial Culture,4,1001,Minimax,Borda,0.18946
+355,Impartial Culture,4,1001,Minimax,Instant Runoff,0.16404
+356,Impartial Culture,4,1001,Minimax,Coombs,0.16328
+357,Impartial Culture,4,1001,Copeland,Split Cycle,0.16228
+358,Impartial Culture,4,1001,Copeland,Minimax,0.16942
+359,Impartial Culture,4,1001,Copeland,Copeland,0.0
+360,Impartial Culture,4,1001,Copeland,Plurality,0.47646
+361,Impartial Culture,4,1001,Copeland,Borda,0.28346
+362,Impartial Culture,4,1001,Copeland,Instant Runoff,0.23642
+363,Impartial Culture,4,1001,Copeland,Coombs,0.23754
+364,Impartial Culture,4,1001,Plurality,Split Cycle,0.41708
+365,Impartial Culture,4,1001,Plurality,Minimax,0.41356
+366,Impartial Culture,4,1001,Plurality,Copeland,0.47646
+367,Impartial Culture,4,1001,Plurality,Plurality,0.0
+368,Impartial Culture,4,1001,Plurality,Borda,0.38554
+369,Impartial Culture,4,1001,Plurality,Instant Runoff,0.37296
+370,Impartial Culture,4,1001,Plurality,Coombs,0.48396
+371,Impartial Culture,4,1001,Borda,Split Cycle,0.19434
+372,Impartial Culture,4,1001,Borda,Minimax,0.18946
+373,Impartial Culture,4,1001,Borda,Copeland,0.28346
+374,Impartial Culture,4,1001,Borda,Plurality,0.38554
+375,Impartial Culture,4,1001,Borda,Borda,0.0
+376,Impartial Culture,4,1001,Borda,Instant Runoff,0.25178
+377,Impartial Culture,4,1001,Borda,Coombs,0.24816
+378,Impartial Culture,4,1001,Instant Runoff,Split Cycle,0.16608
+379,Impartial Culture,4,1001,Instant Runoff,Minimax,0.16404
+380,Impartial Culture,4,1001,Instant Runoff,Copeland,0.23642
+381,Impartial Culture,4,1001,Instant Runoff,Plurality,0.37296
+382,Impartial Culture,4,1001,Instant Runoff,Borda,0.25178
+383,Impartial Culture,4,1001,Instant Runoff,Instant Runoff,0.0
+384,Impartial Culture,4,1001,Instant Runoff,Coombs,0.25814
+385,Impartial Culture,4,1001,Coombs,Split Cycle,0.16596
+386,Impartial Culture,4,1001,Coombs,Minimax,0.16328
+387,Impartial Culture,4,1001,Coombs,Copeland,0.23754
+388,Impartial Culture,4,1001,Coombs,Plurality,0.48396
+389,Impartial Culture,4,1001,Coombs,Borda,0.24816
+390,Impartial Culture,4,1001,Coombs,Instant Runoff,0.25814
+391,Impartial Culture,4,1001,Coombs,Coombs,0.0
+392,Impartial Culture,5,10,Split Cycle,Split Cycle,0.0
+393,Impartial Culture,5,10,Split Cycle,Minimax,0.0439
+394,Impartial Culture,5,10,Split Cycle,Copeland,0.31414
+395,Impartial Culture,5,10,Split Cycle,Plurality,0.59798
+396,Impartial Culture,5,10,Split Cycle,Borda,0.43768
+397,Impartial Culture,5,10,Split Cycle,Instant Runoff,0.40464
+398,Impartial Culture,5,10,Split Cycle,Coombs,0.34472
+399,Impartial Culture,5,10,Minimax,Split Cycle,0.0439
+400,Impartial Culture,5,10,Minimax,Minimax,0.0
+401,Impartial Culture,5,10,Minimax,Copeland,0.29174
+402,Impartial Culture,5,10,Minimax,Plurality,0.59286
+403,Impartial Culture,5,10,Minimax,Borda,0.41818
+404,Impartial Culture,5,10,Minimax,Instant Runoff,0.40122
+405,Impartial Culture,5,10,Minimax,Coombs,0.34064
+406,Impartial Culture,5,10,Copeland,Split Cycle,0.31414
+407,Impartial Culture,5,10,Copeland,Minimax,0.29174
+408,Impartial Culture,5,10,Copeland,Copeland,0.0
+409,Impartial Culture,5,10,Copeland,Plurality,0.54874
+410,Impartial Culture,5,10,Copeland,Borda,0.23954
+411,Impartial Culture,5,10,Copeland,Instant Runoff,0.40166
+412,Impartial Culture,5,10,Copeland,Coombs,0.334
+413,Impartial Culture,5,10,Plurality,Split Cycle,0.59798
+414,Impartial Culture,5,10,Plurality,Minimax,0.59286
+415,Impartial Culture,5,10,Plurality,Copeland,0.54874
+416,Impartial Culture,5,10,Plurality,Plurality,0.0
+417,Impartial Culture,5,10,Plurality,Borda,0.5575
+418,Impartial Culture,5,10,Plurality,Instant Runoff,0.44268
+419,Impartial Culture,5,10,Plurality,Coombs,0.6488
+420,Impartial Culture,5,10,Borda,Split Cycle,0.43768
+421,Impartial Culture,5,10,Borda,Minimax,0.41818
+422,Impartial Culture,5,10,Borda,Copeland,0.23954
+423,Impartial Culture,5,10,Borda,Plurality,0.5575
+424,Impartial Culture,5,10,Borda,Borda,0.0
+425,Impartial Culture,5,10,Borda,Instant Runoff,0.46376
+426,Impartial Culture,5,10,Borda,Coombs,0.39048
+427,Impartial Culture,5,10,Instant Runoff,Split Cycle,0.40464
+428,Impartial Culture,5,10,Instant Runoff,Minimax,0.40122
+429,Impartial Culture,5,10,Instant Runoff,Copeland,0.40166
+430,Impartial Culture,5,10,Instant Runoff,Plurality,0.44268
+431,Impartial Culture,5,10,Instant Runoff,Borda,0.46376
+432,Impartial Culture,5,10,Instant Runoff,Instant Runoff,0.0
+433,Impartial Culture,5,10,Instant Runoff,Coombs,0.51264
+434,Impartial Culture,5,10,Coombs,Split Cycle,0.34472
+435,Impartial Culture,5,10,Coombs,Minimax,0.34064
+436,Impartial Culture,5,10,Coombs,Copeland,0.334
+437,Impartial Culture,5,10,Coombs,Plurality,0.6488
+438,Impartial Culture,5,10,Coombs,Borda,0.39048
+439,Impartial Culture,5,10,Coombs,Instant Runoff,0.51264
+440,Impartial Culture,5,10,Coombs,Coombs,0.0
+441,Impartial Culture,5,11,Split Cycle,Split Cycle,0.0
+442,Impartial Culture,5,11,Split Cycle,Minimax,0.0152
+443,Impartial Culture,5,11,Split Cycle,Copeland,0.17366
+444,Impartial Culture,5,11,Split Cycle,Plurality,0.55444
+445,Impartial Culture,5,11,Split Cycle,Borda,0.3248
+446,Impartial Culture,5,11,Split Cycle,Instant Runoff,0.30964
+447,Impartial Culture,5,11,Split Cycle,Coombs,0.2923
+448,Impartial Culture,5,11,Minimax,Split Cycle,0.0152
+449,Impartial Culture,5,11,Minimax,Minimax,0.0
+450,Impartial Culture,5,11,Minimax,Copeland,0.17692
+451,Impartial Culture,5,11,Minimax,Plurality,0.55464
+452,Impartial Culture,5,11,Minimax,Borda,0.32612
+453,Impartial Culture,5,11,Minimax,Instant Runoff,0.30986
+454,Impartial Culture,5,11,Minimax,Coombs,0.29248
+455,Impartial Culture,5,11,Copeland,Split Cycle,0.17366
+456,Impartial Culture,5,11,Copeland,Minimax,0.17692
+457,Impartial Culture,5,11,Copeland,Copeland,0.0
+458,Impartial Culture,5,11,Copeland,Plurality,0.56042
+459,Impartial Culture,5,11,Copeland,Borda,0.3249
+460,Impartial Culture,5,11,Copeland,Instant Runoff,0.31788
+461,Impartial Culture,5,11,Copeland,Coombs,0.3
+462,Impartial Culture,5,11,Plurality,Split Cycle,0.55444
+463,Impartial Culture,5,11,Plurality,Minimax,0.55464
+464,Impartial Culture,5,11,Plurality,Copeland,0.56042
+465,Impartial Culture,5,11,Plurality,Plurality,0.0
+466,Impartial Culture,5,11,Plurality,Borda,0.55396
+467,Impartial Culture,5,11,Plurality,Instant Runoff,0.44444
+468,Impartial Culture,5,11,Plurality,Coombs,0.60428
+469,Impartial Culture,5,11,Borda,Split Cycle,0.3248
+470,Impartial Culture,5,11,Borda,Minimax,0.32612
+471,Impartial Culture,5,11,Borda,Copeland,0.3249
+472,Impartial Culture,5,11,Borda,Plurality,0.55396
+473,Impartial Culture,5,11,Borda,Borda,0.0
+474,Impartial Culture,5,11,Borda,Instant Runoff,0.3611
+475,Impartial Culture,5,11,Borda,Coombs,0.307
+476,Impartial Culture,5,11,Instant Runoff,Split Cycle,0.30964
+477,Impartial Culture,5,11,Instant Runoff,Minimax,0.30986
+478,Impartial Culture,5,11,Instant Runoff,Copeland,0.31788
+479,Impartial Culture,5,11,Instant Runoff,Plurality,0.44444
+480,Impartial Culture,5,11,Instant Runoff,Borda,0.3611
+481,Impartial Culture,5,11,Instant Runoff,Instant Runoff,0.0
+482,Impartial Culture,5,11,Instant Runoff,Coombs,0.36004
+483,Impartial Culture,5,11,Coombs,Split Cycle,0.2923
+484,Impartial Culture,5,11,Coombs,Minimax,0.29248
+485,Impartial Culture,5,11,Coombs,Copeland,0.3
+486,Impartial Culture,5,11,Coombs,Plurality,0.60428
+487,Impartial Culture,5,11,Coombs,Borda,0.307
+488,Impartial Culture,5,11,Coombs,Instant Runoff,0.36004
+489,Impartial Culture,5,11,Coombs,Coombs,0.0
+490,Impartial Culture,5,1000,Split Cycle,Split Cycle,0.0
+491,Impartial Culture,5,1000,Split Cycle,Minimax,0.04116
+492,Impartial Culture,5,1000,Split Cycle,Copeland,0.20066
+493,Impartial Culture,5,1000,Split Cycle,Plurality,0.51878
+494,Impartial Culture,5,1000,Split Cycle,Borda,0.25746
+495,Impartial Culture,5,1000,Split Cycle,Instant Runoff,0.24394
+496,Impartial Culture,5,1000,Split Cycle,Coombs,0.24208
+497,Impartial Culture,5,1000,Minimax,Split Cycle,0.04116
+498,Impartial Culture,5,1000,Minimax,Minimax,0.0
+499,Impartial Culture,5,1000,Minimax,Copeland,0.20234
+500,Impartial Culture,5,1000,Minimax,Plurality,0.50878
+501,Impartial Culture,5,1000,Minimax,Borda,0.24016
+502,Impartial Culture,5,1000,Minimax,Instant Runoff,0.23982
+503,Impartial Culture,5,1000,Minimax,Coombs,0.2372
+504,Impartial Culture,5,1000,Copeland,Split Cycle,0.20066
+505,Impartial Culture,5,1000,Copeland,Minimax,0.20234
+506,Impartial Culture,5,1000,Copeland,Copeland,0.0
+507,Impartial Culture,5,1000,Copeland,Plurality,0.56178
+508,Impartial Culture,5,1000,Copeland,Borda,0.32114
+509,Impartial Culture,5,1000,Copeland,Instant Runoff,0.311
+510,Impartial Culture,5,1000,Copeland,Coombs,0.30776
+511,Impartial Culture,5,1000,Plurality,Split Cycle,0.51878
+512,Impartial Culture,5,1000,Plurality,Minimax,0.50878
+513,Impartial Culture,5,1000,Plurality,Copeland,0.56178
+514,Impartial Culture,5,1000,Plurality,Plurality,0.0
+515,Impartial Culture,5,1000,Plurality,Borda,0.4733
+516,Impartial Culture,5,1000,Plurality,Instant Runoff,0.4666
+517,Impartial Culture,5,1000,Plurality,Coombs,0.5832
+518,Impartial Culture,5,1000,Borda,Split Cycle,0.25746
+519,Impartial Culture,5,1000,Borda,Minimax,0.24016
+520,Impartial Culture,5,1000,Borda,Copeland,0.32114
+521,Impartial Culture,5,1000,Borda,Plurality,0.4733
+522,Impartial Culture,5,1000,Borda,Borda,0.0
+523,Impartial Culture,5,1000,Borda,Instant Runoff,0.32054
+524,Impartial Culture,5,1000,Borda,Coombs,0.31412
+525,Impartial Culture,5,1000,Instant Runoff,Split Cycle,0.24394
+526,Impartial Culture,5,1000,Instant Runoff,Minimax,0.23982
+527,Impartial Culture,5,1000,Instant Runoff,Copeland,0.311
+528,Impartial Culture,5,1000,Instant Runoff,Plurality,0.4666
+529,Impartial Culture,5,1000,Instant Runoff,Borda,0.32054
+530,Impartial Culture,5,1000,Instant Runoff,Instant Runoff,0.0
+531,Impartial Culture,5,1000,Instant Runoff,Coombs,0.35772
+532,Impartial Culture,5,1000,Coombs,Split Cycle,0.24208
+533,Impartial Culture,5,1000,Coombs,Minimax,0.2372
+534,Impartial Culture,5,1000,Coombs,Copeland,0.30776
+535,Impartial Culture,5,1000,Coombs,Plurality,0.5832
+536,Impartial Culture,5,1000,Coombs,Borda,0.31412
+537,Impartial Culture,5,1000,Coombs,Instant Runoff,0.35772
+538,Impartial Culture,5,1000,Coombs,Coombs,0.0
+539,Impartial Culture,5,1001,Split Cycle,Split Cycle,0.0
+540,Impartial Culture,5,1001,Split Cycle,Minimax,0.03674
+541,Impartial Culture,5,1001,Split Cycle,Copeland,0.2168
+542,Impartial Culture,5,1001,Split Cycle,Plurality,0.51478
+543,Impartial Culture,5,1001,Split Cycle,Borda,0.24672
+544,Impartial Culture,5,1001,Split Cycle,Instant Runoff,0.2357
+545,Impartial Culture,5,1001,Split Cycle,Coombs,0.23458
+546,Impartial Culture,5,1001,Minimax,Split Cycle,0.03674
+547,Impartial Culture,5,1001,Minimax,Minimax,0.0
+548,Impartial Culture,5,1001,Minimax,Copeland,0.22736
+549,Impartial Culture,5,1001,Minimax,Plurality,0.50598
+550,Impartial Culture,5,1001,Minimax,Borda,0.23194
+551,Impartial Culture,5,1001,Minimax,Instant Runoff,0.22858
+552,Impartial Culture,5,1001,Minimax,Coombs,0.22722
+553,Impartial Culture,5,1001,Copeland,Split Cycle,0.2168
+554,Impartial Culture,5,1001,Copeland,Minimax,0.22736
+555,Impartial Culture,5,1001,Copeland,Copeland,0.0
+556,Impartial Culture,5,1001,Copeland,Plurality,0.57294
+557,Impartial Culture,5,1001,Copeland,Borda,0.3389
+558,Impartial Culture,5,1001,Copeland,Instant Runoff,0.31622
+559,Impartial Culture,5,1001,Copeland,Coombs,0.31678
+560,Impartial Culture,5,1001,Plurality,Split Cycle,0.51478
+561,Impartial Culture,5,1001,Plurality,Minimax,0.50598
+562,Impartial Culture,5,1001,Plurality,Copeland,0.57294
+563,Impartial Culture,5,1001,Plurality,Plurality,0.0
+564,Impartial Culture,5,1001,Plurality,Borda,0.47724
+565,Impartial Culture,5,1001,Plurality,Instant Runoff,0.45574
+566,Impartial Culture,5,1001,Plurality,Coombs,0.57872
+567,Impartial Culture,5,1001,Borda,Split Cycle,0.24672
+568,Impartial Culture,5,1001,Borda,Minimax,0.23194
+569,Impartial Culture,5,1001,Borda,Copeland,0.3389
+570,Impartial Culture,5,1001,Borda,Plurality,0.47724
+571,Impartial Culture,5,1001,Borda,Borda,0.0
+572,Impartial Culture,5,1001,Borda,Instant Runoff,0.30724
+573,Impartial Culture,5,1001,Borda,Coombs,0.30496
+574,Impartial Culture,5,1001,Instant Runoff,Split Cycle,0.2357
+575,Impartial Culture,5,1001,Instant Runoff,Minimax,0.22858
+576,Impartial Culture,5,1001,Instant Runoff,Copeland,0.31622
+577,Impartial Culture,5,1001,Instant Runoff,Plurality,0.45574
+578,Impartial Culture,5,1001,Instant Runoff,Borda,0.30724
+579,Impartial Culture,5,1001,Instant Runoff,Instant Runoff,0.0
+580,Impartial Culture,5,1001,Instant Runoff,Coombs,0.34278
+581,Impartial Culture,5,1001,Coombs,Split Cycle,0.23458
+582,Impartial Culture,5,1001,Coombs,Minimax,0.22722
+583,Impartial Culture,5,1001,Coombs,Copeland,0.31678
+584,Impartial Culture,5,1001,Coombs,Plurality,0.57872
+585,Impartial Culture,5,1001,Coombs,Borda,0.30496
+586,Impartial Culture,5,1001,Coombs,Instant Runoff,0.34278
+587,Impartial Culture,5,1001,Coombs,Coombs,0.0
+588,Mallows,3,10,Split Cycle,Split Cycle,0.0
+589,Mallows,3,10,Split Cycle,Minimax,0.0
+590,Mallows,3,10,Split Cycle,Copeland,0.09816
+591,Mallows,3,10,Split Cycle,Plurality,0.28232
+592,Mallows,3,10,Split Cycle,Borda,0.21964
+593,Mallows,3,10,Split Cycle,Instant Runoff,0.1304
+594,Mallows,3,10,Split Cycle,Coombs,0.09892
+595,Mallows,3,10,Minimax,Split Cycle,0.0
+596,Mallows,3,10,Minimax,Minimax,0.0
+597,Mallows,3,10,Minimax,Copeland,0.09816
+598,Mallows,3,10,Minimax,Plurality,0.28232
+599,Mallows,3,10,Minimax,Borda,0.21964
+600,Mallows,3,10,Minimax,Instant Runoff,0.1304
+601,Mallows,3,10,Minimax,Coombs,0.09892
+602,Mallows,3,10,Copeland,Split Cycle,0.09816
+603,Mallows,3,10,Copeland,Minimax,0.09816
+604,Mallows,3,10,Copeland,Copeland,0.0
+605,Mallows,3,10,Copeland,Plurality,0.25766
+606,Mallows,3,10,Copeland,Borda,0.1246
+607,Mallows,3,10,Copeland,Instant Runoff,0.14862
+608,Mallows,3,10,Copeland,Coombs,0.10684
+609,Mallows,3,10,Plurality,Split Cycle,0.28232
+610,Mallows,3,10,Plurality,Minimax,0.28232
+611,Mallows,3,10,Plurality,Copeland,0.25766
+612,Mallows,3,10,Plurality,Plurality,0.0
+613,Mallows,3,10,Plurality,Borda,0.26364
+614,Mallows,3,10,Plurality,Instant Runoff,0.18164
+615,Mallows,3,10,Plurality,Coombs,0.31076
+616,Mallows,3,10,Borda,Split Cycle,0.21964
+617,Mallows,3,10,Borda,Minimax,0.21964
+618,Mallows,3,10,Borda,Copeland,0.1246
+619,Mallows,3,10,Borda,Plurality,0.26364
+620,Mallows,3,10,Borda,Borda,0.0
+621,Mallows,3,10,Borda,Instant Runoff,0.2527
+622,Mallows,3,10,Borda,Coombs,0.20912
+623,Mallows,3,10,Instant Runoff,Split Cycle,0.1304
+624,Mallows,3,10,Instant Runoff,Minimax,0.1304
+625,Mallows,3,10,Instant Runoff,Copeland,0.14862
+626,Mallows,3,10,Instant Runoff,Plurality,0.18164
+627,Mallows,3,10,Instant Runoff,Borda,0.2527
+628,Mallows,3,10,Instant Runoff,Instant Runoff,0.0
+629,Mallows,3,10,Instant Runoff,Coombs,0.19478
+630,Mallows,3,10,Coombs,Split Cycle,0.09892
+631,Mallows,3,10,Coombs,Minimax,0.09892
+632,Mallows,3,10,Coombs,Copeland,0.10684
+633,Mallows,3,10,Coombs,Plurality,0.31076
+634,Mallows,3,10,Coombs,Borda,0.20912
+635,Mallows,3,10,Coombs,Instant Runoff,0.19478
+636,Mallows,3,10,Coombs,Coombs,0.0
+637,Mallows,3,11,Split Cycle,Split Cycle,0.0
+638,Mallows,3,11,Split Cycle,Minimax,0.0
+639,Mallows,3,11,Split Cycle,Copeland,0.03788
+640,Mallows,3,11,Split Cycle,Plurality,0.25618
+641,Mallows,3,11,Split Cycle,Borda,0.13814
+642,Mallows,3,11,Split Cycle,Instant Runoff,0.07346
+643,Mallows,3,11,Split Cycle,Coombs,0.06834
+644,Mallows,3,11,Minimax,Split Cycle,0.0
+645,Mallows,3,11,Minimax,Minimax,0.0
+646,Mallows,3,11,Minimax,Copeland,0.03788
+647,Mallows,3,11,Minimax,Plurality,0.25618
+648,Mallows,3,11,Minimax,Borda,0.13814
+649,Mallows,3,11,Minimax,Instant Runoff,0.07346
+650,Mallows,3,11,Minimax,Coombs,0.06834
+651,Mallows,3,11,Copeland,Split Cycle,0.03788
+652,Mallows,3,11,Copeland,Minimax,0.03788
+653,Mallows,3,11,Copeland,Copeland,0.0
+654,Mallows,3,11,Copeland,Plurality,0.26948
+655,Mallows,3,11,Copeland,Borda,0.14716
+656,Mallows,3,11,Copeland,Instant Runoff,0.08056
+657,Mallows,3,11,Copeland,Coombs,0.07612
+658,Mallows,3,11,Plurality,Split Cycle,0.25618
+659,Mallows,3,11,Plurality,Minimax,0.25618
+660,Mallows,3,11,Plurality,Copeland,0.26948
+661,Mallows,3,11,Plurality,Plurality,0.0
+662,Mallows,3,11,Plurality,Borda,0.27688
+663,Mallows,3,11,Plurality,Instant Runoff,0.23584
+664,Mallows,3,11,Plurality,Coombs,0.28596
+665,Mallows,3,11,Borda,Split Cycle,0.13814
+666,Mallows,3,11,Borda,Minimax,0.13814
+667,Mallows,3,11,Borda,Copeland,0.14716
+668,Mallows,3,11,Borda,Plurality,0.27688
+669,Mallows,3,11,Borda,Borda,0.0
+670,Mallows,3,11,Borda,Instant Runoff,0.16748
+671,Mallows,3,11,Borda,Coombs,0.15446
+672,Mallows,3,11,Instant Runoff,Split Cycle,0.07346
+673,Mallows,3,11,Instant Runoff,Minimax,0.07346
+674,Mallows,3,11,Instant Runoff,Copeland,0.08056
+675,Mallows,3,11,Instant Runoff,Plurality,0.23584
+676,Mallows,3,11,Instant Runoff,Borda,0.16748
+677,Mallows,3,11,Instant Runoff,Instant Runoff,0.0
+678,Mallows,3,11,Instant Runoff,Coombs,0.0973
+679,Mallows,3,11,Coombs,Split Cycle,0.06834
+680,Mallows,3,11,Coombs,Minimax,0.06834
+681,Mallows,3,11,Coombs,Copeland,0.07612
+682,Mallows,3,11,Coombs,Plurality,0.28596
+683,Mallows,3,11,Coombs,Borda,0.15446
+684,Mallows,3,11,Coombs,Instant Runoff,0.0973
+685,Mallows,3,11,Coombs,Coombs,0.0
+686,Mallows,3,1000,Split Cycle,Split Cycle,0.0
+687,Mallows,3,1000,Split Cycle,Minimax,0.0
+688,Mallows,3,1000,Split Cycle,Copeland,0.0
+689,Mallows,3,1000,Split Cycle,Plurality,0.0
+690,Mallows,3,1000,Split Cycle,Borda,0.0
+691,Mallows,3,1000,Split Cycle,Instant Runoff,0.0
+692,Mallows,3,1000,Split Cycle,Coombs,0.0
+693,Mallows,3,1000,Minimax,Split Cycle,0.0
+694,Mallows,3,1000,Minimax,Minimax,0.0
+695,Mallows,3,1000,Minimax,Copeland,0.0
+696,Mallows,3,1000,Minimax,Plurality,0.0
+697,Mallows,3,1000,Minimax,Borda,0.0
+698,Mallows,3,1000,Minimax,Instant Runoff,0.0
+699,Mallows,3,1000,Minimax,Coombs,0.0
+700,Mallows,3,1000,Copeland,Split Cycle,0.0
+701,Mallows,3,1000,Copeland,Minimax,0.0
+702,Mallows,3,1000,Copeland,Copeland,0.0
+703,Mallows,3,1000,Copeland,Plurality,0.0
+704,Mallows,3,1000,Copeland,Borda,0.0
+705,Mallows,3,1000,Copeland,Instant Runoff,0.0
+706,Mallows,3,1000,Copeland,Coombs,0.0
+707,Mallows,3,1000,Plurality,Split Cycle,0.0
+708,Mallows,3,1000,Plurality,Minimax,0.0
+709,Mallows,3,1000,Plurality,Copeland,0.0
+710,Mallows,3,1000,Plurality,Plurality,0.0
+711,Mallows,3,1000,Plurality,Borda,0.0
+712,Mallows,3,1000,Plurality,Instant Runoff,0.0
+713,Mallows,3,1000,Plurality,Coombs,0.0
+714,Mallows,3,1000,Borda,Split Cycle,0.0
+715,Mallows,3,1000,Borda,Minimax,0.0
+716,Mallows,3,1000,Borda,Copeland,0.0
+717,Mallows,3,1000,Borda,Plurality,0.0
+718,Mallows,3,1000,Borda,Borda,0.0
+719,Mallows,3,1000,Borda,Instant Runoff,0.0
+720,Mallows,3,1000,Borda,Coombs,0.0
+721,Mallows,3,1000,Instant Runoff,Split Cycle,0.0
+722,Mallows,3,1000,Instant Runoff,Minimax,0.0
+723,Mallows,3,1000,Instant Runoff,Copeland,0.0
+724,Mallows,3,1000,Instant Runoff,Plurality,0.0
+725,Mallows,3,1000,Instant Runoff,Borda,0.0
+726,Mallows,3,1000,Instant Runoff,Instant Runoff,0.0
+727,Mallows,3,1000,Instant Runoff,Coombs,0.0
+728,Mallows,3,1000,Coombs,Split Cycle,0.0
+729,Mallows,3,1000,Coombs,Minimax,0.0
+730,Mallows,3,1000,Coombs,Copeland,0.0
+731,Mallows,3,1000,Coombs,Plurality,0.0
+732,Mallows,3,1000,Coombs,Borda,0.0
+733,Mallows,3,1000,Coombs,Instant Runoff,0.0
+734,Mallows,3,1000,Coombs,Coombs,0.0
+735,Mallows,3,1001,Split Cycle,Split Cycle,0.0
+736,Mallows,3,1001,Split Cycle,Minimax,0.0
+737,Mallows,3,1001,Split Cycle,Copeland,0.0
+738,Mallows,3,1001,Split Cycle,Plurality,2e-05
+739,Mallows,3,1001,Split Cycle,Borda,0.0
+740,Mallows,3,1001,Split Cycle,Instant Runoff,0.0
+741,Mallows,3,1001,Split Cycle,Coombs,0.0
+742,Mallows,3,1001,Minimax,Split Cycle,0.0
+743,Mallows,3,1001,Minimax,Minimax,0.0
+744,Mallows,3,1001,Minimax,Copeland,0.0
+745,Mallows,3,1001,Minimax,Plurality,2e-05
+746,Mallows,3,1001,Minimax,Borda,0.0
+747,Mallows,3,1001,Minimax,Instant Runoff,0.0
+748,Mallows,3,1001,Minimax,Coombs,0.0
+749,Mallows,3,1001,Copeland,Split Cycle,0.0
+750,Mallows,3,1001,Copeland,Minimax,0.0
+751,Mallows,3,1001,Copeland,Copeland,0.0
+752,Mallows,3,1001,Copeland,Plurality,2e-05
+753,Mallows,3,1001,Copeland,Borda,0.0
+754,Mallows,3,1001,Copeland,Instant Runoff,0.0
+755,Mallows,3,1001,Copeland,Coombs,0.0
+756,Mallows,3,1001,Plurality,Split Cycle,2e-05
+757,Mallows,3,1001,Plurality,Minimax,2e-05
+758,Mallows,3,1001,Plurality,Copeland,2e-05
+759,Mallows,3,1001,Plurality,Plurality,0.0
+760,Mallows,3,1001,Plurality,Borda,2e-05
+761,Mallows,3,1001,Plurality,Instant Runoff,2e-05
+762,Mallows,3,1001,Plurality,Coombs,2e-05
+763,Mallows,3,1001,Borda,Split Cycle,0.0
+764,Mallows,3,1001,Borda,Minimax,0.0
+765,Mallows,3,1001,Borda,Copeland,0.0
+766,Mallows,3,1001,Borda,Plurality,2e-05
+767,Mallows,3,1001,Borda,Borda,0.0
+768,Mallows,3,1001,Borda,Instant Runoff,0.0
+769,Mallows,3,1001,Borda,Coombs,0.0
+770,Mallows,3,1001,Instant Runoff,Split Cycle,0.0
+771,Mallows,3,1001,Instant Runoff,Minimax,0.0
+772,Mallows,3,1001,Instant Runoff,Copeland,0.0
+773,Mallows,3,1001,Instant Runoff,Plurality,2e-05
+774,Mallows,3,1001,Instant Runoff,Borda,0.0
+775,Mallows,3,1001,Instant Runoff,Instant Runoff,0.0
+776,Mallows,3,1001,Instant Runoff,Coombs,0.0
+777,Mallows,3,1001,Coombs,Split Cycle,0.0
+778,Mallows,3,1001,Coombs,Minimax,0.0
+779,Mallows,3,1001,Coombs,Copeland,0.0
+780,Mallows,3,1001,Coombs,Plurality,2e-05
+781,Mallows,3,1001,Coombs,Borda,0.0
+782,Mallows,3,1001,Coombs,Instant Runoff,0.0
+783,Mallows,3,1001,Coombs,Coombs,0.0
+784,Mallows,4,10,Split Cycle,Split Cycle,0.0
+785,Mallows,4,10,Split Cycle,Minimax,0.0089
+786,Mallows,4,10,Split Cycle,Copeland,0.16672
+787,Mallows,4,10,Split Cycle,Plurality,0.41814
+788,Mallows,4,10,Split Cycle,Borda,0.3118
+789,Mallows,4,10,Split Cycle,Instant Runoff,0.2219
+790,Mallows,4,10,Split Cycle,Coombs,0.17984
+791,Mallows,4,10,Minimax,Split Cycle,0.0089
+792,Mallows,4,10,Minimax,Minimax,0.0
+793,Mallows,4,10,Minimax,Copeland,0.16216
+794,Mallows,4,10,Minimax,Plurality,0.41732
+795,Mallows,4,10,Minimax,Borda,0.30808
+796,Mallows,4,10,Minimax,Instant Runoff,0.22162
+797,Mallows,4,10,Minimax,Coombs,0.17904
+798,Mallows,4,10,Copeland,Split Cycle,0.16672
+799,Mallows,4,10,Copeland,Minimax,0.16216
+800,Mallows,4,10,Copeland,Copeland,0.0
+801,Mallows,4,10,Copeland,Plurality,0.38322
+802,Mallows,4,10,Copeland,Borda,0.19708
+803,Mallows,4,10,Copeland,Instant Runoff,0.23632
+804,Mallows,4,10,Copeland,Coombs,0.1843
+805,Mallows,4,10,Plurality,Split Cycle,0.41814
+806,Mallows,4,10,Plurality,Minimax,0.41732
+807,Mallows,4,10,Plurality,Copeland,0.38322
+808,Mallows,4,10,Plurality,Plurality,0.0
+809,Mallows,4,10,Plurality,Borda,0.38946
+810,Mallows,4,10,Plurality,Instant Runoff,0.29674
+811,Mallows,4,10,Plurality,Coombs,0.45284
+812,Mallows,4,10,Borda,Split Cycle,0.3118
+813,Mallows,4,10,Borda,Minimax,0.30808
+814,Mallows,4,10,Borda,Copeland,0.19708
+815,Mallows,4,10,Borda,Plurality,0.38946
+816,Mallows,4,10,Borda,Borda,0.0
+817,Mallows,4,10,Borda,Instant Runoff,0.33598
+818,Mallows,4,10,Borda,Coombs,0.28396
+819,Mallows,4,10,Instant Runoff,Split Cycle,0.2219
+820,Mallows,4,10,Instant Runoff,Minimax,0.22162
+821,Mallows,4,10,Instant Runoff,Copeland,0.23632
+822,Mallows,4,10,Instant Runoff,Plurality,0.29674
+823,Mallows,4,10,Instant Runoff,Borda,0.33598
+824,Mallows,4,10,Instant Runoff,Instant Runoff,0.0
+825,Mallows,4,10,Instant Runoff,Coombs,0.30778
+826,Mallows,4,10,Coombs,Split Cycle,0.17984
+827,Mallows,4,10,Coombs,Minimax,0.17904
+828,Mallows,4,10,Coombs,Copeland,0.1843
+829,Mallows,4,10,Coombs,Plurality,0.45284
+830,Mallows,4,10,Coombs,Borda,0.28396
+831,Mallows,4,10,Coombs,Instant Runoff,0.30778
+832,Mallows,4,10,Coombs,Coombs,0.0
+833,Mallows,4,11,Split Cycle,Split Cycle,0.0
+834,Mallows,4,11,Split Cycle,Minimax,0.0043
+835,Mallows,4,11,Split Cycle,Copeland,0.07324
+836,Mallows,4,11,Split Cycle,Plurality,0.35302
+837,Mallows,4,11,Split Cycle,Borda,0.20782
+838,Mallows,4,11,Split Cycle,Instant Runoff,0.14108
+839,Mallows,4,11,Split Cycle,Coombs,0.13604
+840,Mallows,4,11,Minimax,Split Cycle,0.0043
+841,Mallows,4,11,Minimax,Minimax,0.0
+842,Mallows,4,11,Minimax,Copeland,0.07448
+843,Mallows,4,11,Minimax,Plurality,0.35326
+844,Mallows,4,11,Minimax,Borda,0.20904
+845,Mallows,4,11,Minimax,Instant Runoff,0.14114
+846,Mallows,4,11,Minimax,Coombs,0.13622
+847,Mallows,4,11,Copeland,Split Cycle,0.07324
+848,Mallows,4,11,Copeland,Minimax,0.07448
+849,Mallows,4,11,Copeland,Copeland,0.0
+850,Mallows,4,11,Copeland,Plurality,0.36458
+851,Mallows,4,11,Copeland,Borda,0.2219
+852,Mallows,4,11,Copeland,Instant Runoff,0.152
+853,Mallows,4,11,Copeland,Coombs,0.14894
+854,Mallows,4,11,Plurality,Split Cycle,0.35302
+855,Mallows,4,11,Plurality,Minimax,0.35326
+856,Mallows,4,11,Plurality,Copeland,0.36458
+857,Mallows,4,11,Plurality,Plurality,0.0
+858,Mallows,4,11,Plurality,Borda,0.37328
+859,Mallows,4,11,Plurality,Instant Runoff,0.30058
+860,Mallows,4,11,Plurality,Coombs,0.38776
+861,Mallows,4,11,Borda,Split Cycle,0.20782
+862,Mallows,4,11,Borda,Minimax,0.20904
+863,Mallows,4,11,Borda,Copeland,0.2219
+864,Mallows,4,11,Borda,Plurality,0.37328
+865,Mallows,4,11,Borda,Borda,0.0
+866,Mallows,4,11,Borda,Instant Runoff,0.23446
+867,Mallows,4,11,Borda,Coombs,0.21126
+868,Mallows,4,11,Instant Runoff,Split Cycle,0.14108
+869,Mallows,4,11,Instant Runoff,Minimax,0.14114
+870,Mallows,4,11,Instant Runoff,Copeland,0.152
+871,Mallows,4,11,Instant Runoff,Plurality,0.30058
+872,Mallows,4,11,Instant Runoff,Borda,0.23446
+873,Mallows,4,11,Instant Runoff,Instant Runoff,0.0
+874,Mallows,4,11,Instant Runoff,Coombs,0.17916
+875,Mallows,4,11,Coombs,Split Cycle,0.13604
+876,Mallows,4,11,Coombs,Minimax,0.13622
+877,Mallows,4,11,Coombs,Copeland,0.14894
+878,Mallows,4,11,Coombs,Plurality,0.38776
+879,Mallows,4,11,Coombs,Borda,0.21126
+880,Mallows,4,11,Coombs,Instant Runoff,0.17916
+881,Mallows,4,11,Coombs,Coombs,0.0
+882,Mallows,4,1000,Split Cycle,Split Cycle,0.0
+883,Mallows,4,1000,Split Cycle,Minimax,0.0
+884,Mallows,4,1000,Split Cycle,Copeland,0.0
+885,Mallows,4,1000,Split Cycle,Plurality,0.00014
+886,Mallows,4,1000,Split Cycle,Borda,2e-05
+887,Mallows,4,1000,Split Cycle,Instant Runoff,0.0
+888,Mallows,4,1000,Split Cycle,Coombs,0.0
+889,Mallows,4,1000,Minimax,Split Cycle,0.0
+890,Mallows,4,1000,Minimax,Minimax,0.0
+891,Mallows,4,1000,Minimax,Copeland,0.0
+892,Mallows,4,1000,Minimax,Plurality,0.00014
+893,Mallows,4,1000,Minimax,Borda,2e-05
+894,Mallows,4,1000,Minimax,Instant Runoff,0.0
+895,Mallows,4,1000,Minimax,Coombs,0.0
+896,Mallows,4,1000,Copeland,Split Cycle,0.0
+897,Mallows,4,1000,Copeland,Minimax,0.0
+898,Mallows,4,1000,Copeland,Copeland,0.0
+899,Mallows,4,1000,Copeland,Plurality,0.00014
+900,Mallows,4,1000,Copeland,Borda,2e-05
+901,Mallows,4,1000,Copeland,Instant Runoff,0.0
+902,Mallows,4,1000,Copeland,Coombs,0.0
+903,Mallows,4,1000,Plurality,Split Cycle,0.00014
+904,Mallows,4,1000,Plurality,Minimax,0.00014
+905,Mallows,4,1000,Plurality,Copeland,0.00014
+906,Mallows,4,1000,Plurality,Plurality,0.0
+907,Mallows,4,1000,Plurality,Borda,0.00016
+908,Mallows,4,1000,Plurality,Instant Runoff,0.00014
+909,Mallows,4,1000,Plurality,Coombs,0.00014
+910,Mallows,4,1000,Borda,Split Cycle,2e-05
+911,Mallows,4,1000,Borda,Minimax,2e-05
+912,Mallows,4,1000,Borda,Copeland,2e-05
+913,Mallows,4,1000,Borda,Plurality,0.00016
+914,Mallows,4,1000,Borda,Borda,0.0
+915,Mallows,4,1000,Borda,Instant Runoff,2e-05
+916,Mallows,4,1000,Borda,Coombs,2e-05
+917,Mallows,4,1000,Instant Runoff,Split Cycle,0.0
+918,Mallows,4,1000,Instant Runoff,Minimax,0.0
+919,Mallows,4,1000,Instant Runoff,Copeland,0.0
+920,Mallows,4,1000,Instant Runoff,Plurality,0.00014
+921,Mallows,4,1000,Instant Runoff,Borda,2e-05
+922,Mallows,4,1000,Instant Runoff,Instant Runoff,0.0
+923,Mallows,4,1000,Instant Runoff,Coombs,0.0
+924,Mallows,4,1000,Coombs,Split Cycle,0.0
+925,Mallows,4,1000,Coombs,Minimax,0.0
+926,Mallows,4,1000,Coombs,Copeland,0.0
+927,Mallows,4,1000,Coombs,Plurality,0.00014
+928,Mallows,4,1000,Coombs,Borda,2e-05
+929,Mallows,4,1000,Coombs,Instant Runoff,0.0
+930,Mallows,4,1000,Coombs,Coombs,0.0
+931,Mallows,4,1001,Split Cycle,Split Cycle,0.0
+932,Mallows,4,1001,Split Cycle,Minimax,0.0
+933,Mallows,4,1001,Split Cycle,Copeland,0.0
+934,Mallows,4,1001,Split Cycle,Plurality,0.00028
+935,Mallows,4,1001,Split Cycle,Borda,8e-05
+936,Mallows,4,1001,Split Cycle,Instant Runoff,0.0
+937,Mallows,4,1001,Split Cycle,Coombs,0.0
+938,Mallows,4,1001,Minimax,Split Cycle,0.0
+939,Mallows,4,1001,Minimax,Minimax,0.0
+940,Mallows,4,1001,Minimax,Copeland,0.0
+941,Mallows,4,1001,Minimax,Plurality,0.00028
+942,Mallows,4,1001,Minimax,Borda,8e-05
+943,Mallows,4,1001,Minimax,Instant Runoff,0.0
+944,Mallows,4,1001,Minimax,Coombs,0.0
+945,Mallows,4,1001,Copeland,Split Cycle,0.0
+946,Mallows,4,1001,Copeland,Minimax,0.0
+947,Mallows,4,1001,Copeland,Copeland,0.0
+948,Mallows,4,1001,Copeland,Plurality,0.00028
+949,Mallows,4,1001,Copeland,Borda,8e-05
+950,Mallows,4,1001,Copeland,Instant Runoff,0.0
+951,Mallows,4,1001,Copeland,Coombs,0.0
+952,Mallows,4,1001,Plurality,Split Cycle,0.00028
+953,Mallows,4,1001,Plurality,Minimax,0.00028
+954,Mallows,4,1001,Plurality,Copeland,0.00028
+955,Mallows,4,1001,Plurality,Plurality,0.0
+956,Mallows,4,1001,Plurality,Borda,0.00028
+957,Mallows,4,1001,Plurality,Instant Runoff,0.00028
+958,Mallows,4,1001,Plurality,Coombs,0.00028
+959,Mallows,4,1001,Borda,Split Cycle,8e-05
+960,Mallows,4,1001,Borda,Minimax,8e-05
+961,Mallows,4,1001,Borda,Copeland,8e-05
+962,Mallows,4,1001,Borda,Plurality,0.00028
+963,Mallows,4,1001,Borda,Borda,0.0
+964,Mallows,4,1001,Borda,Instant Runoff,8e-05
+965,Mallows,4,1001,Borda,Coombs,8e-05
+966,Mallows,4,1001,Instant Runoff,Split Cycle,0.0
+967,Mallows,4,1001,Instant Runoff,Minimax,0.0
+968,Mallows,4,1001,Instant Runoff,Copeland,0.0
+969,Mallows,4,1001,Instant Runoff,Plurality,0.00028
+970,Mallows,4,1001,Instant Runoff,Borda,8e-05
+971,Mallows,4,1001,Instant Runoff,Instant Runoff,0.0
+972,Mallows,4,1001,Instant Runoff,Coombs,0.0
+973,Mallows,4,1001,Coombs,Split Cycle,0.0
+974,Mallows,4,1001,Coombs,Minimax,0.0
+975,Mallows,4,1001,Coombs,Copeland,0.0
+976,Mallows,4,1001,Coombs,Plurality,0.00028
+977,Mallows,4,1001,Coombs,Borda,8e-05
+978,Mallows,4,1001,Coombs,Instant Runoff,0.0
+979,Mallows,4,1001,Coombs,Coombs,0.0
+980,Mallows,5,10,Split Cycle,Split Cycle,0.0
+981,Mallows,5,10,Split Cycle,Minimax,0.02302
+982,Mallows,5,10,Split Cycle,Copeland,0.2265
+983,Mallows,5,10,Split Cycle,Plurality,0.5017
+984,Mallows,5,10,Split Cycle,Borda,0.36958
+985,Mallows,5,10,Split Cycle,Instant Runoff,0.29616
+986,Mallows,5,10,Split Cycle,Coombs,0.2421
+987,Mallows,5,10,Minimax,Split Cycle,0.02302
+988,Mallows,5,10,Minimax,Minimax,0.0
+989,Mallows,5,10,Minimax,Copeland,0.21448
+990,Mallows,5,10,Minimax,Plurality,0.499
+991,Mallows,5,10,Minimax,Borda,0.35892
+992,Mallows,5,10,Minimax,Instant Runoff,0.2945
+993,Mallows,5,10,Minimax,Coombs,0.23904
+994,Mallows,5,10,Copeland,Split Cycle,0.2265
+995,Mallows,5,10,Copeland,Minimax,0.21448
+996,Mallows,5,10,Copeland,Copeland,0.0
+997,Mallows,5,10,Copeland,Plurality,0.46326
+998,Mallows,5,10,Copeland,Borda,0.22658
+999,Mallows,5,10,Copeland,Instant Runoff,0.30666
+1000,Mallows,5,10,Copeland,Coombs,0.2442
+1001,Mallows,5,10,Plurality,Split Cycle,0.5017
+1002,Mallows,5,10,Plurality,Minimax,0.499
+1003,Mallows,5,10,Plurality,Copeland,0.46326
+1004,Mallows,5,10,Plurality,Plurality,0.0
+1005,Mallows,5,10,Plurality,Borda,0.47408
+1006,Mallows,5,10,Plurality,Instant Runoff,0.38184
+1007,Mallows,5,10,Plurality,Coombs,0.5407
+1008,Mallows,5,10,Borda,Split Cycle,0.36958
+1009,Mallows,5,10,Borda,Minimax,0.35892
+1010,Mallows,5,10,Borda,Copeland,0.22658
+1011,Mallows,5,10,Borda,Plurality,0.47408
+1012,Mallows,5,10,Borda,Borda,0.0
+1013,Mallows,5,10,Borda,Instant Runoff,0.3896
+1014,Mallows,5,10,Borda,Coombs,0.32586
+1015,Mallows,5,10,Instant Runoff,Split Cycle,0.29616
+1016,Mallows,5,10,Instant Runoff,Minimax,0.2945
+1017,Mallows,5,10,Instant Runoff,Copeland,0.30666
+1018,Mallows,5,10,Instant Runoff,Plurality,0.38184
+1019,Mallows,5,10,Instant Runoff,Borda,0.3896
+1020,Mallows,5,10,Instant Runoff,Instant Runoff,0.0
+1021,Mallows,5,10,Instant Runoff,Coombs,0.39036
+1022,Mallows,5,10,Coombs,Split Cycle,0.2421
+1023,Mallows,5,10,Coombs,Minimax,0.23904
+1024,Mallows,5,10,Coombs,Copeland,0.2442
+1025,Mallows,5,10,Coombs,Plurality,0.5407
+1026,Mallows,5,10,Coombs,Borda,0.32586
+1027,Mallows,5,10,Coombs,Instant Runoff,0.39036
+1028,Mallows,5,10,Coombs,Coombs,0.0
+1029,Mallows,5,11,Split Cycle,Split Cycle,0.0
+1030,Mallows,5,11,Split Cycle,Minimax,0.00786
+1031,Mallows,5,11,Split Cycle,Copeland,0.1063
+1032,Mallows,5,11,Split Cycle,Plurality,0.44442
+1033,Mallows,5,11,Split Cycle,Borda,0.25534
+1034,Mallows,5,11,Split Cycle,Instant Runoff,0.20322
+1035,Mallows,5,11,Split Cycle,Coombs,0.19052
+1036,Mallows,5,11,Minimax,Split Cycle,0.00786
+1037,Mallows,5,11,Minimax,Minimax,0.0
+1038,Mallows,5,11,Minimax,Copeland,0.10828
+1039,Mallows,5,11,Minimax,Plurality,0.44468
+1040,Mallows,5,11,Minimax,Borda,0.25612
+1041,Mallows,5,11,Minimax,Instant Runoff,0.20334
+1042,Mallows,5,11,Minimax,Coombs,0.19078
+1043,Mallows,5,11,Copeland,Split Cycle,0.1063
+1044,Mallows,5,11,Copeland,Minimax,0.10828
+1045,Mallows,5,11,Copeland,Copeland,0.0
+1046,Mallows,5,11,Copeland,Plurality,0.4525
+1047,Mallows,5,11,Copeland,Borda,0.26404
+1048,Mallows,5,11,Copeland,Instant Runoff,0.21268
+1049,Mallows,5,11,Copeland,Coombs,0.2002
+1050,Mallows,5,11,Plurality,Split Cycle,0.44442
+1051,Mallows,5,11,Plurality,Minimax,0.44468
+1052,Mallows,5,11,Plurality,Copeland,0.4525
+1053,Mallows,5,11,Plurality,Plurality,0.0
+1054,Mallows,5,11,Plurality,Borda,0.46158
+1055,Mallows,5,11,Plurality,Instant Runoff,0.37024
+1056,Mallows,5,11,Plurality,Coombs,0.48294
+1057,Mallows,5,11,Borda,Split Cycle,0.25534
+1058,Mallows,5,11,Borda,Minimax,0.25612
+1059,Mallows,5,11,Borda,Copeland,0.26404
+1060,Mallows,5,11,Borda,Plurality,0.46158
+1061,Mallows,5,11,Borda,Borda,0.0
+1062,Mallows,5,11,Borda,Instant Runoff,0.28458
+1063,Mallows,5,11,Borda,Coombs,0.2445
+1064,Mallows,5,11,Instant Runoff,Split Cycle,0.20322
+1065,Mallows,5,11,Instant Runoff,Minimax,0.20334
+1066,Mallows,5,11,Instant Runoff,Copeland,0.21268
+1067,Mallows,5,11,Instant Runoff,Plurality,0.37024
+1068,Mallows,5,11,Instant Runoff,Borda,0.28458
+1069,Mallows,5,11,Instant Runoff,Instant Runoff,0.0
+1070,Mallows,5,11,Instant Runoff,Coombs,0.24524
+1071,Mallows,5,11,Coombs,Split Cycle,0.19052
+1072,Mallows,5,11,Coombs,Minimax,0.19078
+1073,Mallows,5,11,Coombs,Copeland,0.2002
+1074,Mallows,5,11,Coombs,Plurality,0.48294
+1075,Mallows,5,11,Coombs,Borda,0.2445
+1076,Mallows,5,11,Coombs,Instant Runoff,0.24524
+1077,Mallows,5,11,Coombs,Coombs,0.0
+1078,Mallows,5,1000,Split Cycle,Split Cycle,0.0
+1079,Mallows,5,1000,Split Cycle,Minimax,0.0
+1080,Mallows,5,1000,Split Cycle,Copeland,0.0
+1081,Mallows,5,1000,Split Cycle,Plurality,0.0021
+1082,Mallows,5,1000,Split Cycle,Borda,0.0002
+1083,Mallows,5,1000,Split Cycle,Instant Runoff,0.0
+1084,Mallows,5,1000,Split Cycle,Coombs,0.0
+1085,Mallows,5,1000,Minimax,Split Cycle,0.0
+1086,Mallows,5,1000,Minimax,Minimax,0.0
+1087,Mallows,5,1000,Minimax,Copeland,0.0
+1088,Mallows,5,1000,Minimax,Plurality,0.0021
+1089,Mallows,5,1000,Minimax,Borda,0.0002
+1090,Mallows,5,1000,Minimax,Instant Runoff,0.0
+1091,Mallows,5,1000,Minimax,Coombs,0.0
+1092,Mallows,5,1000,Copeland,Split Cycle,0.0
+1093,Mallows,5,1000,Copeland,Minimax,0.0
+1094,Mallows,5,1000,Copeland,Copeland,0.0
+1095,Mallows,5,1000,Copeland,Plurality,0.0021
+1096,Mallows,5,1000,Copeland,Borda,0.0002
+1097,Mallows,5,1000,Copeland,Instant Runoff,0.0
+1098,Mallows,5,1000,Copeland,Coombs,0.0
+1099,Mallows,5,1000,Plurality,Split Cycle,0.0021
+1100,Mallows,5,1000,Plurality,Minimax,0.0021
+1101,Mallows,5,1000,Plurality,Copeland,0.0021
+1102,Mallows,5,1000,Plurality,Plurality,0.0
+1103,Mallows,5,1000,Plurality,Borda,0.00214
+1104,Mallows,5,1000,Plurality,Instant Runoff,0.0021
+1105,Mallows,5,1000,Plurality,Coombs,0.0021
+1106,Mallows,5,1000,Borda,Split Cycle,0.0002
+1107,Mallows,5,1000,Borda,Minimax,0.0002
+1108,Mallows,5,1000,Borda,Copeland,0.0002
+1109,Mallows,5,1000,Borda,Plurality,0.00214
+1110,Mallows,5,1000,Borda,Borda,0.0
+1111,Mallows,5,1000,Borda,Instant Runoff,0.0002
+1112,Mallows,5,1000,Borda,Coombs,0.0002
+1113,Mallows,5,1000,Instant Runoff,Split Cycle,0.0
+1114,Mallows,5,1000,Instant Runoff,Minimax,0.0
+1115,Mallows,5,1000,Instant Runoff,Copeland,0.0
+1116,Mallows,5,1000,Instant Runoff,Plurality,0.0021
+1117,Mallows,5,1000,Instant Runoff,Borda,0.0002
+1118,Mallows,5,1000,Instant Runoff,Instant Runoff,0.0
+1119,Mallows,5,1000,Instant Runoff,Coombs,0.0
+1120,Mallows,5,1000,Coombs,Split Cycle,0.0
+1121,Mallows,5,1000,Coombs,Minimax,0.0
+1122,Mallows,5,1000,Coombs,Copeland,0.0
+1123,Mallows,5,1000,Coombs,Plurality,0.0021
+1124,Mallows,5,1000,Coombs,Borda,0.0002
+1125,Mallows,5,1000,Coombs,Instant Runoff,0.0
+1126,Mallows,5,1000,Coombs,Coombs,0.0
+1127,Mallows,5,1001,Split Cycle,Split Cycle,0.0
+1128,Mallows,5,1001,Split Cycle,Minimax,0.0
+1129,Mallows,5,1001,Split Cycle,Copeland,0.0
+1130,Mallows,5,1001,Split Cycle,Plurality,0.00256
+1131,Mallows,5,1001,Split Cycle,Borda,0.00038
+1132,Mallows,5,1001,Split Cycle,Instant Runoff,0.0
+1133,Mallows,5,1001,Split Cycle,Coombs,0.0
+1134,Mallows,5,1001,Minimax,Split Cycle,0.0
+1135,Mallows,5,1001,Minimax,Minimax,0.0
+1136,Mallows,5,1001,Minimax,Copeland,0.0
+1137,Mallows,5,1001,Minimax,Plurality,0.00256
+1138,Mallows,5,1001,Minimax,Borda,0.00038
+1139,Mallows,5,1001,Minimax,Instant Runoff,0.0
+1140,Mallows,5,1001,Minimax,Coombs,0.0
+1141,Mallows,5,1001,Copeland,Split Cycle,0.0
+1142,Mallows,5,1001,Copeland,Minimax,0.0
+1143,Mallows,5,1001,Copeland,Copeland,0.0
+1144,Mallows,5,1001,Copeland,Plurality,0.00256
+1145,Mallows,5,1001,Copeland,Borda,0.00038
+1146,Mallows,5,1001,Copeland,Instant Runoff,0.0
+1147,Mallows,5,1001,Copeland,Coombs,0.0
+1148,Mallows,5,1001,Plurality,Split Cycle,0.00256
+1149,Mallows,5,1001,Plurality,Minimax,0.00256
+1150,Mallows,5,1001,Plurality,Copeland,0.00256
+1151,Mallows,5,1001,Plurality,Plurality,0.0
+1152,Mallows,5,1001,Plurality,Borda,0.00272
+1153,Mallows,5,1001,Plurality,Instant Runoff,0.00256
+1154,Mallows,5,1001,Plurality,Coombs,0.00256
+1155,Mallows,5,1001,Borda,Split Cycle,0.00038
+1156,Mallows,5,1001,Borda,Minimax,0.00038
+1157,Mallows,5,1001,Borda,Copeland,0.00038
+1158,Mallows,5,1001,Borda,Plurality,0.00272
+1159,Mallows,5,1001,Borda,Borda,0.0
+1160,Mallows,5,1001,Borda,Instant Runoff,0.00038
+1161,Mallows,5,1001,Borda,Coombs,0.00038
+1162,Mallows,5,1001,Instant Runoff,Split Cycle,0.0
+1163,Mallows,5,1001,Instant Runoff,Minimax,0.0
+1164,Mallows,5,1001,Instant Runoff,Copeland,0.0
+1165,Mallows,5,1001,Instant Runoff,Plurality,0.00256
+1166,Mallows,5,1001,Instant Runoff,Borda,0.00038
+1167,Mallows,5,1001,Instant Runoff,Instant Runoff,0.0
+1168,Mallows,5,1001,Instant Runoff,Coombs,0.0
+1169,Mallows,5,1001,Coombs,Split Cycle,0.0
+1170,Mallows,5,1001,Coombs,Minimax,0.0
+1171,Mallows,5,1001,Coombs,Copeland,0.0
+1172,Mallows,5,1001,Coombs,Plurality,0.00256
+1173,Mallows,5,1001,Coombs,Borda,0.00038
+1174,Mallows,5,1001,Coombs,Instant Runoff,0.0
+1175,Mallows,5,1001,Coombs,Coombs,0.0

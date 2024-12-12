@@ -8,10 +8,10 @@ def test_all_profile_vms():
     for vm in voting_methods: 
         if ElectionTypes.PROFILE in vm.input_types:
             print(vm.name)
-            if vm.name != "Pareto":
-                assert vm(prof) == [1]
-            else:
+            if vm.name == "Pareto":
                 assert vm(prof) == [0, 1]
+            else:
+                assert vm(prof) == [1]
 
 def test_all_profile_with_ties_vms():
     prof = ProfileWithTies([{0:1, 1:2}, {1:1, 0:2}], rcounts=[1, 2])

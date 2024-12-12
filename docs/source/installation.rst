@@ -19,3 +19,7 @@ Requirements:
 * Python 3.9+
 * The following pip packages are required and installed automatically:  filelock, scipy, networkx, tabulate, matplotlib, nashpy, numba, ortools, pathos, preflibtools, prefsampling, and seaborn 
 
+.. warning::
+
+    Since the package uses Numba, refer to the [Numba documentation for the latest supported Python version](https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information).
+

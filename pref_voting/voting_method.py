@@ -15,7 +15,8 @@ import random
 import json
 from pref_voting.voting_method_properties import VotingMethodProperties
 from filelock import FileLock, Timeout
-import pkg_resources
+import importlib.resources
+
 import glob
 import os
 
@@ -41,7 +42,9 @@ class VotingMethod(object):
 
         # Determine the path to the properties file
         if properties_file is None:
-            properties_file = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
+
+            properties_file = importlib.resources.files('pref_voting') / 'data' / 'voting_methods_properties.json'
+
 
         # Get the properties of the voting method
         try:
@@ -142,8 +145,7 @@ class VotingMethod(object):
         
         # Determine the path to the properties file
         if filename is None:
-            filename = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
-
+            filename = importlib.resources.files('pref_voting') / 'data' / 'voting_methods_properties.json'
         lock = FileLock(f"{filename}.lock")
         with lock:
             try:
@@ -182,7 +184,8 @@ class VotingMethod(object):
 
         # Determine the path to the properties file
         if filename is None:
-            filename = pkg_resources.resource_filename('pref_voting', 'data/voting_methods_properties.json')
+            filename = importlib.resources.files('pref_voting') / 'data' / 'voting_methods_properties.json'
+
 
         lock = FileLock(f"{filename}.lock", timeout=timeout)
         try:
@@ -217,7 +220,8 @@ class VotingMethod(object):
             print(f"{self.name} does not have a value for {prop}, no election returned.")
             return elections
         else:
-            dir = pkg_resources.resource_filename('pref_voting', f'data/examples/{prop}/')
+            dir = importlib.resources.files('pref_voting') / 'data' / 'examples' / prop
+
             for f in glob.glob(f"{dir}*"):
                 fname = os.path.basename(f)
                 is_min = fname.startswith("minimal_")
