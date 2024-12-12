@@ -147,12 +147,25 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 .. autofunction:: pref_voting.margin_based_methods.stable_voting
 ```
 
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.stable_voting_with_explanation
+
+```
+
 
 ## Simple Stable Voting
 
 ```{eval-rst}
 
 .. autofunction:: pref_voting.margin_based_methods.simple_stable_voting
+
+```
+
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.simple_stable_voting_with_explanation
 
 ```
 

@@ -1476,26 +1476,405 @@ def simple_stable_voting(
         return _simple_stable_voting_with_condorcet_check(edata, curr_cands = curr_cands, strength_function = strength_function)
     else:
         raise ValueError("Invalid algorithm specified.")
-    
 
-def _stable_voting(edata, 
-                   curr_cands,
-                   strength_function,
-                   sorted_matches,
-                   mem_sv_winners): 
+# Simple Stable Voting with explanation
+def _simple_stable_voting_with_explanation(curr_cands, 
+                          sorted_matches,
+                          mem_sv_winners,
+                          mem_elim_dict):
     '''
-    Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation. 
+    Determine the Simple Stable Voting winners while keeping track 
+    of the winners in any subprofiles checked during computation
+    and building up elimination dictionaries (associating with each
+    winner the candidates eliminated before reaching that winner).
     '''
     
     sv_winners = list()
-    
-    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands, strength_function = strength_function)
-
+        
     if len(curr_cands) == 1: 
+        mem_sv_winners[tuple(curr_cands)] = curr_cands
+        mem_elim_dict[tuple(curr_cands)] = {c: [] for c in curr_cands}
+        return curr_cands, mem_sv_winners, {c: [] for c in curr_cands}, mem_elim_dict
+    
+    margin_witnessing_win = -math.inf
+
+    new_elim_dict = dict()
+
+    for a, b, s in sorted_matches:
+        if s < margin_witnessing_win: 
+            break
+        if a not in sv_winners: 
+            cands_minus_b = [c for c in curr_cands if c != b]
+            cands_minus_b_key = tuple(sorted(cands_minus_b))
+            if cands_minus_b_key not in mem_sv_winners.keys(): 
+                ws, mem_sv_winners, elim_dict, mem_elim_dict = _simple_stable_voting_with_explanation(curr_cands = cands_minus_b,
+                                                                                                      sorted_matches = [(a, c, s) for a, c, s in sorted_matches if a != b and c != b],
+                                                                                                      mem_sv_winners = mem_sv_winners, 
+                                                                                                      mem_elim_dict=mem_elim_dict
+                                                                                                      )
+                mem_sv_winners[cands_minus_b_key] = ws
+                mem_elim_dict[cands_minus_b_key] = elim_dict
+            else: 
+                ws = mem_sv_winners[cands_minus_b_key]
+                elim_dict = mem_elim_dict[cands_minus_b_key]
+            if a in ws:
+                sv_winners.append(a)
+                margin_witnessing_win = s
+                new_elim_dict[a] = [b] + elim_dict[a]
+                
+    return sv_winners, mem_sv_winners, new_elim_dict, mem_elim_dict
+    
+def _simple_stable_voting_with_condorcet_check_with_explanation(
+    edata, 
+    curr_cands = None, 
+    strength_function = None): 
+    """Simple Stable Voting is Condorcet consistent. It is faster to skip executing the recursive algorithm when there is a Condorcet winner.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    """
+    
+    cw = edata.condorcet_winner(curr_cands = curr_cands)
+    if cw is not None: 
+        return [cw], {cw: list()}
+    else: 
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_function = edata.margin if strength_function is None else strength_function  
+
+        matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+        sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
+        ws, mem_sv_winners, elim_dict, mem_elim_dict = _simple_stable_voting_with_explanation(curr_cands = curr_cands, 
+                                                                                              sorted_matches = sorted_matches,
+                                                                                              mem_sv_winners = {}, 
+                                                                                              mem_elim_dict = {}
+                                                                                              )
+    
+        return sorted(ws), elim_dict
+
+
+def _simple_stable_voting_basic_with_explanation(edata, curr_cands = None, strength_function = None): 
+    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+
+    Returns: 
+        A sorted list of candidates. 
+
+    """
+    
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function  
+
+    matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
+
+    ws, mem_sv_winners, elim_dict, mem_elim_dict = _simple_stable_voting_with_explanation(curr_cands = curr_cands, 
+                                                                                          sorted_matches = sorted_matches,
+                                                                                          mem_sv_winners = {}, 
+                                                                                          mem_elim_dict = {}
+                                                                                          )
+    
+    return sorted(ws), elim_dict
+
+def simple_stable_voting_with_explanation(
+    edata, 
+    curr_cands=None, 
+    strength_function=None,
+    algorithm = 'basic'): 
+
+    """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
+
+    Simple Stable Voting is a recursive voting method defined as follows: 
+
+    1. If there is only one candidate in the profile, then that candidate is the winner. 
+    2. Order the pairs :math:`(a,b)` of candidates from largest to smallest value of the margin of :math:`a` over :math:`b`, and declare as Simple Stable Voting winners the candidate(s) :math:`a` from the earliest pair(s) :math:`(a,b)` such that :math:`a` is a Simple Stable Voting winner in the election without :math:`b`. 
+
+    This function outputs not only the winning candidates but also an "explanation", which is a dictionary associating with each winning candidate a list of candidates that were eliminated before reaching the base case of the recursion. Note that if there are tied margins, there may be multiple elimination lists witnessing the same winnner, but the function will only output one of them.
+    
+    Also note that if algorithm = 'with_condorcet_check' and there is a Condorcet winner, then the dictionary associated with the Condorcet winner and empty list, reflecting the fact that no eliminations were necessary to compute the winner.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+        algorithm (str, optional): Specify which algorithm to use.  Options are 'basic' (the default) and 'with_condorcet_check'.
+
+    Returns: 
+        A sorted list of candidates plus a dictionary associating with each winning candidate a list.
+
+    .. seealso::
+        :meth:`pref_voting.margin_based_methods.simple_stable_voting`
+        :meth:`pref_voting.margin_based_methods.stable_voting`
+
+    :Example: 
+
+    .. exec_code::
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import simple_stable_voting
+
+        mg = MarginGraph([0, 1, 2, 3], [(0, 3, 8), (1, 0, 10), (2, 0, 4), (2, 1, 8), (3, 1, 8)])
+
+        simple_stable_voting.display(mg)
+        simple_stable_voting.display(mg, algorithm='basic')
+        simple_stable_voting.display(mg, algorithm='with_condorcet_check')
+
+    """
+    
+    if algorithm == 'basic': 
+        return _simple_stable_voting_basic_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function)
+    elif algorithm == 'with_condorcet_check':
+        return _simple_stable_voting_with_condorcet_check_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function)
+    else:
+        raise ValueError("Invalid algorithm specified.")
+
+# Stable Voting
+def _stable_voting(edata,
+                   curr_cands,
+                   strength_function,
+                   sorted_matches,
+                   mem_sv_winners,
+                   terminate_early):
+    '''
+    Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation.
+
+    If terminate_early is True, then the algorithm will terminate early if there is only one undefeated candidate.
+    '''
+
+    sv_winners = list()
+
+    if len(curr_cands) == 1:
         mem_sv_winners[tuple(curr_cands)] = curr_cands
         return curr_cands, mem_sv_winners
     
+    undefeated_candidates = split_cycle(edata, curr_cands=curr_cands, strength_function=strength_function)
+
+    # Early termination if there is only one undefeated candidate
+    if terminate_early and len(undefeated_candidates) == 1:
+        mem_sv_winners[tuple(undefeated_candidates)] = undefeated_candidates
+        return undefeated_candidates, mem_sv_winners
+
     margin_witnessing_win = -math.inf
+
+    for a, b, s in sorted_matches:
+        if s < margin_witnessing_win:
+            break
+        if a in undefeated_candidates and a not in sv_winners:
+            cands_minus_b = [c for c in curr_cands if c != b]
+            cands_minus_b_key = tuple(sorted(cands_minus_b))
+            if cands_minus_b_key not in mem_sv_winners:
+                ws, mem_sv_winners = _stable_voting(edata,
+                                                    curr_cands=cands_minus_b,
+                                                    strength_function=strength_function,
+                                                    sorted_matches=[(x, y, s) for x, y, s in sorted_matches if x != b and y != b],
+                                                    mem_sv_winners=mem_sv_winners,
+                                                    terminate_early=terminate_early
+                                                    )
+                mem_sv_winners[cands_minus_b_key] = ws
+            else:
+                ws = mem_sv_winners[cands_minus_b_key]
+            if a in ws:
+                sv_winners.append(a)
+                margin_witnessing_win = s
+
+    return sv_winners, mem_sv_winners
+
+def _stable_voting_with_condorcet_check(
+    edata,
+    curr_cands=None,
+    strength_function=None,
+    terminate_early=False):
+    """
+    Stable Voting is Condorcet consistent. It is faster to skip executing the recursive algorithm when there is a Condorcet winner.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method.
+        curr_cands (List[int], optional): Find the winners for the profile restricted to these candidates.
+        strength_function (function, optional): The strength function to calculate the strength of a path.
+        terminate_early (bool, optional): If True, terminate early when there is only one undefeated candidate.
+
+    Returns:
+        A sorted list of candidates.
+    """
+    cw = edata.condorcet_winner(curr_cands=curr_cands)
+    if cw is not None:
+        return [cw]
+    else:
+        curr_cands = edata.candidates if curr_cands is None else curr_cands
+        strength_function = edata.margin if strength_function is None else strength_function
+
+        matches = [(a, b, strength_function(a, b))
+                   for a in curr_cands for b in curr_cands if a != b]
+        sorted_matches = sorted(matches, reverse=True, key=lambda m: m[2])
+
+        winners, _ = _stable_voting(edata,
+                                    curr_cands=curr_cands,
+                                    strength_function=strength_function,
+                                    sorted_matches=sorted_matches,
+                                    mem_sv_winners={},
+                                    terminate_early=terminate_early
+                                    )
+        return sorted(winners)
+
+def _stable_voting_basic(
+    edata,
+    curr_cands=None,
+    strength_function=None,
+    terminate_early=False):
+    """Implementation of Stable Voting from https://arxiv.org/abs/2108.00542.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method.
+        curr_cands (List[int], optional): Find the winners for the profile restricted to these candidates.
+        strength_function (function, optional): The strength function to calculate the strength of a path.
+        terminate_early (bool, optional): If True, terminate early when there is only one undefeated candidate.
+
+    Returns:
+        A sorted list of candidates.
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+    strength_function = edata.margin if strength_function is None else strength_function
+
+    matches = [(a, b, strength_function(a, b))
+               for a in curr_cands for b in curr_cands if a != b]
+    sorted_matches = sorted(matches, reverse=True, key=lambda m: m[2])
+
+    winners, _ = _stable_voting(edata,
+                                curr_cands=curr_cands,
+                                strength_function=strength_function,
+                                sorted_matches=sorted_matches,
+                                mem_sv_winners={},
+                                terminate_early=terminate_early
+                                )
+    return sorted(winners)
+
+@vm(name="Stable Voting",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
+def stable_voting(
+    edata,
+    curr_cands=None,
+    strength_function=None,
+    algorithm='with_condorcet_check_and_early_termination'):
+    """Implementation of Stable Voting from https://arxiv.org/abs/2108.00542.
+
+    Stable Voting is a recursive voting method defined as follows:
+
+    1. If there is only one candidate in the profile, then that candidate is the winner.
+    2. Order the pairs (a, b) of candidates from largest to smallest margin of a over b such that a is undefeated according to Split Cycle, and declare as Stable Voting winners the candidate(s) a from the earliest pair(s) (a, b) such that a is a Simple Stable Voting winner in the election without b.
+
+    If the algorithm 'with_condorcet_check' is specified, then the algorithm will first check if there is a Condorcet winner and return that candidate if there is one.
+
+    If the algorithm 'with_early_termination' is specified, then the algorithm will terminate early if there is only one undefeated candidate.
+
+    If the algorithm 'with_condorcet_check_and_early_termination' (the default) is specified, then the algorithm will first check if there is a Condorcet winner and return that candidate if there is one.  It will also terminate early if there is only one undefeated candidate.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method.
+        curr_cands (List[int], optional): Find the winners for the profile restricted to these candidates.
+        strength_function (function, optional): The strength function to calculate the strength of a path.
+        algorithm (str, optional): Specify which algorithm to use:
+            - 'basic'
+            - 'with_condorcet_check'
+            - 'with_early_termination'
+            - 'with_condorcet_check_and_early_termination'
+
+    Returns:
+        A sorted list of candidates.
+
+    .. seealso::
+        :meth:`simple_stable_voting`
+
+    Example:
+
+        from pref_voting.weighted_majority_graphs import MarginGraph
+        from pref_voting.margin_based_methods import stable_voting
+
+        mg = MarginGraph(
+            candidates=[0, 1, 2, 3],
+            edges=[(0, 3, 8), (1, 0, 10), (2, 0, 4),
+                   (2, 1, 8), (3, 1, 8)]
+        )
+
+        stable_voting.display(mg)
+        stable_voting.display(mg, algorithm='basic')
+        stable_voting.display(mg, algorithm='with_condorcet_check')
+        stable_voting.display(mg, algorithm='with_early_termination')
+        stable_voting.display(mg, algorithm='with_condorcet_check_and_early_termination')
+    """
+
+    if algorithm == 'basic':
+        return _stable_voting_basic(
+            edata,
+            curr_cands=curr_cands,
+            strength_function=strength_function,
+            terminate_early=False
+        )
+    elif algorithm == 'with_condorcet_check':
+        return _stable_voting_with_condorcet_check(
+            edata,
+            curr_cands=curr_cands,
+            strength_function=strength_function,
+            terminate_early=False
+        )
+    elif algorithm == 'with_early_termination':
+        return _stable_voting_basic(
+            edata,
+            curr_cands=curr_cands,
+            strength_function=strength_function,
+            terminate_early=True
+        )
+    elif algorithm == 'with_condorcet_check_and_early_termination':
+        return _stable_voting_with_condorcet_check(
+            edata,
+            curr_cands=curr_cands,
+            strength_function=strength_function,
+            terminate_early=True
+        )
+    else:
+        raise ValueError("Invalid algorithm specified.")
+    
+# Stable Voting with explanation
+def _stable_voting_with_explanation(edata, 
+                   curr_cands,
+                   strength_function,
+                   sorted_matches,
+                   mem_sv_winners,
+                   mem_elim_dict,
+                   terminate_early): 
+    '''
+    Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation. 
+
+    If terminate_early is True, then the algorithm will terminate early if there is only one undefeated candidate.
+    '''
+    
+    sv_winners = list()
+
+    if len(curr_cands) == 1: 
+        mem_sv_winners[tuple(curr_cands)] = curr_cands
+        mem_elim_dict[tuple(curr_cands)] = {c: list() for c in curr_cands}
+        return curr_cands, mem_sv_winners, {c: list() for c in curr_cands}, mem_elim_dict
+    
+    undefeated_candidates = split_cycle(edata, curr_cands = curr_cands, strength_function = strength_function)
+
+    if terminate_early and len(undefeated_candidates) == 1: 
+        mem_sv_winners[tuple(undefeated_candidates)] = undefeated_candidates
+        mem_elim_dict[tuple(undefeated_candidates)] = {c: list() for c in undefeated_candidates}
+        return undefeated_candidates, mem_sv_winners, {c: list() for c in undefeated_candidates}, mem_elim_dict
+    
+    margin_witnessing_win = -math.inf
+
+    new_elim_dict = dict()
 
     for a, b, s in sorted_matches:
         if s < margin_witnessing_win: 
@@ -1504,26 +1883,35 @@ def _stable_voting(edata,
             cands_minus_b = [c for c in curr_cands if c != b]
             cands_minus_b_key = tuple(sorted(cands_minus_b))
             if cands_minus_b_key not in mem_sv_winners.keys(): 
-                ws, mem_sv_winners = _stable_voting(edata,
-                                                    curr_cands = cands_minus_b,
-                                                    strength_function = strength_function,
-                                                    sorted_matches = [(a, c, s) for a, c, s in sorted_matches if a != b and c != b],
-                                                    mem_sv_winners = mem_sv_winners)
+                ws, mem_sv_winners, elim_dict, mem_elim_dict = _stable_voting_with_explanation(edata,
+                                                                                               curr_cands = cands_minus_b,
+                                                                                               strength_function = strength_function,
+                                                                                               sorted_matches = [(a, c, s) for a, c, s in sorted_matches if a != b and c != b],
+                                                                                               mem_sv_winners = mem_sv_winners,
+                                                                                               mem_elim_dict = mem_elim_dict,
+                                                                                               terminate_early = terminate_early
+                                                                                               )
+                
                 mem_sv_winners[cands_minus_b_key] = ws
+                mem_elim_dict[cands_minus_b_key] = elim_dict
             else: 
                 ws = mem_sv_winners[cands_minus_b_key]
+                elim_dict = mem_elim_dict[cands_minus_b_key]
+
             if a in ws:
                 sv_winners.append(a)
                 margin_witnessing_win = s
-                
-    return sv_winners, mem_sv_winners
-        
-def _stable_voting_with_condorcet_check(
+                new_elim_dict[a] = [b] + elim_dict[a]
+     
+    return sv_winners, mem_sv_winners, new_elim_dict, mem_elim_dict
+
+def _stable_voting_with_condorcet_check_with_explanation(
     edata, 
     curr_cands=None, 
-    strength_function=None): 
+    strength_function=None,
+    terminate_early=True): 
     """
-    Stable Voting is Condorcet consistent.   It is faster to skip executing the recursive algorithm when there is a Condorcet winner.  
+    Stable Voting is Condorcet consistent. It is faster to skip executing the recursive algorithm when there is a Condorcet winner.  
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
@@ -1536,7 +1924,7 @@ def _stable_voting_with_condorcet_check(
     """
     cw = edata.condorcet_winner(curr_cands = curr_cands)
     if cw is not None: 
-        return [cw]
+        return [cw], {cw: list()}
     else: 
         curr_cands = edata.candidates if curr_cands is None else curr_cands
         strength_function = edata.margin if strength_function is None else strength_function  
@@ -1544,16 +1932,22 @@ def _stable_voting_with_condorcet_check(
         matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
         sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
 
-        return sorted(_stable_voting(edata, 
-                                    curr_cands = curr_cands, 
-                                    strength_function = strength_function,
-                                    sorted_matches = sorted_matches,
-                                    mem_sv_winners = {})[0])
+        ws, mem_sv_winners, elim_dict, mem_elim_dict = _stable_voting_with_explanation(edata, 
+                                                                                       curr_cands = curr_cands, 
+                                                                                       strength_function = strength_function,
+                                                                                       sorted_matches = sorted_matches,
+                                                                                       mem_sv_winners = {},
+                                                                                       mem_elim_dict = {},
+                                                                                       terminate_early = terminate_early
+                                                                                       )
 
-def _stable_voting_basic(
+        return sorted(ws), elim_dict
+
+def _stable_voting_basic_with_explanation(
         edata, 
         curr_cands = None, 
-        strength_function = None): 
+        strength_function = None,
+        terminate_early = True): 
     """Implementation of  Stable Voting from https://arxiv.org/abs/2108.00542. 
 
     Args:
@@ -1572,15 +1966,18 @@ def _stable_voting_basic(
     matches = [(a, b, strength_function(a, b)) for a in curr_cands for b in curr_cands if a != b]
     sorted_matches = sorted(matches, reverse=True, key=lambda m_w_weight: m_w_weight[2])
 
-    return sorted(_stable_voting(edata, 
-                                 curr_cands = curr_cands, 
-                                 strength_function = strength_function,
-                                 sorted_matches = sorted_matches,
-                                 mem_sv_winners = {})[0])
+    ws, mem_sv_winners, elim_dict, mem_elim_dict = _stable_voting_with_explanation(edata, 
+                                                                                   curr_cands = curr_cands, 
+                                                                                   strength_function = strength_function,
+                                                                                   sorted_matches = sorted_matches,
+                                                                                   mem_sv_winners = {},
+                                                                                   mem_elim_dict = {},
+                                                                                   terminate_early = terminate_early
+                                                                                   )
 
-@vm(name = "Stable Voting",
-    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
-def stable_voting(
+    return sorted(ws), elim_dict
+
+def stable_voting_with_explanation(
     edata, 
     curr_cands=None, 
     strength_function=None, 
@@ -1589,16 +1986,27 @@ def stable_voting(
 
     Stable Voting is a recursive voting method defined as follows: 
 
-    1.  If there is only one candidate in the profile, then that candidate is the winner. 
+    1. If there is only one candidate in the profile, then that candidate is the winner. 
     2. Order the pairs :math:`(a,b)` of candidates from largest to smallest value of the margin of :math:`a` over :math:`b` such that :math:`a` is undefeated according to Split Cycle, and declare as Stable Voting winners the candidate(s) :math:`a` from the earliest pair(s) :math:`(a,b)` such that :math:`a` is a Simple Stable Voting winner in the election without :math:`b`. 
+
+    If the algorithm 'with_condorcet_check' is specified, then the algorithm will first check if there is a Condorcet winner and return that candidate if there is one.
+
+    If the algorithm 'with_early_termination' is specified, then the algorithm will terminate early if there is only one undefeated candidate.
+
+    If the algorithm 'with_condorcet_check_and_early_termination' (the default) is specified, then the algorithm will first check if there is a Condorcet winner and return that candidate if there is one.  It will also terminate early if there is only one undefeated candidate.
 
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         strength_function (function, optional): The strength function to be used to calculate the strength of a path.   The default is the margin method of ``edata``.   This only matters when the ballots are not linear orders. 
+        algorithm (str, optional): Specify which algorithm to use:
+            - 'basic'
+            - 'with_condorcet_check'
+            - 'with_early_termination'
+            - 'with_condorcet_check_and_early_termination'
 
     Returns: 
-        A sorted list of candidates. 
+        A sorted list of candidates plus a dictionary associating with each winning a candidate x the list of candidates that were eliminated before reaching x.
 
     .. seealso::
 
@@ -1617,15 +2025,21 @@ def stable_voting(
         stable_voting.display(mg)
         stable_voting.display(mg, algorithm='basic')
         stable_voting.display(mg, algorithm='with_condorcet_check')
+        stable_voting.display(mg, algorithm='with_early_termination')
+        stable_voting.display(mg, algorithm='with_condorcet_check_and_early_termination')
 
     """
 
     if algorithm == 'basic': 
-        return _stable_voting_basic(edata, curr_cands = curr_cands, strength_function = strength_function)
+        return _stable_voting_basic_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function, terminate_early=False)
     elif algorithm == 'with_condorcet_check':
-        return _stable_voting_with_condorcet_check(edata, curr_cands = curr_cands, strength_function = strength_function)
+        return _stable_voting_with_condorcet_check_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function, terminate_early=False)
+    elif algorithm == "with_early_termination":
+        return _stable_voting_basic_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function, terminate_early=True)
+    elif algorithm == "with_condorcet_check_and_early_termination":
+        return _stable_voting_with_condorcet_check_with_explanation(edata, curr_cands = curr_cands, strength_function = strength_function, terminate_early=True)
     else:
-        raise ValueError("Invalid algorithm specified.")
+        raise ValueError("Invalid algorithm specified.")  
     
 
 @vm(name="Essential Set",
