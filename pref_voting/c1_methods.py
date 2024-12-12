@@ -67,6 +67,33 @@ def condorcet(edata, curr_cands = None):
     
     return [cond_winner] if cond_winner is not None else sorted(candidates)
 
+@vm(name = "Weak Condorcet",
+    input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
+def weak_condorcet(edata, curr_cands = None):
+    
+    """
+    Return all weak Condorcet winner if one exists, otherwise return all the candidates.  A weak Condorcet winner is a candidate :math:`c` such that no other candidate is majority preferred to :math:`c`.
+
+    Args:
+        edata (Profile, ProfileWithTies, MajorityGraph, MarginGraph): Any election data that has a `weak_condorcet_winner` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. seealso::
+
+        :meth:`pref_voting.profiles.Profile.weak_condorcet_winner`,  
+        :meth:`pref_voting.profiles_with_ties.ProfileWithTies.weak_condorcet_winner`, 
+        :meth:`pref_voting.weighted_majority_graphs.MajorityGraph.weak_condorcet_winner`
+
+    """
+   
+    candidates = edata.candidates if curr_cands is None else curr_cands
+    weak_cond_winners = edata.weak_condorcet_winner(curr_cands = curr_cands)
+    
+    return weak_cond_winners if weak_cond_winners is not None else sorted(candidates)
+
 @vm(name = "Copeland",
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def copeland(edata, curr_cands = None):

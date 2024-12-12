@@ -14,6 +14,14 @@ A voting method $F$ is **C1** if it satisfies the following invariance property:
 
 ```
 
+## Weak Condorcet
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.c1_methods.weak_condorcet
+
+```
+
 ## Copeland
 
 ```{eval-rst}
