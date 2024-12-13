@@ -16,7 +16,7 @@ Alternatively, you can install the latest development version from source:
 
 Requirements:
 
-* Python 3.9+
+* The package requires Python 3.9 or higher and has been tested on Python 3.12.
 * The following pip packages are required and installed automatically:  filelock, scipy, networkx, tabulate, matplotlib, nashpy, numba, ortools, pathos, preflibtools, prefsampling, and seaborn 
 
 .. warning::
