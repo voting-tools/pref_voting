@@ -178,7 +178,7 @@ def preflib_to_profile(
 
     rankings = []
     rcounts = []
-    cmap = {c:str(c) for c in range(instance.num_alternatives)}
+    cmap = {c:str(c) for c in instance.alternatives_name.keys()}
 
     if not as_linear_profile:
 
