@@ -232,6 +232,7 @@ def resoluteness_data(
         "probmod": list(),
         "probmod_param":list(),
         "num_trials": list(),
+        "freq_multiple_winners": list(),
         "avg_num_winners": list(),
         "avg_percent_winners": list(),
     }
@@ -255,10 +256,13 @@ def resoluteness_data(
                     data = list(map(get_data, range(num_trials)))
                     
                 num_winners = {vm.name: 0 for vm in vms}
+                multiple_winners = {vm.name: 0 for vm in vms}
 
                 for d in data:
                     for vm in vms:
                         num_winners[vm.name] += int(d["num_winners"][vm.name])
+                        if d["num_winners"][vm.name] > 1:
+                            multiple_winners[vm.name] += 1
 
                 for vm in vms:
                     data_for_df["vm"].append(vm.name)
@@ -267,6 +271,7 @@ def resoluteness_data(
                     data_for_df["probmod"].append(probmod)
                     data_for_df["probmod_param"].append(probmod_param)
                     data_for_df["num_trials"].append(num_trials)
+                    data_for_df["freq_multiple_winners"].append(multiple_winners[vm.name] / num_trials)
                     data_for_df["avg_num_winners"].append(
                         num_winners[vm.name] / num_trials
                     )
