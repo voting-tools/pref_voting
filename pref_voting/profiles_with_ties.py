@@ -21,6 +21,26 @@ from pref_voting.weighted_majority_graphs import (
 import os
 import pandas as pd
 
+def _num_rank_profile_with_ties(rankings, rcounts, cand, level):
+    """
+    Counts the number of voters that rank candidate `cand` at rank `level` (1-based)
+    in a ProfileWithTies object.
+
+    Args:
+        rankings: list of Ranking objects
+        rcounts: list of counts for each ranking
+        cand: candidate
+        level: rank to check (1-based)
+
+    Returns:
+        Total number of voters ranking candidate `cand` at rank `level`
+    """
+    total = 0
+    for ranking, count in zip(rankings, rcounts):
+        if cand in ranking.rmap and ranking.rmap[cand] == level - 1:  # Convert 1-based rank to 0-based
+            total += count
+    return total
+
 class ProfileWithTies(object):
     """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates. 
 
