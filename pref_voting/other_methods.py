@@ -2,10 +2,9 @@
     File: other_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 12, 2022
-    Updated: May 28, 2024
+    Updated: December 31, 2024
 
 '''
-
 from pref_voting.voting_method import *
 from pref_voting.scoring_methods import plurality
 from pref_voting.profiles import _find_updated_profile, _num_rank
@@ -16,6 +15,7 @@ from pref_voting.voting_method_properties import ElectionTypes
 from pref_voting.rankings import Ranking
 from pref_voting.social_welfare_function import swf
 import numpy as np
+from pref_voting.profiles_with_ties import _num_rank_profile_with_ties
 
 @vm(name = "Absolute Majority",
     skip_registration=True, # skip registration since aboslute majority may return an empty list
@@ -400,6 +400,59 @@ def bucklin_with_explanation(profile, curr_cands = None):
             break
     max_score = max(cand_scores.values())
     return sorted([c for c in candidates if cand_scores[c] >= max_score]), cand_scores
+
+@vm(name="Bucklin for Truncated Linear Orders", 
+    input_types=[ElectionTypes.PROFILE_WITH_TIES])
+def bucklin_for_truncated_linear_orders(profile, curr_cands=None):
+    """The Bucklin voting method adapted for truncated linear orders using ProfileWithTies.
+    
+    Args:
+        profile: A ProfileWithTies object that represents an election profile.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in curr_cands
+
+    Returns: 
+        A sorted list of candidates that win according to the Bucklin method.
+        
+    .. note::
+        This is an adaptation of the Bucklin method for truncated linear orders. Empty ballots are removed before calculating
+        the majority threshold, similar to how instant_runoff_for_truncated_linear_orders handles truncated profiles.
+    """
+    assert all([not r.has_overvote() for r in profile.rankings]), "Bucklin is only defined when all the ballots are truncated linear orders."
+
+    # Remove empty rankings and get working copy of profile
+    working_profile = copy.deepcopy(profile)
+    working_profile.remove_empty_rankings()
+    
+    strict_maj_size = working_profile.strict_maj_size()
+    candidates = working_profile.candidates if curr_cands is None else curr_cands
+    
+    if curr_cands is not None:
+        working_profile = working_profile.remove_candidates([c for c in working_profile.candidates if c not in curr_cands])
+    rcounts = working_profile.rcounts
+    
+    num_cands = len(candidates)
+    ranks = range(1, num_cands + 1)
+    
+    # Get rankings and their counts
+    rankings, rcounts = working_profile.rankings_counts
+    
+    # Track scores at each rank level
+    cand_to_num_voters_rank = dict()
+    for r in range(1, num_cands + 1):
+        cand_to_num_voters_rank[r] = {c: _num_rank_profile_with_ties(rankings, rcounts, c, r)
+                                     for c in candidates}
+        # Calculate cumulative scores up to current rank
+        cand_scores = {c: sum([cand_to_num_voters_rank[_r][c] for _r in range(1, r + 1)])
+                      for c in candidates}
+        
+        # Check if any candidate has a majority
+        if any([s >= strict_maj_size for s in cand_scores.values()]):
+            max_score = max(cand_scores.values())
+            return sorted([c for c in candidates if cand_scores[c] >= max_score])
+    
+    # If no candidate has majority, return those with highest cumulative score
+    max_score = max(cand_scores.values())
+    return sorted([c for c in candidates if cand_scores[c] >= max_score])
 
 
 @vm(name = "Simplified Bucklin",
