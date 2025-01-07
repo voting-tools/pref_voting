@@ -1816,6 +1816,8 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False):
                 return True
             
         return False
+    
+    return False
 
 def find_all_single_voter_resolvability_violations(prof, vm, verbose=False):
     """
