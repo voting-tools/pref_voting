@@ -200,8 +200,8 @@ def preflib_to_profile(
             rcounts.append(instance.multiplicity[order])
 
         return ProfileWithTies(rankings, 
-                       rcounts=rcounts,
-                       cmap=cmap)
+                               rcounts=rcounts,
+                               cmap=cmap)
 
     elif as_linear_profile: 
         
@@ -246,7 +246,7 @@ def csv_to_profile(
         """
         
         if csv_format == "rank_columns":
-            df = pd.read_csv(filename)
+            df = pd.read_csv(filename, low_memory=False)
             items_to_skip = items_to_skip if items_to_skip is not None else ["skipped"]
             ranks = []
             rank_columns = [col for col in df.columns if col.startswith('rank') or col.startswith('Rank')]
