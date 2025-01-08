@@ -489,6 +489,68 @@ def instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thres
     
     return sorted([c for c in pl_scores.keys() if pl_scores[c] == max_pl_score])
 
+def top_n_instant_runoff_for_truncated_linear_orders(
+    profile, 
+    n,
+    curr_cands = None, 
+    threshold = None, 
+    hide_warnings = True): 
+    """
+    Returns the top n candidates according to the Instant Runoff method: Iteratively remove candidates until there are at most n candidates left.   Note that since there may be multiple candidates with the lowest plurality score, this may return less than n candidates.
+
+    """
+    
+    assert all([not r.has_overvote() for r in profile.rankings]), "Instant Runoff is only defined when all the ballots are truncated linear orders."
+    
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+    if len(curr_cands) <= n:
+        return sorted(curr_cands)
+
+    # we need to remove empty rankings during the algorithm, so make a copy of the profile
+    prof2 = copy.deepcopy(profile) 
+    
+    _prof = prof2.remove_candidates([c for c in profile.candidates if c not in curr_cands])
+
+    # remove the empty rankings
+    _prof.remove_empty_rankings()
+    
+    threshold = threshold if threshold is not None else _prof.strict_maj_size()
+    
+    remaining_candidates = _prof.candidates
+        
+    pl_scores = _prof.plurality_scores()
+    max_pl_score = max(pl_scores.values())
+    
+    while max_pl_score < threshold and len(remaining_candidates) > n: 
+        print("len remaining cands ", len(remaining_candidates))
+        reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
+        
+        # after removing the candidates, there might be some empty ballots.
+        reduced_prof.remove_empty_rankings()
+
+        pl_scores = reduced_prof.plurality_scores()
+        min_pl_score = min(pl_scores.values())
+        print(pl_scores)  
+        cands_to_remove = [c for c in pl_scores.keys() if pl_scores[c] == min_pl_score]
+
+        if not hide_warnings and len(cands_to_remove) > 1: 
+            print(f"Warning: multiple candidates removed in a round: {', '.join(map(str,cands_to_remove))}")
+            
+        if len(cands_to_remove) == len(reduced_prof.candidates): 
+            # all remaining candidates have the same plurality score.
+            remaining_candidates = reduced_prof.candidates
+            break 
+            
+        # possibly update the threshold, so that it is a strict majority of the remaining ballots
+        threshold = threshold if threshold is not None else reduced_prof.strict_maj_size()
+        max_pl_score = max(pl_scores.values())
+
+        remaining_candidates = [c for c in remaining_candidates if c not in cands_to_remove]
+
+    return sorted(remaining_candidates)
+
+
 @vm(name="Bottom-Two-Runoff Instant Runoff",
     input_types=[ElectionTypes.PROFILE])
 def bottom_two_runoff_instant_runoff(profile, curr_cands = None):
