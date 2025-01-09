@@ -71,3 +71,13 @@ Variable Voter Axioms
 .. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations
 
 ```
+
+## Neutral Reversal
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_neutral_reversal_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_neutral_reversal_violations
+
+```
