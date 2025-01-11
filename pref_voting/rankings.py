@@ -380,7 +380,9 @@ class Ranking(object):
                 return False
         return True
 
-
+    def __hash__(self): 
+        return hash(tuple(self.to_indiff_list()))
+    
 def break_ties_alphabetically(ranking):
     """Break ties in the ranking alphabetically.
 

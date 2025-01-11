@@ -17,7 +17,8 @@ import copy
 from itertools import permutations, product
 import numpy as np
 from pref_voting.voting_method_properties import ElectionTypes
-
+from pref_voting.profiles import Profile
+from pref_voting.profiles_with_ties import ProfileWithTies
 
 def _instant_runoff_basic(profile,curr_cands = None):
     "The basic implementation of instant runoff"
@@ -66,9 +67,100 @@ def _instant_runoff_recursive(profile, curr_cands = None):
     else:
         return _instant_runoff_recursive(profile, [c for c in candidates if c not in lowest_first_place_votes])
 
+
+def _instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, threshold = None, hide_warnings = True): 
+    """
+    Instant Runoff for Truncated Linear Orders.  Iteratively remove the candidates with the fewest number of first place votes, until there is a candidate with more than the threshold number of first-place votes. 
+    If a threshold is not set, then it is strictly more than half of the non-empty ballots. 
+    
+    Args:
+        profile (ProfileWithTies): An anonymous profile with no ties in the ballots (note that ProfileWithTies allows for truncated linear orders).
+        threshold (int, float, optional): The threshold needed to win the election.  If it is not set, then it is strictly more than half of the remaining ballots.
+        hide_warnings (bool, optional): Show or hide the warnings when more than one candidate is eliminated in a round.
+
+    Returns: 
+        A sorted list of candidates
+    
+    .. note:: This is the simultaneous version of instant runoff, not the parallel-universe tiebreaking version. It is intended to be run on profiles with large number of voters in which there is a very low probability of a tie in the fewest number of first place votes.  A warning is displayed when more than one candidate is eliminated. 
+
+    :Example: 
+
+    .. exec_code:: 
+
+        from pref_voting.profiles_with_ties import ProfileWithTies
+        from pref_voting.iterative_methods import instant_runoff_for_truncated_linear_orders
+
+        prof = ProfileWithTies([{0:1, 1:1},{0:1, 1:2, 2:3, 3:4}, {0:1, 1:3, 2:3}, {3:2}, {0:1}, {0:1}, {}, {}])
+        prof.display()
+
+        tprof, report = prof.truncate_overvotes()
+        for r, new_r, count in report: 
+            print(f"{r} --> {new_r}: {count}")
+        tprof.display()
+        instant_runoff_for_truncated_linear_orders.display(tprof)
+    
+    
+    """
+    
+    assert all([not r.has_overvote() for r in profile.rankings]), "Instant Runoff is only defined when all the ballots are truncated linear orders."
+    
+    curr_cands = profile.candidates if curr_cands is None else curr_cands
+
+    # we need to remove empty rankings during the algorithm, so make a copy of the profile
+    prof2 = copy.deepcopy(profile) 
+    
+    _prof = prof2.remove_candidates([c for c in profile.candidates if c not in curr_cands])
+
+    # remove the empty rankings
+    _prof.remove_empty_rankings()
+    
+    threshold = threshold if threshold is not None else _prof.strict_maj_size()
+    
+    remaining_candidates = _prof.candidates
+        
+    pl_scores = _prof.plurality_scores()
+    max_pl_score = max(pl_scores.values())
+    
+    while max_pl_score < threshold: 
+
+        reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
+        
+        # after removing the candidates, there might be some empty ballots.
+        reduced_prof.remove_empty_rankings()
+
+        pl_scores = reduced_prof.plurality_scores()
+        min_pl_score = min(pl_scores.values())
+            
+        cands_to_remove = [c for c in pl_scores.keys() if pl_scores[c] == min_pl_score]
+
+        if not hide_warnings and len(cands_to_remove) > 1: 
+            print(f"Warning: multiple candidates removed in a round: {', '.join(map(str,cands_to_remove))}")
+            
+        if len(cands_to_remove) == len(reduced_prof.candidates): 
+            # all remaining candidates have the same plurality score.
+            break 
+            
+        # possibly update the threshold, so that it is a strict majority of the remaining ballots
+        threshold = threshold if threshold is not None else reduced_prof.strict_maj_size()
+        max_pl_score = max(pl_scores.values())
+
+        remaining_candidates = [c for c in remaining_candidates if c not in cands_to_remove]
+
+
+    reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
+
+    # after removing the candidates, there might be some empty ballots.
+    reduced_prof.remove_empty_rankings()
+        
+    pl_scores = reduced_prof.plurality_scores()
+    
+    max_pl_score = max(pl_scores.values())
+    
+    return sorted([c for c in pl_scores.keys() if pl_scores[c] == max_pl_score])
+
 @vm(name = "Instant Runoff",
     input_types=[ElectionTypes.PROFILE])
-def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
+def instant_runoff(profile, curr_cands = None, algorithm = "basic", **kwargs):
     """
     If there is a majority winner then that candidate is the winner. If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters. Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  
     
@@ -105,16 +197,17 @@ def instant_runoff(profile, curr_cands = None, algorithm = "basic"):
         hare.display(prof)
 
     """
-
-    if algorithm == "basic":
-        return _instant_runoff_basic(profile, curr_cands = curr_cands)
-    
-    elif algorithm == "recursive":
-        return _instant_runoff_recursive(profile, curr_cands = curr_cands)
-    
-    else:
-        raise ValueError("Algorithm must be either 'basic' or 'recursive'.")
-
+    if isinstance(profile, Profile): 
+        if algorithm == "basic":
+            return _instant_runoff_basic(profile, curr_cands = curr_cands)
+        
+        elif algorithm == "recursive":
+            return _instant_runoff_recursive(profile, curr_cands = curr_cands)
+        
+        else:
+            raise ValueError("Algorithm must be either 'basic' or 'recursive'.")
+    elif isinstance(profile, ProfileWithTies): 
+        return _instant_runoff_for_truncated_linear_orders(profile, curr_cands = curr_cands, **kwargs)
 # Create some aliases for instant runoff
 instant_runoff.set_name("Hare")
 hare = copy.deepcopy(instant_runoff)
@@ -523,7 +616,6 @@ def top_n_instant_runoff_for_truncated_linear_orders(
     max_pl_score = max(pl_scores.values())
     
     while max_pl_score < threshold and len(remaining_candidates) > n: 
-        print("len remaining cands ", len(remaining_candidates))
         reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
         
         # after removing the candidates, there might be some empty ballots.
@@ -531,7 +623,6 @@ def top_n_instant_runoff_for_truncated_linear_orders(
 
         pl_scores = reduced_prof.plurality_scores()
         min_pl_score = min(pl_scores.values())
-        print(pl_scores)  
         cands_to_remove = [c for c in pl_scores.keys() if pl_scores[c] == min_pl_score]
 
         if not hide_warnings and len(cands_to_remove) > 1: 
