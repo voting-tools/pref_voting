@@ -12,6 +12,7 @@ import numpy as np
 from itertools import product, combinations, permutations
 from pref_voting.helper import weak_orders
 from pref_voting.rankings import Ranking
+from pref_voting.generate_profiles import strict_weak_orders
 
 def divide_electorate(prof):
     """Given a Profile or ProfileWithTies object, yield all possible ways to divide the electorate into two nonempty electorates."""
@@ -2064,6 +2065,76 @@ neutral_indifference = Axiom(
     find_all_violations = find_all_neutral_indifference_violations,
 )
 
+def has_nonlinear_neutral_reversal_violation(prof, vm, verbose=False): 
+    """
+    Return True if there is a violation of the nonlinear neutral reversal axiom for the voting method vm.  Otherwise, return False.  That is, return True if there is a strict weak order and its reverse that can be added to the profile that changes the winning set according to vm.  
+    """
+    for swo in strict_weak_orders(prof.candidates):
+
+        ranking = Ranking.from_indiff_list(swo)
+        ranking_reverse = ranking.reverse()
+
+        if isinstance(prof, ProfileWithTies):
+            new_rankings = prof.rankings + [ranking, ranking_reverse]
+            new_prof = ProfileWithTies(new_rankings)
+
+        elif isinstance(prof, Profile):
+            new_rankings = [Ranking.from_linear_order(r) for r in prof.rankings] + [ranking, ranking_reverse]
+            new_prof = ProfileWithTies(new_rankings)
+        
+        if vm(prof) != vm(new_prof):
+            if verbose:
+                print("The original profile")
+                prof.anonymize().display()
+                print(prof.description())
+                vm.display(prof)
+                print(f"The profile after adding {ranking} and its reverse {ranking_reverse}:")
+                new_prof.anonymize().display()
+                print(new_prof.description())
+                vm.display(new_prof)
+            return True
+    return False
+
+
+def find_all_nonlinear_neutral_reversal_violations(prof, vm, verbose=False): 
+    """
+    Return the list of strict weak orders and their reverse such that adding them to prof results in a different winning set according to vm.  Otherwise, return the empty list.  
+    """
+
+    violation_swos = []
+    for swo in strict_weak_orders(prof.candidates):
+
+        ranking = Ranking.from_indiff_list(swo)
+        ranking_reverse = ranking.reverse()
+
+        if isinstance(prof, ProfileWithTies):
+            new_rankings = prof.rankings + [ranking, ranking_reverse]
+            new_prof = ProfileWithTies(new_rankings)
+
+        elif isinstance(prof, Profile):
+            new_rankings = [Ranking.from_linear_order(r) for r in prof.rankings] + [ranking, ranking_reverse]
+            new_prof = ProfileWithTies(new_rankings)
+        
+        if vm(prof) != vm(new_prof):
+            if verbose:
+                print("The original profile")
+                prof.anonymize().display()
+                print(prof.description())
+                vm.display(prof)
+                print(f"The profile after adding {ranking} and its reverse {ranking_reverse}:")
+                new_prof.anonymize().display()
+                print(new_prof.description())
+                vm.display(new_prof)
+            violation_swos.append((ranking, ranking_reverse))
+
+    return violation_swos
+
+nonlinear_neutral_reversal = Axiom(
+    "Nonlinear Neutral Reversal",
+    has_violation = has_nonlinear_neutral_reversal_violation,
+    find_all_violations = find_all_nonlinear_neutral_reversal_violations,
+)
+
 variable_voter_axioms = [
     reinforcement,
     positive_involvement,
@@ -2074,4 +2145,5 @@ variable_voter_axioms = [
     single_voter_resolvability,
     neutral_reversal,
     neutral_indifference,
+    nonlinear_neutral_reversal,
 ]

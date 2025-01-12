@@ -231,7 +231,7 @@ class Ranking(object):
         """
         self.rmap = {c: self.ranks.index(r) + 1 for c, r in self.rmap.items()}
 
-    ## set preferences
+
     def AAdom(self, c1s, c2s, use_extended_preferences=False):
         """
         Returns True if every candidate in ``c1s`` is weakly preferred to every candidate in ``c2s``. If ``use_extended_preferences`` is True, then use the extended weak preference.
@@ -308,6 +308,14 @@ class Ranking(object):
 
         new_cmap = {c: self.cmap[c] if c in self.cmap.keys() else f'{c}' for c in candidates}
         return Ranking(new_ranks, cmap=new_cmap)
+    
+    def reverse(self): 
+        """
+        Returns the reverse of the ranking. 
+        """
+        r =  Ranking({c: -r for c, r in self.rmap.items()}, cmap=self.cmap)
+        r.normalize_ranks()
+        return r
     
     def display(self, cmap = None): 
         """
