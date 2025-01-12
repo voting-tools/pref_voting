@@ -1,7 +1,7 @@
 """
     File: variable_voter_axioms.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: May 24, 2023
+    Date: January 9, 2024
     
     Variable voter axioms 
 """
@@ -1889,6 +1889,124 @@ single_voter_resolvability = Axiom(
     find_all_violations = find_all_single_voter_resolvability_violations, 
 )
 
+def has_neutral_reversal_violation(prof, vm, verbose=False):
+    """Returns True if adding a reversal pair of voters (a voter with ranking L and a voter with the reverse ranking L^{-1}) changes the winners.
+    
+    Args:
+        prof: a Profile or ProfileWithTies object
+        vm: a voting method
+        verbose: if True, display the violation when found
+        
+    Returns:
+        True if there is a violation, False otherwise
+    """
+    
+    winners = vm(prof)
+    
+    # Get all possible linear orders of the candidates
+    all_rankings = list(permutations(prof.candidates))
+    
+    # For each linear order L, add L and its reverse L^-1 to create new profile
+    for ranking in all_rankings:
+        # Skip if we've already considered this pair (to avoid redundancy)
+        reverse_ranking = tuple(reversed(ranking))
+        if reverse_ranking < ranking:
+            continue
+            
+        if isinstance(prof, Profile):
+            # For Profile objects, we need to work with numpy arrays
+            pair_arr = np.array([list(ranking), list(reverse_ranking)])
+            combined_rankings = np.concatenate([prof._rankings, pair_arr], axis=0)
+            combined_rcounts = np.concatenate([prof._rcounts, [1, 1]], axis=0)
+            prof2 = Profile(combined_rankings, rcounts=combined_rcounts)
+        else:
+            # For ProfileWithTies, we work with Ranking objects
+            ranking_obj = Ranking({c: i for i, c in enumerate(ranking)})
+            reverse_ranking_obj = Ranking({c: len(ranking)-1-i for i, c in enumerate(ranking)})
+            new_rankings = prof.rankings + [ranking_obj, reverse_ranking_obj]
+            prof2 = ProfileWithTies(new_rankings, candidates=prof.candidates)
+            if prof.using_extended_strict_preference:
+                prof2.use_extended_strict_preference()
+                
+        # Check if winners changed
+        winners2 = vm(prof2)
+        if set(winners) != set(winners2):
+            if verbose:
+                print(f"Adding voters with rankings {ranking} and {reverse_ranking} changes the winners:")
+                print("\nOriginal profile:")
+                prof.display()
+                vm.display(prof)
+                print("\nProfile after adding reversal pair:")
+                prof2.display()
+                vm.display(prof2)
+            return True
+            
+    return False
+
+def find_all_neutral_reversal_violations(prof, vm, verbose=False):
+    """Returns a list of reversal pairs (L, L^-1) that when added to the profile change the winners.
+    
+    Args:
+        prof: a Profile or ProfileWithTies object
+        vm: a voting method
+        verbose: if True, display the violations when found
+        
+    Returns:
+        A list of pairs (L, L^-1) where L is a linear order and L^-1 is its reverse
+    """
+    
+    winners = vm(prof)
+    violations = []
+    
+    # Get all possible linear orders of the candidates
+    all_rankings = list(permutations(prof.candidates))
+    
+    # For each linear order L, add L and its reverse L^-1 to create new profile
+    for ranking in all_rankings:
+        # Create the reverse ranking
+        reverse_ranking = tuple(reversed(ranking))
+        
+        # Skip if we've already considered this pair (to avoid redundancy)
+        if reverse_ranking < ranking:
+            continue
+            
+        # Add the ranking and its reverse to create new profile
+        if isinstance(prof, Profile):
+            # For Profile objects, we need to work with numpy arrays
+            pair_arr = np.array([list(ranking), list(reverse_ranking)])
+            combined_rankings = np.concatenate([prof._rankings, pair_arr], axis=0)
+            combined_rcounts = np.concatenate([prof._rcounts, [1, 1]], axis=0)
+            prof2 = Profile(combined_rankings, rcounts=combined_rcounts)
+        else:
+            # For ProfileWithTies, we work with Ranking objects
+            ranking_obj = Ranking({c: i for i, c in enumerate(ranking)})
+            reverse_ranking_obj = Ranking({c: len(ranking)-1-i for i, c in enumerate(ranking)})
+            new_rankings = prof.rankings + [ranking_obj, reverse_ranking_obj]
+            prof2 = ProfileWithTies(new_rankings, candidates=prof.candidates)
+            if prof.using_extended_strict_preference:
+                prof2.use_extended_strict_preference()
+                
+        # Check if winners changed
+        winners2 = vm(prof2)
+        if set(winners) != set(winners2):
+            violations.append((ranking, reverse_ranking))
+            if verbose:
+                print(f"Adding voters with rankings {ranking} and {reverse_ranking} changes the winners:")
+                print("\nOriginal profile:")
+                prof.display()
+                vm.display(prof)
+                print("\nProfile after adding reversal pair:")
+                prof2.display()
+                vm.display(prof2)
+                
+    return violations
+
+neutral_reversal = Axiom(
+    "Neutral Reversal",
+    has_violation = has_neutral_reversal_violation,
+    find_all_violations = find_all_neutral_reversal_violations,
+)
+
 
 def has_preferential_equality_violation(prof, vm, verbose=False):
     """
@@ -2034,5 +2152,4 @@ variable_voter_axioms = [
     bullet_vote_positive_involvement,
     participation,
     single_voter_resolvability,
-    preferential_equality
 ]
