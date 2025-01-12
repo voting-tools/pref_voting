@@ -61,3 +61,13 @@ Invariance Axioms
 .. autofunction:: pref_voting.invariance_axioms.find_all_downward_homogeneity_violations
 
 ```
+
+## Preferential Equality
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.invariance_axioms.has_preferential_equality_violation
+
+.. autofunction:: pref_voting.invariance_axioms.find_all_preferential_equality_violations
+
+```

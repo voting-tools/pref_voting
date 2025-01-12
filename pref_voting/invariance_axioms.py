@@ -1,7 +1,7 @@
 """
     File: invariance_axioms.py
     Author: Wesley H. Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: October 24, 2023
+    Date: January 11, 2024
     
     Invariance axioms 
 """
@@ -339,6 +339,143 @@ downward_block_preservation = Axiom(
     find_all_violations = find_all_downward_block_preservation_violations, 
 )
 
+def has_preferential_equality_violation(prof, vm, verbose=False):
+    """
+    Check if a profile has a preferential equality violation for the voting method vm.
+
+    See Definition 2.1 and Lemma 2.4 from the paper "Characterizations of voting rules based on majority margins" by Y. Ding,  W. Holliday, and E. Pacuit.
+
+    """
+    prof_constructor = ProfileWithTies if isinstance(prof, ProfileWithTies) else Profile
+    
+    for x, y in combinations(prof.candidates, 2):
+        
+        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1]
+
+        other_rankings = [r for r in prof.rankings if r not in xy_rankings]
+
+        if len(xy_rankings) != 0 and len(xy_rankings) % 2 == 0:
+            for I, J in equal_size_partitions_with_duplicates(xy_rankings):
+                new_rankings_I = [swap_candidates(r, x, y) for r in I] + list(J) + list(other_rankings)
+                prof_I = prof_constructor(new_rankings_I)
+                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
+                 
+                prof_J = prof_constructor(new_rankings_J)
+
+                if vm(prof_I) != vm(prof_J): 
+                    if verbose:
+                        print("The original profile")
+                        prof.anonymize().display()
+                        print(prof.description())
+                        print(f"The profile after swapping {x} and {y} in the rankings {I}:")
+                        prof_I.anonymize().display()
+                        print(prof_I.description())
+                        vm.display(prof_I)
+                        print(f"The profile after swapping {x} and {y} in the rankings {J}:")
+                        prof_J.anonymize().display()
+                        print(prof_J.description())
+                        vm.display(prof_J)
+                    return True
+
+        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1]
+
+        other_rankings = [r for r in prof.rankings if r not in yx_rankings]
+
+        if len(yx_rankings) != 0 and len(yx_rankings) % 2 == 0:
+            for I, J in equal_size_partitions_with_duplicates(yx_rankings):
+                new_rankings_I = [swap_candidates(r, y, x) for r in I] + list(J) + list(other_rankings)
+                prof_I = prof_constructor(new_rankings_I)
+                new_rankings_J = [swap_candidates(r, y, x) for r in J] + list(I) + list(other_rankings)
+                prof_J = prof_constructor(new_rankings_J)
+
+                if vm(prof_I) != vm(prof_J): 
+                    if verbose:
+                        print("The original profile")
+                        prof.anonymize().display()
+                        print(prof.description())
+                        print(f"The profile after swapping {x} and {y} in the rankings {I}:")
+                        prof_I.anonymize().display()
+                        print(prof_I.description())
+                        vm.display(prof_I)
+                        print(f"The profile after swapping {x} and {y} in the rankings {J}:")
+                        prof_J.anonymize().display()
+                        print(prof_J.description())
+                        vm.display(prof_J)
+                    return True
+    return False
+
+def find_all_preferential_equality_violations(prof, vm, verbose=False):
+    """
+    Return all the preferential equality violations for the voting method vm.  Returns a list of tuples of three profiles (prof, prof_I, prof_J) such that vm(prof_I) != vm(prof_J) and prof_I and prof_J are as defined Lemma 2.4 from the paper "Characterizations of voting rules based on majority margins" by Y. Ding,  W. Holliday, and E. Pacuit (see also Definition 2.1).
+
+    """
+
+    prof_constructor = ProfileWithTies if isinstance(prof, ProfileWithTies) else Profile
+    
+    violations = []
+    for x, y in combinations(prof.candidates, 2):
+        
+        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1]
+
+        other_rankings = [r for r in prof.rankings if r not in xy_rankings]
+
+        if len(xy_rankings) != 0 and len(xy_rankings) % 2 == 0:
+            for I, J in equal_size_partitions_with_duplicates(xy_rankings):
+                new_rankings_I = [swap_candidates(r, x, y) for r in I] + list(J) + list(other_rankings)
+                prof_I = prof_constructor(new_rankings_I)
+                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
+                 
+                prof_J = prof_constructor(new_rankings_J)
+
+                if vm(prof_I) != vm(prof_J): 
+                    if verbose:
+                        print("The original profile")
+                        prof.anonymize().display()
+                        print(prof.description())
+                        print(f"The profile after swapping {x} and {y} in the rankings {I}:")
+                        prof_I.anonymize().display()
+                        print(prof_I.description())
+                        vm.display(prof_I)
+                        print(f"The profile after swapping {x} and {y} in the rankings {J}:")
+                        prof_J.anonymize().display()
+                        print(prof_J.description())
+                        vm.display(prof_J)
+                    violations.append((prof, prof_I, prof_J))
+
+        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1]
+
+        other_rankings = [r for r in prof.rankings if r not in yx_rankings]
+
+        if len(yx_rankings) != 0 and len(yx_rankings) % 2 == 0:
+            for I, J in equal_size_partitions_with_duplicates(yx_rankings):
+                new_rankings_I = [swap_candidates(r, y, x) for r in I] + list(J) + list(other_rankings)
+                prof_I = prof_constructor(new_rankings_I)
+                new_rankings_J = [swap_candidates(r, y, x) for r in J] + list(I) + list(other_rankings)
+                prof_J = prof_constructor(new_rankings_J)
+
+                if vm(prof_I) != vm(prof_J): 
+                    if verbose:
+                        print("The original profile")
+                        prof.anonymize().display()
+                        print(prof.description())
+                        print(f"The profile after swapping {x} and {y} in the rankings {I}:")
+                        prof_I.anonymize().display()
+                        print(prof_I.description())
+                        vm.display(prof_I)
+                        print(f"The profile after swapping {x} and {y} in the rankings {J}:")
+                        prof_J.anonymize().display()
+                        print(prof_J.description())
+                        vm.display(prof_J)
+                    violations.append((prof, prof_I, prof_J))
+    return violations
+
+
+preferential_equality = Axiom(
+    "Preferential Equality",
+    has_violation = has_preferential_equality_violation,
+    find_all_violations = find_all_preferential_equality_violations, 
+)
+
 invariance_axioms = [
     block_invariance,
     upward_block_preservation,
@@ -346,4 +483,5 @@ invariance_axioms = [
     homogeneity,
     upward_homogeneity,
     downward_homogeneity,
+    preferential_equality
 ]
