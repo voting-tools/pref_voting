@@ -16,7 +16,7 @@ from pref_voting.rankings import Ranking
 from pref_voting.social_welfare_function import swf
 import numpy as np
 from pref_voting.profiles_with_ties import _num_rank_profile_with_ties
-
+import copy
 @vm(name = "Absolute Majority",
     skip_registration=True, # skip registration since aboslute majority may return an empty list
     input_types = [ElectionTypes.PROFILE])

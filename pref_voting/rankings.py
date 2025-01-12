@@ -275,6 +275,27 @@ class Ranking(object):
         """
         return tuple([tuple(self.cands_at_rank(r)) for r in self.ranks])
     
+    @classmethod
+    def from_indiff_list(cls, indiff_list, cmap=None): 
+        """
+        Returns a ranking from a list of indifference classes. 
+        """
+        rmap = dict()
+        for r, cands in enumerate(indiff_list): 
+            for c in cands: 
+                rmap[c] = r + 1
+        return Ranking(rmap, cmap=cmap)
+    
+    @classmethod
+    def from_linear_order(cls, linear_order, cmap=None): 
+        """
+        Returns a ranking from a list of indifference classes. 
+        """
+        rmap = dict()
+        for r, c in enumerate(linear_order): 
+            rmap[c] = r + 1
+        return Ranking(rmap, cmap=cmap)
+
     def to_weak_order(self, candidates):
         """
         Returns the ranking as a weak order over the candidates in the list ``candidates``.
