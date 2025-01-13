@@ -477,6 +477,79 @@ preferential_equality = Axiom(
     find_all_violations = find_all_preferential_equality_violations, 
 )
 
+
+def has_tiebreaking_compensation_violation(prof, vm, verbose=False):
+    """
+    Return True if the profile prof has a tiebreaking compensation violation for the voting method vm.
+    """
+    for cands in powerset(prof.candidates): 
+        if len(cands) > 1: 
+
+            rankings_with_tie = [r for r in prof.rankings if r.is_tied(cands)]
+
+            checked_rankings = []
+            for r1, r2 in combinations(rankings_with_tie, 2):
+                if set([r1, r2]) in checked_rankings:
+                    continue
+                checked_rankings.append(set([r1, r2]))
+                for lin_order, reverse_lin_order in linear_orders_with_reverse(cands): 
+
+                    other_rankings = [r for r in prof.rankings if not r in rankings_with_tie]
+                    
+                    # rankings_with_tie without r1 and r2
+                    other_rankings_with_tie = remove_first_occurrences(rankings_with_tie, r1, r2)
+
+                    new_rankings = [r1.break_tie(lin_order),r2.break_tie(reverse_lin_order)] +  other_rankings_with_tie + other_rankings 
+
+                    new_prof = ProfileWithTies(new_rankings, candidates=prof.candidates)
+                    if vm(prof) != vm(new_prof): 
+                        if verbose: 
+                            print(f"\nAfter adding breaking the tie between {cands} with {lin_order} and {reverse_lin_order} in {r1} and {r2}, respectively: \n")
+                            new_prof.anonymize().display()
+                            vm.display(new_prof)
+                        return True
+    return False
+
+
+def find_all_tiebreaking_compensation_violations(prof, vm, verbose=False):
+    """
+    Find all the violations of tiebreaking compensation for prof with respect to the voting method vm. Returns a list of tuples consisting of the rankings and the rankings with the ties broken. If there are no violations, return an empty list.
+    """
+
+    violations = []
+    for cands in powerset(prof.candidates): 
+        if len(cands) > 1: 
+
+            rankings_with_tie = [r for r in prof.rankings if r.is_tied(cands)]
+
+            checked_rankings = []
+            for r1, r2 in combinations(rankings_with_tie, 2):
+                if set([r1, r2]) in checked_rankings:
+                    continue
+                checked_rankings.append(set([r1, r2]))
+                for lin_order, reverse_lin_order in linear_orders_with_reverse(cands): 
+
+                    other_rankings = [r for r in prof.rankings if not r in rankings_with_tie]
+                    
+                    # rankings_with_tie without r1 and r2
+                    other_rankings_with_tie = remove_first_occurrences(rankings_with_tie, r1, r2)
+
+                    new_rankings = [r1.break_tie(lin_order),r2.break_tie(reverse_lin_order)] +  other_rankings_with_tie + other_rankings 
+
+                    new_prof = ProfileWithTies(new_rankings, candidates=prof.candidates)
+                    if vm(prof) != vm(new_prof): 
+                        if verbose: 
+                            print(f"\nAfter adding breaking the tie between {cands} with {lin_order} and {reverse_lin_order} in {r1} and {r2}, respectively: \n")
+                            new_prof.anonymize().display()
+                            vm.display(new_prof)
+                        violations.append((r1, r1.break_tie(lin_order)), (r2, r2.break_tie(reverse_lin_order)))
+    return violations
+
+tiebreaking_compensation = Axiom(
+    "Tiebreaking Compensation",
+    has_violation = has_tiebreaking_compensation_violation,
+    find_all_violations = find_all_tiebreaking_compensation_violations, 
+)
 invariance_axioms = [
     block_invariance,
     upward_block_preservation,
@@ -484,5 +557,6 @@ invariance_axioms = [
     homogeneity,
     upward_homogeneity,
     downward_homogeneity,
-    preferential_equality
+    preferential_equality,
+    tiebreaking_compensation,
 ]

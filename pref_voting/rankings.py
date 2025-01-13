@@ -152,6 +152,11 @@ class Ranking(object):
         """Return True when the ranking has a tie."""
         return len(list(set(self.rmap.values()))) != len(list(self.rmap.values()))
 
+    def is_tied(self, cands):
+        """Return True if the ranking contains a tie between the candidates in cands
+        """        
+        return len(list(set([self.rmap[c] for c in cands]))) == 1
+
     def is_linear(self, num_cands):
         """Return True when the ranking is a linear order of ``num_cands`` candidates. 
         """
@@ -317,6 +322,20 @@ class Ranking(object):
         r.normalize_ranks()
         return r
     
+    def break_tie(self, lin_order):
+        """
+        Given a linear order, break the tie in the ranking by using the linear order.   It is assumed that lin_order is a tuple of candidates such that are a tie according to the ranking. If not, then the function will return the same ranking. 
+        """
+
+        new_indiff_list = []
+        for cs in self.to_indiff_list():
+            if set(cs) == set(lin_order):
+                for c in lin_order: 
+                    new_indiff_list.append((c,))
+            else:
+                new_indiff_list.append(cs)
+        return Ranking.from_indiff_list(new_indiff_list, cmap=self.cmap)
+
     def display(self, cmap = None): 
         """
         Display the ranking vertically as a column of a table. 

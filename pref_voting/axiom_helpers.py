@@ -2,7 +2,7 @@
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.rankings import Ranking
-from itertools import combinations  
+from itertools import combinations, chain, permutations
 import copy
 
 def display_mg(edata): 
@@ -98,3 +98,32 @@ def get_rank(ranking, c):
         return ranking.index(c)
     else:
         raise ValueError("Invalid input type")
+    
+
+# generate all subsets of a set, use combinations
+def powerset(lst):
+    s = list(lst)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+def linear_orders_with_reverse(cands): 
+
+    lin_orders = list(permutations(cands))
+    lin_orders_with_reverse = []
+    for lin_order in lin_orders:
+        lin_orders_with_reverse.append((lin_order, lin_order[::-1]))
+    return lin_orders_with_reverse
+
+def remove_first_occurrences(rankings, r1, r2):
+    removed_r1 = False
+    removed_r2 = False
+    result = []
+
+    for r in rankings:
+        if r == r1 and not removed_r1:
+            removed_r1 = True  # Skip the first r1
+        elif r == r2 and not removed_r2:
+            removed_r2 = True  # Skip the first r2
+        else:
+            result.append(r)  # Keep all other elements
+
+    return result
