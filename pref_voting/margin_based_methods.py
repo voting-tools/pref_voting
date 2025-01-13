@@ -72,6 +72,17 @@ def minimax(edata, curr_cands = None, strength_function = None):
     return sorted([c for c in candidates if scores[c] == min_score])
 
 
+@vm(name = "Minimax (Support)",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES]
+    )
+def minimax_support(edata, curr_cands = None): 
+    """
+    The Minimax method using the support function for the strength_function.
+    """
+
+    return minimax(edata, curr_cands = curr_cands, strength_function = edata.support)  
+
+
 def minimax_scores(edata, curr_cands = None, score_method="margins"):
     """Return the minimax scores for each candidate, where the minimax score for :math:`c` is -1 * the maximum pairwise majority loss. 
 

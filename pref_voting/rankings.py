@@ -155,7 +155,7 @@ class Ranking(object):
     def is_tied(self, cands):
         """Return True if the ranking contains a tie between the candidates in cands
         """        
-        return len(list(set([self.rmap[c] for c in cands]))) == 1
+        return set(self.cands_at_rank(self.rmap[cands[0]])) == set(cands)
 
     def is_linear(self, num_cands):
         """Return True when the ranking is a linear order of ``num_cands`` candidates. 

@@ -504,8 +504,13 @@ def has_tiebreaking_compensation_violation(prof, vm, verbose=False):
                     new_prof = ProfileWithTies(new_rankings, candidates=prof.candidates)
                     if vm(prof) != vm(new_prof): 
                         if verbose: 
-                            print(f"\nAfter adding breaking the tie between {cands} with {lin_order} and {reverse_lin_order} in {r1} and {r2}, respectively: \n")
+                            prof.anonymize().display()
+                            print(prof.description())
+                            vm.display(prof)
+
+                            print(f"\nAfter breaking the tie between the candidates {[prof.cmap[c] for c in cands]} in {r1} with {tuple([prof.cmap[c] for c in lin_order])} and {r2} with {tuple([prof.cmap[c] for c in reverse_lin_order])}: \n")
                             new_prof.anonymize().display()
+                            print(new_prof.description())
                             vm.display(new_prof)
                         return True
     return False
@@ -539,10 +544,15 @@ def find_all_tiebreaking_compensation_violations(prof, vm, verbose=False):
                     new_prof = ProfileWithTies(new_rankings, candidates=prof.candidates)
                     if vm(prof) != vm(new_prof): 
                         if verbose: 
-                            print(f"\nAfter adding breaking the tie between {cands} with {lin_order} and {reverse_lin_order} in {r1} and {r2}, respectively: \n")
+                            prof.anonymize().display()
+                            print(prof.description())
+                            vm.display(prof)
+
+                            print(f"\nAfter breaking the tie between the candidates {[prof.cmap[c] for c in cands]} in {r1} with {tuple([prof.cmap[c] for c in lin_order])} and {r2} with {tuple([prof.cmap[c] for c in reverse_lin_order])}: \n")
                             new_prof.anonymize().display()
+                            print(new_prof.description())
                             vm.display(new_prof)
-                        violations.append((r1, r1.break_tie(lin_order)), (r2, r2.break_tie(reverse_lin_order)))
+                        violations.append(((r1, r1.break_tie(lin_order)), (r2, r2.break_tie(reverse_lin_order))))
     return violations
 
 tiebreaking_compensation = Axiom(
