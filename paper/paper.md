@@ -10,10 +10,10 @@ authors:
   - name: Wesley H. Holliday
     orcid: 0000-0001-6054-9052
     equal-contrib: true
-    affiliation: 1 # (Multiple affiliations must be quoted)
+    affiliation: 1 
   - name: Eric Pacuit
     orcid: 0000-0002-0751-9011
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
+    equal-contrib: true 
     affiliation: 2
 affiliations:
  - name: University of California, Berkeley
