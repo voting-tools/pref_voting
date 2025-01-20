@@ -1,5 +1,7 @@
 pref_voting
 ==========
+[![DOI](https://zenodo.org/badge/578984957.svg)](https://doi.org/10.5281/zenodo.14675583)
+
 
 > [!NOTE]
 > - [**Documentation**](https://pref-voting.readthedocs.io/)
