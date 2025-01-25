@@ -164,13 +164,13 @@ class SpatialProfile(object):
 
         return cls(cand_positions, voter_positions)
 
-    def view(self, show_labels = False): 
+    def view(self, show_cand_labels=False, show_voter_labels=False): 
         """ 
         Displays the spatial model in a 1D, 2D, or 3D plot.
 
         Args:
-            show_labels (optional, bool): If True, displays the labels of each candidate and voter. The default is False.
-
+            show_cand_labels (optional, bool): If True, displays the labels of each candidate. The default is False.
+            show_voter_labels (optional, bool): If True, displays the labels of each voter. The default is False.
         """
         assert self.num_dims <= 3, "Can only view profiles with 1, 2, or 3 dimensions"
 
@@ -181,14 +181,16 @@ class SpatialProfile(object):
             sns.scatterplot(x=[self.voter_position(v)[0] for v in self.voters], y=[1] * len(self.voters), color="blue", label="Voters")
 
             sns.scatterplot(x=[self.candidate_position(c)[0] for c in self.candidates], y=[1] * len(self.candidates), color="red", marker='X', label="Candidates")
-            
-            if show_labels:
-                # Adding labels to each point
-                for v in self.voters:
-                    plt.annotate(v + 1, (self.voter_position(v)[0], 1))
+
+            if show_cand_labels:
                 # Adding labels to each point
                 for c in self.candidates:
                     plt.annotate(c, (self.candidate_position(c)[0], 1))
+            
+            if show_voter_labels:
+                # Adding labels to each point
+                for v in self.voters:
+                    plt.annotate(v + 1, (self.voter_position(v)[0], 1))
 
             plt.yticks([])  # this hides the y-axis
             plt.show()
@@ -199,14 +201,13 @@ class SpatialProfile(object):
 
             scatter = sns.scatterplot(x=[self.candidate_position(c)[0] for c in self.candidates], y=[self.candidate_position(c)[1] for c in self.candidates], color="red", marker='X', label="Candidates")
 
-            if show_labels:
-
-                # Adding labels to each point
-                for v in self.voters:
-                    plt.annotate(v + 1, (self.voter_position(v)[0], self.voter_position(v)[1]))
+            if show_cand_labels:
                 for c in self.candidates:
                     plt.annotate(c, (self.candidate_position(c)[0], self.candidate_position(c)[1]))
 
+            if show_voter_labels:
+                for v in self.voters:
+                    plt.annotate(v + 1, (self.voter_position(v)[0], self.voter_position(v)[1]))
 
             scatter.set(xlabel='Dimension 1', ylabel='Dimension 2')
             plt.legend()
