@@ -1,6 +1,6 @@
 pref_voting
 ==========
-[![DOI](https://zenodo.org/badge/578984957.svg)](https://doi.org/10.5281/zenodo.14675583)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.07020/status.svg)](https://doi.org/10.21105/joss.07020) [![DOI](https://zenodo.org/badge/578984957.svg)](https://doi.org/10.5281/zenodo.14675583)
 
 
 > [!NOTE]
@@ -131,6 +131,36 @@ For more detailed output, add the -v or --verbose flag:
 ```bash
 pytest -v
 ```
+
+How to cite
+===========
+
+If you would like to acknowledge our work in a scientific paper,
+please use the following citation:
+
+.. code-block:: text
+
+    Wesley H. Holliday and Eric Pacuit (2025).
+    pref_voting: The Preferential Voting Tools package for Python.
+    Journal of Open Source Software, 10(105), 7020. https://doi.org/10.21105/joss.07020
+
+Bibtex:
+
+.. code-block:: bibtex
+
+    @article{HollidayPacuit2025, 
+    author = {Wesley H. Holliday and Eric Pacuit}, 
+    title = {pref_voting: The Preferential Voting Tools package for Python}, 
+    journal = {Journal of Open Source Software},
+    year = {2025}, 
+    publisher = {The Open Journal}, 
+    volume = {10}, 
+    number = {105}, 
+    pages = {7020}, 
+    doi = {10.21105/joss.07020}}
+
+Alternatively, you can cite the archived code repository
+at `zenodo <https://doi.org/10.5281/zenodo.14675583>`_.
 
 ## Contributing
 
