@@ -132,35 +132,32 @@ For more detailed output, add the -v or --verbose flag:
 pytest -v
 ```
 
-How to cite
-===========
-
+## How to cite
+ 
 If you would like to acknowledge our work in a scientific paper,
 please use the following citation:
 
-.. code-block:: text
+Wesley H. Holliday and Eric Pacuit (2025). pref_voting: The Preferential Voting Tools package for Python. Journal of Open Source Software, 10(105), 7020. https://doi.org/10.21105/joss.07020
 
-    Wesley H. Holliday and Eric Pacuit (2025).
-    pref_voting: The Preferential Voting Tools package for Python.
-    Journal of Open Source Software, 10(105), 7020. https://doi.org/10.21105/joss.07020
+### BibTeX:
 
-Bibtex:
+```bibtex
+@article{HollidayPacuit2025, 
+  author = {Wesley H. Holliday and Eric Pacuit}, 
+  title = {pref_voting: The Preferential Voting Tools package for Python}, 
+  journal = {Journal of Open Source Software},
+  year = {2025}, 
+  publisher = {The Open Journal}, 
+  volume = {10}, 
+  number = {105}, 
+  pages = {7020}, 
+  doi = {10.21105/joss.07020}
+}
 
-.. code-block:: bibtex
-
-    @article{HollidayPacuit2025, 
-    author = {Wesley H. Holliday and Eric Pacuit}, 
-    title = {pref_voting: The Preferential Voting Tools package for Python}, 
-    journal = {Journal of Open Source Software},
-    year = {2025}, 
-    publisher = {The Open Journal}, 
-    volume = {10}, 
-    number = {105}, 
-    pages = {7020}, 
-    doi = {10.21105/joss.07020}}
+```
 
 Alternatively, you can cite the archived code repository
-at `zenodo <https://doi.org/10.5281/zenodo.14675583>`_.
+at [zenodo](https://doi.org/10.5281/zenodo.14675583).
 
 ## Contributing
 
