@@ -21,6 +21,31 @@ The library is developed by Wes Holliday (http://wesholliday.net) and Eric Pacui
 Related resources
 ------------------------
 
+If you would like to acknowledge our work in a scientific paper,
+please use the following citation:
+
+Wesley H. Holliday and Eric Pacuit (2025). pref_voting: The Preferential Voting Tools package for Python. Journal of Open Source Software, 10(105), 7020. https://doi.org/10.21105/joss.07020
+
+**Bibtex***:
+
+```bibtex
+@article{HollidayPacuit2025, 
+  author = {Wesley H. Holliday and Eric Pacuit}, 
+  title = {pref_voting: The Preferential Voting Tools package for Python}, 
+  journal = {Journal of Open Source Software},
+  year = {2025}, 
+  publisher = {The Open Journal}, 
+  volume = {10}, 
+  number = {105}, 
+  pages = {7020}, 
+  doi = {10.21105/joss.07020}
+}
+
+```
+
+Related resources
+------------------------
+
 - VoteKit (https://votekit.readthedocs.io/) - A Python package developed by the MGGG Redistricting Lab (https://mggg.org/) designed to facilitate the study of different election methods.
 
 - prefsampling (https://comsoc-community.github.io/prefsampling/) - A Python library for sampling from preference profiles with respect to different probability models.
