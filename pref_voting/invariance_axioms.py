@@ -362,10 +362,7 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
                 new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
                 prof_J = prof_constructor(new_rankings_J)
 
-                prof_I_winners = vm(prof_I)
-                prof_J_winners = vm(prof_J)
-
-                if prof_I_winners != prof_J_winners: 
+                if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
@@ -397,10 +394,7 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
                 new_rankings_J = [swap_candidates(r, y, x) for r in J] + list(I) + list(other_rankings)
                 prof_J = prof_constructor(new_rankings_J)
 
-                prof_I_winners = vm(prof_I)
-                prof_J_winners = vm(prof_J)
-
-                if prof_I_winners != prof_J_winners: 
+                if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
@@ -441,13 +435,10 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
             for I, J in equal_size_partitions_with_duplicates(xy_rankings):
                 new_rankings_I = [swap_candidates(r, x, y) for r in I] + list(J) + list(other_rankings)
                 prof_I = prof_constructor(new_rankings_I)
-                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
+                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)   
                 prof_J = prof_constructor(new_rankings_J)
 
-                prof_I_winners = vm(prof_I)
-                prof_J_winners = vm(prof_J)
-
-                if prof_I_winners != prof_J_winners: 
+                if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
@@ -479,10 +470,7 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
                 new_rankings_J = [swap_candidates(r, y, x) for r in J] + list(I) + list(other_rankings)
                 prof_J = prof_constructor(new_rankings_J)
 
-                prof_I_winners = vm(prof_I)
-                prof_J_winners = vm(prof_J)
-
-                if prof_I_winners != prof_J_winners: 
+                if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
