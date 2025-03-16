@@ -849,7 +849,7 @@ negative_involvement = Axiom(
 
 def has_positive_negative_involvement_violation(prof, vm, verbose=False, violation_type="Removal", coalition_size=1, uniform_coalition=True, require_resoluteness=False, require_uniquely_weighted=False, check_probabilities=False):
     """
-    If violation_type = "Removal", returns True if removing some voter(s) who ranked a losing candidate P in first place and a winning candidate N in last place causes P to win and N to lose, witnessing a violation of positive-negative involvement.
+    If violation_type = "Removal", returns True if removing some voter(s) who ranked a losing candidate favorite in first place and a winning candidate least favorite in last place causes favorite to win and least favorite to lose, witnessing a violation of positive-negative involvement.
     
     If uniform_coalition = True, then only coalitions of voters with the same ranking are considered.
 
@@ -857,7 +857,7 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
 
     If require_uniquely_weighted = True, then only uniquely-weighted profiles are considered.
 
-    If check_probabilities = True, the function also checks whether removing the voters who ranked P in first-place and N in last-place causes P's probability of winning to increase and N's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
+    If check_probabilities = True, the function also checks whether removing the voters who ranked favorite in first-place and least favorite in last-place causes favorite's probability of winning to increase and least favorite's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
     
     Args:
         prof: a Profile or ProfileWithTies object.
@@ -875,7 +875,7 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
     """
     
     winners = vm(prof)   
-    losers = [c for c in prof.candidates if c not in winners]
+    non_winners = [c for c in prof.candidates if c not in winners]
 
     if require_resoluteness and len(winners) > 1:
         return False
@@ -885,9 +885,10 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
     
     if violation_type == "Removal":
         if uniform_coalition:
-            for loser in losers:
-                for winner in winners:
-                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and r[-1] == winner and prof.rankings.count(r) >= coalition_size]
+            # Check for standard positive-negative involvement violations and Case 1 probability violations
+            for favorite in non_winners:
+                for least_favorite in winners:
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite and prof.rankings.count(r) >= coalition_size]
 
                     for r in relevant_ranking_types:
                         rankings = prof.rankings
@@ -911,13 +912,13 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                         if require_uniquely_weighted and not prof2.is_uniquely_weighted():
                             continue
                         
-                        if loser in winners2 and winner not in winners2:
+                        if favorite in winners2 and least_favorite not in winners2:
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing a voter with the ranking {str(r)}:")
+                                    print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing {coalition_size} voters with the ranking {str(r)}:")
+                                    print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -937,14 +938,15 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                                 print("")
                             return True
                         
-                        # Case 1: P goes from losing to winning, winning set expands
-                        if check_probabilities and loser in winners2 and winner in winners2 and len(winners) < len(winners2):
+                        # Case 1: When removing a ballot, favorite goes from losing to winning, while least_favorite becomes less likely to win, since the winning set expands
+                        # Viewed in terms of adding a ballot, favorite goes from winning to losing, while least_favorite becomes more likely to win, since the winning set shrinks
+                        if check_probabilities and favorite in winners2 and least_favorite in winners2 and len(winners) < len(winners2):
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{loser} has a higher probability of winning after removing a voter with the ranking {str(r)}, as the winning set expanded:")
+                                    print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{loser} has a higher probability of winning after removing {coalition_size} voters with the ranking {str(r)}, as the winning set expanded:")
+                                    print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -963,15 +965,47 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                                 vm.display(prof2)
                                 print("")
                             return True
+            
+            # Check for Case 2 probability violations (where favorite is already a winner)
+            if check_probabilities:
+                for favorite in winners:
+                    for least_favorite in winners:
+                        if favorite == least_favorite:
+                            continue
                         
-                        # Case 2: N goes from winning to losing, winning set shrinks
-                        if check_probabilities and winner not in winners2 and not loser in winners2 and len(winners) > len(winners2):
+                        relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite and prof.rankings.count(r) >= coalition_size]
+
+                    for r in relevant_ranking_types:
+                        rankings = prof.rankings
+
+                        for i in range(coalition_size):
+                            rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
+
+                        if isinstance(prof, Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof, ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings, candidates=prof.candidates)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
+
+                        winners2 = vm(prof2)
+
+                        if require_resoluteness and len(winners2) > 1:
+                            continue
+
+                        if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                            continue
+                        
+                        # Case 2: When removing a ballot, least_favorite goes from winning to losing, while favorite remains a winner and becomes more likely to win, since the winning set shrinks
+                        # Viewed in terms of adding a ballot, least_favorite goes from losing to winning, while favorite becomes less likely to win, since the winning set expands
+                        if check_probabilities and favorite in winners and least_favorite in winners and least_favorite not in winners2 and len(winners) > len(winners2):
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{winner} has a lower probability of winning after removing a voter with the ranking {str(r)}, as the winning set shrank:")
+                                    print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{winner} has a lower probability of winning after removing {coalition_size} voters with the ranking {str(r)}, as the winning set shrank:")
+                                    print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -992,9 +1026,9 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                             return True
         
         if not uniform_coalition:
-            for loser in losers:
-                for winner in winners:
-                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and r[-1] == winner]
+            for favorite in non_winners:
+                for least_favorite in winners:
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite]
                     relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                     for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types, relevant_ranking_types_counts, coalition_size):
@@ -1021,10 +1055,10 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                         if require_uniquely_weighted and not prof2.is_uniquely_weighted():
                             continue
                         
-                        if loser in winners2 and winner not in winners2:
+                        if favorite in winners2 and least_favorite not in winners2:
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
+                                print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1041,11 +1075,12 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                                 print("")
                             return True
                         
-                        # Case 1: P goes from losing to winning, winning set expands
-                        if check_probabilities and loser in winners2 and winner in winners2 and len(winners) < len(winners2):
+                        # Case 1: When removing a ballot, favorite goes from losing to winning, while least_favorite becomes less likely to win, since the winning set expands
+                        # Viewed in terms of adding a ballot, favorite goes from winning to losing, while least_favorite becomes more likely to win, since the winning set shrinks
+                        if check_probabilities and favorite in winners2 and least_favorite in winners2 and len(winners) < len(winners2):
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{loser} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}, as the winning set expanded:")
+                                print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1062,11 +1097,12 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                                 print("")
                             return True
                         
-                        # Case 2: N goes from winning to losing, winning set shrinks
-                        if check_probabilities and winner not in winners2 and not loser in winners2 and len(winners) > len(winners2):
+                        # Case 2: When removing a ballot, least_favorite goes from winning to losing, while favorite remains a winner and becomes more likely to win, since the winning set shrinks
+                        # Viewed in terms of adding a ballot, least_favorite goes from losing to winning, while favorite becomes less likely to win, since the winning set expands
+                        if check_probabilities and favorite in winners and least_favorite in winners and least_favorite not in winners2 and len(winners) > len(winners2):
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{winner} has a lower probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}, as the winning set shrank:")
+                                print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1087,7 +1123,7 @@ def has_positive_negative_involvement_violation(prof, vm, verbose=False, violati
                     
 def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, violation_type="Removal", coalition_size=1, uniform_coalition=True, require_resoluteness=False, require_uniquely_weighted=False, check_probabilities=False):
     """
-    If violation_type = "Removal", returns a list of tuples (loser, winner, rankings, counts) such that removing the indicated rankings with the indicated counts causes the loser to win and the winner to lose, witnessing a violation of positive-negative involvement.
+    If violation_type = "Removal", returns a list of tuples (favorite, least_favorite, rankings, counts) such that removing the indicated rankings with the indicated counts causes the favorite to win and the least_favorite to lose, witnessing a violation of positive-negative involvement.
     
     If uniform_coalition = True, then only coalitions of voters with the same ranking are considered.
 
@@ -1095,7 +1131,7 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
 
     If require_uniquely_weighted = True, then only uniquely-weighted profiles are considered.
 
-    If check_probabilities = True, the function also checks whether removing the voters who ranked P in first-place and N in last-place causes P's probability of winning to increase and N's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
+    If check_probabilities = True, the function also checks whether removing the voters who ranked favorite in first-place and least favorite in last-place causes favorite's probability of winning to increase and least favorite's probability of winning to decrease (in the case of a tie broken by even-chance tiebreaking).
     
     Args:
         prof: a Profile or ProfileWithTies object.
@@ -1116,7 +1152,7 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
     """
     
     winners = vm(prof)   
-    losers = [c for c in prof.candidates if c not in winners]
+    non_winners = [c for c in prof.candidates if c not in winners]
     
     witnesses = list()
 
@@ -1128,9 +1164,10 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
     
     if violation_type == "Removal":
         if uniform_coalition:
-            for loser in losers:
-                for winner in winners:
-                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and r[-1] == winner and prof.rankings.count(r) >= coalition_size]
+            # Check for standard positive-negative involvement violations and Case 1 probability violations
+            for favorite in non_winners:
+                for least_favorite in winners:
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite and prof.rankings.count(r) >= coalition_size]
 
                     for r in relevant_ranking_types:
                         rankings = prof.rankings
@@ -1154,14 +1191,14 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                         if require_uniquely_weighted and not prof2.is_uniquely_weighted():
                             continue
                         
-                        if loser in winners2 and winner not in winners2:
-                            witnesses.append((loser, winner, [r], [coalition_size]))
+                        if favorite in winners2 and least_favorite not in winners2:
+                            witnesses.append((favorite, least_favorite, [r], [coalition_size]))
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing a voter with the ranking {str(r)}:")
+                                    print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing {coalition_size} voters with the ranking {str(r)}:")
+                                    print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1180,15 +1217,16 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                                 vm.display(prof2)
                                 print("")
                         
-                        # Case 1: P goes from losing to winning, winning set expands
-                        if check_probabilities and loser in winners2 and winner in winners2 and len(winners) < len(winners2):
-                            witnesses.append((loser, winner, [r], [coalition_size]))
+                        # Case 1: When removing a ballot, favorite goes from losing to winning, while least_favorite becomes less likely to win, since the winning set expands
+                        # Viewed in terms of adding a ballot, favorite goes from winning to losing, while least_favorite becomes more likely to win, since the winning set shrinks
+                        if check_probabilities and favorite in winners2 and least_favorite in winners2 and len(winners) < len(winners2):
+                            witnesses.append((favorite, least_favorite, [r], [coalition_size]))
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{loser} has a higher probability of winning after removing a voter with the ranking {str(r)}, as the winning set expanded:")
+                                    print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{loser} has a higher probability of winning after removing {coalition_size} voters with the ranking {str(r)}, as the winning set expanded:")
+                                    print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1206,16 +1244,48 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                                 prof2.display_margin_graph()
                                 vm.display(prof2)
                                 print("")
+            
+            # Check for Case 2 probability violations (where favorite is already a winner)
+            if check_probabilities:
+                for favorite in winners:
+                    for least_favorite in winners:
+                        if favorite == least_favorite:
+                            continue
                         
-                        # Case 2: N goes from winning to losing, winning set shrinks
-                        if check_probabilities and winner not in winners2 and not loser in winners2 and len(winners) > len(winners2):
-                            witnesses.append((loser, winner, [r], [coalition_size]))
+                        relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite and prof.rankings.count(r) >= coalition_size]
+
+                    for r in relevant_ranking_types:
+                        rankings = prof.rankings
+
+                        for i in range(coalition_size):
+                            rankings.remove(r) # remove coalition_size-many tokens of the type of ranking
+
+                        if isinstance(prof, Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof, ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings, candidates=prof.candidates)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
+
+                        winners2 = vm(prof2)
+
+                        if require_resoluteness and len(winners2) > 1:
+                            continue
+
+                        if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                            continue
+                        
+                        # Case 2: When removing a ballot, least_favorite goes from winning to losing, while favorite remains a winner and becomes more likely to win, since the winning set shrinks
+                        # Viewed in terms of adding a ballot, least_favorite goes from losing to winning, while favorite becomes less likely to win, since the winning set expands
+                        if check_probabilities and favorite in winners and least_favorite in winners and least_favorite not in winners2 and len(winners) > len(winners2):
+                            witnesses.append((favorite, least_favorite, [r], [coalition_size]))
                             if verbose:
                                 prof = prof.anonymize()
                                 if coalition_size == 1:
-                                    print(f"{winner} has a lower probability of winning after removing a voter with the ranking {str(r)}, as the winning set shrank:")
+                                    print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing a voter with the ranking {str(r)}:")
                                 else:
-                                    print(f"{winner} has a lower probability of winning after removing {coalition_size} voters with the ranking {str(r)}, as the winning set shrank:")
+                                    print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing {coalition_size} voters with the ranking {str(r)}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1235,9 +1305,10 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                                 print("")
         
         if not uniform_coalition:
-            for loser in losers:
-                for winner in winners:
-                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == loser and r[-1] == winner]
+            # Check for standard positive-negative involvement violations and Case 1 probability violations
+            for favorite in non_winners:
+                for least_favorite in winners:
+                    relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite]
                     relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
 
                     for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types, relevant_ranking_types_counts, coalition_size):
@@ -1264,11 +1335,11 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                         if require_uniquely_weighted and not prof2.is_uniquely_weighted():
                             continue
                         
-                        if loser in winners2 and winner not in winners2:
-                            witnesses.append((loser, winner, coalition_rankings, coalition_rankings_counts))
+                        if favorite in winners2 and least_favorite not in winners2:
+                            witnesses.append((favorite, least_favorite, coalition_rankings, coalition_rankings_counts))
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{loser} loses and {winner} wins in the full profile, but {loser} is a winner and {winner} is a loser after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
+                                print(f"{favorite} loses and {least_favorite} wins in the full profile, but {favorite} is a winner and {least_favorite} is a loser after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1284,12 +1355,13 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                                 vm.display(prof2)
                                 print("")
                         
-                        # Case 1: P goes from losing to winning, winning set expands
-                        if check_probabilities and loser in winners2 and winner in winners2 and len(winners) < len(winners2):
-                            witnesses.append((loser, winner, coalition_rankings, coalition_rankings_counts))
+                        # Case 1: When removing a ballot, favorite goes from losing to winning, while least_favorite becomes less likely to win, since the winning set expands
+                        # Viewed in terms of adding a ballot, favorite goes from winning to losing, while least_favorite becomes more likely to win, since the winning set shrinks
+                        if check_probabilities and favorite in winners2 and least_favorite in winners2 and len(winners) < len(winners2):
+                            witnesses.append((favorite, least_favorite, coalition_rankings, coalition_rankings_counts))
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{loser} has a higher probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}, as the winning set expanded:")
+                                print(f"{favorite} becomes more likely to win and {least_favorite} becomes less likely to win after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1304,13 +1376,48 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
                                 prof2.display_margin_graph()
                                 vm.display(prof2)
                                 print("")
+            
+            # Check for Case 2 probability violations (where favorite is already a winner)
+            if check_probabilities:
+                for favorite in winners:
+                    for least_favorite in winners:
+                        if favorite == least_favorite:
+                            continue
                         
-                        # Case 2: N goes from winning to losing, winning set shrinks
-                        if check_probabilities and winner not in winners2 and not loser in winners2 and len(winners) > len(winners2):
-                            witnesses.append((loser, winner, coalition_rankings, coalition_rankings_counts))
+                        relevant_ranking_types = [r for r in prof.ranking_types if r[0] == favorite and r[-1] == least_favorite]
+                        relevant_ranking_types_counts = [prof.rankings.count(r) for r in relevant_ranking_types]
+
+                    for coalition_rankings, coalition_rankings_counts in _submultisets_of_fixed_cardinality(relevant_ranking_types, relevant_ranking_types_counts, coalition_size):
+                        
+                        rankings = prof.rankings
+                        
+                        for r_idx, r in enumerate(coalition_rankings):
+                            for i in range(coalition_rankings_counts[r_idx]):
+                                rankings.remove(r)
+                            
+                        if isinstance(prof, Profile):
+                            prof2 = Profile(rankings)
+
+                        if isinstance(prof, ProfileWithTies):
+                            prof2 = ProfileWithTies(rankings, candidates=prof.candidates)
+                            if prof.using_extended_strict_preference:
+                                prof2.use_extended_strict_preference()
+
+                        winners2 = vm(prof2)              
+
+                        if require_resoluteness and len(winners2) > 1:
+                            continue
+
+                        if require_uniquely_weighted and not prof2.is_uniquely_weighted():
+                            continue
+                        
+                        # Case 2: When removing a ballot, least_favorite goes from winning to losing, while favorite remains a winner and becomes more likely to win, since the winning set shrinks
+                        # Viewed in terms of adding a ballot, least_favorite goes from losing to winning, while favorite becomes less likely to win, since the winning set expands
+                        if check_probabilities and favorite in winners and least_favorite in winners and least_favorite not in winners2 and len(winners) > len(winners2):
+                            witnesses.append((favorite, least_favorite, coalition_rankings, coalition_rankings_counts))
                             if verbose:
                                 prof = prof.anonymize()
-                                print(f"{winner} has a lower probability of winning after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}, as the winning set shrank:")
+                                print(f"{least_favorite} becomes less likely to win and {favorite} remains a winner after removing a {coalition_size}-voter coalition with the rankings {[str(r) for r in coalition_rankings]} and counts {coalition_rankings_counts}:")
                                 print("")
                                 print("Full profile")
                                 prof.display()
@@ -1330,8 +1437,8 @@ def find_all_positive_negative_involvement_violations(prof, vm, verbose=False, v
 
 positive_negative_involvement = Axiom(
     "Positive-Negative Involvement",
-    has_violation = has_positive_negative_involvement_violation,
-    find_all_violations = find_all_positive_negative_involvement_violations, 
+    has_violation=has_positive_negative_involvement_violation,
+    find_all_violations=find_all_positive_negative_involvement_violations
 )
 
 def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violation_type="Removal"):
