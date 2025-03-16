@@ -360,20 +360,29 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
                 new_rankings_I = [swap_candidates(r, x, y) for r in I] + list(J) + list(other_rankings)
                 prof_I = prof_constructor(new_rankings_I)
                 new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
-                 
                 prof_J = prof_constructor(new_rankings_J)
 
                 if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
+                        prof.display_margin_graph()
                         print(prof.description())
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        vm.display(prof)
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in I]}:")
                         prof_I.anonymize().display()
-                        print(prof_I.description())
+                        prof_I.display_margin_graph()
+                        print(prof_I.description())   
                         vm.display(prof_I)
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in J]}:")
                         prof_J.anonymize().display()
+                        prof_J.display_margin_graph()
                         print(prof_J.description())
                         vm.display(prof_J)
                     return True
@@ -393,13 +402,23 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
+                        prof.display_margin_graph()
                         print(prof.description())
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        vm.display(prof)
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {y} and {x} in the rankings {[r.rmap for r in I]}:")
+                        else:
+                            print(f"\nThe profile after swapping {y} and {x} in the rankings {[r for r in I]}:")
                         prof_I.anonymize().display()
+                        prof_I.display_margin_graph()
                         print(prof_I.description())
                         vm.display(prof_I)
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {y} and {x} in the rankings {[r.rmap for r in J]}:")
+                        else:
+                            print(f"\nThe profile after swapping {y} and {x} in the rankings {[r for r in J]}:")
                         prof_J.anonymize().display()
+                        prof_J.display_margin_graph()
                         print(prof_J.description())
                         vm.display(prof_J)
                     return True
@@ -424,21 +443,30 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
             for I, J in equal_size_partitions_with_duplicates(xy_rankings):
                 new_rankings_I = [swap_candidates(r, x, y) for r in I] + list(J) + list(other_rankings)
                 prof_I = prof_constructor(new_rankings_I)
-                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)
-                 
+                new_rankings_J = [swap_candidates(r, x, y) for r in J] + list(I) + list(other_rankings)   
                 prof_J = prof_constructor(new_rankings_J)
 
                 if vm(prof_I) != vm(prof_J): 
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
+                        prof.display_margin_graph()
                         print(prof.description())
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        vm.display(prof)
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in I]}:")
                         prof_I.anonymize().display()
+                        prof_I.display_margin_graph()
                         print(prof_I.description())
                         vm.display(prof_I)
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in J]}:")
                         prof_J.anonymize().display()
+                        prof_J.display_margin_graph()
                         print(prof_J.description())
                         vm.display(prof_J)
                     violations.append((prof, prof_I, prof_J))
@@ -458,18 +486,27 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
                     if verbose:
                         print("The original profile")
                         prof.anonymize().display()
+                        prof.display_margin_graph()
                         print(prof.description())
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        vm.display(prof)
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in I]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in I]}:")
                         prof_I.anonymize().display()
+                        prof_I.display_margin_graph()
                         print(prof_I.description())
                         vm.display(prof_I)
-                        print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        if prof_constructor == ProfileWithTies:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r.rmap for r in J]}:")
+                        else:
+                            print(f"\nThe profile after swapping {x} and {y} in the rankings {[r for r in J]}:")
                         prof_J.anonymize().display()
+                        prof_J.display_margin_graph()
                         print(prof_J.description())
                         vm.display(prof_J)
                     violations.append((prof, prof_I, prof_J))
     return violations
-
 
 preferential_equality = Axiom(
     "Preferential Equality",

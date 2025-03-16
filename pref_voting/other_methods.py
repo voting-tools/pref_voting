@@ -614,17 +614,17 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
 
 @vm(name = "Bracket Voting",
     input_types = [ElectionTypes.PROFILE])
-def bracket_voting(profile, curr_cands = None, seed = None):
+def bracket_voting(profile, curr_cands = None, seed = None, tie_break = "random"):
     """The candidates with the top four plurality scores are seeded into a bracket: the candidate with the highest plurality score is seeded 1st, the candidate with the second highest plurality score is seeded 2nd, etc. The 1st seed faces the 4th seed in a head-to-head match decided by majority rule, and the 2nd seed faces the 3rd seed in a head-to-head match decided by majority rule. The winners of these two matches face each other in a final head-to-head match decided by majority rule. The winner of the final is the winner of the election.
 
     .. note::
-        A version of bracket voting as proposed by Edward B. Foley. This is a probabilistic method that always returns a unique winner. Ties are broken using a random tie breaking ordering of the candidates.
+        A version of bracket voting as proposed by Edward B. Foley. By default, this is a probabilistic method that always returns a unique winner, as ties are broken using a random tie breaking ordering of the candidates.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         seed (int, optional): The seed for the random tie breaking ordering of the candidates.   
-
+        tie_break (str, optional): The method used to break ties in the head-to-head matches. If set to "random", then a random tie breaking ordering of the candidates is used. If set to "lexicographic", then the candidates are sorted lexicographically.
     Returns: 
         A sorted list of candidates
 
@@ -634,10 +634,13 @@ def bracket_voting(profile, curr_cands = None, seed = None):
     if len(cands) == 2:
         return plurality(profile, curr_cands = curr_cands)
     
-    # Generate a random tie breaking ordering of cands
-    rng = np.random.default_rng(seed)
-    tie_breaking_ordering = cands.copy()
-    rng.shuffle(tie_breaking_ordering)
+    if tie_break == "random":
+        rng = np.random.default_rng(seed)
+        tie_breaking_ordering = cands.copy()
+        rng.shuffle(tie_breaking_ordering)
+
+    elif tie_break == "lexicographic":
+        tie_breaking_ordering = sorted(cands)
 
     plurality_scores = profile.plurality_scores(curr_cands = cands)
     descending_plurality_scores = sorted(plurality_scores.values(), reverse=True)

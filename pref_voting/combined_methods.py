@@ -169,12 +169,13 @@ def smith_irv_put(profile, curr_cands=None):
 
 @vm(name = "Condorcet IRV",
     input_types = [ElectionTypes.PROFILE])
-def condorcet_irv(profile, curr_cands=None):
+def condorcet_irv(profile, curr_cands=None,algorithm = "basic", **kwargs):
     """If a Condorcet winner exists, elect that candidate, otherwise return the instant runoff winners.
 
     Args:
         profile (Profile): An anonymous profile of linear orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+        algorithm (str, optional): The algorithm to use.  Options are "basic" and "recursive".  The default is "basic".
 
     Returns:
         A sorted list of candidates
@@ -201,7 +202,16 @@ def condorcet_irv(profile, curr_cands=None):
     if cw is not None: 
         return [cw]
     else:
-        return instant_runoff(profile, curr_cands=curr_cands)
+        if isinstance(profile, Profile): 
+            if algorithm == "basic":
+                return _instant_runoff_basic(profile, curr_cands = curr_cands)
+            
+            elif algorithm == "recursive":
+                return _instant_runoff_recursive(profile, curr_cands = curr_cands)
+            else:
+                raise ValueError("Algorithm must be either 'basic' or 'recursive'.")
+        elif isinstance(profile, ProfileWithTies): 
+            return _instant_runoff_for_truncated_linear_orders(profile, curr_cands = curr_cands, **kwargs)
 
 @vm(name = "Condorcet IRV PUT",
     input_types = [ElectionTypes.PROFILE])
