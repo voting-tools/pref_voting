@@ -2014,6 +2014,358 @@ bullet_vote_positive_involvement = Axiom(
     find_all_violations = find_all_bullet_vote_positive_involvement_violations, 
 )
 
+def has_semi_positive_involvement_violation(prof, vm, verbose=False):
+    """
+    Semi-Positive Involvement says that if A wins in an initial profile, and we add a voter with a truncated ballot
+    ranking A first, then it cannot happen that all of the winners in the new profile are unranked by the truncated ballot.
+
+    Rather than adding a ballot, this function removes a ballot from the profile and then adds a truncated version of the ballot.
+
+    The function returns True if there is a ballot such that starting from an updated version of prof 
+    with the ballot removed, adding a truncated version of the ballot causes the winner(s) 
+    to shift from the top-ranked candidate (plus possibly other ranked candidates) to some unranked candidate(s).
+    
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise.
+    """
+    
+    if isinstance(prof, Profile):
+        # For each ranking in the profile
+        for r_idx, r in enumerate(prof.rankings):
+            # Create a profile with this ballot removed
+            removed_ballot_rankings = prof.rankings.copy()
+            removed_ballot_rankings.pop(r_idx)
+            removed_ballot_prof = Profile(removed_ballot_rankings)
+            
+            # Get winners when ballot is removed
+            removed_ballot_winners = vm(removed_ballot_prof)
+            
+            # For each possible truncation of the ballot
+            for truncation_level in range(1, len(prof.candidates)):
+                # Create a truncated ballot with only the top truncation_level candidates
+                ranked_candidates = r[:truncation_level]
+                unranked_candidates = [c for c in prof.candidates if c not in ranked_candidates]
+                
+                # Get the top-ranked candidate
+                top_ranked_candidate = r[0] if len(r) > 0 else None
+                
+                # Create a ranking object for the truncated ballot
+                truncated_ballot = {c: i+1 for i, c in enumerate(ranked_candidates)}
+                
+                # Create a profile with the truncated ballot
+                # Convert tuples to dictionaries for ProfileWithTies
+                converted_rankings = []
+                for ranking in removed_ballot_rankings:
+                    converted_rankings.append({c: i+1 for i, c in enumerate(ranking)})
+                
+                # Add the truncated ballot to the converted rankings
+                converted_rankings.append(truncated_ballot)
+                truncated_ballot_prof = ProfileWithTies(converted_rankings, candidates=prof.candidates)
+                truncated_ballot_prof.use_extended_strict_preference()
+                
+                # Get winners when truncated ballot is added
+                truncated_ballot_winners = vm(truncated_ballot_prof)
+                
+                # Check if winners shifted from top-ranked+other-ranked to unranked candidates
+                # The winners in the profile without the truncated ballot must include the top-ranked candidate
+                winners_include_top_ranked = top_ranked_candidate in removed_ballot_winners
+                # All winners in the profile with the truncated ballot must be among the unranked candidates
+                winners_from_unranked = all(c in unranked_candidates for c in truncated_ballot_winners)
+                
+                if winners_include_top_ranked and winners_from_unranked:
+                    if verbose:
+                        print(f"Semi-Positive Involvement violation found:")
+                        print("Original profile:")
+                        prof.display()
+                        print(prof.description())
+                        vm.display(prof)
+                        print("\nProfile with ballot removed:")
+                        removed_ballot_prof.display()
+                        print(removed_ballot_prof.description())
+                        vm.display(removed_ballot_prof)
+                        print("\nMargin graph of profile with ballot removed:")
+                        removed_ballot_prof.display_margin_graph()
+                        print(f"Winners: {removed_ballot_winners}")
+                        print(f"\nTruncated ballot: {truncated_ballot}")
+                        print(f"Top-ranked candidate: {top_ranked_candidate}")
+                        print(f"Ranked candidates: {ranked_candidates}")
+                        print(f"Unranked candidates: {unranked_candidates}")
+                        print("\nProfile with truncated ballot:")
+                        truncated_ballot_prof.display()
+                        print(truncated_ballot_prof.description())
+                        vm.display(truncated_ballot_prof)
+                        print("\nMargin graph of profile with truncated ballot:")
+                        truncated_ballot_prof.display_margin_graph()
+                        print(f"Winners: {truncated_ballot_winners}")
+                        print(f"\nWinners shifted from including top-ranked candidate {top_ranked_candidate} to unranked candidates {truncated_ballot_winners}")
+                    return True
+    
+    elif isinstance(prof, ProfileWithTies):
+        # For each ranking in the profile
+        rankings, rcounts = prof.rankings_counts
+        
+        for r_idx, (r, count) in enumerate(zip(rankings, rcounts)):
+            # Skip if this is not a single ballot
+            if count != 1:
+                continue
+                
+            # Create a profile with this ballot removed
+            removed_ballot_rankings = rankings.copy()
+            removed_ballot_rcounts = rcounts.copy()
+            removed_ballot_rankings.pop(r_idx)
+            removed_ballot_rcounts.pop(r_idx)
+            removed_ballot_prof = ProfileWithTies(removed_ballot_rankings, rcounts=removed_ballot_rcounts, candidates=prof.candidates)
+            if prof.using_extended_strict_preference:
+                removed_ballot_prof.use_extended_strict_preference()
+            
+            # Get winners when ballot is removed
+            removed_ballot_winners = vm(removed_ballot_prof)
+            
+            # For each possible truncation of the ballot
+            ranked_candidates = r.cands
+            for truncation_level in range(1, len(ranked_candidates)):
+                # Get the candidates at each rank
+                candidates_by_rank = [r.cands_at_rank(rank) for rank in r.ranks]
+                
+                # Take only the first truncation_level ranks
+                truncated_ranked_candidates = [c for rank_candidates in candidates_by_rank[:truncation_level] for c in rank_candidates]
+                unranked_candidates = [c for c in prof.candidates if c not in truncated_ranked_candidates]
+                
+                # Get the top-ranked candidates (those at rank 1)
+                top_ranked_candidates = candidates_by_rank[0] if len(candidates_by_rank) > 0 else []
+                
+                # Create a ranking object for the truncated ballot
+                truncated_ballot = {c: r.rmap[c] for c in truncated_ranked_candidates}
+                
+                # Create a profile with the truncated ballot
+                truncated_ballot_rankings = removed_ballot_rankings + [Ranking(truncated_ballot)]
+                truncated_ballot_rcounts = removed_ballot_rcounts + [1]
+                truncated_ballot_prof = ProfileWithTies(truncated_ballot_rankings, rcounts=truncated_ballot_rcounts, candidates=prof.candidates)
+                if prof.using_extended_strict_preference:
+                    truncated_ballot_prof.use_extended_strict_preference()
+                
+                # Get winners when truncated ballot is added
+                truncated_ballot_winners = vm(truncated_ballot_prof)
+                
+                # Check if winners shifted from top-ranked+other-ranked to unranked candidates
+                # The winners in the profile without the truncated ballot must include at least one top-ranked candidate
+                winners_include_top_ranked = any(c in top_ranked_candidates for c in removed_ballot_winners)
+                # All winners in the profile with the truncated ballot must be among the unranked candidates
+                winners_from_unranked = all(c in unranked_candidates for c in truncated_ballot_winners)
+                
+                if winners_include_top_ranked and winners_from_unranked:
+                    if verbose:
+                        print(f"Semi-Positive Involvement violation found:")
+                        print("Original profile:")
+                        prof.display()
+                        print(prof.description())
+                        vm.display(prof)
+                        print("\nProfile with ballot removed:")
+                        removed_ballot_prof.display()
+                        print(removed_ballot_prof.description())
+                        vm.display(removed_ballot_prof)
+                        print("\nMargin graph of profile with ballot removed:")
+                        removed_ballot_prof.display_margin_graph()
+                        print(f"Winners: {removed_ballot_winners}")
+                        print(f"\nTruncated ballot: {truncated_ballot}")
+                        print(f"Top-ranked candidates: {top_ranked_candidates}")
+                        print(f"Ranked candidates: {truncated_ranked_candidates}")
+                        print(f"Unranked candidates: {unranked_candidates}")
+                        print("\nProfile with truncated ballot:")
+                        truncated_ballot_prof.display()
+                        print(truncated_ballot_prof.description())
+                        vm.display(truncated_ballot_prof)
+                        print("\nMargin graph of profile with truncated ballot:")
+                        truncated_ballot_prof.display_margin_graph()
+                        print(f"Winners: {truncated_ballot_winners}")
+                        print(f"\nWinners shifted from including top-ranked candidate(s) {[prof.cmap[c] for c in removed_ballot_winners if c in top_ranked_candidates]} to unranked candidates {[prof.cmap[c] for c in truncated_ballot_winners]}")
+                    return True
+    
+    return False
+
+def find_all_semi_positive_involvement_violations(prof, vm, verbose=False):
+    """
+    Returns all violations of semi-positive involvement for a given profile and voting method.
+    
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        
+    Returns:
+        A list of tuples (ballot, truncated_ballot, removed_ballot_winners, truncated_ballot_winners) where each tuple represents a violation.
+    """
+    
+    violations = []
+    
+    if isinstance(prof, Profile):
+        # For each ranking in the profile
+        for r_idx, r in enumerate(prof.rankings):
+            # Create a profile with this ballot removed
+            removed_ballot_rankings = prof.rankings.copy()
+            removed_ballot_rankings.pop(r_idx)
+            removed_ballot_prof = Profile(removed_ballot_rankings)
+            
+            # Get winners when ballot is removed
+            removed_ballot_winners = vm(removed_ballot_prof)
+            
+            # For each possible truncation of the ballot
+            for truncation_level in range(1, len(prof.candidates)):
+                # Create a truncated ballot with only the top truncation_level candidates
+                ranked_candidates = r[:truncation_level]
+                unranked_candidates = [c for c in prof.candidates if c not in ranked_candidates]
+                
+                # Get the top-ranked candidate
+                top_ranked_candidate = r[0] if len(r) > 0 else None
+                
+                # Create a ranking object for the truncated ballot
+                truncated_ballot = {c: i+1 for i, c in enumerate(ranked_candidates)}
+                
+                # Create a profile with the truncated ballot
+                # Convert tuples to dictionaries for ProfileWithTies
+                converted_rankings = []
+                for ranking in removed_ballot_rankings:
+                    converted_rankings.append({c: i+1 for i, c in enumerate(ranking)})
+                
+                # Add the truncated ballot to the converted rankings
+                converted_rankings.append(truncated_ballot)
+                truncated_ballot_prof = ProfileWithTies(converted_rankings, candidates=prof.candidates)
+                truncated_ballot_prof.use_extended_strict_preference()
+                
+                # Get winners when truncated ballot is added
+                truncated_ballot_winners = vm(truncated_ballot_prof)
+                
+                # Check if winners shifted from top-ranked+other-ranked to unranked candidates
+                # The winners in the profile without the truncated ballot must include the top-ranked candidate
+                winners_include_top_ranked = top_ranked_candidate in removed_ballot_winners
+                # All winners in the profile with the truncated ballot must be among the unranked candidates
+                winners_from_unranked = all(c in unranked_candidates for c in truncated_ballot_winners)
+                
+                if winners_include_top_ranked and winners_from_unranked:
+                    violations.append((r, truncated_ballot, removed_ballot_winners, truncated_ballot_winners))
+                    if verbose:
+                        print(f"Semi-Positive Involvement violation found:")
+                        print("")
+                        print("Original profile:")
+                        prof.display()
+                        print(prof.description())
+                        vm.display(prof)
+                        print("\nProfile with ballot removed:")
+                        removed_ballot_prof.display()
+                        print(removed_ballot_prof.description())
+                        vm.display(removed_ballot_prof)
+                        print("\nMargin graph of profile with ballot removed:")
+                        removed_ballot_prof.display_margin_graph()
+                        print(f"Winners: {removed_ballot_winners}")
+                        print(f"\nTruncated ballot: {truncated_ballot}")
+                        print(f"Top-ranked candidate: {top_ranked_candidate}")
+                        print(f"Ranked candidates: {ranked_candidates}")
+                        print(f"Unranked candidates: {unranked_candidates}")
+                        print("\nProfile with truncated ballot:")
+                        truncated_ballot_prof.display()
+                        print(truncated_ballot_prof.description())
+                        vm.display(truncated_ballot_prof)
+                        print("\nMargin graph of profile with truncated ballot:")
+                        truncated_ballot_prof.display_margin_graph()
+                        print(f"Winners: {truncated_ballot_winners}")
+                        print(f"\nWinners shifted from including top-ranked candidate {top_ranked_candidate} to unranked candidates {truncated_ballot_winners}")
+    
+    elif isinstance(prof, ProfileWithTies):
+        # For each ranking in the profile
+        rankings, rcounts = prof.rankings_counts
+        
+        for r_idx, (r, count) in enumerate(zip(rankings, rcounts)):
+            # Skip if this is not a single ballot
+            if count != 1:
+                continue
+                
+            # Create a profile with this ballot removed
+            removed_ballot_rankings = rankings.copy()
+            removed_ballot_rcounts = rcounts.copy()
+            removed_ballot_rankings.pop(r_idx)
+            removed_ballot_rcounts.pop(r_idx)
+            removed_ballot_prof = ProfileWithTies(removed_ballot_rankings, rcounts=removed_ballot_rcounts, candidates=prof.candidates)
+            if prof.using_extended_strict_preference:
+                removed_ballot_prof.use_extended_strict_preference()
+            
+            # Get winners when ballot is removed
+            removed_ballot_winners = vm(removed_ballot_prof)
+            
+            # For each possible truncation of the ballot
+            ranked_candidates = r.cands
+            for truncation_level in range(1, len(ranked_candidates)):
+                # Get the candidates at each rank
+                candidates_by_rank = [r.cands_at_rank(rank) for rank in r.ranks]
+                
+                # Take only the first truncation_level ranks
+                truncated_ranked_candidates = [c for rank_candidates in candidates_by_rank[:truncation_level] for c in rank_candidates]
+                unranked_candidates = [c for c in prof.candidates if c not in truncated_ranked_candidates]
+                
+                # Get the top-ranked candidates (those at rank 1)
+                top_ranked_candidates = candidates_by_rank[0] if len(candidates_by_rank) > 0 else []
+                
+                # Create a ranking object for the truncated ballot
+                truncated_ballot = {c: r.rmap[c] for c in truncated_ranked_candidates}
+                
+                # Create a profile with the truncated ballot
+                truncated_ballot_rankings = removed_ballot_rankings + [Ranking(truncated_ballot)]
+                truncated_ballot_rcounts = removed_ballot_rcounts + [1]
+                truncated_ballot_prof = ProfileWithTies(truncated_ballot_rankings, rcounts=truncated_ballot_rcounts, candidates=prof.candidates)
+                if prof.using_extended_strict_preference:
+                    truncated_ballot_prof.use_extended_strict_preference()
+                
+                # Get winners when truncated ballot is added
+                truncated_ballot_winners = vm(truncated_ballot_prof)
+                
+                # Check if winners shifted from top-ranked+other-ranked to unranked candidates
+                # The winners in the profile without the truncated ballot must include at least one top-ranked candidate
+                winners_include_top_ranked = any(c in top_ranked_candidates for c in removed_ballot_winners)
+                # All winners in the profile with the truncated ballot must be among the unranked candidates
+                winners_from_unranked = all(c in unranked_candidates for c in truncated_ballot_winners)
+                
+                if winners_include_top_ranked and winners_from_unranked:
+                    violations.append((r, Ranking(truncated_ballot), removed_ballot_winners, truncated_ballot_winners))
+                    if verbose:
+                        print(f"Semi-Positive Involvement violation found:")
+                        print("")
+                        print("Original profile:")
+                        prof.display()
+                        print(prof.description())
+                        vm.display(prof)
+                        print("\nProfile with ballot removed:")
+                        removed_ballot_prof.display()
+                        print(removed_ballot_prof.description())
+                        vm.display(removed_ballot_prof)
+                        print("\nMargin graph of profile with ballot removed:")
+                        removed_ballot_prof.display_margin_graph()
+                        print(f"Winners: {removed_ballot_winners}")
+                        print(f"\nTruncated ballot: {truncated_ballot}")
+                        print(f"Top-ranked candidates: {top_ranked_candidates}")
+                        print(f"Ranked candidates: {truncated_ranked_candidates}")
+                        print(f"Unranked candidates: {unranked_candidates}")
+                        print("\nProfile with truncated ballot:")
+                        truncated_ballot_prof.display()
+                        print(truncated_ballot_prof.description())
+                        vm.display(truncated_ballot_prof)
+                        print("\nMargin graph of profile with truncated ballot:")
+                        truncated_ballot_prof.display_margin_graph()
+                        print(f"Winners: {truncated_ballot_winners}")
+                        print(f"\nWinners shifted from including top-ranked candidate(s) {[prof.cmap[c] for c in removed_ballot_winners if c in top_ranked_candidates]} to unranked candidates {[prof.cmap[c] for c in truncated_ballot_winners]}")
+    
+    return violations
+
+# Create an Axiom instance for the semi-positive involvement axiom
+semi_positive_involvement = Axiom(
+    "Semi-Positive Involvement",
+    has_violation = has_semi_positive_involvement_violation,
+    find_all_violations = find_all_semi_positive_involvement_violations,
+)
+
 def has_participation_violation(prof, vm, verbose = False, violation_type = "Removal", coalition_size = 1, uniform_coalition = True, set_preference = "single-winner"):
     """
     If violation_type = "Removal", returns True if removing some voter(s) from prof changes the vm winning set such that the (each) voter prefers the new winner(s) to the original winner(s), according to the set_preference relation.
@@ -3016,6 +3368,7 @@ variable_voter_axioms = [
     positive_negative_involvement,
     tolerant_positive_involvement,
     bullet_vote_positive_involvement,
+    semi_positive_involvement,
     participation,
     single_voter_resolvability,
     neutral_reversal,
