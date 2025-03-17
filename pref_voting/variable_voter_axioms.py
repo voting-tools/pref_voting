@@ -1116,7 +1116,11 @@ def find_all_negative_involvement_violations(prof, vm, verbose=False, violation_
     
     return witnesses
 
-
+negative_involvement = Axiom(
+    "Negative Involvement",
+    has_violation = has_negative_involvement_violation,
+    find_all_violations = find_all_negative_involvement_violations, 
+)
 
 def has_positive_negative_involvement_violation(prof, vm, verbose=False, violation_type="Removal", coalition_size=1, uniform_coalition=True, require_resoluteness=False, require_uniquely_weighted=False, check_probabilities=False):
     """
@@ -3009,6 +3013,7 @@ variable_voter_axioms = [
     reinforcement,
     positive_involvement,
     negative_involvement,
+    positive_negative_involvement,
     tolerant_positive_involvement,
     bullet_vote_positive_involvement,
     participation,
