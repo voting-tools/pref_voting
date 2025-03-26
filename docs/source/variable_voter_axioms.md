@@ -32,6 +32,15 @@ Variable Voter Axioms
 
 ```
 
+## Positive-Negative Involvement
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_positive_negative_involvement_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_positive_negative_involvement_violations
+
+``` 
 ## Tolerant Positive Involvement
 
 ```{eval-rst}
@@ -49,6 +58,24 @@ Variable Voter Axioms
 .. autofunction:: pref_voting.variable_voter_axioms.has_bullet_vote_positive_involvement_violation
 
 .. autofunction:: pref_voting.variable_voter_axioms.find_all_bullet_vote_positive_involvement_violations
+
+```
+## Semi-Positive Involvement
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_semi_positive_involvement_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_semi_positive_involvement_violations
+
+```
+## Truncated Involvement
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_truncated_involvement_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_truncated_involvement_violations
 
 ```
 
@@ -81,3 +108,19 @@ Variable Voter Axioms
 .. autofunction:: pref_voting.variable_voter_axioms.find_all_neutral_reversal_violations
 
 ```
+## Neutral Indifference
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_neutral_indifference_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_neutral_indifference_violations
+```
+## Nonlinear Neutral Reversal
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_nonlinear_neutral_reversal_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_nonlinear_neutral_reversal_violations
+``` 
