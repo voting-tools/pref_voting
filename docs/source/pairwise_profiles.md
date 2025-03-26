@@ -8,7 +8,7 @@ Pairwise Profiles
 ```{eval-rst}
 
 
-.. autoclass:: pref_voting.pairwise_profiles.PairwiseComparisons
+.. autoclass:: pref_voting.pairwise_profiles.PairwiseBallot
     :members: 
 
 

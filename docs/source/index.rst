@@ -18,6 +18,30 @@ The library is developed by Wes Holliday (http://wesholliday.net) and Eric Pacui
 
 - W. Zwicker (2016). `Introduction to the theory of voting <https://www.cambridge.org/core/books/abs/handbook-of-computational-social-choice/introduction-to-the-theory-of-voting/7C7A70249A972A4AC56E8938AD27464E>`_, Handbook of Computational Social Choice.
 
+How to cite
+------------------------
+
+If you would like to acknowledge our work in a scientific paper,
+please use the following citation:
+
+Wesley H. Holliday and Eric Pacuit (2025). pref_voting: The Preferential Voting Tools package for Python. Journal of Open Source Software, 10(105), 7020. https://doi.org/10.21105/joss.07020
+
+**Bibtex**:
+
+.. code-block:: bibtex
+
+   @article{HollidayPacuit2025, 
+     author = {Wesley H. Holliday and Eric Pacuit}, 
+     title = {pref_voting: The Preferential Voting Tools package for Python}, 
+     journal = {Journal of Open Source Software},
+     year = {2025}, 
+     publisher = {The Open Journal}, 
+     volume = {10}, 
+     number = {105}, 
+     pages = {7020}, 
+     doi = {10.21105/joss.07020}
+   }
+
 Related resources
 ------------------------
 
