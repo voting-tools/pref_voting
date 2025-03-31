@@ -505,3 +505,73 @@ def test_add():
     prof2 = ProfileWithTies([{0:1, 2:2}])
     prof3 = ProfileWithTies([{0:1, 1:2}, {0:1, 2:2}])
 
+def test_replace_rankings():
+    prof = ProfileWithTies([
+        Ranking({0:1, 1:2}),
+    ])
+    correct_new_prof = ProfileWithTies([
+        Ranking({1:1, 0:2}),
+    ])
+    new_prof = prof.replace_rankings(Ranking({0:1, 1:2}), Ranking({1:1, 0:2}), 10, use_extended_strict_preference_for_comparison=False)
+    assert new_prof.candidates == prof.candidates
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof == correct_new_prof
+
+
+    prof = ProfileWithTies([
+        Ranking({0:1, 1:2}),
+    ])
+    correct_new_prof = ProfileWithTies([
+        Ranking({0:1, 1:2}),
+    ])
+    new_prof = prof.replace_rankings(Ranking({1:1, 0:2}), Ranking({1:1, 0:2}), 1, use_extended_strict_preference_for_comparison=False)
+    assert new_prof.candidates == prof.candidates
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof == prof
+
+    prof = ProfileWithTies([
+        Ranking({0:1, 1:2, 2:3}),
+    ])
+    correct_new_prof = ProfileWithTies([
+        Ranking({2:1, 1:2}),
+    ])
+    new_prof = prof.replace_rankings(Ranking({0:1, 1:2}), Ranking({2:1, 1:2}), 1, use_extended_strict_preference_for_comparison=True)
+    assert new_prof.candidates == prof.candidates
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof == correct_new_prof
+
+    prof = ProfileWithTies([
+        Ranking({0:1, 1:2}),
+    ])
+    correct_new_prof = ProfileWithTies([
+        Ranking({2:1, 1:2}),
+    ])
+    new_prof = prof.replace_rankings(Ranking({0:1, 1:2, 2:3}), Ranking({2:1, 1:2}), 1, use_extended_strict_preference_for_comparison=True)
+    assert new_prof.candidates == prof.candidates
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof == correct_new_prof
+
+    prof = ProfileWithTies([
+        Ranking({0:1, 1:2}),
+        Ranking({0:2}),
+        Ranking({0:1, 1:1}),
+        Ranking({0:1, 1:2}),
+        Ranking({0:1, 1:2, 2:3}),
+    ],
+    rcounts=[2, 1, 1, 2, 1])
+
+    correct_new_prof = ProfileWithTies([
+        Ranking({2:1, 1:2}),
+        Ranking({0:2}),
+        Ranking({0:1, 1:1}),
+        Ranking({2:1, 1:2}),
+        Ranking({0:1, 1:2}),
+        Ranking({0:1, 1:2, 2:3}),
+    ],
+    rcounts=[2, 1, 1, 1, 1, 1])
+
+    r1 = Ranking.from_linear_order((0, 1))
+    new_prof = prof.replace_rankings(r1, Ranking.from_linear_order((2, 1)), 3, use_extended_strict_preference_for_comparison=False)
+    assert new_prof.candidates == prof.candidates
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof == correct_new_prof

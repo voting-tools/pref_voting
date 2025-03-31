@@ -41,6 +41,14 @@ def _num_rank_profile_with_ties(rankings, rcounts, cand, level):
             total += count
     return total
 
+def same_ranking_extended_strict_pref(ranking1, ranking2, candidates): 
+    # check if ranking1 and ranking2 have the same ranking of candidates
+    for c1 in candidates:
+        for c2 in candidates:
+            if (not ranking1.extended_strict_pref(c1, c2) and ranking2.extended_strict_pref(c1, c2)) or (not ranking2.extended_strict_pref(c1, c2) and ranking1.extended_strict_pref(c1, c2)):
+                return False
+    return True
+
 class ProfileWithTies(object):
     """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates. 
 
@@ -555,7 +563,67 @@ class ProfileWithTies(object):
             return None
         new_rankings = [tuple([cand_to_cindx[c] for c in r]) for r in _new_rankings]
         return Profile(new_rankings, rcounts=rcounts, cmap=new_cmap)
-                
+
+    def replace_rankings(
+            self, 
+            old_ranking, 
+            new_ranking, 
+            num, 
+            use_extended_strict_preference_for_comparison = False): 
+        """
+
+        Create a new profile by replacing num ballots matching old_ranking with new_ranking.
+
+        If num is greater than the number of ballots matching old_ranking, then all ballots matching old_ranking are replaced with new_ranking.
+
+        
+        """
+        using_extended_strict_pref = self.using_extended_strict_preference
+        
+        ranking_types, ranking_counts = self.rankings_counts
+
+        if not isinstance(old_ranking, Ranking) or not isinstance(new_ranking, Ranking):
+            raise ValueError("rankings must be of type Ranking")
+            
+        if use_extended_strict_preference_for_comparison:
+            same_ranking = lambda r1, r2: same_ranking_extended_strict_pref(r1, r2, self.candidates)
+        else:
+            same_ranking = lambda r1, r2: r1 == r2
+            
+        new_ranking_types = []
+        new_ranking_counts = []
+
+        current_num = 0
+        for r, c in zip(ranking_types, ranking_counts):
+            
+            if current_num < num and same_ranking(r, old_ranking):
+                if c > num - current_num:
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(num - current_num)
+                    new_ranking_types.append(old_ranking)
+                    new_ranking_counts.append(c - (num - current_num))
+                    current_num = num
+                elif c == num - current_num and same_ranking(r, old_ranking):
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(num - current_num)
+                    current_num = num
+                elif c < num - current_num:
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(c)
+                    current_num += c
+            else:
+                new_ranking_types.append(r)
+                new_ranking_counts.append(c)
+
+        new_prof = ProfileWithTies(new_ranking_types, new_ranking_counts, self.candidates, cmap=self.cmap)
+
+        if using_extended_strict_pref:
+            new_prof.use_extended_strict_preference()
+    
+        assert self.num_voters == new_prof.num_voters, "Problem: the number of voters is not the same in the new profile!"
+        
+        return new_prof   
+    
     def margin_graph(self):
         """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
 
