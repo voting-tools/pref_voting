@@ -316,7 +316,55 @@ def test_eq(condorcet_cycle):
     assert prof == condorcet_cycle
 
 
-    
+def test_replace_ranking():
+    prof = Profile([
+        [0, 1, 2], 
+        [1, 2, 0],
+        [0, 1, 2], 
+        [2, 0, 1]
+    ])
+    correct_new_prof = Profile([
+        [2, 1, 0], 
+        [1, 2, 0],
+        [0, 1, 2], 
+        [2, 0, 1]
+    ])
+
+    new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 1)
+
+    assert new_prof == correct_new_prof
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof.candidates == prof.candidates
+
+    prof = Profile([
+        [0, 1, 2], 
+        [1, 2, 0],
+        [0, 1, 2], 
+        [2, 0, 1]
+    ])
+    correct_new_prof = Profile([
+        [2, 1, 0], 
+        [1, 2, 0],
+        [2, 1, 0], 
+        [2, 0, 1]
+    ])
+
+    new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 2)
+
+    assert new_prof == correct_new_prof
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof.candidates == prof.candidates
+
+    prof = Profile([
+        [1, 2, 0],
+        [2, 0, 1]
+    ])
+    new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 2)
+
+    assert new_prof == prof
+    assert new_prof.num_voters == prof.num_voters
+    assert new_prof.candidates == prof.candidates
+
 # def test_isin():
 #     assert isin(np.array([1, 2, 3]), 2)
 #     assert not isin(np.array([1, 2, 3]), 4)

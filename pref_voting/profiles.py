@@ -604,6 +604,55 @@ class Profile(object):
             [Utility.from_linear_ranking(r, seed=(seed + idx if seed is not None else None)) for idx,r in enumerate(self.rankings)]
         )
     
+    def replace_rankings(
+            self, 
+            old_ranking, 
+            new_ranking, 
+            num, 
+            use_extended_strict_preference_for_comparison = False): 
+        """
+
+        Create a new profile by replacing num ballots matching old_ranking with new_ranking.
+
+        If num is greater than the number of ballots matching old_ranking, then all ballots matching old_ranking are replaced with new_ranking.
+        
+        """
+        
+        ranking_types, ranking_counts = self.rankings_counts
+            
+        same_ranking = lambda r1, r2: list(r1) == list(r2)
+
+        new_ranking_types = []
+        new_ranking_counts = []
+
+        current_num = 0
+        for r, c in zip(ranking_types, ranking_counts):
+            
+            if current_num < num and same_ranking(r, old_ranking):
+                if c > num - current_num:
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(num - current_num)
+                    new_ranking_types.append(old_ranking)
+                    new_ranking_counts.append(c - (num - current_num))
+                    current_num = num
+                elif c == num - current_num and same_ranking(r, old_ranking):
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(num - current_num)
+                    current_num = num
+                elif c < num - current_num:
+                    new_ranking_types.append(new_ranking)
+                    new_ranking_counts.append(c)
+                    current_num += c
+            else:
+                new_ranking_types.append(r)
+                new_ranking_counts.append(c)
+
+        new_prof = Profile(new_ranking_types, new_ranking_counts, cmap=self.cmap)
+        
+        assert self.num_voters == new_prof.num_voters, "Problem: the number of voters is not the same in the new profile!"
+        
+        return new_prof
+    
     def to_latex(self, cmap = None, curr_cands = None):
         """Returns a string describing the profile (restricted to ``curr_cands``) as a LaTeX table (use the provided ``cmap`` or the ``cmap`` associated with the profile).
 
