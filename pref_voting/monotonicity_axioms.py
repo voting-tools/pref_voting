@@ -199,7 +199,10 @@ def has_monotonicity_violation(profile, vm, verbose = False, violation_type = "L
 
     if violation_type == "Lift":
         for w in ws: 
-            for r_idx, r in enumerate(rankings): 
+            for r_idx, r in enumerate(rankings):
+
+                if rcounts[r_idx] == 0:
+                    continue
 
                 if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                     r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
@@ -269,6 +272,9 @@ def has_monotonicity_violation(profile, vm, verbose = False, violation_type = "L
             if l not in ws:
                 for r_idx, r in enumerate(rankings): 
 
+                    if rcounts[r_idx] == 0:
+                        continue
+
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
 
@@ -316,6 +322,9 @@ def has_monotonicity_violation(profile, vm, verbose = False, violation_type = "L
                             
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if rcounts[r_idx] == 0:
+                        continue
 
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
@@ -402,6 +411,9 @@ def find_all_monotonicity_violations(profile, vm, verbose = False, violation_typ
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
 
+                if rcounts[r_idx] == 0:
+                    continue
+
                 if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                     r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
                     
@@ -471,6 +483,9 @@ def find_all_monotonicity_violations(profile, vm, verbose = False, violation_typ
             if l not in ws:
                 for r_idx, r in enumerate(rankings): 
 
+                    if rcounts[r_idx] == 0:
+                        continue
+
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
 
@@ -518,6 +533,9 @@ def find_all_monotonicity_violations(profile, vm, verbose = False, violation_typ
 
             if check_probabilities and l in ws:
                 for r_idx, r in enumerate(rankings): 
+
+                    if rcounts[r_idx] == 0:
+                        continue
 
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
@@ -642,6 +660,9 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
 
+                if rcounts[r_idx] == 0:
+                    continue
+
                 if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                     r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
 
@@ -681,6 +702,9 @@ def has_weak_positive_responsiveness_violation(profile, vm, verbose = False, vio
         for l in profile.candidates:
             if l not in ws or (l in ws and len(ws) > 1):
                 for r_idx, r in enumerate(rankings): 
+
+                    if rcounts[r_idx] == 0:
+                        continue
 
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
@@ -753,6 +777,9 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
         for w in ws: 
             for r_idx, r in enumerate(rankings): 
 
+                if rcounts[r_idx] == 0:
+                    continue
+
                 if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                     r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
 
@@ -791,6 +818,9 @@ def find_all_weak_positive_responsiveness_violations(profile, vm, verbose = Fals
         for l in profile.candidates:
             if l not in ws or (l in ws and len(ws) > 1):
                 for r_idx, r in enumerate(rankings): 
+
+                    if rcounts[r_idx] == 0:
+                        continue
 
                     if isinstance(r, Ranking): # Make sure all candidates are ranked in r
                         r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})

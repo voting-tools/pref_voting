@@ -589,8 +589,7 @@ def top_n_instant_runoff_for_truncated_linear_orders(
     threshold = None, 
     hide_warnings = True): 
     """
-    Returns the top n candidates according to the Instant Runoff method: Iteratively remove candidates until there are at most n candidates left.   Note that since there may be multiple candidates with the lowest plurality score, this may return less than n candidates.
-
+    Returns the top n candidates according to the Instant Runoff method: Iteratively remove candidates until there are at most n candidates left.   Note that since there may be multiple candidates with the lowest plurality score, it may not be possible to reduce to exactly n candidates, in which case the function will return None.
     """
     
     assert all([not r.has_overvote() for r in profile.rankings]), "Instant Runoff is only defined when all the ballots are truncated linear orders."
@@ -608,14 +607,11 @@ def top_n_instant_runoff_for_truncated_linear_orders(
     # remove the empty rankings
     _prof.remove_empty_rankings()
     
-    threshold = threshold if threshold is not None else _prof.strict_maj_size()
-    
     remaining_candidates = _prof.candidates
         
     pl_scores = _prof.plurality_scores()
-    max_pl_score = max(pl_scores.values())
     
-    while max_pl_score < threshold and len(remaining_candidates) > n: 
+    while len(remaining_candidates) > n: 
         reduced_prof = _prof.remove_candidates([c for c in _prof.candidates if c not in remaining_candidates])
         
         # after removing the candidates, there might be some empty ballots.
@@ -632,12 +628,13 @@ def top_n_instant_runoff_for_truncated_linear_orders(
             # all remaining candidates have the same plurality score.
             remaining_candidates = reduced_prof.candidates
             break 
-            
-        # possibly update the threshold, so that it is a strict majority of the remaining ballots
-        threshold = threshold if threshold is not None else reduced_prof.strict_maj_size()
-        max_pl_score = max(pl_scores.values())
 
         remaining_candidates = [c for c in remaining_candidates if c not in cands_to_remove]
+
+    if len(remaining_candidates) != n:
+        if not hide_warnings:
+            print(f"Warning: cannot reduce to exactly {n} candidates.")
+        return None
 
     return sorted(remaining_candidates)
 
