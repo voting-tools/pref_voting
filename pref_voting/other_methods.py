@@ -2,7 +2,7 @@
     File: other_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 12, 2022
-    Updated: December 31, 2024
+    Updated: April 21, 2025
 
 '''
 from pref_voting.voting_method import *
@@ -17,6 +17,8 @@ from pref_voting.social_welfare_function import swf
 import numpy as np
 from pref_voting.profiles_with_ties import _num_rank_profile_with_ties
 import copy
+from ortools.linear_solver import pywraplp
+
 @vm(name = "Absolute Majority",
     skip_registration=True, # skip registration since aboslute majority may return an empty list
     input_types = [ElectionTypes.PROFILE])
@@ -611,6 +613,127 @@ def weighted_bucklin(profile, curr_cands = None, strict_threshold = False, score
     max_score = max(cand_scores.values())
 
     return sorted([c for c in candidates if cand_scores[c] >= max_score])
+
+def _dodgson_score(profile, cand):
+    """
+    Return the **Dodgson score** of ``cand`` in ``profile``.
+
+    The Dodgson score of a candidate *c* is the minimum number of
+    *adjacent* swaps, summed over *all* ballots, needed to make *c* the
+    **Condorcet winner**.
+
+    We formulate this as a *mixed‑integer program* and solve it with
+    OR‑Tools/SCIP:
+
+        • Variables x[r, k] = number of voters with ranking r who move 
+        *c* upward by *exactly* k positions (0 ≤ k ≤ pos₍r₎(c)).
+        • Objective: minimise Σ k · x[r, k] (total swaps).
+        • Constraints
+            – Partition: for each distinct ranking r, the x[r,·] must
+              sum to the observed multiplicity of r.
+            – Condorcet: for every rival d ≠ c, after the moves
+              *c* must beat d by a strict majority.
+
+    Parameters
+    ----------
+    profile : pref_voting.profiles.Profile
+    cand : int, the candidate whose Dodgson score we compute.
+
+    Returns
+    -------
+    int, the Dodgson score of *cand*.
+    """
+    rankings, counts = profile.rankings_counts   # ranking types & their multiplicities
+    majority = profile.strict_maj_size()         # ⌊number of voters / 2⌋ + 1
+
+    solver = pywraplp.Solver.CreateSolver("SCIP")
+    if solver is None:
+        raise EnvironmentError("This OR‑Tools build lacks a MIP solver.")
+
+    # Variables x[r, k]
+    #
+    # For each ranking type and each possible upward
+    # move k (0..pos_c) we create an *integer* variable representing
+    # the number of voters with that ranking who move *c* upward by
+    # exactly k positions.
+    #
+    # The partition constraints (one per ranking) ensure that we do not
+    # duplicate or delete ballots but only *re‑order* the existing ones.
+
+    x = {}  # maps (r_idx, k) -> IntVar
+    for r_idx, (ranking, w_np) in enumerate(zip(rankings, counts)):
+        w = int(w_np)                # NumPy scalar → Python int  (SCIP wants int bounds)
+        order = list(ranking)
+        pos_c = order.index(cand)    # 0‑based position of cand in this ballot
+
+        # create variables for k = 0 … pos_c
+        for k in range(pos_c + 1):
+            x[(r_idx, k)] = solver.IntVar(0, w, f"x_{r_idx}_{k}")
+
+        # partition constraint  Σ_k x[r,k] = multiplicity of ranking r
+        solver.Add(solver.Sum(x[(r_idx, k)] for k in range(pos_c + 1)) == w)
+
+    # Condorcet constraints:  make cand beat every rival d ≠ cand
+    # For each rival d we compare:
+    #   current_support   – voters already preferring cand over d
+    #   contributed_flips – voters whose ballots we move enough for cand
+    #                       to pass d (k ≥ distance in that ranking)
+    # The sum must reach the strict majority threshold.
+    for d in range(profile.num_cands):
+        if d == cand:
+            continue  # skip self‑comparison
+
+        current_support = profile.support(cand, d)
+        flip_terms = []
+
+        # identify voters who can move cand up by k positions to go above d
+        for r_idx, ranking in enumerate(rankings):
+            order = list(ranking)
+            pos_c = order.index(cand)
+            pos_d = order.index(d)
+            if pos_d < pos_c:                       # cand currently below d
+                dist = pos_c - pos_d                # minimum upward steps to pass d
+                for k in range(dist, pos_c + 1):    # any k ≥ dist suffices
+                    flip_terms.append(x[(r_idx, k)])
+
+        # enforce majority: support_after ≥ majority
+        solver.Add(current_support + solver.Sum(flip_terms) >= majority)
+
+    # Objective: minimise total adjacent swaps  
+    # Each voter who moves cand up by k positions contributes exactly k swaps.
+    solver.Minimize(
+        solver.Sum(k * var for (r_idx, k), var in x.items() if k > 0)
+    )
+
+    if solver.Solve() != pywraplp.Solver.OPTIMAL:
+        raise RuntimeError("SCIP failed to prove optimality.")
+
+    return int(solver.Objective().Value())
+
+@vm(name="Dodgson", 
+    input_types = [ElectionTypes.PROFILE])
+def dodgson(profile, curr_cands=None, global_score = True):
+    """The Dodgson score of a candidate is the minimum number of adjacent swaps in the ballots needed to make them a Condorcet winner. The Dodgson method selects the candidate with the minimum Dodgson score.
+
+    Args:
+        profile (Profile): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the candidates in curr_cands with the best Dodgson score.
+        global_score (bool, optional): If True, then the Dodgson score is computed using the entire profile, including candidates not in curr_cands. If False, then the Dodgson score is computed using the profile restricted to the candidates in curr_cands.
+
+    Returns:
+        A sorted list of candidates
+
+    """
+    if curr_cands is None:
+        curr_cands = profile.candidates
+
+    if not global_score:
+        profile.remove_candidates([c for c in profile.candidates if c not in curr_cands])
+
+    scores = {c: _dodgson_score(profile, c) for c in curr_cands}
+
+    best   = min(scores.values())
+    return sorted([c for c, s in scores.items() if s == best])
 
 @vm(name = "Bracket Voting",
     input_types = [ElectionTypes.PROFILE])
