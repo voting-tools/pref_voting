@@ -74,6 +74,14 @@ Other Methods
 
 ```
 
+## Dodgson
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.dodgson
+
+```
+
 
 ## Bracket Voting
 
