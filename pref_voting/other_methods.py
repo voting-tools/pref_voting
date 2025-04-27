@@ -622,6 +622,12 @@ def _dodgson_score(profile, cand):
     *adjacent* swaps, summed over *all* ballots, needed to make *c* the
     **Condorcet winner**.
 
+    This is equivalent to the the minimum number of places that $c$ 
+    must *move up* in ballots to become a Condorcet winner
+    (see Lemma 4.0.5 of John C. McCabe-Dansted, 
+    *Approximability and computational feasibility of Dodgson’s rule*. 
+    Master’s thesis, University of Auckland, 2006.)
+
     We formulate this as a *mixed‑integer program* and solve it with
     OR‑Tools/SCIP:
 
