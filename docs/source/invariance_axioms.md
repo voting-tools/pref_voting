@@ -22,7 +22,7 @@ Invariance Axioms
 
 ```
 
-## Upward Block Preservation
+## Downward Block Preservation
 
 ```{eval-rst}
 
