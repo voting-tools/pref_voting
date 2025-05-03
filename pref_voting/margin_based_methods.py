@@ -1601,7 +1601,8 @@ def simple_stable_voting_with_explanation(
     edata, 
     curr_cands=None, 
     strength_function=None,
-    algorithm = 'basic'): 
+    algorithm = 'basic',
+    ): 
 
     """Implementation of Simple Stable Voting from https://arxiv.org/abs/2108.00542. 
 
@@ -1655,11 +1656,14 @@ def _stable_voting(edata,
                    strength_function,
                    sorted_matches,
                    mem_sv_winners,
-                   terminate_early):
+                   terminate_early,
+                   favor_weak_condorcet_winners):
     '''
     Determine the Stable Voting winners for the profile while keeping track of the winners in any subprofiles checked during computation.
 
     If terminate_early is True, then the algorithm will terminate early if there is only one undefeated candidate.
+
+    If favor_weak_condorcet_winners is True, then if there are weak Condorcet winners, the algorithm will only consider pairs (A,B) where A is a weak Condorcet winner.
     '''
 
     sv_winners = list()
@@ -1668,7 +1672,10 @@ def _stable_voting(edata,
         mem_sv_winners[tuple(curr_cands)] = curr_cands
         return curr_cands, mem_sv_winners
     
-    undefeated_candidates = split_cycle(edata, curr_cands=curr_cands, strength_function=strength_function)
+    if favor_weak_condorcet_winners and len(edata.weak_condorcet_winner(curr_cands=curr_cands)) > 0:
+        undefeated_candidates = edata.weak_condorcet_winner(curr_cands=curr_cands)
+    else:
+        undefeated_candidates = split_cycle(edata, curr_cands=curr_cands, strength_function=strength_function)
 
     # Early termination if there is only one undefeated candidate
     if terminate_early and len(undefeated_candidates) == 1:
@@ -1689,7 +1696,8 @@ def _stable_voting(edata,
                                                     strength_function=strength_function,
                                                     sorted_matches=[(x, y, s) for x, y, s in sorted_matches if x != b and y != b],
                                                     mem_sv_winners=mem_sv_winners,
-                                                    terminate_early=terminate_early
+                                                    terminate_early=terminate_early,
+                                                    favor_weak_condorcet_winners=favor_weak_condorcet_winners
                                                     )
                 mem_sv_winners[cands_minus_b_key] = ws
             else:
@@ -1704,7 +1712,8 @@ def _stable_voting_with_condorcet_check(
     edata,
     curr_cands=None,
     strength_function=None,
-    terminate_early=False):
+    terminate_early=False,
+    favor_weak_condorcet_winners=False):
     """
     Stable Voting is Condorcet consistent. It is faster to skip executing the recursive algorithm when there is a Condorcet winner.
 
@@ -1713,7 +1722,8 @@ def _stable_voting_with_condorcet_check(
         curr_cands (List[int], optional): Find the winners for the profile restricted to these candidates.
         strength_function (function, optional): The strength function to calculate the strength of a path.
         terminate_early (bool, optional): If True, terminate early when there is only one undefeated candidate.
-
+        favor_weak_condorcet_winners (bool, optional): If True, then if there are any weak Condorcet winners,
+        only consider pairs (A,B) where A is a weak Condorcet winner.
     Returns:
         A sorted list of candidates.
     """
@@ -1733,7 +1743,8 @@ def _stable_voting_with_condorcet_check(
                                     strength_function=strength_function,
                                     sorted_matches=sorted_matches,
                                     mem_sv_winners={},
-                                    terminate_early=terminate_early
+                                    terminate_early=terminate_early,
+                                    favor_weak_condorcet_winners=favor_weak_condorcet_winners
                                     )
         return sorted(winners)
 
@@ -1741,7 +1752,8 @@ def _stable_voting_basic(
     edata,
     curr_cands=None,
     strength_function=None,
-    terminate_early=False):
+    terminate_early=False,
+    favor_weak_condorcet_winners=False):
     """Implementation of Stable Voting from https://arxiv.org/abs/2108.00542.
 
     Args:
@@ -1766,7 +1778,8 @@ def _stable_voting_basic(
                                 strength_function=strength_function,
                                 sorted_matches=sorted_matches,
                                 mem_sv_winners={},
-                                terminate_early=terminate_early
+                                terminate_early=terminate_early,
+                                favor_weak_condorcet_winners=favor_weak_condorcet_winners
                                 )
     return sorted(winners)
 
@@ -1776,7 +1789,8 @@ def stable_voting(
     edata,
     curr_cands=None,
     strength_function=None,
-    algorithm='with_condorcet_check_and_early_termination'):
+    algorithm='with_condorcet_check_and_early_termination',
+    favor_weak_condorcet_winners=False):
     """Implementation of Stable Voting from https://arxiv.org/abs/2108.00542.
 
     Stable Voting is a recursive voting method defined as follows:
@@ -1829,28 +1843,32 @@ def stable_voting(
             edata,
             curr_cands=curr_cands,
             strength_function=strength_function,
-            terminate_early=False
+            terminate_early=False,
+            favor_weak_condorcet_winners=favor_weak_condorcet_winners
         )
     elif algorithm == 'with_condorcet_check':
         return _stable_voting_with_condorcet_check(
             edata,
             curr_cands=curr_cands,
             strength_function=strength_function,
-            terminate_early=False
+            terminate_early=False,
+            favor_weak_condorcet_winners=favor_weak_condorcet_winners
         )
     elif algorithm == 'with_early_termination':
         return _stable_voting_basic(
             edata,
             curr_cands=curr_cands,
             strength_function=strength_function,
-            terminate_early=True
+            terminate_early=True,
+            favor_weak_condorcet_winners=favor_weak_condorcet_winners
         )
     elif algorithm == 'with_condorcet_check_and_early_termination':
         return _stable_voting_with_condorcet_check(
             edata,
             curr_cands=curr_cands,
             strength_function=strength_function,
-            terminate_early=True
+            terminate_early=True,
+            favor_weak_condorcet_winners=favor_weak_condorcet_winners
         )
     else:
         raise ValueError("Invalid algorithm specified.")
