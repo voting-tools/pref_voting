@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
 import seaborn as sns
 from pref_voting.utility_functions import *
 from pref_voting.utility_profiles import UtilityProfile
+
 class SpatialProfile(object): 
     """
     A spatial profile is a set of candidates and voters in a multi-dimensional space.  Each voter and candidate is assigned vector of floats representing their position on each issue.
@@ -164,76 +166,235 @@ class SpatialProfile(object):
 
         return cls(cand_positions, voter_positions)
 
-    def view(self, show_cand_labels=False, show_voter_labels=False): 
-        """ 
+    def view(self, show_cand_labels=False, show_voter_labels=False, bin_width=None, dpi=150):
+        """
         Displays the spatial model in a 1D, 2D, or 3D plot.
-
+        
         Args:
             show_cand_labels (optional, bool): If True, displays the labels of each candidate. The default is False.
             show_voter_labels (optional, bool): If True, displays the labels of each voter. The default is False.
+                Note: In 1D visualizations, voter labels are disabled regardless of this setting.
+            bin_width (optional, float): Width of bins for grouping voters in 1D visualization. If None, a suitable width is calculated.
+            dpi (optional, int): Resolution in dots per inch. Default is 150.
         """
         assert self.num_dims <= 3, "Can only view profiles with 1, 2, or 3 dimensions"
-
         sns.set_theme(style="darkgrid")
-
-        if self.num_dims == 1: 
-
-            sns.scatterplot(x=[self.voter_position(v)[0] for v in self.voters], y=[1] * len(self.voters), color="blue", label="Voters")
-
-            sns.scatterplot(x=[self.candidate_position(c)[0] for c in self.candidates], y=[1] * len(self.candidates), color="red", marker='X', label="Candidates")
-
-            if show_cand_labels:
-                # Adding labels to each point
-                for c in self.candidates:
-                    plt.annotate(c, (self.candidate_position(c)[0], 1))
+        
+        # Define the candidate color consistently across all dimensions
+        candidate_color = "red"
+        
+        if self.num_dims == 1:
+            # Get all voter positions
+            voter_positions = [self.voter_position(v)[0] for v in self.voters]
             
-            if show_voter_labels:
-                # Adding labels to each point
-                for v in self.voters:
-                    plt.annotate(v + 1, (self.voter_position(v)[0], 1))
-
-            plt.yticks([])  # this hides the y-axis
+            # Calculate histogram data
+            if bin_width is None:
+                # Auto-calculate a reasonable bin width based on data range
+                position_range = max(voter_positions) - min(voter_positions)
+                bin_width = max(position_range / 20, 0.05)
+            
+            # Create histogram data - exact counts
+            bins = {}
+            for pos in voter_positions:
+                # Round to nearest bin
+                binned_pos = round(pos / bin_width) * bin_width
+                bins[binned_pos] = bins.get(binned_pos, 0) + 1
+            
+            # Get the bin positions and counts
+            bin_positions = list(bins.keys())
+            bin_counts = list(bins.values())
+            max_count = max(bin_counts) if bin_counts else 1
+            
+            # Create figure with sufficient space for labels and high resolution
+            fig, ax = plt.subplots(figsize=(10, 6), dpi=dpi)
+            
+            # Calculate the space needed for candidates at the top
+            candidate_area_height = max_count * 0.3
+            
+            # Plot the bars for voters
+            bars = ax.bar(
+                bin_positions,
+                bin_counts,
+                width=bin_width*0.8, 
+                alpha=0.6,
+                color="blue",
+                label="Voters"
+            )
+            
+            # Calculate position for candidates at the top
+            top_line_y = max_count + 0.2
+            candidate_y_pos = top_line_y + candidate_area_height * 0.3
+            candidate_positions = [self.candidate_position(c)[0] for c in self.candidates]
+            
+            # Plot candidates above the histogram
+            cand_scatter = ax.scatter(candidate_positions, [candidate_y_pos] * len(self.candidates), 
+                    color=candidate_color, marker='X', s=100, zorder=5)
+            
+            # Create a custom legend box
+            legend = ax.legend([cand_scatter, bars], ['Candidates', 'Voters'], 
+                            loc='upper right', 
+                            bbox_to_anchor=(0.99, 0.99))
+            
+            # Draw the figure to get legend position for label placement
+            fig.canvas.draw()
+            
+            # Get legend position for detecting label overlap
+            if legend:
+                legend_bbox = legend.get_window_extent().transformed(ax.transData.inverted())
+                legend_left = legend_bbox.x0
+                legend_right = legend_bbox.x1
+                legend_width = legend_right - legend_left
+            else:
+                legend_left = float('inf')
+                legend_right = float('inf')
+                legend_width = 0
+            
+            if show_cand_labels:
+                # Add labels to each candidate
+                for c in self.candidates:
+                    pos = self.candidate_position(c)[0]
+                    
+                    # Buffer to detect legend overlap
+                    legend_buffer = 0.05 * legend_width
+                    
+                    # Check if candidate is under or near the legend
+                    if (pos >= legend_left - legend_buffer) and (pos <= legend_right + legend_buffer):
+                        # Place label below the marker to avoid legend overlap
+                        ax.annotate(c, (pos, candidate_y_pos), xytext=(0, -25), 
+                                textcoords='offset points', ha='center', va='top',
+                                fontsize=13, fontweight='bold', color=candidate_color)
+                    else:
+                        # Otherwise place it above
+                        ax.annotate(c, (pos, candidate_y_pos), xytext=(0, 15), 
+                                textcoords='offset points', ha='center', va='bottom',
+                                fontsize=13, fontweight='bold', color=candidate_color)
+            
+            # Set axis labels
+            ax.set_xlabel('Position')
+            ax.set_ylabel('Number of voters')
+            
+            # Configure y-axis to show integers for the histogram area
+            ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+            
+            # Set y-limits to include the candidate area
+            ax.set_ylim(0, top_line_y + candidate_area_height)
+            
+            # Hide y-ticks in the candidate area
+            yticks = [t for t in ax.get_yticks() if t <= max_count]
+            ax.set_yticks(yticks)
+            
+            # Adjust the figure layout
+            plt.tight_layout(rect=[0, 0, 1, 0.97])
+            
             plt.show()
-
+        
         elif self.num_dims == 2:
-
-            sns.scatterplot(x=[self.voter_position(v)[0] for v in self.voters], y=[self.voter_position(v)[1] for v in self.voters], color="blue", label="Voters")
-
-            scatter = sns.scatterplot(x=[self.candidate_position(c)[0] for c in self.candidates], y=[self.candidate_position(c)[1] for c in self.candidates], color="red", marker='X', label="Candidates")
-
+    
+            fig, ax = plt.subplots(figsize=(10, 6), dpi=dpi)
+            
+            # Get voter positions
+            x_voters = [self.voter_position(v)[0] for v in self.voters]
+            y_voters = [self.voter_position(v)[1] for v in self.voters]
+            
+            # Plot voters with semi-transparency to visualize density
+            voter_scatter = ax.scatter(x_voters, y_voters, 
+                                    color="blue", alpha=0.2,
+                                    edgecolor="black", linewidth=0.3,
+                                    s=30,
+                                    label="Voters")
+            
+            # Plot candidates
+            x_cand = [self.candidate_position(c)[0] for c in self.candidates]
+            y_cand = [self.candidate_position(c)[1] for c in self.candidates]
+            cand_scatter = ax.scatter(x_cand, y_cand, 
+                                    color=candidate_color, marker='X', s=100,
+                                    edgecolor="white", linewidth=0.7,
+                                    zorder=5,
+                                    label="Candidates")
+            
+            # Create a legend
+            ax.legend([cand_scatter, voter_scatter], ['Candidates', 'Voters'], loc='upper right')
+            
             if show_cand_labels:
                 for c in self.candidates:
-                    plt.annotate(c, (self.candidate_position(c)[0], self.candidate_position(c)[1]))
-
+                    pos = self.candidate_position(c)
+                    text = ax.annotate(c, (pos[0], pos[1]), xytext=(0, 10), 
+                            textcoords='offset points', ha='center', va='bottom',
+                            fontsize=11, fontweight='bold', color=candidate_color)
+                    
+                    # Add white outline to text for better visibility
+                    text.set_path_effects([
+                        path_effects.Stroke(linewidth=1.5, foreground='white'),
+                        path_effects.Normal()
+                    ])
+                    
             if show_voter_labels:
                 for v in self.voters:
-                    plt.annotate(v + 1, (self.voter_position(v)[0], self.voter_position(v)[1]))
-
-            scatter.set(xlabel='Dimension 1', ylabel='Dimension 2')
-            plt.legend()
+                    pos = self.voter_position(v)
+                    ax.annotate(v + 1, (pos[0], pos[1]), fontsize=8)
+                    
+            ax.set_xlabel('Dimension 1')
+            ax.set_ylabel('Dimension 2')
+            plt.tight_layout()
             plt.show()
+        
         elif self.num_dims == 3:
 
-            fig = plt.figure()
-            ax = fig.add_subplot(111, projection = '3d')
-
-            x = [self.voter_position(v)[0] for v in self.voters]
-            y = [self.voter_position(v)[1] for v in self.voters]
-            z = [self.voter_position(v)[2] for v in self.voters]
-            ax.scatter(x, y, z, color="blue", label="Voters")
-
-            x = [self.candidate_position(c)[0] for c in self.candidates]
-            y = [self.candidate_position(c)[1] for c in self.candidates]
-            z = [self.candidate_position(c)[2] for c in self.candidates]
-            ax.scatter(x, y, z, color="red", marker="X", label="Candidates")
-
+            fig = plt.figure(figsize=(10, 6), dpi=dpi)
+            ax = fig.add_subplot(111, projection='3d')
+            
+            # Fetch all positions
+            x_voters = [self.voter_position(v)[0] for v in self.voters]
+            y_voters = [self.voter_position(v)[1] for v in self.voters]
+            z_voters = [self.voter_position(v)[2] for v in self.voters]
+            
+            x_cand = [self.candidate_position(c)[0] for c in self.candidates]
+            y_cand = [self.candidate_position(c)[1] for c in self.candidates]
+            z_cand = [self.candidate_position(c)[2] for c in self.candidates]
+            
+            # Plot voters with high transparency for better visibility through clusters
+            voter_scatter = ax.scatter(x_voters, y_voters, z_voters, 
+                                    color="blue", alpha=0.1,
+                                    edgecolor="black", linewidth=0.5,
+                                    s=30,
+                                    label="Voters")
+            
+            # Plot candidate markers with white outline for better visibility
+            cand_scatter = ax.scatter(x_cand, y_cand, z_cand, 
+                                    color=candidate_color, marker="X", s=40,
+                                    edgecolor="white", linewidth=0.7,
+                                    label="Candidates")
+            
+            # Add voter labels if requested
+            if show_voter_labels:
+                for v in self.voters:
+                    pos = self.voter_position(v)
+                    ax.text(pos[0], pos[1], pos[2], str(v + 1), fontsize=8)
+            
+            # Add candidate labels
+            if show_cand_labels:
+                for c in self.candidates:
+                    pos = self.candidate_position(c)
+                    text = ax.text(pos[0], pos[1], pos[2] + 0.15, c, 
+                        fontsize=11, fontweight='bold', color=candidate_color,
+                        ha='center', va='bottom')
+                    
+                    # Add white outline to text for better visibility
+                    text.set_path_effects([
+                        path_effects.Stroke(linewidth=1.5, foreground='white'),
+                        path_effects.Normal()
+                    ])
+            
+            # Create legend
+            ax.legend([cand_scatter, voter_scatter], ['Candidates', 'Voters'], loc='upper right')
+            
+            # Set axis labels
             ax.set_xlabel('Dimension 1')
             ax.set_ylabel('Dimension 2')
             ax.set_zlabel('Dimension 3')
-
-            plt.legend()
+            
+            plt.tight_layout()
             plt.show()
-
     
     def display(self): 
         """
