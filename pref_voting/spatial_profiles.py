@@ -79,7 +79,7 @@ class SpatialProfile(object):
 
         assert set(cand_types.keys()) == set(self.candidates), "The candidate types must be specified for all candidates."
 
-        self.candidate_types = candidate_types
+        self.candidate_types = cand_types
 
     def to_utility_profile(self, 
                            utility_function = None,
@@ -130,6 +130,44 @@ class SpatialProfile(object):
             ]
             return UtilityProfile(utility_profile)
     
+    def add_candidate(self, candidate_positions, add_multiple_candidates = False): 
+        """
+        Add a candidate to the spatial profile. 
+
+        Args: 
+            candidate_positions (list): A list of candidate positions
+        """
+
+        if add_multiple_candidates: 
+            assert all([len(pos) == self.num_dims for pos in candidate_positions]), f"Candidates positions ({candidate_positions}) must be the same dimension as the profile dimension ({self.num_dims})"
+
+            starting_cand_name = self.num_cands
+
+            for c_pos in candidate_positions: 
+                self.cand_pos[starting_cand_name] = c_pos
+                starting_cand_name += 1
+
+        elif not add_multiple_candidates: 
+
+            assert  len(candidate_positions) == self.num_dims, f"Candidates position ({candidate_positions}) must be the same dimension as the profile dimension ({self.num_dims})"
+
+            starting_cand_name = self.num_cands
+            self.cand_pos[starting_cand_name] = candidate_positions
+
+        self.candidates = sorted(list(self.cand_pos.keys())) 
+
+    def move_candidate(self, cand, new_cand_pos): 
+        """
+        Move cand to a new position
+        """
+
+        assert len(new_cand_pos) == self.num_dims, f"The new position {new_cand_pos} must be the same as the profile dimension: {self.num_dims}"
+
+        assert cand in self.candidates, f"Candidate {cand} is not in the profile."
+
+        self.cand_pos[cand] = new_cand_pos
+
+
     def to_string(self): 
         """
         Returns a string representation of the spatial profile.

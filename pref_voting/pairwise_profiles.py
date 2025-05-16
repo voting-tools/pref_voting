@@ -14,6 +14,7 @@ import networkx as nx
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph, SupportGraph
+from pref_voting.rankings import Ranking
 import os
 
 # turn off future warnings.
@@ -48,17 +49,17 @@ class PairwiseBallot:
             else:
                 raise ValueError("Each element of the list of comparisons should be a tuple of sets or lists of candidates.")
 
-        if not self.is_coherent():
+        if not self._well_formed_comparisons():
             raise ValueError("The pairwise comparisons are not coherent.")
         
         self.candidates = sorted(list(set(c for menu, _ in self._comparisons for c in menu)) if candidates is None else candidates)
         self.cmap = cmap if cmap is not None else {c: str(c) for c in self.candidates}
 
-    def is_coherent(self):
-        """Check if the pairwise comparisons are coherent.
+    def _well_formed_comparisons(self):
+        """Check if the pairwise comparisons are all well-formed.
         
         Returns:
-            bool: True if the pairwise comparisons are coherent, False otherwise.
+            bool: True if the pairwise comparisons are well-formed, False otherwise.
         """
         for menu, choice in self._comparisons:
             if not choice.issubset(menu):
@@ -66,6 +67,10 @@ class PairwiseBallot:
         menus = [menu for menu, _ in self._comparisons]
         return len(menus) == len(set(frozenset(menu) for menu in menus))
 
+    def num_comparisons(self): 
+        """Return the number of pairwise comparisons"""
+        return len(self._comparisons)
+    
     def weak_pref(self, c1, c2):
         """Return the revealed weak preference of a menu of choices.
 
@@ -139,9 +144,9 @@ class PairwiseBallot:
         """
         new_comparison = (set(menu), set(choice))
         self._comparisons.append(new_comparison)
-        if not self.is_coherent():
+        if not self._well_formed_comparisons():
             self._comparisons.pop()
-            raise ValueError("The new comparison is not coherent with the existing comparisons.")
+            raise ValueError("The new comparison is not well-formed given the existing comparisons.")
         self.candidates = sorted(list(set(c for menu, _ in self._comparisons for c in menu)))
 
     def add_strict_preference(self, c1, c2):
@@ -156,6 +161,67 @@ class PairwiseBallot:
         """
         self.add_comparison({c1, c2}, {c1})
 
+    def is_transitive(self, cands): 
+        """Return True of the comparisons is transitive on the set cands of candidates"""
+
+        for c1 in cands: 
+            for c2 in cands: 
+                for c3 in cands: 
+                    if self.weak_pref(c1, c2) and self.weak_pref(c2, c3) and not self.weak_pref(c1, c3): 
+                        return False
+        return True
+    
+    def is_coherent(self):
+        """Return True if the comparisons are coherent: If a candidate is compared to another candidate, then that candidate must be compared to all canidates"""
+
+        for c in self.candidates: 
+            for menu, _ in self._comparisons: 
+                if c in menu: 
+                    for c1 in self.candidates: 
+                        if c != c1 and not self.has_comparison(c, c1): 
+                            return False
+        return True
+
+    def to_ranking(self): 
+        """Return the comparison as a ranking (return an error if comparisons are not transitive)"""
+
+        assert self.is_transitive(self.candidates), "The comparisons must be transitive to convert to a ranking"
+        assert self.is_coherent(), "The comparisons must be coherent to convert to a ranking"
+
+        c1, c2 = self.candidates[0], self.candidates[1]
+        ranking = {}
+        if self.strict_pref(c1, c2): 
+            ranking[c1] = 1
+            ranking[c2] = 2
+        elif self.strict_pref(c2, c1):
+            ranking[c2] = 1
+            ranking[c1] = 2
+        elif self.indiff(c1, c2): 
+            ranking[c2] = 1
+            ranking[c1] = 1
+
+        for c in self.candidates: 
+            prev_rank = 0
+            if c not in ranking.keys():
+                ranked_last = True 
+                for c2, r in sorted(ranking.items(), key=lambda r: r[1]): 
+                    if self.strict_pref(c, c2): 
+                        ranking[c] = (prev_rank + r) / 2
+                        ranked_last = False
+                        break
+                    elif self.strict_pref(c2, c): 
+                        prev_rank = r
+                    elif self.indiff(c, c2): 
+                        ranking[c] = r
+                        ranked_last = False
+                        break
+                if ranked_last: 
+                    ranking[c] = prev_rank + 1
+
+        r = Ranking(ranking)
+        r.normalize_ranks()
+        return r
+    
     def display(self):
         """Display the pairwise comparisons in a readable format."""
         for menu, choice in self._comparisons:
@@ -219,6 +285,13 @@ class PairwiseProfile:
     def comparisons_counts(self):
         """Returns the submitted rankings and the list of counts."""
         return self._pairwise_comparisons, self._rcounts
+
+    @property
+    def pairwise_comparisons(self): 
+        """Returns a list of all pairwise comparisons"""
+
+        return [comp for compidx,comp in enumerate(self._pairwise_comparisons) 
+                for _ in range(self._rcounts[compidx])]
 
     def support(self, c1, c2):
         """The number of voters that rank `c1` above `c2`.
