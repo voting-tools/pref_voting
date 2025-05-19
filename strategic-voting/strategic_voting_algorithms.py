@@ -1,3 +1,27 @@
+"""
+Implementation of algorithms from:
+    "Strategic Voting in the Context of Negotiating Teams",
+    Leora Schmerler & Noam Hazon (2021) – https://arxiv.org/abs/2107.14097
+
+Programmer: Elyasaf Kopel
+Last revised: 18 May 2025
+
+The module provides two functions:
+
+    algorithm1_single_voter ─ C-MaNego (single manipulator)
+    algorithm2_coalitional ─ CC-MaNego (coalition of k manipulators)
+
+Both decide whether a preferred outcome `p` can be made the unique
+sub-game perfect equilibrium (SPE) of a VAOV negotiation game.
+
+Changes compared with the paper
+-------------------------------
+* `check_validation` encapsulate the common “sanity checks.”
+* `_rc_result` models the Rational-Compromise (Bucklin-style) outcome
+  and returns ``None`` whenever the first intersection is not singleton;
+  this is enough because a manipulator must guarantee *uniqueness*.
+
+"""
 from __future__ import annotations
 import logging, math
 from typing import Callable, List, Optional, Sequence, Set, Tuple
