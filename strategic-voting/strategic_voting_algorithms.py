@@ -24,7 +24,12 @@ def borda(profile: List[List[str]]) -> List[str]:
 
 
 def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
-    """Factory: x-approval rule (Plurality is x=1)."""
+    """
+    Factory: x-approval rule (Plurality is x=1).
+    >>> x_approval = make_x_approval(2)
+    >>> x_approval([["C", "A", "B"], ["B", "C", "A"], ["C", "A", "B"]])
+    ['C', 'A', 'B']
+    """
     if x <= 0:
         raise ValueError("x must be a positive integer")
 
@@ -42,10 +47,19 @@ def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
 
 # ───────────────────── 1. shared helper utilities ────────────────────────
 def _pos(candidate: str, ranking: Sequence[str]) -> int:
-    """Paper position: higher ranked ⇒ larger value."""
+    """
+    Paper position: higher ranked ⇒ larger value.
+    >>> _pos("A", ["C", "B", "A"])
+    0
+    """
     return len(ranking) - 1 - ranking.index(candidate)
 
 def _top_i(ranking: Sequence[str], i: int) -> List[str]:
+    """
+    Return the top-i candidates in the given ranking.
+    >>> _top_i(["C", "B", "A"], 2)
+    ['C', 'B']
+    """
     return list(ranking)[:i]
 
 # ──────────────────── Rational-Compromise helper ────────────────────────
@@ -55,6 +69,8 @@ def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
 
     Prints a concise trace of the top-j intersections as it searches for the
     first *singleton* intersection.  Returns the winner (string) or None.
+    >>> _rc_result(["C", "A", "B"], ["B", "C", "A"])
+    'C'
     """
     m = len(pt)
     for j in range(1, m + 1):
@@ -73,6 +89,8 @@ def _compute_Hi(
     """
     Hᵢ = {preferred} ∪ (i-1 best in pt not in Aᵢ(po)), keeping pt order.
     Aᵢ(po) = top-i candidates in po (opponent) order.
+    >>> _compute_Hi("A", 2, ["C", "A", "B"], ["B", "C", "A"])
+    ['A']
     """
     Ai_po: Set[str] = set(_top_i(opponent_order, i)) # top-i in opponent order
     H: List[str] = [preferred] # preferred is always in Hᵢ
@@ -85,6 +103,14 @@ def _compute_Hi(
     return H
 
 def check_validation(opp: List[str], preferred: str, m: int) -> bool:
+    """
+    Check if the opponent ranks the preferred candidate high enough.
+    If not, manipulation is impossible.
+    >>> check_validation(["A", "B", "C"], "A", 3)
+    True
+    >>> check_validation(["C", "B", "A"], "A", 2)
+    False
+    """
     if not opp:
         return False
     if _pos(preferred, opp) < math.ceil(m / 2):
