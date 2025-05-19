@@ -1,35 +1,10 @@
-"""
-Implementation of algorithms from:
-    "Strategic Voting in the Context of Negotiating Teams",
-    Leora Schmerler & Noam Hazon (2021) – https://arxiv.org/abs/2107.14097
-
-Programmer: Elyasaf Kopel
-Last revised: 18 May 2025
-
-The module provides two functions:
-
-    algorithm1_single_voter ─ C-MaNego (single manipulator)
-    algorithm2_coalitional ─ CC-MaNego (coalition of k manipulators)
-
-Both decide whether a preferred outcome `p` can be made the unique
-sub-game perfect equilibrium (SPE) of a VAOV negotiation game.
-
-Changes compared with the paper
--------------------------------
-* `check_validation` encapsulate the common “sanity checks.”
-* `_rc_result` models the Rational-Compromise (Bucklin-style) outcome
-  and returns ``None`` whenever the first intersection is not singleton;
-  this is enough because a manipulator must guarantee *uniqueness*.
-
-"""
-
 from __future__ import annotations
 import logging, math
 from typing import Callable, List, Optional, Sequence, Set, Tuple
 
 # ───────────────────────────── logging ───────────────────────────────────
 _log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
 # ──────────────────── 0. built-in social-welfare rules ───────────────────
 def borda(profile: List[List[str]]) -> List[str]:
@@ -84,7 +59,7 @@ def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
     m = len(pt)
     for j in range(1, m + 1):
         inter = set(_top_i(pt, j)) & set(_top_i(po, j))
-        print(f"[RC]  depth j={j:<2}  intersection = {sorted(inter)}")
+        _log.debug(f"[RC]  depth j={j:<2}  intersection = {sorted(inter)}")
         if inter:
             return next(iter(inter)) if len(inter) == 1 else None
     return None
@@ -113,7 +88,7 @@ def check_validation(opp: List[str], preferred: str, m: int) -> bool:
     if not opp:
         return False
     if _pos(preferred, opp) < math.ceil(m / 2):
-        _log.info("Preferred candidate ranked too low by opponent – impossible.")
+        _log.warning("Preferred candidate ranked too low by opponent – manipulation impossible.")
         return False
     return True
 
@@ -125,33 +100,30 @@ def algorithm1_single_voter(
     preferred    : str,                          # preferred candidate
 ) -> Tuple[bool, Optional[List[str]]]:
     """
-    Figure 1 of the paper (C-MaNego) with clear, human-readable tracing.
+    Single-voter manipulation (C-MaNego) with logging for trace.
     """
+    _log.info("\n[Alg-1] =========================================================")
+    _log.info(f"[Alg-1] opponent order  : {opponent_order}")
+    _log.info(f"[Alg-1] preferred       : '{preferred}'")
+    _log.info(f"[Alg-1] team profile ({len(team_profile)} voters): {team_profile}")
 
     m = len(opponent_order)
-    print("\n[Alg-1] =========================================================")
-    print(f"[Alg-1] opponent order  : {opponent_order}")
-    print(f"[Alg-1] preferred       : '{preferred}'")
-    print(f"[Alg-1] team profile ({len(team_profile)} voters): {team_profile}")
-
-    # guard: pos(p, po) ≥ ⌈m/2⌉  →  impossible
     if not check_validation(opponent_order, preferred, m):
-        print("[Alg-1] ❌ guard failed – manipulation impossible")
+        _log.warning("[Alg-1] guard failed – manipulation impossible")
         return False, None
 
     # SWF order of the honest team
     pt = F(team_profile)
-    print("[Alg-1] SWF order (pt)  :", pt)
+    _log.info(f"[Alg-1] SWF order (pt)  : {pt}")
 
     # iterate i = 1 … ⌈m/2⌉
     for i in range(1, math.ceil(m / 2) + 1):
-        print(f"\n[Alg-1] ----- depth i = {i} -----")
+        _log.info(f"\n[Alg-1] ----- depth i = {i} -----")
 
         Hi = _compute_Hi(preferred, i, pt, opponent_order)
-        print(f"[Alg-1] H_i           = {Hi}   "
-              f"(size {len(Hi)} vs required {i})")
+        _log.info(f"[Alg-1] H_i           = {Hi}   (size {len(Hi)} vs required {i})")
         if len(Hi) < i:
-            print("[Alg-1] › not enough candidates – skip depth")
+            _log.info("[Alg-1] › not enough candidates – skip depth")
             continue
 
         # build manipulator ballot: high block then low block (both reversed)
@@ -159,21 +131,20 @@ def algorithm1_single_voter(
         lo_block = list(reversed([c for c in pt if c not in Hi]))
         pa       = hi_block + lo_block
 
-        print("[Alg-1] hi_block      =", hi_block)
-        print("[Alg-1] lo_block      =", lo_block)
-        print("[Alg-1] ballot (pa)   =", pa)
+        _log.info(f"[Alg-1] hi_block      = {hi_block}")
+        _log.info(f"[Alg-1] lo_block      = {lo_block}")
+        _log.info(f"[Alg-1] ballot (pa)   = {pa}")
 
         # test if ‘preferred’ becomes the unique RC winner
-        if _rc_result(F(team_profile + [pa]), opponent_order) == preferred:
-            print("[Alg-1] ✅ success – manipulation ballot found")
+        rc = _rc_result(F(team_profile + [pa]), opponent_order)
+        if rc == preferred:
+            _log.info("[Alg-1] ✅ success – manipulation ballot found")
             return True, pa
 
-        print("[Alg-1] ✘ depth failed – trying next i")
+        _log.info("[Alg-1] ✘ depth failed – trying next i")
 
-    print("[Alg-1] ❌ no successful manipulation found")
+    _log.info("[Alg-1] ❌ no successful manipulation found")
     return False, None
-
-
 
 # ───────── Algorithm 2 – coalition of k manipulators (CC-MaNego) ─────────
 def algorithm2_coalitional(
@@ -190,27 +161,27 @@ def algorithm2_coalitional(
 
     # ── 0  guards ─────────────────────────────────────────────────────────
     if k <= 0:
-        print("[Alg-2] 0 manipulators ⇒ impossible")
+        _log.warning("[Alg-2] 0 manipulators ⇒ impossible")
         return False, None
 
     m = len(opponent_order)
     if not check_validation(opponent_order, preferred, m):
-        print("[Alg-2] opponent ranks ‘p’ too high ⇒ impossible")
+        _log.warning("[Alg-2] opponent ranks 'p' too low ⇒ manipulation impossible")
         return False, None
 
     # ── SWF order of the honest team ───────────────────────────────────
     pt = F(team_profile)
-    print("\n[Alg-2] =========================================================")
-    print("[Alg-2] SWF order before coalition:", pt)
+    _log.info("\n[Alg-2] =========================================================")
+    _log.info(f"[Alg-2] SWF order before coalition: {pt}")
 
     # ── iterate depths i = 1 … ⌈m/2⌉ ──────────────────────────────────
     for i in range(1, math.ceil(m / 2) + 1):
-        print(f"\n[Alg-2] ===== depth i = {i} =====")
+        _log.info(f"\n[Alg-2] ===== depth i = {i} =====")
 
         Hi = _compute_Hi(preferred, i, pt, opponent_order)
-        print(f"[Alg-2] H_i = {Hi}   (size {len(Hi)} vs required {i})")
+        _log.info(f"[Alg-2] H_i = {Hi}   (size {len(Hi)} vs required {i})")
         if len(Hi) < i:
-            print("[Alg-2] › not enough candidates – skip depth")
+            _log.info("[Alg-2] › not enough candidates – skip depth")
             continue
 
         pm: List[List[str]] = []
@@ -218,7 +189,7 @@ def algorithm2_coalitional(
         # ── construct ballots l = 1 … k with the *same* Hᵢ ────────────
         for l in range(1, k + 1):
             cur_pt = F(team_profile + pm)
-            print(f"          -- manipulator #{l} sees SWF:", cur_pt)
+            _log.info(f"[Alg-2] manipulator #{l} sees SWF: {cur_pt}")
 
             # top block (Hᵢ) – place the least-preferred first (rev order)
             hi_block = list(reversed([c for c in cur_pt if c in Hi]))
@@ -229,20 +200,19 @@ def algorithm2_coalitional(
             pa = hi_block + lo_block
             pm.append(pa)
 
-            print("             ballot   =", pa)
-            print("             hi_block =", hi_block)
-            print("             lo_block =", lo_block)
+            _log.info(f"[Alg-2] ballot   = {pa}")
+            _log.info(f"[Alg-2] hi_block = {hi_block}")
+            _log.info(f"[Alg-2] lo_block = {lo_block}")
 
         # ── 4  evaluate RC after the whole coalition is in ───────────────
         rc_outcome = _rc_result(F(team_profile + pm), opponent_order)
-        print("[Alg-2] RC outcome with coalition =", rc_outcome)
+        _log.debug(f"[Alg-2] RC outcome with coalition = {rc_outcome}")
 
         if rc_outcome == preferred:
-            print("[Alg-2] ✅ success – coalition found")
+            _log.info("[Alg-2] ✅ success – coalition found")
             return True, pm
 
-        print("[Alg-2] ✘ depth failed – trying next i")
+        _log.info("[Alg-2] ✘ depth failed – trying next i")
 
-    # ── 5  no depth succeeded ────────────────────────────────────────────
-    print("\n[Alg-2] ❌ no successful coalition manipulation found")
+    _log.info("\n[Alg-2] ❌ no successful coalition manipulation found")
     return False, None
