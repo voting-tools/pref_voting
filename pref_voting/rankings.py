@@ -63,6 +63,15 @@ class Ranking(object):
         """Returns a sorted list of the candidates that are ranked."""
         return sorted(list(self.rmap.keys()))
 
+    def num_ranked_candidates(self): 
+        """Returns the number of ranked candidates"""
+        return len(self.cands)
+    
+    def is_bullet_vote(self): 
+        """Return True if the ranking is a bullet vote (a vote for a single candidate)"""
+
+        return self.num_ranked_candidates() == 1
+    
     def cands_at_rank(self, r):
         """Returns a list of the candidates that are assigned the rank ``r``."""
         return [c for c in self.rmap.keys() if self.rmap[c] == r]
