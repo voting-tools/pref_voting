@@ -17,7 +17,7 @@ import math
 import random
 from scipy.stats import gamma
 from itertools import permutations
-from pref_voting.helper import weak_compositions
+from pref_voting.helper import weak_compositions, weak_orders
 
 from pref_voting.profiles_with_ties import ProfileWithTies
 from ortools.linear_solver import pywraplp
