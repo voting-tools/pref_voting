@@ -540,7 +540,7 @@ def canonical_ballot_multiset(profile: Profile) -> tuple:
     counts = counts.astype(int)
 
     best = None
-    for perm in itertools.permutations(range(m)):
+    for perm in permutations(range(m)):
         relabel = dict(zip(range(m), perm))
         canon   = tuple(sorted(
             (tuple(relabel[c] for c in r.tolist()), int(k))
@@ -600,7 +600,7 @@ def _canonical_multiset_with_ties(profile):
     counts  = [int(k) for k in counts]
 
     best = None
-    for perm in itertools.permutations(range(m)):
+    for perm in permutations(range(m)):
         relabel = dict(zip(range(m), perm))
 
         canon = tuple(sorted(
