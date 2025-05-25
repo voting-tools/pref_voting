@@ -354,8 +354,15 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 
 ### Enumerate anonymous profiles
 
+    ```{eval-rst}
+    .. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile
+
+    ```
+
+### Enumerate one anonymous profile per neutrality orbit
+
 ```{eval-rst}
-.. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile
+.. autofunction:: pref_voting.generate_profiles.enumerate_anon_neutral_profile
 
 ```
 
@@ -363,5 +370,12 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 
 ```{eval-rst}
 .. autofunction:: pref_voting.generate_profiles.enumerate_anon_profile_with_ties
+
+```
+
+### Enumerate anonymous profiles with ties
+
+```{eval-rst}
+.. autofunction:: pref_voting.generate_profiles.enumerate_anon_neutral_profile_with_ties
 
 ```
