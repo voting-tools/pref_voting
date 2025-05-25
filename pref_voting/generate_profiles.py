@@ -523,8 +523,9 @@ def enumerate_anon_profile(num_cands, num_voters):
     num_ballot_types = len(ballot_types)
 
     for comp in weak_compositions(num_voters, num_ballot_types):
-        yield Profile(ballot_types, rcounts = comp)
-
+        instantiated_ballot_types = [ballot_types[idx] for idx, i in enumerate(comp) if i != 0]
+        nonzerocomp = [i for i in comp if i != 0]
+        yield Profile(instantiated_ballot_types, rcounts = nonzerocomp)
 
 def enumerate_anon_profile_with_ties(num_cands, num_voters):
     """A generator that enumerates all anonymous profiles--allowing ties and omissions in ballots--with num_cands candidates and num_voters voters
@@ -541,7 +542,9 @@ def enumerate_anon_profile_with_ties(num_cands, num_voters):
     num_ballot_types = len(ballot_types)
 
     for comp in weak_compositions(num_voters, num_ballot_types):
-        yield ProfileWithTies(ballot_types, rcounts = comp)
+        instantiated_ballot_types = [ballot_types[idx] for idx, i in enumerate(comp) if i != 0]
+        nonzerocomp = [i for i in comp if i != 0]
+        yield ProfileWithTies(instantiated_ballot_types, rcounts = nonzerocomp)
 
 
 ####
