@@ -1737,7 +1737,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
 
     if violation_type == "Removal":
         for loser in losers:
-            for r in prof.rankings_types: # for each type of ranking
+            for r in prof.ranking_types: # for each type of ranking
                 
                 rl = list(r)
                 tolerant_ballot = True
