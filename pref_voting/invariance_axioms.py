@@ -63,14 +63,14 @@ def _homogeneity_violation(edata, vm, num_copies, violation_type, verbose=False)
     
     return False, list()
 
-def has_homogeneity_violation(edata, vm, num_copies, verbose=False):
+def has_homogeneity_violation(edata, vm, num_copies = 2, verbose=False):
     """
     Returns True if replacing each ranking with num_copies of that ranking changes the set of winners.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -79,14 +79,14 @@ def has_homogeneity_violation(edata, vm, num_copies, verbose=False):
     """
     return _homogeneity_violation(edata, vm, num_copies, "Homogeneity", verbose=verbose)[0]
 
-def find_all_homogeneity_violations(edata, vm, num_copies, verbose=False):
+def find_all_homogeneity_violations(edata, vm, num_copies = 2, verbose=False):
     """
     Returns the symmetric difference of the winners before and after multiplying the number of copies of each ranking.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -101,14 +101,14 @@ homogeneity = Axiom(
     find_all_violations = find_all_homogeneity_violations, 
 )
 
-def has_upward_homogeneity_violation(edata, vm, num_copies, verbose=False):
+def has_upward_homogeneity_violation(edata, vm, num_copies = 2, verbose=False):
     """
     Returns True if replacing each ranking with num_copies of that ranking causes some winner to lose.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -117,14 +117,14 @@ def has_upward_homogeneity_violation(edata, vm, num_copies, verbose=False):
     """
     return _homogeneity_violation(edata, vm, num_copies, "Upward Homogeneity", verbose=verbose)[0]
 
-def find_all_upward_homogeneity_violations(edata, vm, num_copies, verbose=False):
+def find_all_upward_homogeneity_violations(edata, vm, num_copies = 2, verbose=False):
     """
     Returns the set of winners who lose as a result of replacing each ranking with num_copies of that ranking.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -139,14 +139,14 @@ upward_homogeneity = Axiom(
     find_all_violations = find_all_upward_homogeneity_violations, 
 )
 
-def has_downward_homogeneity_violation(edata, vm, num_copies, verbose=False):
+def has_downward_homogeneity_violation(edata, vm, num_copies = 2, verbose=False):
     """
     Returns True if replacing each ranking with num_copies of that ranking causes some loser to win.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
@@ -155,14 +155,14 @@ def has_downward_homogeneity_violation(edata, vm, num_copies, verbose=False):
     """
     return _homogeneity_violation(edata, vm, num_copies, "Downward Homogeneity", verbose=verbose)[0]
 
-def find_all_downward_homogeneity_violations(edata, vm, num_copies, verbose=False):
+def find_all_downward_homogeneity_violations(edata, vm, num_copies = 2, verbose=False):
     """
     Returns the set of losers who win as a result of replacing each ranking with num_copies of that ranking.
     
     Args:
         edata (Profile, ProfileWithTies): the election data.
         vm (VotingMethod): A voting method to test.
-        num_copies (int): The number of copies to multiply each ranking by.
+        num_copies (int, default=2): The number of copies to multiply each ranking by.
         verbose (bool, default=False): If a violation is found, display the violation. 
 
     Returns: 
