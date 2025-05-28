@@ -1217,8 +1217,8 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
     # the tie_breaker is any linear order (i.e., list) of the candidates
     tb = tie_breaker if tie_breaker is not None else list(range(profile.num_cands))
 
-    if len(candidates) <= 1:
-        return sorted(candidates)
+    if len(profile.candidates) <= 1:
+        return sorted(profile.candidates)
 
     all_num_cands = profile.num_cands  
     candidates = profile.candidates if curr_cands is None else curr_cands
