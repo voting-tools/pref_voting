@@ -2,6 +2,7 @@
     File: invariance_axioms.py
     Author: Wesley H. Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 11, 2024
+    Updated: May 29, 2025
     
     Invariance axioms 
 """
@@ -9,6 +10,7 @@
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 from itertools import permutations
+from pref_voting.profile import Profile
 
 
 def _homogeneity_violation(edata, vm, num_copies, violation_type, verbose=False):
@@ -519,6 +521,9 @@ def has_tiebreaking_compensation_violation(prof, vm, verbose=False):
     """
     Return True if the profile prof has a tiebreaking compensation violation for the voting method vm.
     """
+    if isinstance(prof, Profile):
+        return False
+    
     for cands in powerset(prof.candidates): 
         if len(cands) > 1: 
 
@@ -557,6 +562,8 @@ def find_all_tiebreaking_compensation_violations(prof, vm, verbose=False):
     """
     Find all the violations of tiebreaking compensation for prof with respect to the voting method vm. Returns a list of tuples consisting of the rankings and the rankings with the ties broken. If there are no violations, return an empty list.
     """
+    if isinstance(prof, Profile):
+        return []
 
     violations = []
     for cands in powerset(prof.candidates): 
