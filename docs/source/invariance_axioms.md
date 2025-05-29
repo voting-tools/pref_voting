@@ -71,3 +71,13 @@ Invariance Axioms
 .. autofunction:: pref_voting.invariance_axioms.find_all_preferential_equality_violations
 
 ```
+
+## Tiebreaking Compensation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.invariance_axioms.has_tiebreaking_compensation_violation
+
+.. autofunction:: pref_voting.invariance_axioms.find_all_tiebreaking_compensation_violations
+
+```
