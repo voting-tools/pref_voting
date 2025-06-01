@@ -349,11 +349,16 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
     See Definition 2.1 and Lemma 2.4 from the paper "Characterizations of voting rules based on majority margins" by Y. Ding,  W. Holliday, and E. Pacuit.
 
     """
-    prof_constructor = ProfileWithTies if isinstance(prof, ProfileWithTies) else Profile
+    if isinstance(prof, ProfileWithTies):
+       prof_constructor = ProfileWithTies
+       prof = prof.add_unranked_candidates()
+    
+    else:
+        prof_constructor = Profile
     
     for x, y in combinations(prof.candidates, 2):
         
-        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1]
+        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1 and not any(get_rank(r,z) == get_rank(r,x) for z in prof.candidates if z != x) and not any(get_rank(r,z) == get_rank(r,y) for z in prof.candidates if z != y)]
 
         other_rankings = [r for r in prof.rankings if r not in xy_rankings]
 
@@ -389,7 +394,7 @@ def has_preferential_equality_violation(prof, vm, verbose=False):
                         vm.display(prof_J)
                     return True
 
-        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1]
+        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1 and not any(get_rank(r,z) == get_rank(r,x) for z in prof.candidates if z != x) and not any(get_rank(r,z) == get_rank(r,y) for z in prof.candidates if z != y)]
 
         other_rankings = [r for r in prof.rankings if r not in yx_rankings]
 
@@ -432,12 +437,17 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
 
     """
 
-    prof_constructor = ProfileWithTies if isinstance(prof, ProfileWithTies) else Profile
+    if isinstance(prof, ProfileWithTies):
+       prof_constructor = ProfileWithTies
+       prof = prof.add_unranked_candidates()
+    
+    else:
+        prof_constructor = Profile
     
     violations = []
     for x, y in combinations(prof.candidates, 2):
         
-        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1]
+        xy_rankings = [r for r in prof.rankings if get_rank(r, x) == get_rank(r, y) - 1 and not any(get_rank(r,z) == get_rank(r,x) for z in prof.candidates if z != x) and not any(get_rank(r,z) == get_rank(r,y) for z in prof.candidates if z != y)]
 
         other_rankings = [r for r in prof.rankings if r not in xy_rankings]
 
@@ -473,7 +483,7 @@ def find_all_preferential_equality_violations(prof, vm, verbose=False):
                         vm.display(prof_J)
                     violations.append((prof, prof_I, prof_J))
 
-        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1]
+        yx_rankings = [r for r in prof.rankings if get_rank(r, y) == get_rank(r, x) - 1 and not any(get_rank(r,z) == get_rank(r,x) for z in prof.candidates if z != x) and not any(get_rank(r,z) == get_rank(r,y) for z in prof.candidates if z != y)]
 
         other_rankings = [r for r in prof.rankings if r not in yx_rankings]
 
