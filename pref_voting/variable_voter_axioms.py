@@ -1731,6 +1731,9 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
         
     Returns:
         Result of the test (bool): Returns True if there is a violation and False otherwise."""
+    
+    if isinstance(prof, ProfileWithTies):
+        prof.use_extended_strict_preference()
 
     winners = vm(prof)   
     losers = [c for c in prof.candidates if c not in winners]
@@ -1738,28 +1741,41 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
     if violation_type == "Removal":
         for loser in losers:
             for r in prof.ranking_types: # for each type of ranking
+
+                rankings = prof.rankings
+                rankings.remove(r) # remove the first token of the type of ranking
                 
-                rl = list(r)
+                if isinstance(prof, Profile):
+                    prof2 = Profile(rankings)
+                
+                if isinstance(prof, ProfileWithTies):
+                    prof2 = ProfileWithTies(rankings, candidates=prof.candidates)
+                    if prof.using_extended_strict_preference:
+                        prof2.use_extended_strict_preference()
+                
                 tolerant_ballot = True
 
                 # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
                 for c in prof.candidates:
-                    if not prof.majority_prefers(loser, c):
-                        if rl.index(c) < rl.index(loser):
-                            tolerant_ballot = False
-                            break
+                    if not prof2.majority_prefers(loser, c):
+                        # Handle different ranking types
+                        if isinstance(r, tuple):
+                            # Profile case: r is a tuple, use index comparison
+                            if r.index(c) < r.index(loser):
+                                tolerant_ballot = False
+                                break
+                        else:
+                            # ProfileWithTies case: r is a Ranking object, use strict_pref method
+                            if not r.strict_pref(loser, c):
+                                tolerant_ballot = False
+                                break
 
                 if tolerant_ballot:
-
-                    rankings = prof.rankings
-                    rankings.remove(r) # remove the first token of the type of ranking
-                    
-                    prof2 = Profile(rankings)
-
                     if loser in vm(prof2):
                         if verbose:
                             prof = prof.anonymize()
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {rl}:")
+                            ranking_str = str(r) if hasattr(r, '__str__') else str(r)
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {ranking_str}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -1776,6 +1792,8 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
                             print("")
                         return True
                     
+    return False
+
 def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, violation_type="Removal"):
     """
     If violation_type = "Removal", returns a list of pairs (loser,ranking) such that removing a voter with the given ranking causes the loser to win, witnessing a violation of tolerant positive involvement.
@@ -1788,6 +1806,9 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
         
     Returns:
         A List of pairs (loser,ranking) witnessing violations of positive involvement."""
+    
+    if isinstance(prof, ProfileWithTies):
+        prof.use_extended_strict_preference()
 
     winners = vm(prof)   
     losers = [c for c in prof.candidates if c not in winners]
@@ -1798,28 +1819,41 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
         for loser in losers:
             for r in prof.ranking_types: # for each type of ranking
 
-                rl = list(r)
+                rankings = prof.rankings
+                rankings.remove(r) # remove the first token of the type of ranking
+                
+                if isinstance(prof, Profile):
+                    prof2 = Profile(rankings)
+                
+                if isinstance(prof, ProfileWithTies):
+                    prof2 = ProfileWithTies(rankings, candidates=prof.candidates)
+                    if prof.using_extended_strict_preference:
+                        prof2.use_extended_strict_preference()
+
                 tolerant_ballot = True
 
                 # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
                 for c in prof.candidates:
-                    if not prof.majority_prefers(loser, c):
-                        if rl.index(c) < rl.index(loser):
-                            tolerant_ballot = False
-                            break
+                    if not prof2.majority_prefers(loser, c):
+                        # Handle different ranking types
+                        if isinstance(r, tuple):
+                            # Profile case: r is a tuple, use index comparison
+                            if r.index(c) < r.index(loser):
+                                tolerant_ballot = False
+                                break
+                        else:
+                            # ProfileWithTies case: r is a Ranking object, use strict_pref method
+                            if not r.strict_pref(loser, c):
+                                tolerant_ballot = False
+                                break
 
                 if tolerant_ballot:
-
-                    rankings = prof.rankings
-                    rankings.remove(r) # remove the first token of the type of ranking
-                    
-                    prof2 = Profile(rankings)
-
                     if loser in vm(prof2):
                         witnesses.append((loser, r))
                         if verbose:
                             prof = prof.anonymize()
-                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {str(r)}:")
+                            ranking_str = str(r) if hasattr(r, '__str__') else str(r)
+                            print(f"{loser} loses in the full profile, but {loser} is a winner after removing a voter with the ranking {ranking_str}:")
                             print("")
                             print("Full profile")
                             prof.display()
@@ -1841,7 +1875,6 @@ tolerant_positive_involvement = Axiom(
     has_violation = has_tolerant_positive_involvement_violation,
     find_all_violations = find_all_tolerant_positive_involvement_violations, 
 )
-    
 
 def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coalition_size = 1, require_resoluteness = False, require_uniquely_weighted = False, check_probabilities = False):
     """
