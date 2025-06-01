@@ -167,9 +167,43 @@ class PairwiseBallot:
         for c1 in cands: 
             for c2 in cands: 
                 for c3 in cands: 
-                    if self.weak_pref(c1, c2) and self.weak_pref(c2, c3) and not self.weak_pref(c1, c3): 
+                    if self.weak_pref(c1, c2) and self.weak_pref(c2, c3) and not self.weak_pref(c1, c3):
+                        #print(f"preference {c1} >= {c2} and {c2} >= {c3} but not {c1} >= {c3}")
                         return False
         return True
+    
+    def is_quasi_transitive(self, cands): 
+        """Return True of the comparisons is transitive on the set cands of candidates"""
+
+        for c1 in cands: 
+            for c2 in cands: 
+                for c3 in cands: 
+                    if self.strict_pref(c1, c2) and self.strict_pref(c2, c3) and not self.strict_pref(c1, c3): 
+                        #print(f"Strict preference {c1} > {c2} and {c2} > {c3} but not {c1} > {c3}")
+                        return False
+        return True
+
+    def to_graph(self, curr_cands=None):
+        """Return the majority graph of the pairwise comparisons restricted to the candidates in curr_cands."""
+        if curr_cands is None:
+            curr_cands = self.candidates
+        edges = []
+        for c1 in curr_cands:
+            for c2 in curr_cands:
+                if c1 == c2:
+                    continue
+                if self.has_comparison(c1, c2) and self.strict_pref(c1, c2):
+                    edges.append((c1, c2))
+                
+        return nx.DiGraph(edges)
+
+    def has_tie(self): 
+        """Returns True if there is a tie in the pairwise comparisons."""
+        for c1 in self.candidates:
+            for c2 in self.candidates:
+                if c1 != c2 and self.indiff(c1, c2):
+                    return True
+        return False
     
     def is_coherent(self):
         """Return True if the comparisons are coherent: If a candidate is compared to another candidate, then that candidate must be compared to all canidates"""
@@ -181,6 +215,24 @@ class PairwiseBallot:
                         if c != c1 and not self.has_comparison(c, c1): 
                             return False
         return True
+
+
+    def cycles(self, curr_cands = None):
+        """Returns the cycles in the pairwise comparisons.
+
+        This uses the networkx method ``networkx.find_cycle`` to find the cycles in ``self.mg``.
+
+        """
+
+        comparison_graph = self.to_graph(curr_cands)
+        
+        return list(nx.simple_cycles(comparison_graph))
+
+
+    def has_cycle(self, curr_cands = None):
+        """Returns True if there is a cycle in the comparison  graph."""
+
+        return len(self.cycles(curr_cands=curr_cands)) != 0
 
     def to_ranking(self): 
         """Return the comparison as a ranking (return an error if comparisons are not transitive)"""
