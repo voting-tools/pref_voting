@@ -33,12 +33,25 @@ def divide_electorate(prof):
         # Only yield if both electorates have at least one voter
         if nonzero_indices_C1.size > 0 and nonzero_indices_C2.size > 0:
 
-            rankings1 = R[nonzero_indices_C1].tolist()
-            rankings2 = R[nonzero_indices_C2].tolist()
+            if isinstance(prof, Profile):
+                rankings1 = R[nonzero_indices_C1].tolist()
+                rankings2 = R[nonzero_indices_C2].tolist()
+            else:  # ProfileWithTies
+                rankings1 = [R[i] for i in nonzero_indices_C1]
+                rankings2 = [R[i] for i in nonzero_indices_C2]
+            
             counts1 = C1[nonzero_indices_C1].tolist()
             counts2 = C2[nonzero_indices_C2].tolist()
 
-            if rankings1 <= rankings2: # This prevents yielding both prof1, prof2 and later on prof2, prof1, unless they are equal
+            # Convert rankings to comparable format for ordering check
+            if isinstance(prof, Profile):
+                comparable1 = rankings1
+                comparable2 = rankings2
+            else:  # ProfileWithTies - convert Ranking objects to tuples for comparison
+                comparable1 = [tuple(r.rmap) for r in rankings1]
+                comparable2 = [tuple(r.rmap) for r in rankings2]
+            
+            if comparable1 <= comparable2: # This prevents yielding both prof1, prof2 and later on prof2, prof1, unless they are equal
 
                 if isinstance(prof,Profile):
                     prof1 = Profile(rankings1, rcounts = counts1)
@@ -53,7 +66,6 @@ def divide_electorate(prof):
                         prof2.use_extended_strict_preference()
             
                 yield prof1, prof2
-
 
 def has_reinforcement_violation_with_undergeneration(prof, vm, verbose=False):
     """Returns true if there is some binary partition of the electorate such that some candidate wins in both subprofiles but not in the full profile"""
