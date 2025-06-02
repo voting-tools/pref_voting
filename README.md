@@ -2,6 +2,8 @@ pref_voting
 ==========
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.07020/status.svg)](https://doi.org/10.21105/joss.07020) [![DOI](https://zenodo.org/badge/578984957.svg)](https://doi.org/10.5281/zenodo.14675583)
 
+[![Tests](https://github.com/voting-tools/pref_voting/actions/workflows/tests.yml/badge.svg)](https://github.com/voting-tools/pref_voting/actions/workflows/tests.yml)
+
 
 > [!NOTE]
 > - [**Documentation**](https://pref-voting.readthedocs.io/)
