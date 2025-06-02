@@ -32,3 +32,8 @@ seaborn = "^0.13.2"
 pathos = "^0.3.3"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
+
