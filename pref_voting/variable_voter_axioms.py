@@ -1757,7 +1757,7 @@ def has_tolerant_positive_involvement_violation(prof, vm, verbose=False, violati
 
                 # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
                 for c in prof.candidates:
-                    if not prof2.majority_prefers(loser, c):
+                    if c != loser and not prof2.majority_prefers(loser, c):
                         # Handle different ranking types
                         if isinstance(r, tuple):
                             # Profile case: r is a tuple, use index comparison
@@ -1834,7 +1834,7 @@ def find_all_tolerant_positive_involvement_violations(prof, vm, verbose=False, v
 
                 # check whether the loser is ranked above every candiddate c such that the loser is not majority preferred to c
                 for c in prof.candidates:
-                    if not prof2.majority_prefers(loser, c):
+                    if c != loser and not prof2.majority_prefers(loser, c):
                         # Handle different ranking types
                         if isinstance(r, tuple):
                             # Profile case: r is a tuple, use index comparison
