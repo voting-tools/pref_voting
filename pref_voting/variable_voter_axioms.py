@@ -1904,9 +1904,15 @@ def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coal
         return False
     
     for w in ws:
-        new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
-        new_prof.use_extended_strict_preference()
-        new_mg = new_prof.margin_graph()
+        if isinstance(prof, Profile):
+            new_prof = Profile([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof.use_extended_strict_preference()
+            new_mg = new_prof.margin_graph()
+
+        if isinstance(prof, ProfileWithTies):
+            new_prof = ProfileWithTies(prof.rankings + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof.use_extended_strict_preference()
+            new_mg = new_prof.margin_graph()
 
         if require_uniquely_weighted == True and not new_mg.is_uniquely_weighted(): 
             continue
@@ -1988,9 +1994,14 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
     violations = list()
 
     for w in ws:
-        new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
-        new_prof.use_extended_strict_preference()
-        new_mg = new_prof.margin_graph()
+        if isinstance(prof, Profile):
+            new_prof = Profile([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof.use_extended_strict_preference()
+            new_mg = new_prof.margin_graph()
+        if isinstance(prof, ProfileWithTies):
+            new_prof = ProfileWithTies(prof.rankings + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof.use_extended_strict_preference()
+            new_mg = new_prof.margin_graph()
 
         if require_uniquely_weighted == True and not new_mg.is_uniquely_weighted(): 
             continue
