@@ -10,7 +10,7 @@
 from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 from itertools import permutations
-from pref_voting.profile import Profile
+from pref_voting.profiles import Profile
 
 
 def _homogeneity_violation(edata, vm, num_copies, violation_type, verbose=False):
