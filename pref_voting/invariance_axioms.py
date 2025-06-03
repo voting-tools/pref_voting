@@ -28,7 +28,10 @@ def _homogeneity_violation(edata, vm, num_copies, violation_type, verbose=False)
 
         new_rcounts = [c * num_copies for c in old_rcounts]
 
-        new_edata = ProfileWithTies(rankings, rcounts = new_rcounts, candidates = edata.candidates, cmap = edata.cmap)
+        new_edata = ProfileWithTies(old_rankings, rcounts = new_rcounts, candidates = edata.candidates, cmap = edata.cmap)
+
+        if edata.using_extended_strict_preference:
+            new_edata.use_extended_strict_preference()
     
     new_ws = vm(new_edata)
 
