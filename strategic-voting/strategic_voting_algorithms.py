@@ -151,6 +151,8 @@ def algorithm1_single_voter(
 ) -> Tuple[bool, Optional[List[str]]]:
     """
     Single-voter manipulation (C-MaNego) with logging for trace.
+    >>> algorithm1_single_voter(borda,[["b", "a", "p"]], ["b", "a", "p"], "p")
+    (False, None)
     """
     _log.info("\n[Alg-1] =========================================================")
     _log.info(f"[Alg-1] opponent order  : {opponent_order}")
@@ -207,6 +209,8 @@ def algorithm2_coalitional(
     """
     Decide whether a coalition of size *k* can make `preferred` the unique
     Rational-Compromise (Bucklin) winner against `opponent_order`.
+    >>> algorithm2_coalitional(borda, [], ["a", "b", "c", "p"], "p", k=2)
+    (False, None)
     """
 
     # ── 0  guards ─────────────────────────────────────────────────────────
