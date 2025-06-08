@@ -27,30 +27,31 @@ import logging, math
 from typing import Callable, List, Optional, Sequence, Set, Tuple
 
 # ───────────────────────────── logging ───────────────────────────────────
-# 4 types of logging:
-#   1. INFO    – high-level algorithm steps.
-#   2. DEBUG   – detailed steps.
-#   3. WARNING – guards.
-#   4. ERROR   – unexpected errors.
+import logging
 
+# 4 levels we actually care about in this module:
+#   INFO    – high-level algorithm steps
+#   DEBUG   – detailed steps
+#   WARNING – guards
+#   ERROR   – unexpected errors
+
+# ── 1. choose format style here ──────────────────────────────────────────
+DETAILED_LOGS = False        # ⇦ flip to True for the full timestamp/lineno format
+
+SIMPLE_FMT   = "%(levelname)s: %(message)s"
+DETAILED_FMT = "%(asctime)s: %(levelname)s: %(name)s: line %(lineno)d: %(message)s"
+chosen_fmt   = DETAILED_FMT if DETAILED_LOGS else SIMPLE_FMT
+
+# ── 2. build a single logger with a single handler ───────────────────────
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-# Configure the default formatting
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
-
-# Create and configure a console handler
 console = logging.StreamHandler()
-console.setLevel(logging.DEBUG)
+console.setLevel(logging.INFO) # set to INFO to avoid DEBUG spam in the console
+console.setFormatter(logging.Formatter(chosen_fmt))
 
-# Define a more detailed formatter for console output
-formatter = logging.Formatter(
-    "%(asctime)s: %(levelname)s: %(name)s: Line %(lineno)s: %(message)s"
-)
-console.setFormatter(formatter)
-
-# Attach the console handler to our module‐level logger
 logger.addHandler(console)
+logger.propagate = False
 
 # ──────────────────── 0. built-in social-welfare rules ───────────────────
 def borda(profile: List[List[str]]) -> List[str]:
@@ -62,12 +63,23 @@ def borda(profile: List[List[str]]) -> List[str]:
     if not profile:
         logger.warning("Empty profile in Borda count")
         return []
+
     m = len(profile[0])
     scores = {c: 0 for c in profile[0]}
+
     for ballot in profile:
         for pos, cand in enumerate(ballot):
-            scores[cand] += m - pos - 1            # m-1 … 0 points
-    return sorted(scores, key=lambda c: (-scores[c], c))    # tie-break lexicographically
+            scores[cand] += m - pos - 1
+
+    ranking = sorted(scores, key=lambda c: (-scores[c], c))
+
+    # ▲ log the full score vector in a stable, readable order
+    logger.info(
+        "[Borda] scores → %s",
+        [(c, scores[c]) for c in ranking]
+    )
+
+    return ranking
 
 
 def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
@@ -136,7 +148,10 @@ def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
                 logger.info(f"[RC] singleton intersection at j={j} ⇒ returning '{winner}'")
                 return winner
             else:
-                logger.info(f"[RC] intersection at j={j} is not singleton ({len(inter)} items) ⇒ returning None")
+                logger.info(
+                    "[RC] intersection at j=%d is not singleton (%d items: %s) ⇒ returning None",
+                    j, len(inter), sorted(inter)
+                )
                 return None
 
     logger.debug("[RC] no intersection found at any depth ⇒ returning None")
@@ -208,6 +223,8 @@ def algorithm1_single_voter(
     Single-voter manipulation (C-MaNego) with logging for trace.
     >>> algorithm1_single_voter(borda,[["b", "a", "p"]], ["b", "a", "p"], "p")
     (False, None)
+    >>> algorithm1_single_voter(borda,[["p", "c", "a", "b"],["p", "b", "a", "c"],["b", "p", "a", "c"],["b", "a", "c", "p"],], ["b", "p", "a", "c"], "p")
+    (True, ['a', 'p', 'c', 'b'])
     """
     logger.info("\n[Alg-1] =========================================================")
     logger.info(f"[Alg-1] opponent order  : {opponent_order}")
@@ -266,8 +283,14 @@ def algorithm2_coalitional(
     Rational-Compromise (Bucklin) winner against `opponent_order`.
     >>> algorithm2_coalitional(borda, [], ["a", "b", "c", "p"], "p", k=2)
     (False, None)
+    >>> algorithm2_coalitional(borda, [["p", "d", "a", "b", "c", "e"],["a", "p", "b", "c", "d", "e"],["b", "c", "a", "p", "d", "e"],], ["a", "p", "b", "c", "d", "e"], "p", k=2)
+    (True, [['p', 'e', 'd', 'c', 'b', 'a'], ['p', 'e', 'd', 'c', 'b', 'a']])
     """
-
+    logger.info("\n[Alg-2] =========================================================")
+    logger.info(f"[Alg-2] opponent order  : {opponent_order}")
+    logger.info(f"[Alg-2] preferred       : '{preferred}'")
+    logger.info(f"[Alg-2] team profile ({len(team_profile)} voters): {team_profile}")
+    logger.info(f"[Alg-2] coalition size k = {k}")
     # ── 0  guards ─────────────────────────────────────────────────────────
     if k <= 0:
         logger.warning("[Alg-2] 0 manipulators ⇒ impossible")
@@ -327,5 +350,67 @@ def algorithm2_coalitional(
     return False, None
 
 
-if __name__== "__main__":
-    print(algorithm1_single_voter(borda,[["b", "a", "p"]], ["b", "a", "p"], "p"))
+# ───────────────────────────── demo harness ──────────────────────────────
+def main() -> None:
+    # ######################################
+    # 1.  Algorithm 1 – single manipulator #
+    # ######################################
+    logger.info("\n===== DEMO 1: C-MaNego (single voter) =====")
+
+    team_profile_1 = [
+        ["p", "c", "a", "b"],
+        ["p", "b", "a", "c"],
+        ["b", "p", "a", "c"],
+        ["b", "a", "c", "p"],
+    ]
+    opponent_order_1 = ["b", "p", "a", "c"]
+    preferred_1 = "p"
+
+    ok_1, ballot_1 = algorithm1_single_voter(
+        borda,
+        team_profile_1,
+        opponent_order_1,
+        preferred_1,
+    )
+    logger.info(f"Outcome               : {ok_1}")
+    if ok_1:
+        logger.info(f"Manipulative ballot   : {ballot_1}")
+    else:
+        logger.info("Manipulation impossible under this profile.")
+
+    # ######################################################
+    # 2.  Algorithm 2 – coalition of k manipulators (k = 2) #
+    # ######################################################
+    logger.info("\n===== DEMO 2: CC-MaNego (coalition, k = 2) =====")
+
+    team_profile_2 = [
+        ["p", "d", "a", "b", "c", "e"],
+        ["a", "p", "b", "c", "d", "e"],
+        ["b", "c", "a", "p", "d", "e"],
+    ]
+    opponent_order_2 = ["a", "p", "b", "c", "d", "e"]
+    preferred_2 = "p"
+    k = 2
+
+    logger.info(f"Honest team profile   : {team_profile_2}")
+    logger.info(f"Opponent ranking      : {opponent_order_2}")
+    logger.info(f"Preferred candidate   : '{preferred_2}', coalition size k = {k}")
+
+    ok_2, ballots_2 = algorithm2_coalitional(
+        borda,
+        team_profile_2,
+        opponent_order_2,
+        preferred_2,
+        k,
+    )
+    logger.info(f"Outcome               : {ok_2}")
+    if ok_2:
+        for idx, b in enumerate(ballots_2, 1):
+            logger.info(f"Manipulator #{idx} ballot : {b}")
+    else:
+        logger.info("Coalitional manipulation impossible under this profile.")
+
+
+# -------------------------------------------------------------------------
+if __name__ == "__main__":
+    main()
