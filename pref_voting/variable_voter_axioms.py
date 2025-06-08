@@ -1917,7 +1917,7 @@ def has_bullet_vote_positive_involvement_violation(prof, vm, verbose=False, coal
     
     for w in ws:
         if isinstance(prof, Profile):
-            new_prof = Profile([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
             new_prof.use_extended_strict_preference()
             new_mg = new_prof.margin_graph()
 
@@ -2007,7 +2007,7 @@ def find_all_bullet_vote_positive_involvement_violations(prof, vm, verbose=False
 
     for w in ws:
         if isinstance(prof, Profile):
-            new_prof = Profile([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
+            new_prof = ProfileWithTies([{c:c_indx+1 for c_indx, c in enumerate(r)} for r in prof.rankings] + [{w:1}] * coalition_size, candidates = prof.candidates)
             new_prof.use_extended_strict_preference()
             new_mg = new_prof.margin_graph()
         if isinstance(prof, ProfileWithTies):
