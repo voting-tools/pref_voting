@@ -63,16 +63,21 @@ def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[L
     Normalise *either* kind of profile into an explicit list of ballots.
 
     • If already a List[List[str]] → return it unchanged (cheap pointer copy).
-    • If a pref_voting.profiles.Profile → replicate each unique ranking
-      according to its count vector.
+    • If a Profile → replicate each unique ranking according to its count vector;
+      if `profile.counts` is missing or None, assume 1 voter per ranking.
     """
     if isinstance(profile, Profile):
+        # try to grab counts; default to [1, 1, …] if missing or None
+        raw_counts = getattr(profile, 'counts', None)
+        counts = raw_counts if raw_counts is not None else [1] * len(profile.rankings)
+
         return [
-            ballot                 # copy-by-reference is fine
-            for ballot, n in zip(profile.rankings, profile.counts)
+            ballot
+            for ballot, n in zip(profile.rankings, counts)
             for _ in range(n)
         ]
 
+    # if it's already a sequence of ballots
     return [list(b) for b in profile]
 
 # ──────────────────── 0. built-in social-welfare rules ───────────────────
