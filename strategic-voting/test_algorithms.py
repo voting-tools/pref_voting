@@ -14,20 +14,17 @@ import math
 import random
 
 import pytest
-#from pref_voting.scoring_methods import borda
 from strategic_voting_algorithms import (
     algorithm1_single_voter,
     algorithm2_coalitional,
     borda,
     make_x_approval,
 )
-from typing import List, Union
 try:
     from pref_voting.profiles import Profile        # real class
 except ImportError:
     Profile = None                                   # tests on a lean env
 
-from pref_voting.helper import create_election
 # ---------------------------------------------------------------------
 # Shared constants – paper’s “4 honest + 1 manipulator” example
 TEAM_PROFILE_EXAMPLE = [

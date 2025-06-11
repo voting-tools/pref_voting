@@ -24,18 +24,16 @@ Changes compared with the paper
 """
 from __future__ import annotations
 import logging, math
-from typing import Callable, List, Optional, Sequence, Set, Tuple, Iterable, Union
+from typing import Callable, List, Optional, Sequence, Set, Tuple, Union
 
 try:
     # Only present if the user has pref_voting installed
     from pref_voting.profiles import Profile as Profile
 except ImportError:          # tests or minimal env
-    class Profile:        # dummy placeholder so isinstance() works
+    class Profile:        # fake placeholder so isinstance() works
         pass
 
 # ───────────────────────────── logging ───────────────────────────────────
-import logging
-
 # 4 levels we actually care about in this module:
 #   INFO    – high-level algorithm steps
 #   DEBUG   – detailed steps
@@ -44,7 +42,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 def _setup_logging(detailed: bool = False) -> None:
-    """Attach a single console handler to this module’s logger."""
+    """
+    Attach a single console handler to this module’s logger.
+
+    Parameters
+    ----------
+    detailed : bool, optional
+        If True, use a verbose timestamped format
+        ("%Y-%m-%d %H:%M:%S ..."); otherwise, use level-only format.
+
+    Returns
+    -------
+    None
+    """
     fmt = (
         "%(asctime)s  %(levelname)-8s  %(name)s:%(lineno)d  %(message)s"
         if detailed
@@ -60,10 +70,21 @@ def _setup_logging(detailed: bool = False) -> None:
 # ────────────────────────────────────────────────────────────────
 def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[List[str]]:
     """
-    Normalise *either* kind of profile into an explicit list of ballots.
+   Normalize a Profile or raw ballots into an explicit list of ballots.
+
+    Parameters
+    ----------
+    profile : Profile or Sequence of Sequence of str
+        - If a Profile, each ranking is replicated by its count.
+        - If a raw sequence, it is assumed to already be a list of ballots.
+
+    Returns
+    -------
+    List[List[str]]
+        Expanded list of ballots.
 
     • If already a List[List[str]] → return it unchanged (cheap pointer copy).
-    • If a Profile → replicate each unique ranking according to its count vector;
+    • If a Profile → replicates each unique ranking according to its count vector;
       if `profile.counts` is missing or None, assume 1 voter per ranking.
     """
     if isinstance(profile, Profile):
@@ -83,7 +104,18 @@ def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[L
 # ──────────────────── 0. built-in social-welfare rules ───────────────────
 def borda(profile: List[List[str]]) -> List[str]:
     """
-    Return a complete Borda ranking for string ballots.
+   Compute the Borda count ranking for a list of ballots.
+
+    Parameters
+    ----------
+    profile : List of List of str
+        Each inner list is a ballot ranking candidates.
+
+    Returns
+    -------
+    List[str]
+        Candidates sorted from highest to lowest Borda score.
+
     >>> borda([["C", "A", "B"], ["B", "C", "A"], ["C", "A", "B"]])
     ['C', 'A', 'B']
     """
@@ -112,6 +144,23 @@ def borda(profile: List[List[str]]) -> List[str]:
 def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
     """
     Factory: x-approval rule (Plurality is x=1).
+    Create an x-approval social welfare function.
+
+    Parameters
+    ----------
+    x : int
+        Number of top positions on each ballot that earn one point.
+
+    Returns
+    -------
+    Callable[[List[List[str]]], List[str]]
+        A function that maps ballots to a full ranking.
+
+    Raises
+    ------
+    ValueError
+        If x is not a positive integer.
+
     >>> x_approval = make_x_approval(2)
     >>> x_approval([["C", "A", "B"], ["B", "C", "A"], ["C", "A", "B"]])
     ['C', 'A', 'B']
@@ -136,7 +185,20 @@ def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
 # ───────────────────── 1. shared helper utilities ────────────────────────
 def _pos(candidate: str, ranking: Sequence[str]) -> int:
     """
-    Paper position: higher ranked ⇒ larger value.
+    Compute paper‐style position of `candidate` in `ranking`.
+
+    Parameters
+    ----------
+    candidate
+        label of the candidate to look up.
+    ranking
+        a full ranking list with most‐to‐least preferred.
+
+    Returns
+    -------
+    int
+        position value (higher ⇒ better).
+
     >>> _pos("A", ["C", "B", "A"])
     0
     """
@@ -148,7 +210,20 @@ def _pos(candidate: str, ranking: Sequence[str]) -> int:
 
 def _top_i(ranking: Sequence[str], i: int) -> List[str]:
     """
-    Return the top-i candidates in the given ranking.
+    Return the first i candidates from a ranking.
+
+    Parameters
+    ----------
+    ranking : Sequence of str
+        Full ranking, most-to-least preferred.
+    i : int
+        Number of top candidates to select.
+
+    Returns
+    -------
+    List[str]
+        The top i candidates.
+
     >>> _top_i(["C", "B", "A"], 2)
     ['C', 'B']
     """
@@ -157,7 +232,19 @@ def _top_i(ranking: Sequence[str], i: int) -> List[str]:
 # ──────────────────── Rational-Compromise helper ────────────────────────
 def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
     """
-    Rational-Compromise outcome for two parties.
+    Compute the Rational-Compromise winner between two orderings.
+
+    Parameters
+    ----------
+    pt : Sequence of str
+        Social welfare function ranking (team).
+    po : Sequence of str
+        Opponent’s ranking.
+
+    Returns
+    -------
+    Optional[str]
+        The singleton intersection winner, or None if none found.
 
     Prints a concise trace of the top-j intersections as it searches for the
     first *singleton* intersection.  Returns the winner (string) or None.
@@ -191,6 +278,25 @@ def _compute_Hi(
         opponent_order: Sequence[str],
 ) -> List[str]:
     """
+    Build a depth-i candidate set Hᵢ.
+
+    Parameters
+    ----------
+    preferred : str
+        The candidate we aim to promote.
+    i : int
+        Depth parameter (1 ≤ i ≤ m).
+    pt : Sequence of str
+        Honest team’s SWF ranking.
+    opponent_order : Sequence of str
+        Opponent’s full ranking.
+
+    Returns
+    -------
+    List[str]
+        A list of up to i candidates: starts with `preferred`, then the next
+        best in `pt` not in opponent’s top-i.
+
     Hᵢ = {preferred} ∪ (i-1 best in pt not in Aᵢ(po)), keeping pt order.
     Aᵢ(po) = top-i candidates in po (opponent) order.
     >>> _compute_Hi("A", 2, ["C", "A", "B"], ["B", "C", "A"])
@@ -215,8 +321,22 @@ def _compute_Hi(
 
 def check_validation(opp: List[str], preferred: str, m: int) -> bool:
     """
-    Check if the opponent ranks the preferred candidate high enough.
-    If not, manipulation is impossible.
+    Guard: ensure opponent ranks `preferred` high enough for manipulation, if not, manipulation is impossible.
+
+    Parameters
+    ----------
+    opp : List of str
+        Opponent’s ranking.
+    preferred : str
+        Candidate to check.
+    m : int
+        Total number of candidates.
+
+    Returns
+    -------
+    bool
+        True if `preferred` is ranked at or above ceil(m/2); otherwise False.
+
     >>> check_validation(["A", "B", "C"], "A", 3)
     True
     >>> check_validation(["C", "B", "A"], "A", 2)
@@ -241,13 +361,30 @@ def check_validation(opp: List[str], preferred: str, m: int) -> bool:
 
 # ─────────────── Algorithm 1 – single-voter manipulation ────────────────
 def algorithm1_single_voter(
-    F: Callable[[List[List[str]]], List[str]],   # social-welfare function
+    F: Callable[[List[List[str]]], List[str]],                   # social-welfare function
     team_profile : Union[List[List[str]], Profile],              # honest team ballots
-    opponent_order: List[any],                   # opponent ranking
-    preferred    : Union[str,int],                          # preferred candidate
+    opponent_order: Union[List[str],List[int]],                  # opponent ranking
+    preferred    : Union[str,int],                               # preferred candidate
 ) -> Tuple[bool, Optional[List[str]]]:
     """
-    Single-voter manipulation (C-MaNego) with logging for trace.
+    Single-voter manipulation: find a ballot that makes `preferred` the unique RC winner.
+
+    Parameters
+    ----------
+    F: Callable[[List[List[str]]], List[str]]
+        Social welfare function.
+    team_profile : List of List of str or Profile
+        Honest team ballots or Profile object.
+    opponent_order : List of int or List of str
+        Opponent’s ranking.
+    preferred : str or int
+        Candidate to manipulate for.
+
+    Returns
+    -------
+    Tuple[bool, Optional[List[str]]]
+        (success, manipulative_ballot) or (False, None).
+
     >>> algorithm1_single_voter(borda,[["b", "a", "p"]], ["b", "a", "p"], "p")
     (False, None)
     >>> algorithm1_single_voter(borda,[["p", "c", "a", "b"],["p", "b", "a", "c"],["b", "p", "a", "c"],["b", "a", "c", "p"],], ["b", "p", "a", "c"], "p")
@@ -307,13 +444,31 @@ def algorithm1_single_voter(
 def algorithm2_coalitional(
     F: Callable[[List[List[str]]], List[str]],
     team_profile : Union[List[List[str]], Profile],
-    opponent_order: List[any],
+    opponent_order: Union[List[str],List[int]],
     preferred    : Union[str,int],
     k            : int,
 ) -> Tuple[bool, Optional[List[List[str]]]]:
     """
-    Decide whether a coalition of size *k* can make `preferred` the unique
-    Rational-Compromise (Bucklin) winner against `opponent_order`.
+   Coalition manipulation of size k: find ballots that make `preferred` the unique RC winner.
+
+    Parameters
+    ----------
+    F: Callable[[List[List[str]]], List[str]]
+        Social welfare function.
+    team_profile : List of List of str or Profile
+        Honest team ballots or Profile object.
+    opponent_order : List of int or List of str
+        Opponent’s ranking.
+    preferred : str or int
+        Candidate to manipulate for.
+    k : int
+        Number of manipulators.
+
+    Returns
+    -------
+    Tuple[bool, Optional[List[List[str]]]]
+        (success, list_of_ballots) or (False, None).
+
     >>> algorithm2_coalitional(borda, [], ["a", "b", "c", "p"], "p", k=2)
     (False, None)
     >>> algorithm2_coalitional(borda, [["p", "d", "a", "b", "c", "e"],["a", "p", "b", "c", "d", "e"],["b", "c", "a", "p", "d", "e"],], ["a", "p", "b", "c", "d", "e"], "p", k=2)
@@ -378,7 +533,7 @@ def algorithm2_coalitional(
             logger.info(f"[Alg-2] hi_block = {hi_block}")
             logger.info(f"[Alg-2] lo_block = {lo_block}")
 
-        # ── 4  evaluate RC after the whole coalition is in ───────────────
+        # ── 4 evaluate RC after the whole coalition is in ───────────────
         rc_outcome = _rc_result(F(team_profile + pm), opponent_order)
         logger.debug(f"[Alg-2] RC outcome with coalition = {rc_outcome}")
 
@@ -394,6 +549,13 @@ def algorithm2_coalitional(
 
 # ───────────────────────────── demo harness ──────────────────────────────
 def main() -> None:
+    """
+    Demo harness for C-MaNego (single manipulator) and CC-MaNego (coalition).
+
+    This function sets up logging, runs two example profiles
+    through `algorithm1_single_voter` and `algorithm2_coalitional`,
+    and prints the outcomes via the module logger.
+    """
     _setup_logging(detailed=False)
     # ######################################
     # 1.  Algorithm 1 – single manipulator #
