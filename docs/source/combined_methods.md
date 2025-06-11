@@ -97,5 +97,10 @@ Combined Methods
 
 ```
 
+## Copeland-Local-Minimax
 
+```{eval-rst}
 
+.. autofunction:: pref_voting.combined_methods.copeland_local_minimax
+
+```

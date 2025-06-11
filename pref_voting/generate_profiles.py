@@ -2,7 +2,7 @@
     File: gen_profiles.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
-    Updated: February 16, 2024
+    Updated: May 25, 2025
     
     Functions to generate profiles
 
@@ -17,7 +17,7 @@ import math
 import random
 from scipy.stats import gamma
 from itertools import permutations
-from pref_voting.helper import weak_compositions
+from pref_voting.helper import weak_compositions, weak_orders
 
 from pref_voting.profiles_with_ties import ProfileWithTies
 from ortools.linear_solver import pywraplp
@@ -507,6 +507,9 @@ def generate_profile_with_groups(
 
     return profs[0] if num_profiles == 1 else profs
 
+####
+# Enumerating profiles
+####
 
 def enumerate_anon_profile(num_cands, num_voters):
     """A generator that enumerates all anonymous profiles with num_cands candidates and num_voters voters.
@@ -523,11 +526,45 @@ def enumerate_anon_profile(num_cands, num_voters):
     num_ballot_types = len(ballot_types)
 
     for comp in weak_compositions(num_voters, num_ballot_types):
-        yield Profile(ballot_types, rcounts = comp)
+        instantiated_ballot_types = [ballot_types[idx] for idx, i in enumerate(comp) if i != 0]
+        nonzerocomp = [i for i in comp if i != 0]
+        yield Profile(instantiated_ballot_types, rcounts = nonzerocomp)
+
+def canonical_ballot_multiset(profile: Profile) -> tuple:
+    """
+    Lexicographically minimal multiset of (ranking, count) pairs across
+    all candidate permutations.
+    """
+    m = profile.num_cands
+    rankings, counts = profile.rankings_counts
+    counts = counts.astype(int)
+
+    best = None
+    for perm in permutations(range(m)):
+        relabel = dict(zip(range(m), perm))
+        canon   = tuple(sorted(
+            (tuple(relabel[c] for c in r.tolist()), int(k))
+            for r, k in zip(rankings, counts)
+        ))
+        if best is None or canon < best:
+            best = canon
+    return best
+
+
+def enumerate_anon_neutral_profile(num_cands: int, num_voters: int):
+    """
+    A generator that yields one representative per neutrality-orbit of anonymous profiles.
+    """
+    seen = set()
+    for prof in enumerate_anon_profile(num_cands, num_voters):
+        key = canonical_ballot_multiset(prof)
+        if key not in seen:
+            seen.add(key)
+            yield prof
 
 
 def enumerate_anon_profile_with_ties(num_cands, num_voters):
-    """A generator that enumerates all anonymous profiles--allowing ties and omissions in ballots--with num_cands candidates and num_voters voters
+    """A generator that enumerates all anonymous profiles--allowing ties in ballots--with num_cands candidates and num_voters voters
 
     Args:
         num_cands (int): Number of candidates.
@@ -541,7 +578,55 @@ def enumerate_anon_profile_with_ties(num_cands, num_voters):
     num_ballot_types = len(ballot_types)
 
     for comp in weak_compositions(num_voters, num_ballot_types):
-        yield ProfileWithTies(ballot_types, rcounts = comp)
+        instantiated_ballot_types = [ballot_types[idx] for idx, i in enumerate(comp) if i != 0]
+        nonzerocomp = [i for i in comp if i != 0]
+        yield ProfileWithTies(instantiated_ballot_types, rcounts = nonzerocomp)
+
+def _weakorder_to_levels(order):
+    """Convert a weak order dict -> tuple of rank-levels."""
+    if not order:
+        return tuple()
+    max_rank = max(order.values())
+    return tuple(
+        tuple(sorted(c for c, r in order.items() if r == lev))
+        for lev in range(max_rank + 1)
+    )
+
+def _canonical_multiset_with_ties(profile):
+    """Canonical key for a *ProfileWithTies* under candidate permutations."""
+    m = profile.num_cands
+    ballots, counts = profile.rankings_counts
+    ballots = list(ballots)
+    counts  = [int(k) for k in counts]
+
+    best = None
+    for perm in permutations(range(m)):
+        relabel = dict(zip(range(m), perm))
+
+        canon = tuple(sorted(
+            (
+                _weakorder_to_levels(
+                    {relabel[c]: r for c, r in (
+                        ballot if isinstance(ballot, dict) else ballot.rmap
+                    ).items()}
+                ),
+                k,
+            )
+            for ballot, k in zip(ballots, counts)
+        ))
+        if best is None or canon < best:
+            best = canon
+    return best
+
+def enumerate_anon_neutral_profile_with_ties(num_cands, num_voters):
+    """A generator that yields one representative per neutrality-orbit of anonymous profiles allowing ties.
+    """
+    seen = set()
+    for prof in enumerate_anon_profile_with_ties(num_cands, num_voters):
+        key = _canonical_multiset_with_ties(prof)
+        if key not in seen:
+            seen.add(key)
+            yield prof
 
 
 ####

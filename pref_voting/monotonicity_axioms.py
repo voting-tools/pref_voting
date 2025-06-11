@@ -12,6 +12,7 @@ from pref_voting.rankings import Ranking
 import numpy as np
 from itertools import product
 import copy
+import math
 
 def ranks_above(ranking,c):
     """

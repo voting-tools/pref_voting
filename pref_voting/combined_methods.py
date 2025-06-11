@@ -341,6 +341,21 @@ def copeland_local_borda(edata, curr_cands = None):
     """
     return _compose(copeland, borda)(edata, curr_cands=curr_cands)
 
+@vm(name="Copeland-Local-Minimax",
+    input_types=[ElectionTypes.PROFILE,  ElectionTypes.MARGIN_GRAPH])
+def copeland_local_minimax(edata, curr_cands = None):
+    """Return the Minimax winner after restricting to the Copeland winners.
+
+    Args:
+        profile (Profile, MarginGraph): An anonymous profile of linear orders on a set of candidates
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns:
+        A sorted list of candidates
+
+    """
+    return _compose(copeland, minimax)(edata, curr_cands=curr_cands)
+
 def voting_method_with_scoring_tiebreaker(vm, score, name):
 
     def _vm(profile, curr_cands=None):
