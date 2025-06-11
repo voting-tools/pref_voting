@@ -24,7 +24,14 @@ Changes compared with the paper
 """
 from __future__ import annotations
 import logging, math
-from typing import Callable, List, Optional, Sequence, Set, Tuple
+from typing import Callable, List, Optional, Sequence, Set, Tuple, Iterable, Union
+
+try:
+    # Only present if the user has pref_voting installed
+    from pref_voting.profiles import Profile as Profile
+except ImportError:          # tests or minimal env
+    class Profile:        # dummy placeholder so isinstance() works
+        pass
 
 # ───────────────────────────── logging ───────────────────────────────────
 import logging
@@ -34,24 +41,39 @@ import logging
 #   DEBUG   – detailed steps
 #   WARNING – guards
 #   ERROR   – unexpected errors
-
-# ── 1. choose format style here ──────────────────────────────────────────
-DETAILED_LOGS = False        # ⇦ flip to True for the full timestamp/lineno format
-
-SIMPLE_FMT   = "%(levelname)s: %(message)s"
-DETAILED_FMT = "%(asctime)s: %(levelname)s: %(name)s: line %(lineno)d: %(message)s"
-chosen_fmt   = DETAILED_FMT if DETAILED_LOGS else SIMPLE_FMT
-
-# ── 2. build a single logger with a single handler ───────────────────────
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
-console = logging.StreamHandler()
-console.setLevel(logging.INFO) # set to INFO to avoid DEBUG spam in the console
-console.setFormatter(logging.Formatter(chosen_fmt))
+def _setup_logging(detailed: bool = False) -> None:
+    """Attach a single console handler to this module’s logger."""
+    fmt = (
+        "%(asctime)s  %(levelname)-8s  %(name)s:%(lineno)d  %(message)s"
+        if detailed
+        else "%(levelname)s: %(message)s"
+    )
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(fmt))
+    handler.setLevel(logging.INFO)        # tweak as you wish
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    logger.propagate = False
 
-logger.addHandler(console)
-logger.propagate = False
+# ────────────────────────────────────────────────────────────────
+def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[List[str]]:
+    """
+    Normalise *either* kind of profile into an explicit list of ballots.
+
+    • If already a List[List[str]] → return it unchanged (cheap pointer copy).
+    • If a pref_voting.profiles.Profile → replicate each unique ranking
+      according to its count vector.
+    """
+    if isinstance(profile, Profile):
+        return [
+            ballot                 # copy-by-reference is fine
+            for ballot, n in zip(profile.rankings, profile.counts)
+            for _ in range(n)
+        ]
+
+    return [list(b) for b in profile]
 
 # ──────────────────── 0. built-in social-welfare rules ───────────────────
 def borda(profile: List[List[str]]) -> List[str]:
@@ -215,9 +237,9 @@ def check_validation(opp: List[str], preferred: str, m: int) -> bool:
 # ─────────────── Algorithm 1 – single-voter manipulation ────────────────
 def algorithm1_single_voter(
     F: Callable[[List[List[str]]], List[str]],   # social-welfare function
-    team_profile : List[List[str]],              # honest team ballots
-    opponent_order: List[str],                   # opponent ranking
-    preferred    : str,                          # preferred candidate
+    team_profile : Union[List[List[str]], Profile],              # honest team ballots
+    opponent_order: List[any],                   # opponent ranking
+    preferred    : Union[str,int],                          # preferred candidate
 ) -> Tuple[bool, Optional[List[str]]]:
     """
     Single-voter manipulation (C-MaNego) with logging for trace.
@@ -226,6 +248,12 @@ def algorithm1_single_voter(
     >>> algorithm1_single_voter(borda,[["p", "c", "a", "b"],["p", "b", "a", "c"],["b", "p", "a", "c"],["b", "a", "c", "p"],], ["b", "p", "a", "c"], "p")
     (True, ['a', 'p', 'c', 'b'])
     """
+    if not opponent_order or not team_profile:
+        logger.warning("[Alg-1] empty team profile or opponent ranking – exit")
+        return False, None
+
+    team_profile = _explode_profile(team_profile)
+
     logger.info("\n[Alg-1] =========================================================")
     logger.info(f"[Alg-1] opponent order  : {opponent_order}")
     logger.info(f"[Alg-1] preferred       : '{preferred}'")
@@ -273,9 +301,9 @@ def algorithm1_single_voter(
 # ───────── Algorithm 2 – coalition of k manipulators (CC-MaNego) ─────────
 def algorithm2_coalitional(
     F: Callable[[List[List[str]]], List[str]],
-    team_profile : List[List[str]],
-    opponent_order: List[str],
-    preferred    : str,
+    team_profile : Union[List[List[str]], Profile],
+    opponent_order: List[any],
+    preferred    : Union[str,int],
     k            : int,
 ) -> Tuple[bool, Optional[List[List[str]]]]:
     """
@@ -286,6 +314,15 @@ def algorithm2_coalitional(
     >>> algorithm2_coalitional(borda, [["p", "d", "a", "b", "c", "e"],["a", "p", "b", "c", "d", "e"],["b", "c", "a", "p", "d", "e"],], ["a", "p", "b", "c", "d", "e"], "p", k=2)
     (True, [['p', 'e', 'd', 'c', 'b', 'a'], ['p', 'e', 'd', 'c', 'b', 'a']])
     """
+    if k <= 0:
+        logger.warning("[Alg-2] k=0 manipulators – impossible by definition")
+        return False, None
+    if not opponent_order:
+        logger.warning("[Alg-2] empty opponent ranking – exit")
+        return False, None
+
+    team_profile = _explode_profile(team_profile)
+
     logger.info("\n[Alg-2] =========================================================")
     logger.info(f"[Alg-2] opponent order  : {opponent_order}")
     logger.info(f"[Alg-2] preferred       : '{preferred}'")
@@ -352,10 +389,11 @@ def algorithm2_coalitional(
 
 # ───────────────────────────── demo harness ──────────────────────────────
 def main() -> None:
+    _setup_logging(detailed=False)
     # ######################################
     # 1.  Algorithm 1 – single manipulator #
     # ######################################
-    logger.info("\n===== DEMO 1: C-MaNego (single voter) =====")
+    logger.info("\n===== DEMO 1-A: C-MaNego (single voter) =====")
 
     team_profile_1 = [
         ["p", "c", "a", "b"],
@@ -377,7 +415,34 @@ def main() -> None:
         logger.info(f"Manipulative ballot   : {ballot_1}")
     else:
         logger.info("Manipulation impossible under this profile.")
+    # ------------------------------------------------------------------
+    # 1-B.  SAME EXAMPLE, Profile BUILT *AS IN* pref_voting DOCS (integers)
+    # ------------------------------------------------------------------
+    logger.info("\n===== DEMO 1-B: C-MaNego with canonical integer Profile =====")
 
+    ballots = [
+        (0, 1, 2, 3),  # 0>1>2>3   (p>c>a>b)
+        (0, 3, 2, 1),  # 0>3>2>1   (p>b>a>c)
+        (3, 0, 2, 1),  # 3>0>2>1   (b>p>a>c)
+        (3, 2, 1, 0),  # 3>2>1>0   (b>a>c>p)
+    ]
+    counts = [1, 1, 1, 1]  # one voter per ranking
+
+    profile = Profile(ballots, rcounts=counts)
+
+    opponent_order = [3, 0, 2, 1]  # b p a c   (IDs)
+    preferred = 0  # p
+
+    ok, ballot = algorithm1_single_voter(
+        borda,
+        profile,
+        opponent_order,
+        preferred,
+    )
+
+    logger.info(f"Outcome               : {ok}")
+    logger.info(f"Manipulative ballot   : {ballot}" if ok
+                else "Manipulation impossible under this profile.")
     # ######################################################
     # 2.  Algorithm 2 – coalition of k manipulators (k = 2) #
     # ######################################################

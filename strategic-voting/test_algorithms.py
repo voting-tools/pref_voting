@@ -21,7 +21,13 @@ from strategic_voting_algorithms import (
     borda,
     make_x_approval,
 )
+from typing import List, Union
+try:
+    from pref_voting.profiles import Profile        # real class
+except ImportError:
+    Profile = None                                   # tests on a lean env
 
+from pref_voting.helper import create_election
 # ---------------------------------------------------------------------
 # Shared constants – paper’s “4 honest + 1 manipulator” example
 TEAM_PROFILE_EXAMPLE = [
@@ -101,6 +107,25 @@ def test_alg1_random_output_shape():
         ok, vote = algorithm1_single_voter(borda, team_profile, opponent_order, preferred)
         if ok:
             assert sorted(vote) == sorted(candidates)
+
+@pytest.mark.skipif(Profile is None, reason="pref_voting not installed")
+def test_alg1_accepts_pref_profile():
+    # 4-candidate mapping: p=0, c=1, a=2, b=3
+    ballots = [
+        [0, 1, 2, 3],  # p c a b
+        [0, 3, 2, 1],  # p b a c
+        [3, 0, 2, 1],  # b p a c
+        [3, 2, 1, 0],  # b a c p
+    ]
+    counts = [1, 1, 1, 1]
+
+    prof = Profile(ballots, counts)
+
+    opponent_order = [3, 0, 2, 1]   # b p a c  (same code)
+    preferred      = 0              # p
+
+    ok, _ = algorithm1_single_voter(borda, prof, opponent_order, preferred)
+    assert ok
 
 
 # ---------------------------------------------------------------------
