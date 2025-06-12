@@ -89,7 +89,7 @@ def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[L
     """
     if isinstance(profile, Profile):
         # try to grab counts; default to [1, 1, …] if missing or None
-        raw_counts = getattr(profile, 'counts', None)
+        raw_counts = getattr(profile, 'rcounts', None)
         counts = raw_counts if raw_counts is not None else [1] * len(profile.rankings)
 
         return [
@@ -173,10 +173,10 @@ def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
         if not profile:
             logger.warning("Empty profile in x-approval count")
             return []
-        scores = {c: 0 for c in profile[0]}
+        scores = {c: 0 for c in profile[0]} # initialize scores for all candidates to 0
         for ballot in profile:
             for cand in ballot[:x]:
-                scores[cand] += 1
+                scores[cand] += 1 # increment score for each of the top x candidates
         return sorted(scores, key=lambda c: (-scores[c], c))
 
     rule.__name__ = f"x_approval_{x}"
@@ -186,6 +186,8 @@ def make_x_approval(x: int) -> Callable[[List[List[str]]], List[str]]:
 def _pos(candidate: str, ranking: Sequence[str]) -> int:
     """
     Compute paper‐style position of `candidate` in `ranking`.
+
+    "the number of outcomes that o (candidate) is preferred over them in pi (ranking)."
 
     Parameters
     ----------
@@ -233,7 +235,7 @@ def _top_i(ranking: Sequence[str], i: int) -> List[str]:
 def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
     """
     Compute the Rational-Compromise winner between two orderings.
-
+    VAOV-style intersection of top-i candidates.
     Parameters
     ----------
     pt : Sequence of str
@@ -253,12 +255,12 @@ def _rc_result(pt: Sequence[str], po: Sequence[str]) -> Optional[str]:
     """
     m = len(pt)
     for j in range(1, m + 1):
-        inter = set(_top_i(pt, j)) & set(_top_i(po, j))
+        inter = set(_top_i(pt, j)) & set(_top_i(po, j)) # intersection of top-j
         logger.debug(f"[RC] depth j={j}, pt_top={_top_i(pt, j)}, po_top={_top_i(po, j)}, intersection={sorted(inter)}")
 
         if inter:
             if len(inter) == 1:
-                winner = next(iter(inter))
+                winner = next(iter(inter)) # the set has exactly one element, get it
                 logger.info(f"[RC] singleton intersection at j={j} ⇒ returning '{winner}'")
                 return winner
             else:
@@ -309,10 +311,10 @@ def _compute_Hi(
     logger.debug(f"[_compute_Hi] initially H = {H}")
 
     for c in pt:
-        if len(H) == i:
+        if len(H) == i: # already have i candidates
             break
 
-        if c != preferred and c not in Ai_po:
+        if c != preferred and c not in Ai_po: # not in opponent's top-i
             H.append(c)
             logger.debug(f"[_compute_Hi] adding '{c}' to H (size now {len(H)})")
 
@@ -489,9 +491,6 @@ def algorithm2_coalitional(
     logger.info(f"[Alg-2] team profile ({len(team_profile)} voters): {team_profile}")
     logger.info(f"[Alg-2] coalition size k = {k}")
     # ── 0  guards ─────────────────────────────────────────────────────────
-    if k <= 0:
-        logger.warning("[Alg-2] 0 manipulators ⇒ impossible")
-        return False, None
 
     m = len(opponent_order)
     if not check_validation(opponent_order, preferred, m):
