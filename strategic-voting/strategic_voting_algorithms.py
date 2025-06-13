@@ -89,7 +89,7 @@ def _explode_profile(profile: Union[Profile, Sequence[Sequence[str]]]) -> List[L
     """
     if isinstance(profile, Profile):
         # try to grab counts; default to [1, 1, …] if missing or None
-        raw_counts = getattr(profile, 'rcounts', None)
+        raw_counts = getattr(profile, 'counts', None)
         counts = raw_counts if raw_counts is not None else [1] * len(profile.rankings)
 
         return [
@@ -301,8 +301,8 @@ def _compute_Hi(
 
     Hᵢ = {preferred} ∪ (i-1 best in pt not in Aᵢ(po)), keeping pt order.
     Aᵢ(po) = top-i candidates in po (opponent) order.
-    >>> _compute_Hi("A", 2, ["C", "A", "B"], ["B", "C", "A"])
-    ['A']
+    >>> _compute_Hi("p", 2, [["p", "c", "a", "b"],["p", "b", "a", "c"],["b", "p", "a", "c"],["b", "a", "c", "p"],], ["b", "p", "a", "c"])
+    ['p','a']
     """
     Ai_po: Set[str] = set(_top_i(opponent_order, i))
     logger.debug(f"[_compute_Hi] i={i}, opponent_top_i={sorted(Ai_po)}")
