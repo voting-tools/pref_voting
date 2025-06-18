@@ -628,7 +628,7 @@ def main() -> None:
     logger.info(f"Preferred candidate   : '{preferred_2}', coalition size k = {k}")
 
     ok_2, ballots_2 = algorithm2_coalitional(
-        borda,
+        make_x_approval(2),
         team_profile_2,
         opponent_order_2,
         preferred_2,
