@@ -6,7 +6,7 @@ Resumes automatically if it crashes: rerun the same command.
 """
 # --- imports -----------------------------------------------------------
 from __future__ import annotations
-import sys, random
+import sys, random, pathlib
 from experiments_csv import *
 
 import pandas as pd
@@ -92,50 +92,74 @@ coalition_grid = {
     "seed": range(N_SEEDS),
 }
 
+# --- helper: make sure we always have runtime_ms -----------------------
+def add_runtime_ms(df: pd.DataFrame) -> pd.DataFrame:
+    if "runtime_ms" not in df.columns:
+        if "runtime" not in df.columns:
+            raise KeyError("Neither 'runtime_ms' nor 'runtime' found in the CSV")
+        df = df.copy()
+        df["runtime_ms"] = df["runtime"] * 1000      # seconds → milliseconds
+    return df
 
 # --- launch ------------------------------------------------------------
 if __name__ == "__main__":
+    plots_only = True  # set to True to skip running the trials
     # SINGLE-VOTER
-    ex1 = experiments_csv.Experiment(RESULT_DIR, CSV_SINGLE, backup_folder=None)
-    ex1.clear_previous_results()
-    ex1.run_with_time_limit(rc_single_trial, single_grid, time_limit=60)
+    if not plots_only:
+        # SINGLE-VOTER
+        ex1 = experiments_csv.Experiment(RESULT_DIR, CSV_SINGLE, backup_folder=None)
+        ex1.clear_previous_results()
+        ex1.run_with_time_limit(rc_single_trial, single_grid, time_limit=60)
 
-    # COALITION
-    ex2 = experiments_csv.Experiment(RESULT_DIR, CSV_COAL, backup_folder=None)
-    ex2.clear_previous_results()
-    ex2.run_with_time_limit(rc_coalition_trial, coalition_grid, time_limit=60)
+        # COALITION
+        ex2 = experiments_csv.Experiment(RESULT_DIR, CSV_COAL, backup_folder=None)
+        ex2.clear_previous_results()
+        ex2.run_with_time_limit(rc_coalition_trial, coalition_grid, time_limit=60)
 
-    # ----------  PLOTS  -------------------------------------------------
+    # ----------  PLOTS  ----------------------------------------------------
+    plt.rcParams["font.size"] = 9
 
 
-    # (A) single-voter success %
-    df = pd.read_csv(RESULT_DIR / CSV_SINGLE)
-    summary = (df.groupby(["rule", "m"]).agg(success_pct=("ok", "mean")).reset_index())
-    summary["success_pct"] *= 100
+    def stacked_plot(tbl, title, fname):
+        tbl_succ = tbl.pivot(index="m", columns="rule", values="success_pct")
+        tbl_time = tbl.pivot(index="m", columns="rule", values="runtime_ms")
 
-    fig, ax = plt.subplots(figsize=(6,4))
-    for rule, g in summary.groupby("rule"):
-        ax.plot(g["m"], g["success_pct"], marker="o", label=rule)
-    ax.set(xlabel="number of candidates (m)",
-           ylabel="manipulation success (%)",
-           ylim=(0, 100))
-    ax.legend(title="voting rule")
-    fig.tight_layout()
-    fig.savefig(RESULT_DIR / "success_vs_m_single.png", dpi=300)
+        fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True,
+                                       figsize=(5.5, 5),
+                                       gridspec_kw={"height_ratios": [2, 1]})
 
-    # (B) coalition – one figure per k
-    dfc = pd.read_csv(RESULT_DIR / CSV_COAL)
-    for k, gk in dfc.groupby("k"):
-        summ_k = (gk.groupby(["rule", "m"]).agg(success_pct=("ok", "mean")).reset_index())
-        summ_k["success_pct"] *= 100
-        fig, ax = plt.subplots(figsize=(6,4))
-        for rule, g in summ_k.groupby("rule"):
-            ax.plot(g["m"], g["success_pct"], marker="o", label=rule)
-        ax.set(xlabel="number of candidates (m)",
-               ylabel="success (%)",
-               ylim=(0, 100),
-               title="k = {}".format(k))
-        ax.legend()
+        tbl_succ.plot(ax=ax1, marker="o", lw=1.2)
+        ax1.set(ylabel="success (%)", ylim=(0, 100), title=title)
+        ax1.legend(ncol=2, fontsize=8, loc="upper center")
+
+        tbl_time.plot(ax=ax2, marker="x", ls="--")
+        ax2.set(xlabel="candidates m", ylabel="runtime (ms)", yscale="log")
+        ax2.yaxis.set_major_formatter(lambda v, p: f"{v * 1e3:.0f}")
+        ax2.grid(axis="y", ls=":", alpha=.3)
+        ax2.legend().remove()
+
         fig.tight_layout()
-        fig.savefig(RESULT_DIR / ("success_vs_m_coal_k{}.png".format(k)),dpi=300)
-    print("Done!  Plots saved under", RESULT_DIR)
+        fig.savefig(fname, dpi=300)
+        plt.close(fig)
+
+
+    # B1 ─ single-voter -----------------------------------------------------
+    df = add_runtime_ms(pd.read_csv(RESULT_DIR / CSV_SINGLE))
+    summ = (df.groupby(["rule", "m"])
+            .agg(success_pct=("ok", "mean"), runtime_ms=("runtime_ms", "mean"))
+            .reset_index())
+    summ["success_pct"] *= 100
+    stacked_plot(summ, "single voter",
+                 RESULT_DIR / "success_vs_m_single_w_time.png")
+
+    # B2 ─ coalition --------------------------------------------------------
+    dfc = add_runtime_ms(pd.read_csv(RESULT_DIR / CSV_COAL))
+    for k, gk in dfc.groupby("k"):
+        tbl = (gk.groupby(["rule", "m"])
+               .agg(success_pct=("ok", "mean"), runtime_ms=("runtime_ms", "mean"))
+               .reset_index())
+        tbl["success_pct"] *= 100
+        stacked_plot(tbl, f"coalition k={k}",
+                     RESULT_DIR / f"success_vs_m_coal_k{k}_w_time.png")
+    print("Done!  (stacked version)")
+
