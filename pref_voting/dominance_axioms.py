@@ -103,17 +103,21 @@ def has_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=False
         return False
     if cw is not None and ws != [cw]:
         if verbose:
+            print("Violation of Condorcet Winner by", vm.name,"on profile:")
             if isinstance(edata, (Profile, ProfileWithTies)):
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else:
                 edata.display()
-            print(edata.description())
+                print(edata.description())
+            
             print(f"The Condorcet winner {cw} is not the unique winner: ")
             vm.display(edata)
         return True
     return False
 
-def find_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=False):
+def find_all_condorcet_winner_violations(edata, vm, only_resolute=False, verbose=False):
     """
     Returns the Condorcet winner that is not the unique winner according to vm.
     
@@ -137,11 +141,15 @@ def find_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=Fals
 
     if cw is not None and ws != [cw]:
         if verbose: 
+            print("Violation of Condorcet Winner by", vm.name,"on profile:")
             if isinstance(edata, (Profile, ProfileWithTies)):
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else:
                 edata.display()
-            print(edata.description())
+                print(edata.description())
+
             print(f"The Condorcet winner {cw} is not the unique winner: ")
             vm.display(edata)
         return [cw] 
@@ -150,7 +158,7 @@ def find_condorcet_winner_violation(edata, vm, only_resolute=False, verbose=Fals
 condorcet_winner = Axiom(
     "Condorcet Winner",
     has_violation = has_condorcet_winner_violation,
-    find_all_violations = find_condorcet_winner_violation, 
+    find_all_violations = find_all_condorcet_winner_violations, 
 )
 
 def has_condorcet_loser_violation(edata, vm, verbose=False):
@@ -172,18 +180,22 @@ def has_condorcet_loser_violation(edata, vm, verbose=False):
     ws = vm(edata)
 
     if cl is not None and cl in ws:
-        if verbose: 
-            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+        if verbose:
+            print("Violation of Condorcet Loser by", vm.name,"on profile:")
+            if type(edata) == Profile or type(edata) == ProfileWithTies:
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else: 
                 edata.display()
-            print(edata.description())
+                print(edata.description())
+
             print(f"The Condorcet loser {cl} is an element of the winning set: ")
             vm.display(edata)
         return True 
     return False
 
-def find_condorcet_loser_violation(edata, vm, verbose=False):
+def find_all_condorcet_loser_violations(edata, vm, verbose=False):
     """
     Returns the Condorcet loser (a candidate that loses head-to-head to every other candidate) who is a winner according to vm.  
     
@@ -203,11 +215,15 @@ def find_condorcet_loser_violation(edata, vm, verbose=False):
 
     if cl is not None and cl in ws:
         if verbose: 
+            print("Violation of Condorcet Loser by", vm.name,"on profile:")
             if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else: 
                 edata.display()
-            print(edata.description())
+                print(edata.description())
+ 
             print(f"The Condorcet loser {cl} is an element of the winning set: ")
             vm.display(edata)
         return [cl] 
@@ -216,7 +232,7 @@ def find_condorcet_loser_violation(edata, vm, verbose=False):
 condorcet_loser = Axiom(
     "Condorcet Loser",
     has_violation = has_condorcet_loser_violation,
-    find_all_violations = find_condorcet_winner_violation, 
+    find_all_violations = find_all_condorcet_loser_violations, 
 )
 
 def has_smith_violation(edata, vm, verbose=False):
