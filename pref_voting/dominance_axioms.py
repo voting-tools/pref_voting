@@ -239,11 +239,16 @@ def has_smith_violation(edata, vm, verbose=False):
     winners_not_in_smith = [w for w in ws if w not in s_set]
     if len(winners_not_in_smith) > 0: 
         if verbose:
-            if type(edata) == Profile or type(edata) == ProfileWithTies: 
+            print("Violation of Smith by", vm.name,"on profile:")
+            if type(edata) == Profile or type(edata) == ProfileWithTies:
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else: 
                 edata.display()
-            print(f"The winners that are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}.")
+                print(edata.description())
+            print("Smith set:", list_to_string(s_set, edata.cmap))
+            print(f"The winners who are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}")
             vm.display(edata)
         return True 
     return False
@@ -269,10 +274,14 @@ def find_all_smith_violations(edata, vm, verbose=False):
     if len(winners_not_in_smith) > 0: 
         if verbose:
             if type(edata) == Profile or type(edata) == ProfileWithTies: 
+                edata.display()
+                print(edata.description())
                 edata.display_margin_graph()
             else: 
                 edata.display()
-            print(f"The winners that are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}.")
+                print(edata.description())
+            print("Smith set:", list_to_string(s_set, edata.cmap))
+            print(f"The winners who are not in the Smith set: {list_to_string(winners_not_in_smith, edata.cmap)}")
             vm.display(edata)
         return winners_not_in_smith 
     return list()
