@@ -9,6 +9,14 @@ Other Methods
 
 ```
 
+## Pareto
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.other_methods.pareto
+
+```
+
 ## Kemeny-Young
 
 ```{eval-rst}
