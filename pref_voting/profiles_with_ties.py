@@ -90,7 +90,7 @@ class ProfileWithTies(object):
         self.num_cands = len(self.candidates)
         """The number of candidates in the profile."""
 
-        self.cmap = cmap if cmap is not None else {c: c for c in self.candidates}
+        self.cmap = cmap if cmap is not None else {c: str(c) for c in self.candidates}
         """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
 
         self._rankings = [
