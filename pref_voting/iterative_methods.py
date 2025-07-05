@@ -735,7 +735,7 @@ def bottom_two_runoff_instant_runoff_put(profile, curr_cands = None):
     return sorted(set(winners))
     
 
-@vm(name = "PluralityWRunoff PUT",
+@vm(name = "Plurality with Runoff PUT",
     input_types=[ElectionTypes.PROFILE])
 def plurality_with_runoff_put(profile, curr_cands = None):
     """If there is a majority winner then that candidate is the Plurality with Runoff winner. Otherwise hold a runoff between the top two candidates: the candidate with the most first place votes and the candidate with the 2nd most first place votes (or perhaps tied for the most first place votes). In the case of multiple candidates tied for the most or 2nd most first place votes, use parallel-universe tiebreaking: a candidate is a Plurality with Runoff winner if it is a winner in some runoff as described. If the candidates are all tied for the most first place votes, then all candidates are winners.

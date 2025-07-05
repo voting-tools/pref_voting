@@ -36,7 +36,10 @@ def has_pareto_dominance_violation(edata, vm, verbose=False, strong_Pareto = Fal
                     edata.display()
                     print(edata.description())
                     vm.display(edata)
-                    print(f"The winner {w} is Pareto dominated by {c}.")
+                    if not strong_Pareto:
+                        print(f"Every voter ranks {c} higher than the winner {w}.")
+                    else:
+                        print(f"Every voter ranks {c} at least as highly as the winner {w}, and some voter ranks {c} strictly higher than {w}.")
                     print()
                 return True
     return False
@@ -70,7 +73,10 @@ def find_all_pareto_dominance_violations(edata, vm, verbose=False, strong_Pareto
         print(edata.description())
         vm.display(edata)
         for w,c in pareto_dominated_winners:
-            print(f"The winner {w} is Pareto dominated by {c}.")
+            if not strong_Pareto:
+                print(f"Every voter ranks {c} higher than the winner {w}.")
+            else:
+                print(f"Every voter ranks {c} at least as highly as the winner {w}, and some voter ranks {c} strictly higher than {w}.")
 
     return pareto_dominated_winners
 
