@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Stable Voting – Independence of Pareto-Dominated Alternatives (violation)</title>
+<style>
+  body, table, h1, h2, p { font-family: Arial, sans-serif; }
+
+  pre {
+      font-family: "Courier New", Courier, monospace;
+      background: #f8f8f8;
+      padding: 0.8em;
+      white-space: pre-wrap;   /* wrap long lines but keep indentation */
+  }
+
+  h1 { margin-bottom: .2em; }
+  h2 { margin-top: 0; font-size: 1.1em; color: #444; }
+</style>
+</head><body><h1>Stable Voting</h1>
+<h2>Violation of Independence of Pareto-Dominated Alternatives</h2>
+<p><b>Profile&nbsp;type:</b> Profile<br><b>Config:</b> 3&nbsp;c, 2&nbsp;v<br><b>Parameters:</b> ∅</p>
+<pre>IPDA violation for Stable Voting.
+0 is Pareto-dominated by another candidate and removing 0 changes the set of winners:
++---+---+
+| 1 | 1 |
++---+---+
+| 1 | 2 |
+| 2 | 0 |
+| 0 | 1 |
++---+---+
+Profile([[1, 2, 0], [2, 0, 1]], rcounts=[1, 1], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;})
+Winners in full election: [2]
+Winners in election without 0: [1, 2]
+</pre></body></html>

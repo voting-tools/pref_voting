@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Bottom-Two-Runoff Instant Runoff – Positive Involvement (violation)</title>
+<style>
+  body, table, h1, h2, p { font-family: Arial, sans-serif; }
+
+  pre {
+      font-family: "Courier New", Courier, monospace;
+      background: #f8f8f8;
+      padding: 0.8em;
+      white-space: pre-wrap;   /* wrap long lines but keep indentation */
+  }
+
+  h1 { margin-bottom: .2em; }
+  h2 { margin-top: 0; font-size: 1.1em; color: #444; }
+</style>
+</head><body><h1>Bottom-Two-Runoff Instant Runoff</h1>
+<h2>Violation of Positive Involvement</h2>
+<p><b>Profile&nbsp;type:</b> Profile<br><b>Config:</b> 3&nbsp;c, 7&nbsp;v<br><b>Parameters:</b> ∅</p>
+<pre>1 loses in the full profile, but 1 is a winner after removing voter with the ranking (1, 2, 0):
+
+Full profile:
++---+---+---+---+
+| 2 | 1 | 2 | 2 |
++---+---+---+---+
+| 0 | 1 | 1 | 2 |
+| 2 | 0 | 2 | 1 |
+| 1 | 2 | 0 | 0 |
++---+---+---+---+
+Profile([[0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 1, 0]], rcounts=[2, 1, 2, 2], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;})
+Bottom-Two-Runoff Instant Runoff winner is {2}
+
+Profile with voter removed:
++---+---+---+---+
+| 2 | 1 | 1 | 2 |
++---+---+---+---+
+| 0 | 1 | 1 | 2 |
+| 2 | 0 | 2 | 1 |
+| 1 | 2 | 0 | 0 |
++---+---+---+---+
+Profile([[0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 1, 0]], rcounts=[2, 1, 1, 2], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;})
+Bottom-Two-Runoff Instant Runoff winners are {0, 1, 2}
+
+</pre></body></html>

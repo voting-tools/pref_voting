@@ -14,6 +14,14 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
+### Minimax (Support)
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.minimax_support
+
+```
+
 ### Minimax Scores
 
 ```{eval-rst}

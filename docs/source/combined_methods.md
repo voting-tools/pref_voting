@@ -104,3 +104,11 @@ Combined Methods
 .. autofunction:: pref_voting.combined_methods.copeland_local_minimax
 
 ```
+
+## Borda-Minimax Faceoff
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.combined_methods.borda_minimax_faceoff
+
+```

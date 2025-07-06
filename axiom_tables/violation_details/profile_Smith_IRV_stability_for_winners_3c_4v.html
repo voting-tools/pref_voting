@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Smith IRV – Stability for Winners (violation)</title>
+<style>
+  body, table, h1, h2, p { font-family: Arial, sans-serif; }
+
+  pre {
+      font-family: "Courier New", Courier, monospace;
+      background: #f8f8f8;
+      padding: 0.8em;
+      white-space: pre-wrap;   /* wrap long lines but keep indentation */
+  }
+
+  h1 { margin-bottom: .2em; }
+  h2 { margin-top: 0; font-size: 1.1em; color: #444; }
+</style>
+</head><body><h1>Smith IRV</h1>
+<h2>Violation of Stability for Winners</h2>
+<p><b>Profile&nbsp;type:</b> Profile<br><b>Config:</b> 3&nbsp;c, 4&nbsp;v<br><b>Parameters:</b> ∅</p>
+<pre>Stability for Winners violation for Smith IRV.
+2 wins without 0 in the election and is majority preferred to 0 but loses when 0 is included:
++---+---+---+
+| 1 | 2 | 1 |
++---+---+---+
+| 0 | 1 | 2 |
+| 2 | 2 | 0 |
+| 1 | 0 | 1 |
++---+---+---+
+Profile([[0, 2, 1], [1, 2, 0], [2, 0, 1]], rcounts=[1, 2, 1], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;})
+Winners in full election: [1]
+Winners in election without 0: [1, 2]
+</pre></body></html>
