@@ -23,6 +23,7 @@ author = 'Wes Holliday and Eric Pacuit'
 
 # The full version, including alpha/beta/rc tags
 release = '1.16.21'
+html_extra_path = ['../../axiom_tables']
 
 
 # -- General configuration ---------------------------------------------------
