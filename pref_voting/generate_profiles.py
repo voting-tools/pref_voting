@@ -538,18 +538,24 @@ def canonical_ballot_multiset(profile: Profile) -> tuple:
     m = profile.num_cands
     rankings, counts = profile.rankings_counts
     counts = counts.astype(int)
-
+    
     best = None
-    for perm in permutations(range(m)):
-        relabel = dict(zip(range(m), perm))
-        canon   = tuple(sorted(
-            (tuple(relabel[c] for c in r.tolist()), int(k))
-            for r, k in zip(rankings, counts)
+    
+    # For each ranking that could potentially be the "canonical" one (0,1,2,...)
+    for r in rankings:
+        # Find the permutation that maps r to (0,1,2,...,m-1)
+        perm = {int(r[i]): i for i in range(m)}
+        
+        # Apply this inverse permutation to all rankings
+        canon = tuple(sorted(
+            (tuple(perm[c] for c in ranking.tolist()), int(k))
+            for ranking, k in zip(rankings, counts)
         ))
+        
         if best is None or canon < best:
             best = canon
+    
     return best
-
 
 def enumerate_anon_neutral_profile(num_cands: int, num_voters: int):
     """
