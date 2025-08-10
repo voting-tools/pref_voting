@@ -840,6 +840,8 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         _rankings = [r.normalize_ranks() or r for r in _rankings]
         curr_cands = curr_cands if curr_cands is not None else self.candidates
         cmap = cmap if cmap is not None else self.cmap
+
+        existing_ranks = max(max(r.ranks) for r in _rankings) if len(_rankings) > 0 else 0
         if order_by_counts: 
             _rankings, rcounts = zip(*sorted(zip(_rankings, self.rcounts), key=lambda x: x[1], reverse=True))
         else:
@@ -857,7 +859,7 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
                         )
                         for r in _rankings
                     ]
-                    for rank in self.ranks
+                    for rank in existing_ranks
                 ],
                 rcounts,
                 tablefmt=style,
