@@ -22,7 +22,7 @@ copyright = '2024, Wes Holliday and Eric Pacuit'
 author = 'Wes Holliday and Eric Pacuit'
 
 # The full version, including alpha/beta/rc tags
-release = '1.16.21'
+release = '1.16.24'
 html_extra_path = ['../../axiom_tables']
 
 

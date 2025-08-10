@@ -707,7 +707,12 @@ class Profile(object):
         rs, cs = self.rankings_counts
         return f"Profile({[list([int(c) for c in r]) for r in rs]}, rcounts={[int(c) for c in cs]}, cmap={self.cmap})"
 
-    def display(self, cmap=None, style="pretty", curr_cands=None):
+    def display(
+            self, 
+            cmap=None, 
+            style="pretty", 
+            curr_cands=None,
+            order_by_counts=False):
         """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
 
         :param cmap: the candidate map to use (overrides the cmap associated with this profile)
@@ -732,7 +737,13 @@ class Profile(object):
         
         rankings = self._rankings if curr_cands is None else _find_updated_profile(self._rankings, np.array([c for c in self.candidates if c not in curr_cands]), len(self.candidates))
 
-        print(tabulate([[cmap[c] for c in cs] for cs in rankings.transpose()], self._rcounts, tablefmt=style))        
+        if order_by_counts: 
+            rankings, rcounts = zip(*sorted(zip(rankings, self._rcounts), key=lambda x: x[1], reverse=True))
+            rankings = np.array(rankings)
+        else: 
+            rcounts = self._rcounts
+
+        print(tabulate([[cmap[c] for c in cs] for cs in rankings.transpose()], rcounts, tablefmt=style))        
 
     def to_preflib_instance(self):
         """
