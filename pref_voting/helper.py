@@ -1,11 +1,10 @@
-
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.weighted_majority_graphs import MajorityGraph
 from pref_voting.rankings import Ranking
 from pref_voting.social_welfare_function import *
 from pref_voting.voting_method import *
-from itertools import combinations
+from itertools import combinations, chain
 import random
 
 import networkx as nx
@@ -364,3 +363,8 @@ def convex_lexicographic_sublists(l):
                 cl_sublists.append(current_list)
 
     return cl_sublists
+
+def powerset(iterable):
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
