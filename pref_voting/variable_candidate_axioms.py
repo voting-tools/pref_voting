@@ -2,6 +2,7 @@
     File: variable_candidate_axioms.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: July 7, 2024
+    Updated: August 20, 2025
     
     Variable candidate axioms 
 """
@@ -10,6 +11,7 @@ from pref_voting.axiom import Axiom
 from pref_voting.axiom_helpers import *
 from pref_voting.c1_methods import top_cycle
 import numpy as np
+from itertools import combinations
 
 def has_stability_for_winners_violation(edata, vm, verbose=False, strong_stability=False):
     """
@@ -425,13 +427,46 @@ def tideman_clone_sets(prof):
                 
     return clone_sets   
 
-def has_independence_of_clones_violation(prof, vm, clone_def = "Tideman", conditions_to_check = "all", verbose = False):
+def marginal_clone_sets(edata, epsilon=0):
+    """Given a profile or margin graph, returns all sets of "marginal clones": a set C of candidates is a set of marginal clones if for any c,d in C and x not in C, |margin(c,x) - margin(d,x)| <= epsilon."""
+    
+    mc_sets = []
+
+    cands = edata.candidates
+
+    for subset in powerset(cands):
+
+        if len(subset) <=1 or len(subset) == len(cands):
+            continue
+
+        is_marginal_clone_set = True
+
+        for c, d in combinations(subset, 2):
+            are_clones = True
+
+            for x in cands:
+                if not x in subset:
+                    if abs(edata.margin(c,x) - edata.margin(d,x)) > epsilon:
+                        are_clones = False
+                        break
+
+            if not are_clones:
+                is_marginal_clone_set = False
+                break
+    
+        if is_marginal_clone_set:
+            mc_sets.append(subset)
+                
+    return mc_sets   
+
+def has_independence_of_clones_violation(prof, vm, clone_def = "Tideman", epsilon = 0, conditions_to_check = "all", verbose = False):
     """Independence of Clones: returns True if there is a set C of clones and a clone c in C such that removing c either (i) changes which non-clones (candidates not in C) win or (ii) changes whether any clone in C wins. We call (i) a violation of "non-clone choice is independent of clones" (NCIC) and call (ii) a violation of "clone choice is independent of clones" (CIC).
 
     Args:
         prof (Profile): the election data.
         vm (VotingMethod): A voting method to test.
-        clone_def (str, default="Tideman"): The definition of clones. Currently only "Tideman" is supported.
+        clone_def (str, default="Tideman"): The definition of clones. Options are "Tideman" and "Marginal".
+        epsilon (float, default=0): If clone_def is "Marginal", then for C to be a marginal clone set, it must but that for any c,c' in C and x not in C, |margin(c,x) - margin(c',x)| <= epsilon.
         conditions_to_check (str, default="all"): The conditions to check. If "all", then both NCIC and CIC are checked. If "NCIC", then only NCIC is checked. If "CIC", then only CIC is checked.
         verbose (bool, default=False): If a violation is found, display the violation.
     
@@ -439,6 +474,9 @@ def has_independence_of_clones_violation(prof, vm, clone_def = "Tideman", condit
 
     if clone_def == "Tideman":
         clone_sets = tideman_clone_sets(prof)
+
+    if clone_def == "Marginal":
+        clone_sets = marginal_clone_sets(prof, epsilon)
 
     for clone_set in clone_sets:
         
@@ -500,13 +538,14 @@ def has_independence_of_clones_violation(prof, vm, clone_def = "Tideman", condit
     
     return False
 
-def find_all_independence_of_clones_violations(prof, vm, clone_def = "Tideman", conditions_to_check = "all", verbose = False):
+def find_all_independence_of_clones_violations(prof, vm, clone_def = "Tideman", epsilon = 0, conditions_to_check = "all", verbose = False):
         """Returns all violations of Independence of Clones for the given election data and voting method.
         
         Args:
             prof (Profile): the election data.
             vm (VotingMethod): A voting method to test.
-            clone_def (str, default="Tideman"): The definition of clones. Currently only "Tideman" is supported.
+            clone_def (str, default="Tideman"): The definition of clones. Options are "Tideman" and "Marginal".
+            epsilon (float, default=0): If clone_def is "Marginal", then for C to be a marginal clone set, it must but that for any c,c' in C and x not in C, |margin(c,x) - margin(c',x)| <= epsilon.
             conditions_to_check (str, default="all"): The conditions to check. If "all", then both NCIC and CIC are checked. If "NCIC", then only NCIC is checked. If "CIC", then only CIC is checked.
             verbose (bool, default=False): If a violation is found, display the violation.
         
@@ -516,6 +555,9 @@ def find_all_independence_of_clones_violations(prof, vm, clone_def = "Tideman", 
     
         if clone_def == "Tideman":
             clone_sets = tideman_clone_sets(prof)
+
+        if clone_def == "Marginal":
+            clone_sets = marginal_clone_sets(prof, epsilon)
     
         violations = list()
     
