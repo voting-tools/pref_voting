@@ -153,8 +153,6 @@ def MWSL(edata, half_point_for_ties = True, curr_cands = None):
 
     If half_point_for_ties = True, then each head-to-head tie counts for 1/2 of a win.
 
-    For the purposes of determining the 'smallest head-to-head loss', a tie counts as a loss of size 0.
-
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         half_point_for_ties (bool, optional): If True, then each head-to-head tie counts for 1/2 of a win.
@@ -170,25 +168,25 @@ def MWSL(edata, half_point_for_ties = True, curr_cands = None):
     curr_cands = edata.candidates if curr_cands is None else curr_cands
 
     if half_point_for_ties:
-        scores = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0.5,0))
+        score = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0.5,0))
     else:
-        scores = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0,0))
+        score = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0,0))
 
-    max_score = max(scores.values())
-    most_wins = [c for c in curr_cands if scores[c] == max_score]
+    most_wins = [c for c in curr_cands if score[c] == max(score.values())]
 
     if len(most_wins) == 1:
         return most_wins
 
-    # find the smallest loss of any candidate in most_wins, counting a tie as a loss of size 0
-    smallest_loss = min([edata.margin(x,y) for x in curr_cands for y in most_wins if x != y and edata.margin(x,y) >= 0])
-
-    # find the smallest loss of each candidate in most_wins, counting a tie as a loss of size 0
+    # find the smallest loss of each candidate in most_wins
     smallest_loss_dict = {}
     for c in most_wins:
-        smallest_loss_dict[c] = min([edata.margin(x,c) for x in curr_cands if x != c and edata.margin(x,c) >= 0])
+        defeaters_of_c = edata.dominators(c, curr_cands = curr_cands)
+        if len(defeaters_of_c) > 0:
+            smallest_loss_dict[c] = min([edata.margin(d,c) for d in defeaters_of_c])
+        else:
+            smallest_loss_dict[c] = 0 # if c has no loss, we count their "smallest loss" as 0
                 
-    return [c for c in most_wins if smallest_loss_dict[c] == smallest_loss]
+    return [c for c in most_wins if smallest_loss_dict[c] == min(smallest_loss_dict.values())]
 
 
 def maximal_elements(g): 
