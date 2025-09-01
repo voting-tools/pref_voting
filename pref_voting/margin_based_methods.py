@@ -2,7 +2,7 @@
     File: margin_based_methods.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: January 10, 2022
-    Update: October 24, 2023
+    Update: August 31, 2025
     
     Implementations of voting methods that work on both profiles and margin graphs.
 '''
@@ -146,6 +146,54 @@ def minimax_scores(edata, curr_cands = None, score_method="margins"):
     } 
 
     return {c: -1 * score_functions[score_method](cands[score_method](c), c) for c in candidates}
+
+@vm(name = "Most Wins, Smallest Loss")
+def MWSL(edata, half_point_for_ties = True, curr_cands = None):
+    """Return the candidate with the most head-to-head wins. If multiple candidates tie for the most wins, return the one with the smallest head-to-head loss.
+
+    If half_point_for_ties = True, then each head-to-head tie counts for 1/2 of a win.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        half_point_for_ties (bool, optional): If True, then each head-to-head tie counts for 1/2 of a win.
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note:: 
+        This method was proposed in https://www.arxiv.org/abs/2508.17095.
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    if half_point_for_ties:
+        scores = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0.5,0))
+
+    else:
+        scores = edata.copeland_scores(curr_cands = curr_cands, scores = (1,0,0))
+
+    max_score = max(scores.values())
+    most_wins = [c for c in curr_cands if scores[c] == max_score]
+
+    if len(most_wins) == 1:
+        return most_wins
+
+    smallest_loss = max([edata.margin(x,y) for x in curr_cands for y in curr_cands])
+    smallest_loss_dict = {}
+
+    for c in most_wins:
+        defeaters_of_c = edata.dominators(c, curr_cands = curr_cands)
+
+        if len(defeaters_of_c) > 0:
+            smallest_loss_dict[c] = min([edata.margin(d,c) for d in defeaters_of_c])
+        else:
+            smallest_loss_dict[c] = 0
+
+        if smallest_loss_dict[c] < smallest_loss:
+            smallest_loss = smallest_loss_dict[c] 
+                
+    return [c for c in most_wins if smallest_loss_dict[c] == smallest_loss]
 
 
 def maximal_elements(g): 
