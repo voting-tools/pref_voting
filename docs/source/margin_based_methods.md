@@ -30,6 +30,14 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
+## Most Wins, Smallest Loss
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.MWSL
+
+```
+
 ## Beat Path
 
 ```{eval-rst}
