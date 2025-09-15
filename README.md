@@ -2,6 +2,8 @@ pref_voting
 ==========
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.07020/status.svg)](https://doi.org/10.21105/joss.07020) [![DOI](https://zenodo.org/badge/578984957.svg)](https://doi.org/10.5281/zenodo.14675583)
 
+[![Tests](https://github.com/voting-tools/pref_voting/actions/workflows/tests.yml/badge.svg)](https://github.com/voting-tools/pref_voting/actions/workflows/tests.yml)
+
 
 > [!NOTE]
 > - [**Documentation**](https://pref-voting.readthedocs.io/)
@@ -20,7 +22,7 @@ The package can be installed using the ``pip3`` package manager:
 pip3 install pref_voting
 ```
 **Notes**: 
-* The package requires Python 3.9 or higher and has been tested on Python 3.12.
+* The package requires Python 3.10 or higher and has been tested on Python 3.12.
 
 * Since the package uses Numba, refer to the [Numba documentation for the latest supported Python version](https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information).
 * If you have both Python 2 and Python 3 installed on your system, make sure to use ``pip3`` instead of pip to install packages for Python 3. Alternatively, you can use ``python3 -m pip`` to ensure you're using the correct version of pip. If you have modified your system's defaults or soft links, adjust accordingly.

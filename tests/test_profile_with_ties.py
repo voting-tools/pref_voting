@@ -446,7 +446,7 @@ def test_anonymize():
 
 def test_description(condorcet_cycle_profile_with_ties): 
     print(condorcet_cycle_profile_with_ties.description())
-    assert condorcet_cycle_profile_with_ties.description() == r'ProfileWithTies([{0: 1, 1: 2, 2: 3}, {0: 2, 1: 3, 2: 1}, {0: 3, 1: 1, 2: 2}], rcounts=[1, 1, 1], cmap={0: 0, 1: 1, 2: 2})'
+    assert condorcet_cycle_profile_with_ties.description() == r"ProfileWithTies([{0: 1, 1: 2, 2: 3}, {0: 2, 1: 3, 2: 1}, {0: 3, 1: 1, 2: 2}], rcounts=[1, 1, 1], cmap={0: '0', 1: '1', 2: '2'})"
 
 def test_display(capsys, test_profile_with_ties):
     test_profile_with_ties.display()

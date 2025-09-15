@@ -18,7 +18,7 @@ Dominance Axioms
 
 .. autofunction:: pref_voting.dominance_axioms.has_condorcet_winner_violation
 
-.. autofunction:: pref_voting.dominance_axioms.find_condorcet_winner_violation
+.. autofunction:: pref_voting.dominance_axioms.find_all_condorcet_winner_violations
 
 ```
 
@@ -29,7 +29,7 @@ Dominance Axioms
 
 .. autofunction:: pref_voting.dominance_axioms.has_condorcet_loser_violation
 
-.. autofunction:: pref_voting.dominance_axioms.find_condorcet_loser_violation
+.. autofunction:: pref_voting.dominance_axioms.find_all_condorcet_loser_violations
 
 ```
 

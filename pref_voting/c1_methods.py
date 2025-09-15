@@ -97,7 +97,8 @@ def weak_condorcet(edata, curr_cands = None):
 @vm(name = "Copeland",
     input_types = [ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MAJORITY_GRAPH, ElectionTypes.MARGIN_GRAPH])
 def copeland(edata, curr_cands = None):
-    """The Copeland score for c is the number of candidates that c is majority preferred to minus the number of candidates majority preferred to c.  The Copeland winners are the candidates with the maximum Copeland score in the profile restricted to ``curr_cands``. 
+    """
+    The Copeland score for c is the number of candidates that c is majority preferred to minus the number of candidates majority preferred to c.  The Copeland winners are the candidates with the maximum Copeland score in the profile restricted to ``curr_cands``. 
 
     Equivalently, give each candidate 1 point for each head-to-head win, 1/2 point for each head-to-head tie, and 0 points for each head-to-head loss. Then the Copeland winners are the candidates with the maximum number of points.
 
