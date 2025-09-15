@@ -155,6 +155,8 @@ def MWSL(edata, half_point_for_ties = True, curr_cands = None):
 
     If half_point_for_ties = True, then each head-to-head tie counts for 1/2 of a win.
 
+    If lexicographic_tie_breaker = True, then if among the candidates with the most wins, there are multiple candidates with the smallest loss, then we break the tie in favor of the candidate whose second-smallest loss is smallest, and so on.
+
     Args:
         edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
         half_point_for_ties (bool, optional): If True, then each head-to-head tie counts for 1/2 of a win.
@@ -179,16 +181,31 @@ def MWSL(edata, half_point_for_ties = True, curr_cands = None):
     if len(most_wins) == 1:
         return most_wins
 
-    # find the smallest loss of each candidate in most_wins
-    smallest_loss_dict = {}
-    for c in most_wins:
-        defeaters_of_c = edata.dominators(c, curr_cands = curr_cands)
-        if len(defeaters_of_c) > 0:
-            smallest_loss_dict[c] = min([edata.margin(d,c) for d in defeaters_of_c])
-        else:
-            smallest_loss_dict[c] = 0 # if c has no loss, we count their "smallest loss" as 0
-                
-    return [c for c in most_wins if smallest_loss_dict[c] == min(smallest_loss_dict.values())]
+    if not lexicographic_tie_breaker:
+        # find the smallest loss of each candidate in most_wins
+        smallest_loss_dict = {}
+        for c in most_wins:
+            defeaters_of_c = edata.dominators(c, curr_cands = curr_cands)
+            if len(defeaters_of_c) > 0:
+                smallest_loss_dict[c] = min([edata.margin(d,c) for d in defeaters_of_c])
+            else:
+                smallest_loss_dict[c] = 0 # if c has no loss, we count their "smallest loss" as 0
+
+        # pick the candidate(s) with the smallest loss
+        return [c for c in most_wins if smallest_loss_dict[c] == min(smallest_loss_dict.values())]
+
+    else:
+        # find the sequence of losses for each candidate, from smallest to largest
+        sequence_of_losses_dict = {}
+        for c in most_wins:
+            defeaters_of_c = edata.dominators(c, curr_cands = curr_cands)
+            if len(defeaters_of_c) > 0:
+                sequence_of_losses_dict[c] = sorted([edata.margin(d,c) for d in defeaters_of_c], reverse = True)
+            else:
+                sequence_of_losses_dict[c] = [0]
+        
+        # pick the candidate(s) with the smallest sequence of losses
+        return [c for c in most_wins if sequence_of_losses_dict[c] == min(sequence_of_losses_dict.values())]       
 
 
 def maximal_elements(g): 
