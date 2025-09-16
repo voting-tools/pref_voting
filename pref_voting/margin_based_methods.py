@@ -147,6 +147,30 @@ def minimax_scores(edata, curr_cands = None, score_method="margins"):
 
     return {c: -1 * score_functions[score_method](cands[score_method](c), c) for c in candidates}
 
+@vm(name = "Leximax",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
+def leximax(edata, curr_cands = None):
+    """Return the candidate(s) with the worst loss is smallest, per Minimax; if there are multiple candidates with the same worst loss, then return the candidate(s) whose second-worst loss is smallest, and so on.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note:: 
+        This method is discussed (under the name `Leximin') in https://arxiv.org/abs/2411.19857.
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    sequence_of_margins_dict = {cand: sorted([edata.margin(other_cand, cand) for other_cand in curr_cands if other_cand != cand], reverse = True) for cand in curr_cands}
+
+    candidates_with_minimal_sequence_of_margins = [cand for cand in curr_cands if sequence_of_margins_dict[cand] == min(sequence_of_margins_dict.values())]
+
+    return sorted(candidates_with_minimal_sequence_of_margins)
+
 @vm(name = "Most Wins, Smallest Loss", 
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH]
 )
@@ -2270,6 +2294,34 @@ def loss_trimmer(edata, curr_cands = None):
 
     return sorted(list(set(winners)))
 
+@vm(name = "Simplified Dodgson",
+    input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH])
+def simplified_dodgson(edata, curr_cands = None):
+    """Return the Condorcet winner, if one exists, and otherwise return the candidate(s) with the smallest sum of margins of loss.
+
+    Args:
+        edata (Profile, ProfileWithTies, MarginGraph): Any election data that has a `margin` method. 
+        curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
+
+    Returns: 
+        A sorted list of candidates
+
+    .. note:: 
+        This method was proposed by Nicolaus Tideman in https://doi.org/10.1007/BF00433944.
+    """
+
+    curr_cands = edata.candidates if curr_cands is None else curr_cands
+
+    if edata.condorcet_winner(curr_cands = curr_cands) is not None:
+        return [edata.condorcet_winner(curr_cands = curr_cands)]
+
+    sum_of_margins_of_loss = {cand: sum([edata.margin(other_cand, cand) for other_cand in curr_cands if edata.margin(other_cand, cand) >= 0]) for cand in curr_cands}
+
+    smallest_sum_of_margins_of_loss = min(sum_of_margins_of_loss.values())
+
+    candidates_with_smallest_sum_of_margins_of_loss = [cand for cand in curr_cands if sum_of_margins_of_loss[cand] == smallest_sum_of_margins_of_loss]
+
+    return sorted(candidates_with_smallest_sum_of_margins_of_loss)
 
 def distance_to_margin_graph(edata, rel, exp = 1, curr_cands = None): 
     """
