@@ -30,6 +30,14 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 
 ```
 
+## Leximax
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.leximax
+
+```
+
 ## Most Wins, Smallest Loss
 
 ```{eval-rst}
@@ -191,6 +199,14 @@ A voting method $F$ is **margin-based** if it satisfies the following invariance
 ```{eval-rst}
 
 .. autofunction:: pref_voting.margin_based_methods.loss_trimmer
+
+```
+
+## Simplified Dodgson
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.margin_based_methods.simplified_dodgson
 
 ```
  
