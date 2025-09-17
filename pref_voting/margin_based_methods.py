@@ -174,7 +174,7 @@ def leximax(edata, curr_cands = None):
 @vm(name = "Most Wins, Smallest Loss", 
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES, ElectionTypes.MARGIN_GRAPH]
 )
-def MWSL(edata, half_point_for_ties = True, curr_cands = None):
+def MWSL(edata, half_point_for_ties = True, lexicographic_tie_breaker = True, curr_cands = None):
     """Return the candidate with the most head-to-head wins. If multiple candidates tie for the most wins, return the one with the smallest head-to-head loss.
 
     If half_point_for_ties = True, then each head-to-head tie counts for 1/2 of a win.
