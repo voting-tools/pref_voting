@@ -624,6 +624,55 @@ class ProfileWithTies(object):
         
         return new_prof   
     
+    def num_bullet_votes(self): 
+        """
+        Return the number of bullet votes in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if r.is_bullet_vote()])
+    
+    def num_empty_rankings(self):
+        """
+        Return the number of empty rankings in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if r.is_empty()])
+    
+    def num_linear_orders(self):
+        """
+        Return the number of linear orders in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if r.is_linear(len(self.candidates))])
+    
+    def num_truncated_linear_orders(self):
+        """
+        Return the number of truncated linear orders in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if r.is_truncated_linear(len(self.candidates))])
+    
+    def num_rankings_with_ties(self):
+        """
+        Return the number of rankings with ties in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if r.has_tie()])
+    
+    def num_ranked_all_candidates(self):
+        """
+        Return the number of rankings that rank all candidates in the profile. 
+        """
+        
+        return sum([c for r,c in zip(*self.rankings_counts) if all([r.is_ranked(cand) for cand in self.candidates])])
+    
+    def num_ranking_each_candidate(self):
+        """Return a dictionary mapping each candidate to the number of voters that rank the candidate. """
+
+        return {
+            cand: sum([c for r,c in zip(*self.rankings_counts) if r.is_ranked(cand)]) 
+                      for cand in self.candidates
+        }
     def margin_graph(self):
         """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
 
