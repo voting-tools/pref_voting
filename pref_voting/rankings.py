@@ -70,8 +70,8 @@ class Ranking(object):
     def is_bullet_vote(self): 
         """Return True if the ranking is a bullet vote (a vote for a single candidate)"""
 
-        return self.num_ranked_candidates() == 1
-    
+        return len(self.first()) == 1 and len(self.ranks) == 2
+
     def cands_at_rank(self, r):
         """Returns a list of the candidates that are assigned the rank ``r``."""
         return [c for c in self.rmap.keys() if self.rmap[c] == r]

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pref_voting"
-version = "1.16.31"
+version = "1.17.1"
 description = "pref_voting is a Python package that contains tools to reason about elections and margin graphs, and implementations of voting methods."
 authors = ["Eric Pacuit <epacuit@umd.edu>", "Wes Holliday <wesholliday@berkeley.edu>"]
 license = "MIT"

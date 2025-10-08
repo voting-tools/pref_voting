@@ -216,6 +216,9 @@ class PairwiseBallot:
                             return False
         return True
 
+    def is_empty(self):
+        """Return True if the comparisons are empty."""
+        return len(self._comparisons) == 0
 
     def cycles(self, curr_cands = None):
         """Returns the cycles in the pairwise comparisons.
