@@ -11,7 +11,7 @@ sphinx-togglebutton
 tabulate 
 matplotlib
 networkx>=2.8
-pref_voting
+pref_voting==1.17.2
 scipy
 multiprocess
 tqdm
