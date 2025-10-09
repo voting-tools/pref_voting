@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'pref_voting'
-copyright = '2024, Wes Holliday and Eric Pacuit'
+copyright = '2025, Wes Holliday and Eric Pacuit'
 author = 'Wes Holliday and Eric Pacuit'
 
 # The full version, including alpha/beta/rc tags

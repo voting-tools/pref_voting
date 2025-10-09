@@ -106,6 +106,7 @@ Contents
    margin_based_methods
    combined_methods
    other_methods
+   proportional_methods
    probabilistic_methods
    stochastic_methods
    utility_methods
