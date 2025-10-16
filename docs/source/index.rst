@@ -42,6 +42,25 @@ Wesley H. Holliday and Eric Pacuit (2025). pref_voting: The Preferential Voting 
      doi = {10.21105/joss.07020}
    }
 
+Axiom Satisfaction/Violation Database
+------------------------
+
+We maintain a database showing whether various voting methods satisfy or violate various axioms: 
+
+* <a href="axiom_violations_dominance_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_dominance_axioms_profilewithties.html">Profile with Ties</a>
+* <a href="axiom_violations_invariance_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_invariance_axioms_profilewithties.html">Profile with Ties</a>
+* <a href="axiom_violations_monotonicity_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_monotonicity_axioms_profilewithties.html">Profile with Ties</a>
+* <a href="axiom_violations_strategic_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_strategic_axioms_profilewithties.html">Profile with Ties</a>
+* <a href="axiom_violations_variable_candidate_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_variable_candidate_axioms_profilewithties.html">Profile with Ties</a>
+* <a href="axiom_violations_variable_voter_axioms_profile.html">Profile</a>
+* <a href="axiom_violations_variable_voter_axioms_profilewithties.html">Profile with Ties</a>
+
+
 Related resources
 ------------------------
 
