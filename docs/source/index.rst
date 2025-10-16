@@ -47,18 +47,18 @@ Axiom Satisfaction/Violation Database
 
 We maintain a database showing whether various voting methods satisfy or violate various axioms: 
 
-* <a href="axiom_violations_dominance_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_dominance_axioms_profilewithties.html">Profile with Ties</a>
-* <a href="axiom_violations_invariance_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_invariance_axioms_profilewithties.html">Profile with Ties</a>
-* <a href="axiom_violations_monotonicity_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_monotonicity_axioms_profilewithties.html">Profile with Ties</a>
-* <a href="axiom_violations_strategic_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_strategic_axioms_profilewithties.html">Profile with Ties</a>
-* <a href="axiom_violations_variable_candidate_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_variable_candidate_axioms_profilewithties.html">Profile with Ties</a>
-* <a href="axiom_violations_variable_voter_axioms_profile.html">Profile</a>
-* <a href="axiom_violations_variable_voter_axioms_profilewithties.html">Profile with Ties</a>
+restructuredtext* `Dominance Axioms - Profile <axiom_violations_dominance_axioms_profile.html>`_
+* `Dominance Axioms - Profile with Ties <axiom_violations_dominance_axioms_profilewithties.html>`_
+* `Invariance Axioms - Profile <axiom_violations_invariance_axioms_profile.html>`_
+* `Invariance Axioms - Profile with Ties <axiom_violations_invariance_axioms_profilewithties.html>`_
+* `Monotonicity Axioms - Profile <axiom_violations_monotonicity_axioms_profile.html>`_
+* `Monotonicity Axioms - Profile with Ties <axiom_violations_monotonicity_axioms_profilewithties.html>`_
+* `Strategic Axioms - Profile <axiom_violations_strategic_axioms_profile.html>`_
+* `Strategic Axioms - Profile with Ties <axiom_violations_strategic_axioms_profilewithties.html>`_
+* `Variable Candidate Axioms - Profile <axiom_violations_variable_candidate_axioms_profile.html>`_
+* `Variable Candidate Axioms - Profile with Ties <axiom_violations_variable_candidate_axioms_profilewithties.html>`_
+* `Variable Voter Axioms - Profile <axiom_violations_variable_voter_axioms_profile.html>`_
+* `Variable Voter Axioms - Profile with Ties <axiom_violations_variable_voter_axioms_profilewithties.html>`_
 
 
 Related resources
