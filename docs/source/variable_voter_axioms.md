@@ -99,6 +99,16 @@ Variable Voter Axioms
 
 ```
 
+## Weak Single-Voter Resolvability
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_weak_single_voter_resolvability_violation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations
+
+```
+
 ## Neutral Reversal
 
 ```{eval-rst}

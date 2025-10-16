@@ -3349,6 +3349,8 @@ participation = Axiom(
 
 def has_single_voter_resolvability_violation(prof, vm, verbose=False):
     """
+    Single-Voter Resolvability requires that for any profile with multiple winners, each of the tied winners can be made the unique winner by adding a ballot (cf. Weak Single-Voter Resolvability, which only requires that at least one of the tied winners can be made the unique winner by adding a ballot).
+
     If prof is a Profile, returns True if there are multiple vm winners in prof and for one such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
 
     If prof is a ProfileWithTies, returns True if there are multiple vm winners in prof and for one such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner. 
@@ -3478,6 +3480,79 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False):
 single_voter_resolvability = Axiom(
     "Single-Voter Resolvability",
     has_violation = has_single_voter_resolvability_violation,
+    find_all_violations = find_all_single_voter_resolvability_violations, 
+)
+
+def has_weak_single_voter_resolvability_violation(prof, vm, verbose=False):
+    """
+    Weak Single-Voter Resolvability requires that for any profile with multiple winners, at least one of the tied winners can be made the unique winner by adding a ballot (cf. Single-Voter Resolvability, which requires that each of the tied winners can be made the unique winner by adding a ballot).
+
+    If prof is a Profile, returns True if there are multiple vm winners in prof and for every such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
+
+    If prof is a ProfileWithTies, returns True if there are multiple vm winners in prof and for every such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner. 
+
+    Args:
+        prof: a Profile or ProfileWithTies object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+
+    Returns:
+        Result of the test (bool): Returns True if there is a violation and False otherwise.
+    """
+
+    winners = vm(prof)
+
+    if isinstance(prof,ProfileWithTies):
+        prof.use_extended_strict_preference()
+
+    if len(winners) > 1:
+        
+        for winner in winners:
+
+            found_voter_to_add = False
+
+            if isinstance(prof,Profile):
+                for r in permutations(prof.candidates):
+                    new_prof = Profile(prof.rankings + [r])
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+                   
+            if isinstance(prof,ProfileWithTies):
+                for _r in weak_orders(prof.candidates):
+                    r = Ranking(_r)
+                    new_prof = ProfileWithTies(prof.rankings + [r], candidates = prof.candidates)
+                    new_prof.use_extended_strict_preference()
+                    if vm(new_prof) == [winner]:
+                        found_voter_to_add = True
+                        break
+        
+            if found_voter_to_add:
+                return False
+
+        # If we get here, no tied winner can be made the unique winner by adding a ballot.
+        if verbose:
+            prof = prof.anonymize()
+            if isinstance(prof,Profile):
+                print(f"Violation of Weak Single-Voter Resolvability for {vm.name}: no tied winner can be made the unique winner by adding a linear ballot.")
+            if isinstance(prof,ProfileWithTies):
+                print(f"Violation of Weak Single-Voter Resolvability for {vm.name}: no tied winner can be made the unique winner by adding a Ranking.")
+            print("")
+            print("Profile:")
+            prof.display()
+            print(prof.description())
+            print("")
+            vm.display(prof)
+            prof.display_margin_graph()
+            print("")
+            
+        return True
+    
+    return False
+
+weak_single_voter_resolvability = Axiom(
+    "Weak Single-Voter Resolvability",
+    has_violation = has_weak_single_voter_resolvability_violation,
     find_all_violations = find_all_single_voter_resolvability_violations, 
 )
 
