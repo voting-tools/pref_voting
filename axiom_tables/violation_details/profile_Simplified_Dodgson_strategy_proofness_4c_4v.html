@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Simplified Dodgson – Strategy Proofness (violation)</title>
+<style>
+  body, table, h1, h2, p { font-family: Arial, sans-serif; }
+
+  pre {
+      font-family: "Courier New", Courier, monospace;
+      background: #f8f8f8;
+      padding: 0.8em;
+      white-space: pre-wrap;   /* wrap long lines but keep indentation */
+  }
+
+  h1 { margin-bottom: .2em; }
+  h2 { margin-top: 0; font-size: 1.1em; color: #444; }
+</style>
+</head><body><h1>Simplified Dodgson</h1>
+<h2>Violation of Strategy Proofness</h2>
+<p><b>Profile&nbsp;type:</b> Profile<br><b>Config:</b> 4&nbsp;c, 4&nbsp;v<br><b>Parameters:</b> ∅</p>
+<pre>Violation of Strategy-Proofness for Simplified Dodgson under the single-winner set preference.
+A voter can benefit by changing their ranking from (np.int64(0), np.int64(3), np.int64(2), np.int64(1)) to (3, 0, 1, 2).
+
+Original Profile:
++---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 0 | 1 | 2 | 3 |
+| 3 | 2 | 0 | 1 |
+| 2 | 0 | 3 | 2 |
+| 1 | 3 | 1 | 0 |
++---+---+---+---+
+Profile([[0, 3, 2, 1], [1, 2, 0, 3], [2, 0, 3, 1], [3, 1, 2, 0]], rcounts=[1, 1, 1, 1], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;, 3: &#x27;3&#x27;})
+
+Simplified Dodgson winner is {2}
+
+New Profile:
++---+---+---+---+
+| 1 | 1 | 1 | 1 |
++---+---+---+---+
+| 1 | 2 | 3 | 3 |
+| 2 | 0 | 1 | 0 |
+| 0 | 3 | 2 | 1 |
+| 3 | 1 | 0 | 2 |
++---+---+---+---+
+Profile([[1, 2, 0, 3], [2, 0, 3, 1], [3, 1, 2, 0], [3, 0, 1, 2]], rcounts=[1, 1, 1, 1], cmap={0: &#x27;0&#x27;, 1: &#x27;1&#x27;, 2: &#x27;2&#x27;, 3: &#x27;3&#x27;})
+
+Simplified Dodgson winner is {3}
+</pre></body></html>

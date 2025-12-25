@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Most Wins, Smallest Loss – Negative Involvement (violation)</title>
+<style>
+  body, table, h1, h2, p { font-family: Arial, sans-serif; }
+
+  pre {
+      font-family: "Courier New", Courier, monospace;
+      background: #f8f8f8;
+      padding: 0.8em;
+      white-space: pre-wrap;   /* wrap long lines but keep indentation */
+  }
+
+  h1 { margin-bottom: .2em; }
+  h2 { margin-top: 0; font-size: 1.1em; color: #444; }
+</style>
+</head><body><h1>Most Wins, Smallest Loss</h1>
+<h2>Violation of Negative Involvement</h2>
+<p><b>Profile&nbsp;type:</b> Profile<br><b>Config:</b> 4&nbsp;c, 6&nbsp;v<br><b>Parameters:</b> ∅</p>
+<pre>WARNING: Violation no longer found during regeneration!
+
+Method: Most Wins, Smallest Loss
+Axiom: negative_involvement
+Parameters: {}
+Profile type: Profile
+Expected type: Profile
+Candidates: [0, 1, 2, 3]
+Number of voters: 6
+
+Profile details:
++---+---+---+---+
+| 2 | 2 | 1 | 1 |
++---+---+---+---+
+| 1 | 2 | 3 | 3 |
+| 3 | 0 | 0 | 2 |
+| 2 | 1 | 1 | 0 |
+| 0 | 3 | 2 | 1 |
++---+---+---+---+
+
+Rankings and counts:
+  [1 3 2 0] : 2
+  [2 0 1 3] : 2
+  [3 0 1 2] : 1
+  [3 2 0 1] : 1
+
+Method result: [3]
+
+[Note: This violation was found previously but cannot be reproduced during regeneration]</pre></body></html>
