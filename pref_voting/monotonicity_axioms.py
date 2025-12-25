@@ -591,6 +591,299 @@ monotonicity = Axiom(
     find_all_violations = find_all_monotonicity_violations,
 )
 
+def has_positive_responsiveness_violation(profile, vm, verbose = False, violation_type = "Lift", one_rank_PR = False): 
+    """
+    If violation_type = "Lift", returns True if there is some winning candidate A and some voter v such that lifting A up some number of positions in v's ranking fails to make A the unique winner.
+
+    If violation_type = "Drop", returns True if there is some candidate A who is not the unique winner and some voter v such that dropping A down some number of positions in v's ranking causes A to win.
+
+    If one_rank_monotonicity = True, then the function will check lifts/drops of one rank only.
+    
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation. 
+        violation_type: default is "Lift"
+
+    Returns: 
+        Result of the test (bool): Returns True if there is a violation and False otherwise. 
+
+    .. note::
+        If a voting method violates positive responsiveness, then it violates one-rank positive responsiveness, so setting one_rank_PR= True is sufficient for testing whether a method violates positive responsiveness (though not for testing the frequency of positive responsiveness violations).
+
+    """
+    
+    _rankings, _rcounts = profile.rankings_counts
+
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
+    rcounts = list(_rcounts)
+    old_rankings = copy.deepcopy(rankings)
+
+    ws = vm(profile)
+
+    if violation_type == "Lift":
+        for w in ws: 
+            for r_idx, r in enumerate(rankings):
+
+                if rcounts[r_idx] == 0:
+                    continue
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                if r[0] != w:
+                    old_ranking = copy.deepcopy(r)
+
+                    if one_rank_PR:
+                        ranks_above_w = 1
+                    else:
+                        ranks_above_w = ranks_above(r, w)
+
+                    for n in range(1, ranks_above_w+1):
+
+                        new_ranking = n_rank_lift(r, w, n)
+                        new_rankings = old_rankings + [new_ranking]
+                        new_rcounts  = copy.deepcopy(rcounts + [1])
+                        new_rcounts[r_idx] -= 1
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
+                        new_ws = vm(new_prof)
+                        
+                        if new_ws != [w]:
+                            if verbose: 
+                                if n==1:
+                                    print(f"Positive responsiveness violation for {vm.name} by lifting {w} one rank:")
+                                else:
+                                    print(f"Positive responsiveness violation for {vm.name} by lifting {w} by {n} ranks:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile:", new_ws)
+                            return True
+                    
+    elif violation_type == "Drop":
+        for l in profile.candidates:
+            if ws != [l]:
+                for r_idx, r in enumerate(rankings): 
+
+                    if rcounts[r_idx] == 0:
+                        continue
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                    if r[-1] != l:
+                        old_ranking = copy.deepcopy(r)
+
+                        if one_rank_PR:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
+
+                        for n in range(1, ranks_below_l+1):
+                            
+                            new_ranking = n_rank_drop(r, l, n)
+                            new_rankings = old_rankings + [new_ranking]
+                            new_rcounts  = copy.deepcopy(rcounts + [1])
+                            new_rcounts[r_idx] -= 1
+
+                            if isinstance(profile, Profile):
+                                new_prof = Profile(new_rankings, new_rcounts)
+                            if isinstance(profile, ProfileWithTies):
+                                new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                                if profile.using_extended_strict_preference:
+                                    new_prof.use_extended_strict_preference()
+
+                            new_ws = vm(new_prof)
+
+                            if l in new_ws: 
+                                if verbose: 
+                                    if n==1:
+                                        print(f"Positive responsiveness violation for {vm.name} by dropping {l} one rank:")
+                                    else:
+                                        print(f"Positive responsiveness violation for {vm.name} by dropping {l} by {n} ranks:")
+                                    profile.display()
+                                    print(profile.description())
+                                    profile.display_margin_graph()
+                                    print(f"{vm.name} winners: ", ws)
+                                    print("Original ranking: ", old_ranking)
+                                    print(f"New ranking: {new_ranking}")
+                                    new_prof.display()
+                                    print(new_prof.description())
+                                    new_prof.display_margin_graph()
+                                    print(f"{vm.name} winners in updated profile: ", new_ws)
+                                return True
+
+    return False
+
+def find_all_positive_responsiveness_violations(profile, vm, verbose = False, violation_type = "Lift", one_rank_PR = False): 
+    """
+    If violation_type = "Lift", returns a list of all the candidates who violate positive responsiveness by lifting.
+
+    If violation_type = "Drop", returns a list of all the candidates who violate positive responsiveness by dropping.
+
+    If one_rank_PR = True, then the function will check lifts/drops of one rank only.
+
+    Args:
+        profile: a Profile object.
+        vm (VotingMethod): A voting method to test.
+        verbose (bool, default=False): If a violation is found, display the violation.
+        violation_type: default is "Lift"
+        one_rank_PR (bool, default=False): If True, then the function will check lifts/drops of one rank only.
+
+    Returns:
+        A list of candidates who violate positive responsiveness.
+
+    .. note::
+        If a voting method violates positive responsiveness, then it violates one-rank positive responsiveness, so setting one_rank_PR= True is sufficient for testing whether a method violates positive responsiveness (though not for testing the frequency of positive responsiveness violations).
+    """
+
+    _rankings, _rcounts = profile.rankings_counts
+
+    if isinstance(profile, Profile):
+        rankings = [tuple(r) for r in list(_rankings)]
+
+    if isinstance(profile, ProfileWithTies):
+        rankings = _rankings
+
+    rcounts = list(_rcounts)
+    old_rankings = copy.deepcopy(rankings)
+
+    witnesses = list()
+    ws = vm(profile)
+
+    if violation_type == "Lift":
+        for w in ws: 
+            for r_idx, r in enumerate(rankings):
+
+                if rcounts[r_idx] == 0:
+                    continue
+
+                if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                    r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                if r[0] != w:
+                    old_ranking = copy.deepcopy(r)
+
+                    if one_rank_PR:
+                        ranks_above_w = 1
+                    else:
+                        ranks_above_w = ranks_above(r, w)
+
+                    for n in range(1, ranks_above_w+1):
+                        new_ranking = n_rank_lift(r, w, n)
+                        new_rankings = old_rankings + [new_ranking]
+                        new_rcounts  = copy.deepcopy(rcounts + [1])
+                        new_rcounts[r_idx] -= 1
+
+                        if isinstance(profile, Profile):
+                            new_prof = Profile(new_rankings, new_rcounts)
+                        if isinstance(profile, ProfileWithTies):
+                            new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                            if profile.using_extended_strict_preference:
+                                new_prof.use_extended_strict_preference()
+
+                        new_ws = vm(new_prof)
+
+                        if new_ws != [w]:
+                            witnesses.append((w, old_ranking, "Lift", n))
+                            
+                        if verbose:
+                            if n==1:
+                                print(f"Positive responsiveness violation for {vm.name} by lifting {w} one rank:")
+                            else:
+                                print(f"Positive responsiveness violation for {vm.name} by lifting {w} by {n} ranks:")
+                            profile.display()
+                            print(profile.description())
+                            profile.display_margin_graph()
+                            print(f"{vm.name} winners: ", ws)
+                            print("Original ranking: ", old_ranking)
+                            print(f"New ranking: {new_ranking}")
+                            new_prof.display()
+                            print(new_prof.description())
+                            new_prof.display_margin_graph()
+                            print(f"{vm.name} winners in updated profile:", new_ws)
+                            print("")
+
+    elif violation_type == "Drop":
+        for l in profile.candidates:
+            if ws != [l]:
+                for r_idx, r in enumerate(rankings):
+
+                    if rcounts[r_idx] == 0:
+                        continue
+
+                    if isinstance(r, Ranking): # Make sure all candidates are ranked in r
+                        r = Ranking({a: r.rmap[a] if a in r.cands else max(r.ranks)+1 for a in profile.candidates})
+
+                    if r[-1] != l:
+                        old_ranking = copy.deepcopy(r)
+
+                        if one_rank_PR:
+                            ranks_below_l = 1
+                        else:
+                            ranks_below_l = ranks_below(r, l)
+
+                        for n in range(1, ranks_below_l+1):
+                            new_ranking = n_rank_drop(r, l, n)
+                            new_rankings = old_rankings + [new_ranking]
+                            new_rcounts  = copy.deepcopy(rcounts + [1])
+                            new_rcounts[r_idx] -= 1
+
+                            if isinstance(profile, Profile):    
+                                new_prof = Profile(new_rankings, new_rcounts)
+                            if isinstance(profile, ProfileWithTies):
+                                new_prof = ProfileWithTies(new_rankings, new_rcounts)
+                                if profile.using_extended_strict_preference:
+                                    new_prof.use_extended_strict_preference()
+
+                            new_ws = vm(new_prof)
+
+                            if l in new_ws:
+                                witnesses.append((l, old_ranking, "Drop", n))
+
+                            if verbose:
+                                if n==1:
+                                    print(f"Positive responsiveness violation for {vm.name} by dropping {l} one rank:")
+                                else:
+                                    print(f"Positive responsiveness violation for {vm.name} by dropping {l} by {n} ranks:")
+                                profile.display()
+                                print(profile.description())
+                                profile.display_margin_graph()
+                                print(f"{vm.name} winners: ", ws)
+                                print("Original ranking: ", old_ranking)
+                                print(f"New ranking: {new_ranking}")
+                                new_prof.display()
+                                print(new_prof.description())
+                                new_prof.display_margin_graph()
+                                print(f"{vm.name} winners in updated profile:", new_ws)
+                                print("")
+
+    return witnesses
+
+positive_responsiveness = Axiom(
+    "Positive Responsiveness",
+    has_violation = has_positive_responsiveness_violation,
+    find_all_violations = find_all_positive_responsiveness_violations,
+)
+
 def lift_to_first(ranking, c):
     """
     Return a ranking in which ``c`` is moved to first position in ``ranking``.
@@ -868,5 +1161,6 @@ weak_positive_responsiveness = Axiom(
                    
 monotonicity_axioms = [
     monotonicity,
+    positive_responsiveness,
     weak_positive_responsiveness
 ]

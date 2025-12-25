@@ -14,7 +14,18 @@ Monotonicity Axioms
 
 
 ```
+## Positive Responsiveness
 
+```{eval-rst}
+
+
+.. autofunction:: pref_voting.monotonicity_axioms.has_positive_responsiveness_violation
+
+
+.. autofunction:: pref_voting.monotonicity_axioms.find_all_positive_responsiveness_violations
+
+
+```
 ## Weak Positive Responsiveness
 
 ```{eval-rst}
