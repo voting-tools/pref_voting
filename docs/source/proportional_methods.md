@@ -1,7 +1,7 @@
 Proportional Methods
 =======================================
 
-The following implementations of proportional methods are based on "The Single Transferable Vote" by N. Tideman, "Better voting methods through technology" by N. Tideman and J. S. Richardson, "Generalizing Instant Runoff Voting to Allow Indifferences" by D. Delemazure and J. Peters, and the Scottish STV rules at https://www.legislation.gov.uk/ssi/2007/42/contents/made.
+The following implementations of proportional methods are based on "The Single Transferable Vote" by N. Tideman, "Better voting methods through technology" by N. Tideman and J. S. Richardson, "Generalizing Instant Runoff Voting to Allow Indifferences" by T. Delemazure and D. Peters, and the Scottish STV rules at https://www.legislation.gov.uk/ssi/2007/42/contents/made.
 
 These implementations have not been thoroughly vetted, so please check them carefully before using them for important purposes.
 
