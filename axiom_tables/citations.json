@@ -1,0 +1,276 @@
+{
+  "Anti-Plurality": {
+    "reinforcement": {
+      "notes": "Young (1975) states that every scoring rule satisfies reinforcement (also called 'consistency'). Anti-plurality is a scoring rule; hence it satisfies reinforcement.",
+      "urls": [
+        "http://www.jstor.org/stable/2100365"
+      ]
+    }
+  },
+  "Baldwin": {
+    "condorcet_winner": {
+      "notes": "Schulze (2011, Table 2) notes that Baldwin is a Condorcet method.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    }
+  },
+  "Banks set": {
+    "independence_of_clones": {
+      "notes": "Laffond et al. (1996, Proposition 8) prove that the Banks set is composition-consistent, which implies independence of clones (Berker et al. 2025).",
+      "urls": [
+        "https://doi.org/10.1007/BF00179100",
+        "https://arxiv.org/abs/2502.16973"
+      ]
+    }
+  },
+  "Beat Path": {
+    "condorcet_winner": {
+      "notes": "Schulze (2011, Sect. 4.7) proves that Beat Path satisfies the Condorcet criterion (as a special case of the Smith criterion).",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "monotonicity": {
+      "notes": "Schulze (2011, Sect. 4.5) proves that Beat Path satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "neutral_reversal": {
+      "notes": "Here we are assuming the margin-based version of Beat Path, and all margin-based methods satisfy neutral reversal.",
+      "urls": [
+        "https://arxiv.org/abs/2501.08595"
+      ]
+    },
+    "pareto_dominance": {
+      "notes": "Schulze (2011, Sect. 4.3) proves that Beat Path satisfies the Pareto criterion.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "smith": {
+      "notes": "Schulze (2011, Sect. 4.7) proves that Beat Path satisfies the Smith criterion.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    }
+  },
+  "Black": {
+    "monotonicity": {
+      "notes": "Felsenthal (2012, Table 3.3) states that Black satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    }
+  },
+  "Borda": {
+    "condorcet_loser": {
+      "notes": "Felsenthal (2012, Table 3.2) states that Borda does not elect Condorcet losers.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    },
+    "monotonicity": {
+      "notes": "Felsenthal (2012, Table 3.2) states that Borda satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    },
+    "neutral_reversal": {
+      "notes": "Saari (2003) notes that Borda satisfies neutral reversal.",
+      "urls": [
+        "https://doi.org/10.1086/342857"
+      ]
+    },
+    "pareto_dominance": {
+      "notes": "Felsenthal (2012, Table 3.2) states that Borda satisfies Pareto dominance.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    },
+    "reinforcement": {
+      "notes": "Young (1975) states that every scoring rule satisfies reinforcement (also called 'consistency'). Borda is a scoring rule; hence it satisfies reinforcement.",
+      "urls": [
+        "http://www.jstor.org/stable/2100365"
+      ]
+    },
+    "weak_positive_responsiveness": {
+      "notes": "Holliday and Pacuit (2025) note that all proper scoring rules (in the sense of Zwicker 2016, Def. 2.9) satisfy weak positive responsiveness. As a positional scoring rule, this covers the method.",
+      "urls": [
+        "https://link.springer.com/article/10.1007/s00355-025-01598-7",
+        "https://arxiv.org/abs/2312.14256"
+      ]
+    }
+  },
+  "Bucklin": {
+    "monotonicity": {
+      "notes": "Felsenthal (2012, Table 3.2) states that Bucklin satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    }
+  },
+  "Copeland": {
+    "monotonicity": {
+      "notes": "Felsenthal (2012, Table 3.3) states that Copeland satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    }
+  },
+  "Instant Runoff": {
+    "positive_involvement": {
+      "notes": "Holliday & Pacuit (2021) state that Instant Runoff (IRV) satisfies positive involvement.",
+      "urls": [
+        "https://doi.org/10.4204/EPTCS.335.17"
+      ]
+    }
+  },
+  "Kemeny": {
+    "condorcet_winner": {
+      "notes": "Young and Levenglick (1978, p. 287) state that Kemeny's rule satisfies the Condorcet criterion.",
+      "urls": [
+        "https://www.jstor.org/stable/2100667"
+      ]
+    },
+    "monotonicity": {
+      "notes": "Schulze (2011, Table 2) lists Kemeny–Young as satisfying monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "weak_positive_responsiveness": {
+      "notes": "Holliday and Pacuit (2025, Table 1, Footnote 16) show that Kemeny satisfies weak positive responsiveness.",
+      "urls": [
+        "https://link.springer.com/article/10.1007/s00355-025-01598-7",
+        "https://arxiv.org/abs/2312.14256"
+      ]
+    }
+  },
+  "Minimax": {
+    "monotonicity": {
+      "notes": "Schulze (2011, Table 2) states that the Simpson-Kramer method (Minimax) satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "neutral_reversal": {
+      "notes": "Here we are assuming the margin-based version of Minimax, and all margin-based methods satisfy neutral reversal.",
+      "urls": [
+        "https://arxiv.org/abs/2501.08595"
+      ]
+    },
+    "pareto_dominance": {
+      "notes": "Schulze (2011, Table 2) states that the Simpson-Kramer method (Minimax) satisfies the Pareto criterion.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    },
+    "positive_involvement": {
+      "notes": "Perez (2001) proves that Minimax (Simpson–Kramer) satisfies positive involvement.",
+      "urls": [
+        "https://doi.org/10.1007/s003550000079"
+      ]
+    },
+    "weak_positive_responsiveness": {
+      "notes": "Fact 3.1 in Holliday and Pacuit (2025) proves that Minimax satisfies weak positive responsiveness.",
+      "urls": [
+        "https://link.springer.com/article/10.1007/s00355-025-01598-7",
+        "https://arxiv.org/abs/2312.14256"
+      ]
+    }
+  },
+  "Nanson": {
+    "condorcet_winner": {
+      "notes": "Niou (1987, p. 193) states that Nanson proved that his voting rule satisfies the Condorcet condition. Also: Niou (1987, p. 193) states that Nanson proved that his voting rule satisfies the Condorcet criterion.",
+      "urls": [
+        "https://doi.org/10.1007/BF00123008"
+      ]
+    }
+  },
+  "Plurality": {
+    "monotonicity": {
+      "notes": "Felsenthal (2012, Table 3.1) states that Plurality satisfies monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/978-3-642-20441-8_3"
+      ]
+    },
+    "reinforcement": {
+      "notes": "Young (1975) states that every scoring rule satisfies reinforcement (also called 'consistency'). Plurality is a scoring rule; hence it satisfies reinforcement.",
+      "urls": [
+        "http://www.jstor.org/stable/2100365"
+      ]
+    }
+  },
+  "Positive-Negative Voting": {
+    "reinforcement": {
+      "notes": "Young (1975) shows that every scoring rule satisfies reinforcement (consistency). Positive–Negative voting is a positional scoring rule, so reinforcement holds.",
+      "urls": [
+        "http://www.jstor.org/stable/2100365"
+      ]
+    }
+  },
+  "Ranked Pairs": {
+    "condorcet_winner": {
+      "notes": "Tideman (1987, p. 186) states that Ranked Pairs satisfies the Condorcet criterion.",
+      "urls": [
+        "https://doi.org/10.1007/BF00433944"
+      ]
+    },
+    "monotonicity": {
+      "notes": "Schulze (2011, Table 2) lists Ranked Pairs as satisfying monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    }
+  },
+  "Ranked Pairs ZT": {
+    "independence_of_clones": {
+      "notes": "Zavist and Tideman (1989) show that Ranked Pairs ZT satisfies independence of clones.",
+      "urls": [
+        "https://doi.org/10.1007/BF00125798"
+      ]
+    },
+    "neutral_reversal": {
+      "notes": "Ranked Pairs is a margin-based method, and all margin-based methods satisfy neutral reversal.",
+      "urls": [
+        "https://arxiv.org/abs/2501.08595"
+      ]
+    }
+  },
+  "Slater": {
+    "monotonicity": {
+      "notes": "Schulze (2011, Table 2) lists Slater as satisfying monotonicity.",
+      "urls": [
+        "https://doi.org/10.1007/s00355-010-0475-4"
+      ]
+    }
+  },
+  "Split Cycle": {
+    "monotonicity": {
+      "notes": "Holliday & Pacuit (2023) prove Split Cycle satisfies non-negative responsiveness (the standard monotonicity criterion; see Proposition 5.43).",
+      "urls": [
+        "https://link.springer.com/article/10.1007/s11127-023-01042-3"
+      ]
+    },
+    "negative_involvement": {
+      "notes": "Holliday & Pacuit (2023) prove that Split Cycle satisfies negative involvement.",
+      "urls": [
+        "https://doi.org/10.1007/s11127-023-01042-3"
+      ]
+    },
+    "neutral_reversal": {
+      "notes": "Split Cycle is a margin-based method, and all margin-based methods satisfy neutral reversal.",
+      "urls": [
+        "https://arxiv.org/abs/2501.08595"
+      ]
+    },
+    "positive_involvement": {
+      "notes": "Holliday & Pacuit (2023) prove that Split Cycle satisfies positive involvement.",
+      "urls": [
+        "https://doi.org/10.1007/s11127-023-01042-3"
+      ]
+    }
+  }
+}
