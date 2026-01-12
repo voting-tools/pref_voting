@@ -27,6 +27,7 @@ import math
 import itertools
 import collections
 import random
+import warnings
 
 from pref_voting.weighted_majority_graphs import MarginGraph
 from pref_voting.margin_based_methods import minimax
@@ -36,7 +37,7 @@ from pref_voting.voting_method_properties import ElectionTypes
 from pref_voting.profiles import Profile
 
 EPS = 1e-12
-TRACE = bool(int(os.environ.get("STV_TRACE", "0") or "0"))
+TRACE = os.environ.get("STV_TRACE", "").strip().lower() in {"1", "true", "yes", "y", "t"}
 
 def _t(msg):
     if TRACE:
@@ -382,8 +383,10 @@ def _eliminate_lowest(pieces, continuing, parcels, tie_break_key=None):
     if not lowest:
         return None, pieces
     if len(lowest) > 1:
+        # tie_break_key interpretation: lower value = higher priority = survives
+        # So we eliminate the candidate with the HIGHEST key value (reverse sort)
         key = tie_break_key or (lambda x: x)
-        lowest.sort(key=key)
+        lowest.sort(key=key, reverse=True)
     elim = lowest[0]
     continuing.remove(elim)
 
@@ -583,7 +586,8 @@ def stv_scottish(profile, num_seats=2, curr_cands=None, decimals=5, rng=None):
                 if len(tied) > 1:
                     chosen = history_prefer(tied, prefer="highest")
                     if chosen is None:
-                        chosen = rand.choice(tied)
+                        # Sort for reproducibility with seeded RNG
+                        chosen = rand.choice(sorted(tied))
                 else:
                     chosen = tied[0]
 
@@ -619,7 +623,8 @@ def stv_scottish(profile, num_seats=2, curr_cands=None, decimals=5, rng=None):
                 max_s = max(tall_now[c] - float(quota) for c in surplusers)
                 tied = [c for c in surplusers if abs((tall_now[c]-float(quota)) - max_s) <= EPS]
                 if len(tied) > 1:
-                    chosen = history_prefer(tied, prefer="highest") or rand.choice(tied)
+                    # Sort for reproducibility with seeded RNG
+                    chosen = history_prefer(tied, prefer="highest") or rand.choice(sorted(tied))
                 else:
                     chosen = tied[0]
 
@@ -644,7 +649,8 @@ def stv_scottish(profile, num_seats=2, curr_cands=None, decimals=5, rng=None):
         if len(lowest) > 1:
             elim = history_prefer(lowest, prefer="lowest")
             if elim is None:
-                elim = rand.choice(lowest)  # decide by lot if tied at all previous stages
+                # Sort for reproducibility with seeded RNG
+                elim = rand.choice(sorted(lowest))
         else:
             elim = lowest[0]
 
@@ -776,17 +782,10 @@ def stv_nb(profile, num_seats = 2, curr_cands=None, quota_rule="nb", mann_strict
                     drain_all=drain_all, last_parcel_only=False, ers_rounding=ers_rounding
                 )
                 _t(f"Transfer surplus from {elect}: moved={moved}")
-                if moved:
-                    # After each transfer, check if any continuing candidate now meets quota.
-                    # If so, break out to let the main loop deem them elected before further transfers.
-                    tallies_after = _tally_from_pieces(pieces, restrict_to=continuing)
-                    newly_elected = [c for c in continuing
-                                     if (tallies_after.get(c, 0.0) > quota + EPS if mann_strict
-                                         else tallies_after.get(c, 0.0) >= quota - EPS)]
-                    if newly_elected:
-                        break  # Go back to main loop to elect them
-                else:
+                if not moved:
                     stuck.add(elect)
+                # Continue transferring all surpluses from elected_this_round before
+                # checking for new winners (standard STV behavior)
 
             if len(continuing) <= num_seats - len(winners):
                 winners.extend(sorted(continuing))
@@ -903,15 +902,10 @@ def stv_wig(profile, num_seats=2, curr_cands=None, quota_rule="nb", tie_break_ke
                     pieces, elect, quota, recipients=continuing, parcels=parcels,
                     drain_all=True, last_parcel_only=False
                 )
-                if moved:
-                    # After each transfer, check if any continuing candidate now meets quota.
-                    # If so, break out to let the main loop deem them elected before further transfers.
-                    tallies_after = _tally_from_pieces(pieces, restrict_to=continuing)
-                    newly_elected = [c for c in continuing if tallies_after.get(c, 0.0) >= quota - EPS]
-                    if newly_elected:
-                        break  # Go back to main loop to elect them
-                else:
+                if not moved:
                     stuck.add(elect)
+                # Continue transferring all surpluses from elected_this_round before
+                # checking for new winners (standard STV behavior)
 
             # If remaining candidates equal remaining seats, elect them all
             if len(continuing) <= num_seats - len(winners):
@@ -1016,13 +1010,6 @@ def stv_last_parcel(profile, num_seats = 2, curr_cands=None, quota_rule="nb", ti
                     drain_all=True, last_parcel_only=True
                 )
                 _t(f"[LP] Transfer surplus (last parcel) from {c}: moved={moved}")
-                if moved:
-                    # After each transfer, check if any continuing candidate now meets quota.
-                    # If so, break out to let the main loop deem them elected before further transfers.
-                    tallies_after = _tally_from_pieces(pieces, restrict_to=continuing)
-                    newly_elected = [c2 for c2 in continuing if tallies_after.get(c2, 0.0) >= quota - EPS]
-                    if newly_elected:
-                        break  # Go back to main loop to elect them
             continue
 
         if len(continuing) <= num_seats - len(winners):
@@ -1235,7 +1222,9 @@ def stv_meek(profile, num_seats=2, curr_cands=None, tol=1e-10, max_iter=2000, ti
         
         if newly_elected:
             # Elect candidates that reached quota (highest tally first)
-            for c in sorted(newly_elected, key=lambda x: (-tallies.get(x, 0.0), x)):
+            # Use tie_break_key for secondary sort (when tallies are equal)
+            key_fn = tie_break_key or (lambda x: x)
+            for c in sorted(newly_elected, key=lambda x: (-tallies.get(x, 0.0), key_fn(x))):
                 if len(elected) >= num_seats:
                     break
                 hopeful.remove(c)
@@ -1246,11 +1235,12 @@ def stv_meek(profile, num_seats=2, curr_cands=None, tol=1e-10, max_iter=2000, ti
                     keep[c] = quota / t
                 _t(f"[Meek] Elect: {c} (t={t:.6f}, quota={quota:.6f})")
             continue
-        
+
         # No one elected - check if we can fill remaining seats with hopeful candidates
         if len(hopeful) <= num_seats - len(elected):
             # Elect all remaining hopeful candidates
-            for c in sorted(hopeful):
+            key_fn = tie_break_key or (lambda x: x)
+            for c in sorted(hopeful, key=key_fn):
                 elected.add(c)
             break
         
@@ -1267,11 +1257,13 @@ def stv_meek(profile, num_seats=2, curr_cands=None, tol=1e-10, max_iter=2000, ti
                 lowest = [c]
             elif abs(t - min_t) <= EPS:
                 lowest.append(c)
-        
+
         if len(lowest) > 1:
+            # tie_break_key interpretation: lower value = higher priority = survives
+            # So we eliminate the candidate with the HIGHEST key value (reverse sort)
             key = tie_break_key or (lambda x: x)
-            lowest.sort(key=key)
-        
+            lowest.sort(key=key, reverse=True)
+
         elim = lowest[0]
         hopeful.remove(elim)
         keep[elim] = 0.0
@@ -1610,9 +1602,11 @@ def stv_warren(profile, num_seats=2, curr_cands=None, tol=1e-10, max_iter=2000, 
                 lowest.append(c)
         
         if len(lowest) > 1:
+            # tie_break_key interpretation: lower value = higher priority = survives
+            # So we eliminate the candidate with the HIGHEST key value (reverse sort)
             key = tie_break_key or (lambda x: x)
-            lowest.sort(key=key)
-        
+            lowest.sort(key=key, reverse=True)
+
         elim = lowest[0]
         hopeful.remove(elim)
         _t(f"[Warren] Eliminate: {elim} (t={min_t:.6f})")
@@ -2023,3 +2017,561 @@ def cpo_stv(profile, num_seats = 2, curr_cands=None, inpair_surplus="meek", fall
 
     # If multiple tied winners, choose one randomly
     return sorted(rand.choice(winners_list))
+
+
+# ---------- Sequential STV ----------
+
+def _stv_meek_with_elimination_order(profile, num_seats, candidates, by_order=None, tol=1e-10, max_iter=2000):
+    """
+    Run Meek STV and return both winners and elimination order.
+
+    Used by Sequential STV to determine the initial queue. This is Meek's method
+    with tracking of which candidates were excluded and in what order.
+
+    The Issue 20 Sequential STV paper (https://www.votingmatters.org.uk/ISSUE20/I20P2.PDF) 
+    requires all STV counts to use Meek's method.
+
+    Args:
+        by_order: A function that returns a sortable key for a candidate.
+            Used for deterministic tie-breaking. Defaults to candidate index
+            in the candidates list.
+
+    Returns:
+        tuple: (winners_set, exclusion_order_list)
+    """
+    # Create stable ordering if not provided
+    if by_order is None:
+        cand_order = {c: i for i, c in enumerate(candidates)}
+        by_order = lambda c: cand_order.get(c, 0)
+
+    # Handle both Profile and ProfileWithTies
+    if isinstance(profile, Profile):
+        profile = profile.to_profile_with_ties()
+
+    hopeful = set(candidates)
+    elected = set()
+    exclusion_order = []
+
+    # Keep factors: hopeful=1, elected=adjusted, excluded=0
+    keep = {c: 1.0 for c in candidates}
+
+    # Calculate total weight from profile
+    rankings, rcounts = profile.rankings_counts
+    total_weight = sum(float(count) for count in rcounts)
+    if total_weight <= EPS or not hopeful or num_seats <= 0:
+        return set(), []
+
+    safety = 0
+    while len(elected) < num_seats:
+        safety += 1
+        if safety > 50000:
+            raise RuntimeError("_stv_meek_with_elimination_order: loop safety tripped")
+
+        # Candidates still in the count (hopeful or elected)
+        active = hopeful | elected
+        if not active:
+            break
+
+        # Iteratively adjust keep factors until convergence
+        for _ in range(max_iter):
+            tallies, excess = _meek_tally_from_profile(profile, keep, active)
+
+            # Quota = (total_votes - excess) / (k+1)
+            usable = total_weight - excess
+            quota = usable / float(num_seats + 1) if usable > EPS else 0.0
+
+            changed = False
+
+            # Adjust keep factors for ELECTED candidates to make their tally approach quota
+            for c in elected:
+                t = tallies.get(c, 0.0)
+                if t > tol and keep.get(c, 1.0) > 0.0:
+                    new_keep = keep[c] * quota / t
+                    new_keep = max(0.0, min(1.0, new_keep))
+                    if abs(keep[c] - new_keep) > tol:
+                        keep[c] = new_keep
+                        changed = True
+
+            if not changed and elected:
+                max_deviation = max(abs(tallies.get(c, 0.0) - quota) for c in elected)
+                if max_deviation > 10 * tol:
+                    changed = True
+
+            if not changed:
+                break
+
+        # After convergence, check if any HOPEFUL candidate has reached quota
+        tallies, excess = _meek_tally_from_profile(profile, keep, active)
+        usable = total_weight - excess
+        quota = usable / float(num_seats + 1) if usable > EPS else 0.0
+
+        newly_elected = []
+        for c in list(hopeful):
+            t = tallies.get(c, 0.0)
+            if t >= quota - tol:
+                newly_elected.append(c)
+
+        if newly_elected:
+            # Elect candidates that reached quota (highest tally first, by_order for ties)
+            for c in sorted(newly_elected, key=lambda x: (-tallies.get(x, 0.0), by_order(x))):
+                if len(elected) >= num_seats:
+                    break
+                hopeful.remove(c)
+                elected.add(c)
+                t = tallies.get(c, 0.0)
+                if t > quota + tol:
+                    keep[c] = quota / t
+            continue
+
+        # No one elected - check if we can fill remaining seats with hopeful candidates
+        if len(hopeful) <= num_seats - len(elected):
+            elected |= hopeful
+            hopeful.clear()  # Clear to avoid adding to exclusion_order below
+            break
+
+        # Exclude the hopeful candidate with the lowest tally
+        if not hopeful:
+            break
+
+        min_t = float('inf')
+        lowest = []
+        for c in hopeful:
+            t = tallies.get(c, 0.0)
+            if t < min_t - EPS:
+                min_t = t
+                lowest = [c]
+            elif abs(t - min_t) <= EPS:
+                lowest.append(c)
+
+        # Tie-break using by_order (deterministic)
+        # Convention: lower value = higher priority = survives
+        # So we eliminate the candidate with the HIGHEST key value (reverse sort)
+        lowest.sort(key=by_order, reverse=True)
+        elim = lowest[0]
+
+        hopeful.remove(elim)
+        keep[elim] = 0.0
+        exclusion_order.append(elim)
+
+    # Ensure ALL non-elected candidates are in the exclusion order.
+    # Some candidates may still be "hopeful" when the count ends (e.g., if enough
+    # candidates reached quota early). These should be added to the exclusion order
+    # in reverse-tally order (strongest last, making them the runner-up).
+    if hopeful:
+        # Get final tallies for remaining hopeful candidates
+        active = hopeful | elected
+        final_tallies, _ = _meek_tally_from_profile(profile, keep, active)
+        # Sort remaining hopeful by tally (lowest first = weakest first), by_order for ties
+        remaining = sorted(hopeful, key=lambda c: (final_tallies.get(c, 0.0), by_order(c)))
+        exclusion_order.extend(remaining)
+
+    return elected, exclusion_order
+
+
+def _calculate_borda_scores(profile, continuing_candidates):
+    """
+    Calculate Borda scores for continuing candidates in Sequential STV.
+
+    Per the Sequential STV paper (https://www.votingmatters.org.uk/ISSUE20/I20P2.PDF): 
+    "a Borda score is calculated, as the sum over all votes of the
+    number of continuing candidates to whom the candidate in question is preferred,
+    taking all unmentioned continuing candidates as equal in last place. A continuing
+    candidate who is not mentioned in a particular vote is given, for that vote, the
+    average score that would have been attained by all those unmentioned. In practice
+    it can help to give 2 points instead of 1 for each candidate beaten, because all
+    scores, including any averages required, are then whole numbers."
+
+    Implementation details:
+    - We use 2 points per candidate beaten (as suggested in the paper)
+    - For tied candidates (whether explicitly tied or unranked), we apply the
+      averaging principle: each gets the average score as if they weren't tied
+    - The formula for a tied group of size s with b candidates strictly below:
+          score = 2 * b + (s - 1)
+      This equals 2*b (for beating b candidates) plus the average among s tied
+      candidates: avg(0, 2, 4, ..., 2(s-1)) = s - 1
+
+    Returns:
+        dict: Mapping from candidate to Borda score
+    """
+    continuing = list(continuing_candidates)
+    scores = {c: 0 for c in continuing}
+
+    rankings, rcounts = profile.rankings_counts
+
+    for ranking, count in zip(rankings, rcounts):
+        rmap = ranking.rmap  # candidate -> rank, None if unranked
+
+        # Group continuing candidates by their rank on this ballot
+        groups = collections.defaultdict(list)  # rank -> list of candidates at that rank
+        unranked = []
+        for c in continuing:
+            r = rmap.get(c)
+            if r is None:
+                unranked.append(c)
+            else:
+                groups[r].append(c)
+
+        # Unranked candidates are treated as tied in last place.
+        # Per the paper, they get the average score: if m are unranked, each gets
+        # the average of {0, 2, 4, ..., 2(m-1)} = (m-1) points.
+        m = len(unranked)
+        if m:
+            unrank_score = m - 1
+            for c in unranked:
+                scores[c] += unrank_score * count
+
+        # Process ranked candidates from lowest rank (worst) to highest (best).
+        # Track how many continuing candidates are strictly below the current position.
+        below = m  # Start with unranked candidates below
+        for r in sorted(groups.keys(), reverse=True):
+            g = groups[r]
+            s = len(g)
+            # Each candidate in this group beats 'below' candidates strictly,
+            # and ties with (s-1) others in the same group.
+            # Score = 2 * below + (s - 1), where (s-1) is the tie averaging.
+            group_score = 2 * below + (s - 1)
+            for c in g:
+                scores[c] += group_score * count
+            below += s  # This group is now "below" for higher-ranked candidates
+
+    return scores
+
+
+@vm(name="Sequential-STV", input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
+def sequential_stv(profile, num_seats=2, curr_cands=None, max_iterations=1000):
+    """
+    Sequential STV as described in Voting Matters Issue 20 (2005 revision).
+
+    Reference: https://www.votingmatters.org.uk/ISSUE20/I20P2.PDF
+    Also see: https://www.votingmatters.org.uk/ISSUE15/P4.HTM
+
+    Sequential STV addresses the "premature exclusion" problem in regular STV by
+    systematically testing whether any non-elected candidate could replace an elected
+    one. It seeks to find a set of n candidates that observes Droop Proportionality
+    and is preferred by the largest majority of voters to any other possible set.
+
+    Algorithm:
+
+    **Phase 1 - Initialization:**
+    Run an initial STV count (using Meek's method) to classify candidates as
+    "probables" (would-be winners) or put them in a queue in reverse exclusion
+    order, with the runner-up moved to the end.
+
+    **Phase 2 - Challenge Loop:**
+    For each challenger (head of queue), run STV with n+1 candidates for n seats.
+    If challenger succeeds, they become a probable and the beaten candidate goes
+    to the end of the queue. If challenger fails (including ties), they go to
+    the end of the queue. Continue until a complete run through the queue with
+    no successful challenger (stable solution) or a loop is detected.
+
+    **Phase 3 - Loop Detection:**
+    - Certain loop: Same probables set recurs with identical queue order
+    - Possible loop: Same probables set with different queue; second chance given,
+      but if it recurs again, treat as certain loop
+
+    **Phase 4 - Loop Resolution:**
+    Exclude all candidates who have never been a probable since the last restart,
+    then restart retaining existing probables and queue. If no candidate can be
+    excluded, use the Borda score special procedure to exclude one at-risk
+    candidate, then restart. (The Borda special procedure implemented here extends 
+    the paper's averaging rule for unranked candidates to also apply to explicitly tied candidates, 
+    providing a generalization to ProfileWithTies.)
+
+    All STV counts use Meek's method.
+
+    Args:
+        profile: A Profile or ProfileWithTies object containing voter rankings
+        num_seats (int): Number of seats to fill
+        curr_cands: List of candidates to consider, defaults to all candidates in profile
+        max_iterations (int): Maximum iterations before giving up (prevents infinite loops)
+
+    Returns:
+        list: List of elected candidates
+
+    .. note::
+        In the single-winner case (num_seats=1), Sequential STV is Condorcet-consistent:
+        if there is a Condorcet winner (a candidate who beats every other candidate
+        head-to-head), Sequential STV will elect them. This distinguishes Sequential
+        STV from plain IRV, which can fail to elect a Condorcet winner due to
+        premature exclusion.
+
+    .. warning::
+        This implementation of Sequential STV has not yet been thoroughly vetted.
+
+    """
+    if isinstance(profile, Profile):
+        profile = profile.to_profile_with_ties()
+
+    # Sort candidates to ensure deterministic ordering regardless of iteration order
+    candidates_list = sorted(profile.candidates) if curr_cands is None else sorted(curr_cands)
+
+    if num_seats <= 0 or len(candidates_list) == 0:
+        return []
+
+    if num_seats >= len(candidates_list):
+        return candidates_list  # Already sorted
+
+    # Phase 1: Run initial STV (Meek) to get probables and exclusion order
+    # Issue 20 sequential STV paper requires all STV counts to use Meek's method
+    probables_set, exclusion_order = _stv_meek_with_elimination_order(
+        profile, num_seats, candidates_list
+    )
+    probables = sorted(probables_set)
+
+    if not exclusion_order:
+        return probables
+
+    # Create queue in reverse exclusion order, with runner-up moved to end.
+    # Per Issue 20 Sequential STV paper: "puts the others into a queue, in the reverse order of their
+    # exclusion in that STV count, except that the runner-up is moved to last place
+    # as it is already known that an initial challenge by that candidate will not succeed."
+    # Example: if exclusion_order = [A, B, C] (A excluded first, C=runner-up),
+    # then reversed = [C, B, A], and queue = [B, A, C] (runner-up C at end).
+    reversed_order = list(reversed(exclusion_order))
+    if len(reversed_order) > 1:
+        runner_up = reversed_order[0]
+        queue = collections.deque(reversed_order[1:] + [runner_up])
+    else:
+        queue = collections.deque(reversed_order)
+
+    _t(f"[Sequential-STV] Initial probables: {probables}")
+    _t(f"[Sequential-STV] Exclusion order: {exclusion_order}")
+    _t(f"[Sequential-STV] Initial queue: {list(queue)}")
+
+    # Track candidates who have ever been probable since last restart
+    ever_probable = set(probables)
+
+    # Track candidates who have ALWAYS been probable since last restart
+    # (for determining "at-risk" candidates in special procedure)
+    always_probable = set(probables)
+
+    # Track probables set occurrences for loop detection
+    # Key: frozenset of probables, Value: list of queue tuples seen with that probables set
+    probables_occurrences = collections.defaultdict(list)
+    probables_occurrences[frozenset(probables)].append(tuple(queue))
+
+    # Track if we've given a "second chance" for a probables set with different queue
+    second_chance_given = set()
+
+    # Track the previous probables set to detect when it changes
+    last_probables = frozenset(probables)
+
+    iterations = 0
+    challenges_since_change = 0
+
+    while iterations < max_iterations:
+        iterations += 1
+
+        # Check if we've completed a full cycle without changes (stable solution)
+        if challenges_since_change >= len(queue):
+            _t(f"[Sequential-STV] Stable solution found at iteration {iterations}")
+            return probables
+
+        if not queue:
+            return probables
+
+        # Get the next challenger
+        challenger = queue.popleft()
+
+        # Run STV (Meek) with probables + challenger competing for num_seats.
+        # Per Issue 20 Sequential STV paper: "Should a tie occur during these rounds, between a probable
+        # and a challenger, it is resolved by maintaining the current situation;
+        # that is to say, the challenger has not succeeded."
+        # We implement this by using a tie_break_key that gives probables higher
+        # priority (lower key value), so challengers lose ties.
+        contest_cands = probables + [challenger]
+
+        def tie_break_favoring_probables(c):
+            # tie_break_key interpretation: lower value = higher priority
+            # - In elections: lower key = elected first (wins)
+            # - In eliminations: lower key = survives (higher priority)
+            # Sequential STV tie rule: challenger loses ties → give probables lower key
+            if c == challenger:
+                return (1, c)  # Challenger has lower priority (loses ties)
+            else:
+                return (0, c)  # Probables have higher priority (win ties)
+
+        winners = stv_meek(
+            profile, num_seats=num_seats, curr_cands=contest_cands,
+            tie_break_key=tie_break_favoring_probables
+        )
+        winners_set = set(winners)
+
+        # n+1-for-n invariant: expect exactly num_seats winners and 1 loser
+        # If outcome is ambiguous (wrong number of winners), maintain status quo
+        contest_set = set(contest_cands)
+        losers = contest_set - winners_set
+
+        if len(winners_set) != num_seats or len(losers) != 1:
+            # Ambiguous outcome - treat as challenger failed (status quo per Issue 20 Sequential STV paper)
+            _t(f"[Sequential-STV] Ambiguous challenge result, maintaining status quo")
+            queue.append(challenger)
+            challenges_since_change += 1
+        elif challenger in winners_set:
+            # Challenger succeeded - find the unique loser
+            loser = next(iter(losers))  # Exactly one loser
+            probables = sorted(winners_set)
+            queue.append(loser)
+            challenges_since_change = 0
+            ever_probable.add(challenger)
+            # Update always_probable: intersect with new probables
+            always_probable = always_probable & winners_set
+            _t(f"[Sequential-STV] {challenger} displaces {loser}")
+        else:
+            # Challenger failed
+            queue.append(challenger)
+            challenges_since_change += 1
+            _t(f"[Sequential-STV] {challenger} fails to displace anyone")
+
+        # Loop detection: only check when probables has CHANGED
+        # (Sequential STV loop detection is about returning to a prior state after changes,
+        # not about probables staying the same during failed challenges)
+        current_probables = frozenset(probables)
+        current_queue = tuple(queue)
+
+        # Only do loop detection if probables changed this round
+        probables_changed = (current_probables != last_probables)
+
+        loop_detected = False
+        if probables_changed and current_probables in probables_occurrences:
+            prev_queues = probables_occurrences[current_probables]
+
+            if current_queue in prev_queues:
+                # Certain loop: same probables AND same queue order
+                _t(f"[Sequential-STV] Certain loop detected (same probables and queue)")
+                loop_detected = True
+
+            elif current_probables in second_chance_given:
+                # Same probables set seen before with different queue, and we already
+                # gave a second chance - now treat as loop
+                _t(f"[Sequential-STV] Loop detected (same probables, second recurrence)")
+                loop_detected = True
+
+            else:
+                # Same probables but different queue - give second chance
+                _t(f"[Sequential-STV] Possible loop (same probables, different queue) - second chance")
+                second_chance_given.add(current_probables)
+
+        if loop_detected:
+            # Handle the loop - returns (is_final, result) tuple
+            is_final, result = _handle_sequential_stv_loop_2005(
+                profile, num_seats, probables, queue, ever_probable, always_probable
+            )
+            if is_final:
+                # Final result - return winners
+                return result
+            # Restart: update probables if changed
+            if result is not None:
+                probables = result
+            # Reset tracking but keep probables and queue
+            ever_probable = set(probables)
+            always_probable = set(probables)
+            probables_occurrences.clear()
+            second_chance_given.clear()
+            challenges_since_change = 0
+            last_probables = frozenset(probables)
+            probables_occurrences[last_probables].append(tuple(queue))
+            continue
+
+        # Update tracking
+        if probables_changed:
+            probables_occurrences[current_probables].append(current_queue)
+        last_probables = current_probables
+
+    _t(f"[Sequential-STV] Max iterations reached")
+    warnings.warn(
+        f"Sequential STV reached max_iterations ({max_iterations}) without converging. "
+        "The result may be incomplete. Consider increasing max_iterations.",
+        RuntimeWarning
+    )
+    return probables
+
+
+def _handle_sequential_stv_loop_2005(profile, num_seats, probables, queue,
+                                      ever_probable, always_probable):
+    """
+    Handle a detected loop in Sequential STV (2005 version).
+
+    Loop resolution per the 2005 paper:
+    1. Exclude all candidates who have never been a probable since last restart
+    2. If no such candidates, use Borda score special procedure to exclude
+       one "at-risk" candidate (those not always probable)
+    3. Restart with existing probables and queue
+
+    Returns:
+        tuple: (is_final, result) where:
+            - is_final=True, result=winners_list: Election complete, return winners
+            - is_final=False, result=new_probables: Restart with updated probables
+            - is_final=False, result=None: Restart, probables unchanged (only queue changed)
+    """
+
+    all_in_contest = set(probables) | set(queue)
+    never_probable = all_in_contest - ever_probable
+
+    if never_probable:
+        # Exclude all candidates who have never been probable
+        _t(f"[Sequential-STV] Excluding never-probables: {never_probable}")
+
+        # Remove never-probables from the queue (mutate in place)
+        new_queue = [c for c in queue if c not in never_probable]
+        queue.clear()
+        queue.extend(new_queue)
+
+        # Check if we're done
+        if len(probables) == num_seats and not queue:
+            return (True, list(probables))  # Final result
+
+        return (False, None)  # Restart, probables unchanged
+
+    else:
+        # All candidates have been probable at some point - use Borda special procedure.
+        # Per Issue 20 Sequential STV paper: "If there is no candidate who can be so excluded, then a special
+        # procedure is used, in which each continuing candidate, other than any who has
+        # always been a probable since the last restart, is classified as 'at-risk'."
+        _t(f"[Sequential-STV] All candidates have been probable, using Borda special procedure")
+
+        # At-risk candidates: those not ALWAYS probable since last restart
+        at_risk = all_in_contest - always_probable
+
+        if not at_risk:
+            # Everyone has always been probable - just return current probables
+            _t(f"[Sequential-STV] No at-risk candidates, returning current probables")
+            return (True, list(probables))  # Final result
+
+        # Calculate Borda scores for all continuing candidates
+        continuing = list(probables) + list(queue)
+        scores = _calculate_borda_scores(profile, continuing)
+
+        # Find the at-risk candidate with the lowest Borda score
+        # Use candidate number for deterministic tie-breaking among equal scores
+        at_risk_scores = [(scores[c], c) for c in at_risk]
+        at_risk_scores.sort()  # Sort by score, then by candidate number
+        _, to_exclude = at_risk_scores[0]
+
+        _t(f"[Sequential-STV] Borda scores: {scores}")
+        _t(f"[Sequential-STV] Excluding at-risk candidate with lowest score: {to_exclude}")
+
+        if to_exclude in probables:
+            # Excluded candidate was a probable - head of queue becomes probable
+            new_probables = [c for c in probables if c != to_exclude]
+            if queue:
+                new_probable = queue.popleft()
+                new_probables = sorted(new_probables + [new_probable])
+                _t(f"[Sequential-STV] {new_probable} promoted to probable")
+
+            # Check if we're done
+            if len(new_probables) == num_seats and not queue:
+                return (True, new_probables)  # Final result
+
+            return (False, new_probables)  # Restart with updated probables
+        else:
+            # Excluded candidate was in queue - just remove from queue (mutate in place)
+            new_queue = [c for c in queue if c != to_exclude]
+            queue.clear()
+            queue.extend(new_queue)
+
+            # Check if we're done
+            if len(probables) == num_seats and not queue:
+                return (True, list(probables))  # Final result
+
+            return (False, None)  # Restart, probables unchanged
