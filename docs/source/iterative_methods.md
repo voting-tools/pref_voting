@@ -84,11 +84,91 @@ To illustrate the difference with respect to the second question, consider Insta
 
 ```
 
+### Top-N Instant Runoff for Truncated Linear Orders
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.top_n_instant_runoff_for_truncated_linear_orders
+
+```
+
+## Approval IRV
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.approval_irv
+
+```
+
+### Approval IRV TB
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.approval_irv_tb
+
+```
+
+### Approval IRV PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.approval_irv_put
+
+```
+
+### Approval IRV with Explanation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.approval_irv_with_explanation
+
+```
+
+## Split IRV
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.split_irv
+
+```
+
+### Split IRV TB
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.split_irv_tb
+
+```
+
+### Split IRV PUT
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.split_irv_put
+
+```
+
+### Split IRV with Explanation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.split_irv_with_explanation
+
+```
+
 ## Plurality With Runoff PUT
 
 ```{eval-rst}
 
 .. autofunction:: pref_voting.iterative_methods.plurality_with_runoff_put
+
+```
+
+### Plurality With Runoff PUT with Explanation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.iterative_methods.plurality_with_runoff_put_with_explanation
 
 ```
 
