@@ -1,7 +1,9 @@
 """
     File: variable_voter_axioms.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: February 4, 2026
+
+    Date: March 16, 2024
+    Updated: February 4, 2026
     
     Variable voter axioms 
 """
