@@ -3350,30 +3350,33 @@ participation = Axiom(
     find_all_violations = find_all_participation_violations, 
 )
 
-def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_truncation=False):
+def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_truncation=False, allow_ties=False):
     """
     Single-Voter Resolvability requires that for any profile with multiple winners, each of the tied winners can be made the unique winner by adding a ballot (cf. Weak Single-Voter Resolvability, which only requires that at least one of the tied winners can be made the unique winner by adding a ballot).
 
-    If prof is a Profile and allow_truncation is False, returns True if there are multiple vm winners in prof and for one such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
+    If prof is a Profile and allow_ties is False and allow_truncation is False, returns True if there are multiple vm winners in prof and for one such winner A, there is no linear ballot that can be added to prof to make A the unique winner.
 
-    If prof is a Profile and allow_truncation is True, returns True if there are multiple vm winners in prof and for one such winner A, there is no truncated linear ballot that can be added to prof to make A the unique winner.
+    If prof is a Profile and allow_ties is True, returns True if there are multiple vm winners in prof and for one such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner. Note: allow_ties takes precedence over allow_truncation.
 
-    If prof is a ProfileWithTies, returns True if there are multiple vm winners in prof and for one such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner. 
+    If prof is a Profile and allow_truncation is True (and allow_ties is False), returns True if there are multiple vm winners in prof and for one such winner A, there is no truncated linear ballot that can be added to prof to make A the unique winner.
+
+    If prof is a ProfileWithTies, returns True if there are multiple vm winners in prof and for one such winner A, there is no Ranking (allowing ties) that can be added to prof to make A the unique winner.
 
     Args:
         prof: a Profile or ProfileWithTies object.
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         allow_truncation (bool, default=False): If True and prof is a Profile, allow truncated linear ballots.
+        allow_ties (bool, default=False): If True and prof is a Profile, allow Rankings with ties. Takes precedence over allow_truncation.
 
     Returns:
         Result of the test (bool): Returns True if there is a violation and False otherwise.
     """
 
-    winners = vm(prof)
-
     if isinstance(prof,ProfileWithTies):
         prof.use_extended_strict_preference()
+
+    winners = vm(prof)
 
     if len(winners) > 1:
         for winner in winners:
@@ -3381,7 +3384,19 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_trun
             found_voter_to_add = False
 
             if isinstance(prof,Profile):
-                if allow_truncation:
+                if allow_ties:
+                    # Iterate over all weak orders (rankings possibly with ties)
+                    for _r in weak_orders(prof.candidates):
+                        r = Ranking(_r)
+                        new_prof = ProfileWithTies(
+                            [Ranking({c: rank + 1 for rank, c in enumerate(old_r)}) for old_r in prof.rankings] + [r],
+                            candidates=prof.candidates
+                        )
+                        new_prof.use_extended_strict_preference()
+                        if vm(new_prof) == [winner]:
+                            found_voter_to_add = True
+                            break
+                elif allow_truncation:
                     # Iterate over all truncated linear orders
                     for subset_size in range(1, len(prof.candidates) + 1):
                         if found_voter_to_add:
@@ -3406,7 +3421,7 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_trun
                         if vm(new_prof) == [winner]:
                             found_voter_to_add = True
                             break
-                   
+
             if isinstance(prof,ProfileWithTies):
                 for _r in weak_orders(prof.candidates):
                     r = Ranking(_r)
@@ -3415,13 +3430,15 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_trun
                     if vm(new_prof) == [winner]:
                         found_voter_to_add = True
                         break
-        
+
             if not found_voter_to_add:
 
                 if verbose:
                     prof = prof.anonymize()
                     if isinstance(prof,Profile):
-                        if allow_truncation:
+                        if allow_ties:
+                            print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a Ranking (possibly with ties).")
+                        elif allow_truncation:
                             print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a (possibly truncated) linear ballot.")
                         else:
                             print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
@@ -3437,16 +3454,18 @@ def has_single_voter_resolvability_violation(prof, vm, verbose=False, allow_trun
                     print("")
 
                 return True
-            
+
         return False
-    
+
     return False
 
-def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allow_truncation=False):
+def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allow_truncation=False, allow_ties=False):
     """
-    If prof is a Profile and allow_truncation is False, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a linear ballot.
+    If prof is a Profile and allow_ties is False and allow_truncation is False, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a linear ballot.
 
-    If prof is a Profile and allow_truncation is True, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a truncated linear ballot.
+    If prof is a Profile and allow_ties is True, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a Ranking (allowing ties). Note: allow_ties takes precedence over allow_truncation.
+
+    If prof is a Profile and allow_truncation is True (and allow_ties is False), returns a list of candidates who win in prof but who cannot be made the unique winner by adding a truncated linear ballot.
 
     If prof is a ProfileWithTies, returns a list of candidates who win in prof but who cannot be made the unique winner by adding a Ranking (allowing ties).
 
@@ -3455,15 +3474,16 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allo
         vm (VotingMethod): A voting method to test.
         verbose (bool, default=False): If a violation is found, display the violation.
         allow_truncation (bool, default=False): If True and prof is a Profile, allow truncated linear ballots.
+        allow_ties (bool, default=False): If True and prof is a Profile, allow Rankings with ties. Takes precedence over allow_truncation.
 
     Returns:
         A List of candidates who win in the given profile but who cannot be made the unique winner by adding a ballot.
     """
 
-    winners = vm(prof)
-
     if isinstance(prof,ProfileWithTies):
         prof.use_extended_strict_preference()
+
+    winners = vm(prof)
 
     violations = list()
 
@@ -3473,7 +3493,19 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allo
             found_voter_to_add = False
 
             if isinstance(prof,Profile):
-                if allow_truncation:
+                if allow_ties:
+                    # Iterate over all weak orders (rankings possibly with ties)
+                    for _r in weak_orders(prof.candidates):
+                        r = Ranking(_r)
+                        new_prof = ProfileWithTies(
+                            [Ranking({c: rank + 1 for rank, c in enumerate(old_r)}) for old_r in prof.rankings] + [r],
+                            candidates=prof.candidates
+                        )
+                        new_prof.use_extended_strict_preference()
+                        if vm(new_prof) == [winner]:
+                            found_voter_to_add = True
+                            break
+                elif allow_truncation:
                     # Iterate over all truncated linear orders
                     for subset_size in range(1, len(prof.candidates) + 1):
                         if found_voter_to_add:
@@ -3498,7 +3530,7 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allo
                         if vm(new_prof) == [winner]:
                             found_voter_to_add = True
                             break
-                   
+
             if isinstance(prof,ProfileWithTies):
                 for _r in weak_orders(prof.candidates):
                     r = Ranking(_r)
@@ -3507,13 +3539,15 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allo
                     if vm(new_prof) == [winner]:
                         found_voter_to_add = True
                         break
-        
+
             if not found_voter_to_add:
 
                 if verbose:
                     prof = prof.anonymize()
                     if isinstance(prof,Profile):
-                        if allow_truncation:
+                        if allow_ties:
+                            print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a Ranking (possibly with ties).")
+                        elif allow_truncation:
                             print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a (possibly truncated) linear ballot.")
                         else:
                             print(f"Violation of Single-Voter Resolvability for {vm.name}: cannot make {winner} the unique winner by adding a linear ballot.")
@@ -3529,8 +3563,24 @@ def find_all_single_voter_resolvability_violations(prof, vm, verbose=False, allo
                     print("")
 
                 violations.append(winner)
-            
+
     return violations
+
+def has_single_voter_resolvability_violation_with_truncation(prof, vm, verbose=False):
+    """Thin wrapper for :func:`has_single_voter_resolvability_violation` with ``allow_truncation=True``."""
+    return has_single_voter_resolvability_violation(prof, vm, verbose=verbose, allow_truncation=True)
+
+def find_all_single_voter_resolvability_violations_with_truncation(prof, vm, verbose=False):
+    """Thin wrapper for :func:`find_all_single_voter_resolvability_violations` with ``allow_truncation=True``."""
+    return find_all_single_voter_resolvability_violations(prof, vm, verbose=verbose, allow_truncation=True)
+
+def has_single_voter_resolvability_violation_with_ties(prof, vm, verbose=False):
+    """Thin wrapper for :func:`has_single_voter_resolvability_violation` with ``allow_ties=True``."""
+    return has_single_voter_resolvability_violation(prof, vm, verbose=verbose, allow_ties=True)
+
+def find_all_single_voter_resolvability_violations_with_ties(prof, vm, verbose=False):
+    """Thin wrapper for :func:`find_all_single_voter_resolvability_violations` with ``allow_ties=True``."""
+    return find_all_single_voter_resolvability_violations(prof, vm, verbose=verbose, allow_ties=True)
 
 single_voter_resolvability = Axiom(
     "Single-Voter Resolvability",
@@ -3541,7 +3591,13 @@ single_voter_resolvability = Axiom(
 single_voter_resolvability_with_truncation = Axiom(
     "Single-Voter Resolvability Allowing Truncation",
     has_violation = partial(has_single_voter_resolvability_violation, allow_truncation=True),
-    find_all_violations = partial(find_all_single_voter_resolvability_violations, allow_truncation=True), 
+    find_all_violations = partial(find_all_single_voter_resolvability_violations, allow_truncation=True),
+)
+
+single_voter_resolvability_with_ties = Axiom(
+    "Single-Voter Resolvability Allowing Ties",
+    has_violation = partial(has_single_voter_resolvability_violation, allow_ties=True),
+    find_all_violations = partial(find_all_single_voter_resolvability_violations, allow_ties=True),
 )
 
 def has_weak_single_voter_resolvability_violation(prof, vm, verbose=False):
@@ -3561,10 +3617,10 @@ def has_weak_single_voter_resolvability_violation(prof, vm, verbose=False):
         Result of the test (bool): Returns True if there is a violation and False otherwise.
     """
 
-    winners = vm(prof)
-
     if isinstance(prof,ProfileWithTies):
         prof.use_extended_strict_preference()
+
+    winners = vm(prof)
 
     if len(winners) > 1:
         
@@ -3877,6 +3933,8 @@ variable_voter_axioms = [
     truncated_involvement,
     participation,
     single_voter_resolvability,
+    single_voter_resolvability_with_truncation,
+    single_voter_resolvability_with_ties,
     neutral_reversal,
     neutral_indifference,
     nonlinear_neutral_reversal,
