@@ -101,11 +101,23 @@ Variable Voter Axioms
 
 ### Single-Voter Resolvability with Truncation
 
-The ``single_voter_resolvability_with_truncation`` axiom uses ``has_single_voter_resolvability_violation`` and ``find_all_single_voter_resolvability_violations`` with ``allow_truncation=True``. See the functions above for details.
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_single_voter_resolvability_violation_with_truncation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations_with_truncation
+
+```
 
 ### Single-Voter Resolvability with Ties
 
-The ``single_voter_resolvability_with_ties`` axiom uses ``has_single_voter_resolvability_violation`` and ``find_all_single_voter_resolvability_violations`` with ``allow_ties=True``. See the functions above for details.
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_single_voter_resolvability_violation_with_ties
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations_with_ties
+
+```
 
 ## Weak Single-Voter Resolvability
 
