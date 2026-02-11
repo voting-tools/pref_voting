@@ -32,12 +32,25 @@ def _validate_tie_breaker(tie_breaker, candidates):
         raise ValueError(f"tie_breaker missing candidates: {sorted(missing)}")
     return tb_pos
 
-def _instant_runoff_basic(profile, curr_cands=None, tie_breaker=None):
+def _instant_runoff_basic(profile, curr_cands=None, tie_breaker=None, score_method=None, exit_on_majority=True):
     """The basic implementation of instant runoff.
     
     If tie_breaker is provided, eliminate one candidate at a time using the tie_breaker
     to select among tied candidates. tie_breaker[0] has lowest priority (eliminated first).
     If tie_breaker is None, eliminate all tied candidates simultaneously.
+    
+    Args:
+        profile (Profile or ProfileWithTies): The profile to use
+        curr_cands (List[int], optional): Candidates to consider
+        tie_breaker (List[int], optional): Tie-breaking order (tie_breaker[0] eliminated first)
+        score_method (str, optional): For ProfileWithTies only. "approval" or "split".
+                                      For Profile, this is ignored (always uses plurality).
+        exit_on_majority (bool): If True, stop as soon as a candidate has a strict majority
+                                 of first-place votes. If False, continue until one candidate
+                                 remains (or all are tied). Default is True.
+    
+    Returns:
+        A sorted list of winners
     """
     # need the total number of all candidates in a profile to check when all candidates have been removed   
     num_cands = profile.num_cands 
@@ -48,37 +61,92 @@ def _instant_runoff_basic(profile, curr_cands=None, tie_breaker=None):
     
     tb_pos = _validate_tie_breaker(tie_breaker, candidates)
 
-    cands_to_ignore = np.empty(0, dtype=int) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands], dtype=int)
-
-    strict_maj_size = profile.strict_maj_size()
-    
-    rs, rcounts = profile.rankings_counts # get all the ranking data
-
-    winners = [c for c in candidates 
-               if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
-
-    while len(winners) == 0:
-        plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates 
-                            if not isin(cands_to_ignore,c)}  
-        min_plurality_score = min(plurality_scores.values())
-        lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
-                                             if  plurality_scores[c] == min_plurality_score], dtype=int)
-
-        # If tie_breaker is provided, eliminate only the candidate with lowest TB priority
-        if tb_pos is not None and len(lowest_first_place_votes) > 1:
-            cand_to_remove = min(lowest_first_place_votes, key=lambda c: tb_pos[c])
-            cands_to_ignore = np.concatenate((cands_to_ignore, [cand_to_remove]), axis=None)
-        else:
-            # remove all cands with lowest plurality score
-            cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
+    # Dispatch based on profile type
+    if isinstance(profile, ProfileWithTies):
+        # Use tops_scores for ProfileWithTies
+        # Note: exit_on_majority is ignored for ProfileWithTies because approval/split
+        # scores can exceed the number of voters (a voter can approve multiple candidates)
+        sm = score_method if score_method is not None else "approval"
+        if sm not in ("approval", "split"):
+            raise ValueError("score_method must be 'approval' or 'split'")
         
-        if len(cands_to_ignore) == num_cands: # removed all of the candidates 
-            winners = sorted(lowest_first_place_votes)
-        else:
+        remaining_cands = set(candidates)
+        
+        while len(remaining_cands) > 1:
+            # Compute scores based on score_method (use sorted for determinism)
+            scores = profile.tops_scores(curr_cands=sorted(remaining_cands), score_type=sm)
+            
+            min_score = min(scores.values())
+            lowest_cands = [c for c, s in scores.items() if _scores_equal(s, min_score)]
+            
+            # Handle the all-tied case explicitly first
+            if len(lowest_cands) == len(remaining_cands):
+                if tb_pos is None:
+                    # No tie-breaker, return all as winners
+                    return sorted(remaining_cands)
+                else:
+                    # Use tie-breaker to eliminate one and continue
+                    cand_to_remove = min(remaining_cands, key=lambda c: tb_pos[c])
+                    remaining_cands.remove(cand_to_remove)
+                    continue
+            
+            # If tie_breaker is provided and there's a tie, eliminate one candidate
+            if tb_pos is not None and len(lowest_cands) > 1:
+                cand_to_remove = min(lowest_cands, key=lambda c: tb_pos[c])
+                remaining_cands.remove(cand_to_remove)
+            else:
+                # Remove all candidates with lowest score
+                remaining_cands -= set(lowest_cands)
+        
+        return sorted(remaining_cands)
+    
+    elif isinstance(profile, Profile):
+        # Profile: use the original NumPy-optimized code with plurality scores
+        cands_to_ignore = np.empty(0, dtype=int) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands], dtype=int)
+
+        strict_maj_size = profile.strict_maj_size()
+        
+        rs, rcounts = profile.rankings_counts # get all the ranking data
+
+        # Check for majority winner at the start if exit_on_majority is True
+        if exit_on_majority:
             winners = [c for c in candidates 
-                       if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
-     
-    return sorted(winners)
+                       if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+        else:
+            winners = []
+
+        while len(winners) == 0:
+            plurality_scores = {c: _num_rank_first(rs, rcounts, cands_to_ignore, c) for c in candidates 
+                                if not isin(cands_to_ignore,c)}  
+            min_plurality_score = min(plurality_scores.values())
+            lowest_first_place_votes = np.array([c for c in plurality_scores.keys() 
+                                                 if  plurality_scores[c] == min_plurality_score], dtype=int)
+
+            # If tie_breaker is provided, eliminate only the candidate with lowest TB priority
+            if tb_pos is not None and len(lowest_first_place_votes) > 1:
+                cand_to_remove = min(lowest_first_place_votes, key=lambda c: tb_pos[c])
+                cands_to_ignore = np.concatenate((cands_to_ignore, [cand_to_remove]), axis=None)
+            else:
+                # remove all cands with lowest plurality score
+                cands_to_ignore = np.concatenate((cands_to_ignore, lowest_first_place_votes), axis=None)
+            
+            if len(cands_to_ignore) == num_cands: # removed all of the candidates 
+                winners = sorted(lowest_first_place_votes)
+            else:
+                # Check for majority winner if exit_on_majority is True
+                if exit_on_majority:
+                    winners = [c for c in candidates 
+                               if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+                else:
+                    # Check if only one candidate remains
+                    remaining = [c for c in candidates if not isin(cands_to_ignore, c)]
+                    if len(remaining) == 1:
+                        winners = remaining
+         
+        return sorted(winners)
+    
+    else:
+        raise TypeError(f"Expected Profile or ProfileWithTies, got {type(profile)}")
 
 def _instant_runoff_recursive(profile, curr_cands=None, tie_breaker=None, _tb_pos=None):
     "A recursive implementation of instant runoff"
@@ -129,61 +197,6 @@ def _scores_equal(a, b, tol=FLOAT_TOLERANCE):
     return abs(float(a) - float(b)) <= tol
 
 
-def _instant_runoff_for_profile_with_ties(profile, curr_cands=None, score_method="approval", tie_breaker=None):
-    """
-    Instant Runoff for ProfileWithTies using approval or split scoring.
-    
-    Based on Delemazure & Peters (2024) "Approval-Based Instant-Runoff Voting" (https://arxiv.org/abs/2404.11407).
-    
-    Args:
-        profile (ProfileWithTies): A profile with possible ties in ballots
-        curr_cands (List[int], optional): Candidates to consider
-        score_method (str): "approval" or "split"
-        tie_breaker (List[int], optional): If provided, eliminate one at a time using this order.
-                                           tie_breaker[0] has lowest priority (eliminated first).
-    
-    Returns:
-        A sorted list of winners
-    """
-    if score_method not in ("approval", "split"):
-        raise ValueError("score_method must be 'approval' or 'split'")
-    
-    remaining_cands = set(profile.candidates if curr_cands is None else curr_cands)
-    
-    if len(remaining_cands) == 0:
-        return []
-    
-    tb_pos = _validate_tie_breaker(tie_breaker, remaining_cands)
-
-    while len(remaining_cands) > 1:
-        # Compute scores based on score_method (use sorted for determinism)
-        scores = profile.tops_scores(curr_cands=sorted(remaining_cands), score_type=score_method)
-        
-        min_score = min(scores.values())
-        lowest_cands = [c for c, s in scores.items() if _scores_equal(s, min_score)]
-        
-        # Handle the all-tied case explicitly first
-        if len(lowest_cands) == len(remaining_cands):
-            if tb_pos is None:
-                # No tie-breaker, return all as winners
-                return sorted(remaining_cands)
-            else:
-                # Use tie-breaker to eliminate one and continue
-                cand_to_remove = min(remaining_cands, key=lambda c: tb_pos[c])
-                remaining_cands.remove(cand_to_remove)
-                continue
-        
-        # If tie_breaker is provided and there's a tie, eliminate one candidate
-        if tb_pos is not None and len(lowest_cands) > 1:
-            cand_to_remove = min(lowest_cands, key=lambda c: tb_pos[c])
-            remaining_cands.remove(cand_to_remove)
-        else:
-            # Remove all candidates with lowest score
-            remaining_cands -= set(lowest_cands)
-    
-    return sorted(remaining_cands)
-
-
 def _instant_runoff_put_for_profile_with_ties(profile, curr_cands=None, score_method="approval"):
     """
     Instant Runoff PUT for ProfileWithTies using approval or split scoring.
@@ -193,7 +206,10 @@ def _instant_runoff_put_for_profile_with_ties(profile, curr_cands=None, score_me
     
     Note that the only base case is when one candidate remains. We do not
     return all candidates when they are all tied; we still branch and recurse.
-    We also do not terminate early on majority; PUT explores all paths.
+    
+    Note: exit_on_majority is not supported for approval/split scoring because
+    approval scores can exceed the number of voters (a voter can approve multiple
+    candidates).
     
     Args:
         profile (ProfileWithTies): A profile with possible ties in ballots
@@ -328,15 +344,12 @@ def _instant_runoff_for_truncated_linear_orders(profile, curr_cands = None, thre
 
 @vm(name = "Instant Runoff",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
-def instant_runoff(profile, curr_cands = None, algorithm = "basic", tie_breaker=None, score_method=None, **kwargs):
+def instant_runoff(profile, curr_cands = None, algorithm = "basic", tie_breaker=None, score_method=None, exit_on_majority=True):
     """
     If there is a majority winner then that candidate is the winner. If there is no majority winner, then remove all candidates that are ranked first by the fewest number of voters. Continue removing candidates with the fewest number first-place votes until there is a candidate with a majority of first place votes.  
     
     .. important::
         If there is more than one candidate with the fewest number of first-place votes and ``tie_breaker`` is None, then *all* such candidates are removed from the profile. If ``tie_breaker`` is provided, only one candidate is removed at a time (the one with lowest priority in the tie_breaker).
-    
-    .. note::
-        For ProfileWithTies, approval or split scoring is used (no majority check, since approval totals can exceed the number of voters). Candidates are eliminated by lowest score until one remains or all are tied.
     
     Args:
         profile (Profile or ProfileWithTies): An anonymous profile of linear orders or weak orders on a set of candidates
@@ -344,6 +357,8 @@ def instant_runoff(profile, curr_cands = None, algorithm = "basic", tie_breaker=
         algorithm (str, optional): The algorithm to use.  Options are "basic" and "recursive".  The default is "basic".
         tie_breaker (List[int], optional): If provided, use this linear order to break ties. tie_breaker[0] has lowest priority (eliminated first among tied).
         score_method (str, optional): For ProfileWithTies only. "approval" (default) or "split".
+        exit_on_majority (bool): If True (default), stop as soon as a candidate has a strict majority
+                                 of first-place votes. If False, continue until one candidate remains.
 
     Returns: 
         A sorted list of candidates
@@ -372,21 +387,15 @@ def instant_runoff(profile, curr_cands = None, algorithm = "basic", tie_breaker=
     """
     if isinstance(profile, Profile):
         if algorithm == "basic":
-            return _instant_runoff_basic(profile, curr_cands=curr_cands, tie_breaker=tie_breaker)
+            return _instant_runoff_basic(profile, curr_cands=curr_cands, tie_breaker=tie_breaker, exit_on_majority=exit_on_majority)
         elif algorithm == "recursive":
             return _instant_runoff_recursive(profile, curr_cands=curr_cands, tie_breaker=tie_breaker)
         else:
             raise ValueError("Algorithm must be either 'basic' or 'recursive'.")
     elif isinstance(profile, ProfileWithTies):
-        if profile.is_truncated_linear and tie_breaker is None and score_method is None:
-            return _instant_runoff_for_truncated_linear_orders(profile, curr_cands=curr_cands, **kwargs)
-        
-        # kwargs like threshold/hide_warnings only apply to truncated linear orders
-        if kwargs:
-            raise TypeError("threshold/hide_warnings only apply to truncated-linear profiles without ties.")
-        
+        # Use unified _instant_runoff_basic for ProfileWithTies
         sm = score_method if score_method is not None else "approval"
-        return _instant_runoff_for_profile_with_ties(profile, curr_cands=curr_cands, score_method=sm, tie_breaker=tie_breaker)
+        return _instant_runoff_basic(profile, curr_cands=curr_cands, tie_breaker=tie_breaker, score_method=sm, exit_on_majority=exit_on_majority)
     else:
         raise TypeError(f"Expected Profile or ProfileWithTies, got {type(profile)}")
 # Create some aliases for instant runoff
@@ -438,7 +447,7 @@ def instant_runoff_ranking(profile, curr_cands = None):
 
 @vm(name = "Instant Runoff TB",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
-def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None, score_method=None):
+def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None, score_method=None, exit_on_majority=True):
     """Instant Runoff (``instant_runoff``) with tie breaking:  If there is  more than one candidate with the fewest number of first-place votes, then remove the candidate with lowest in the tie_breaker ranking from the profile.
 
     Args:
@@ -446,6 +455,8 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None, score_meth
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         tie_breaker (List[int]): A list of the candidates in the profile to be used as a tiebreaker.
         score_method (str, optional): For ProfileWithTies only. "approval" (default) or "split".
+        exit_on_majority (bool): If True (default), stop as soon as a candidate has a strict majority
+                                 of first-place votes. If False, continue until one candidate remains.
 
     Returns: 
         A sorted list of candidates
@@ -470,11 +481,11 @@ def instant_runoff_tb(profile, curr_cands = None, tie_breaker = None, score_meth
     """
     # the tie_breaker is any linear order (i.e., list) of the candidates
     tb = tie_breaker if tie_breaker is not None else list(profile.candidates)
-    return instant_runoff(profile, curr_cands=curr_cands, tie_breaker=tb, score_method=score_method)
+    return instant_runoff(profile, curr_cands=curr_cands, tie_breaker=tb, score_method=score_method, exit_on_majority=exit_on_majority)
 
 @vm(name = "Instant Runoff PUT",
     input_types=[ElectionTypes.PROFILE, ElectionTypes.PROFILE_WITH_TIES])
-def instant_runoff_put(profile, curr_cands = None, score_method=None):
+def instant_runoff_put(profile, curr_cands = None, score_method=None, exit_on_majority=True):
     """
     Instant Runoff (:func:`instant_runoff`) with parallel universe tie-breaking (PUT), defined recursively: if there is a candidate with a strict majority of first-place votes, that candidate is the IRV-PUT winner; otherwise a candidate x is an IRV-PUT winner if there is some candidate y with a minimal number of first-place votes such that after removing y from the profile, x is an IRV-PUT winner.
     
@@ -482,6 +493,8 @@ def instant_runoff_put(profile, curr_cands = None, score_method=None):
         profile (Profile or ProfileWithTies): An anonymous profile of linear orders or weak orders on a set of candidates
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         score_method (str, optional): For ProfileWithTies only. "approval" (default) or "split".
+        exit_on_majority (bool): If True (default), stop as soon as a candidate has a strict majority
+                                 of first-place votes. If False, continue until one candidate remains.
 
     Returns: 
         A sorted list of candidates
@@ -523,14 +536,18 @@ def instant_runoff_put(profile, curr_cands = None, score_method=None):
         
         if len(candidates) == 0:
             return []
+        
+        if len(candidates) == 1:
+            return list(candidates)
 
         plurality_scores = profile.plurality_scores(candidates)
 
-        strict_maj_size = profile.strict_maj_size()
-        majority_winner = [cand for cand, score in plurality_scores.items() if score >= strict_maj_size]
-
-        if len(majority_winner) > 0:
-            return majority_winner
+        # Check for majority winner if exit_on_majority is True
+        if exit_on_majority:
+            strict_maj_size = profile.strict_maj_size()
+            majority_winner = [cand for cand, score in plurality_scores.items() if score >= strict_maj_size]
+            if len(majority_winner) > 0:
+                return majority_winner
         
         original_num_cands = len(candidates)
         
@@ -550,13 +567,15 @@ def instant_runoff_put(profile, curr_cands = None, score_method=None):
         
         winners = []
         for cand_to_remove in cands_to_remove:
-            new_winners = instant_runoff_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove])
+            new_winners = instant_runoff_put(profile, curr_cands = [c for c in candidates if not c == cand_to_remove], exit_on_majority=exit_on_majority)
             winners = winners + new_winners
         
         return sorted(set(winners))
     
     elif isinstance(profile, ProfileWithTies):
         sm = score_method if score_method is not None else "approval"
+        # Note: exit_on_majority is not passed to ProfileWithTies because approval/split
+        # scores can exceed the number of voters, making majority check meaningless
         return _instant_runoff_put_for_profile_with_ties(profile, curr_cands=curr_cands, score_method=sm)
     else:
         raise TypeError(f"Expected Profile or ProfileWithTies, got {type(profile)}")
@@ -574,7 +593,7 @@ ranked_choice_put.skip_registration = True
 instant_runoff_put.set_name("Instant Runoff PUT")
 
 
-def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, score_method=None):
+def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, score_method=None, exit_on_majority=True):
     """
     Instant Runoff with an explanation. In addition to the winner(s), return the order in which the candidates are eliminated as a list of lists.    
 
@@ -583,6 +602,8 @@ def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, 
         curr_cands (List[int], optional): If set, then find the winners for the profile restricted to the candidates in ``curr_cands``
         tie_breaker (List[int], optional): If provided, use this linear order to break ties. tie_breaker[0] has lowest priority (eliminated first among tied).
         score_method (str, optional): For ProfileWithTies only. "approval" (default) or "split".
+        exit_on_majority (bool): If True (default), stop as soon as a candidate has a strict majority
+                                 of first-place votes. If False, continue until one candidate remains.
 
     Returns: 
         A sorted list of candidates
@@ -635,17 +656,14 @@ def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, 
         rs, rcounts = profile.rankings_counts # get all the ranking data
         
         # Validate tie_breaker if provided
-        tb_pos = None
-        if tie_breaker is not None:
-            tb_pos = {c: i for i, c in enumerate(tie_breaker)}
-            if len(tb_pos) != len(tie_breaker):
-                raise ValueError("tie_breaker contains duplicates.")
-            missing = [c for c in candidates if c not in tb_pos]
-            if missing:
-                raise ValueError(f"tie_breaker missing candidates: {sorted(missing)}")
+        tb_pos = _validate_tie_breaker(tie_breaker, candidates)
 
-        winners = [c for c in candidates 
-                   if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+        # Check for majority winner at start if exit_on_majority is True
+        if exit_on_majority:
+            winners = [c for c in candidates 
+                       if _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+        else:
+            winners = []
         elims_list = list()
 
         while len(winners) == 0:
@@ -667,12 +685,21 @@ def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, 
             if len(cands_to_ignore) == num_cands: # removed all of the candidates 
                 winners = sorted(lowest_first_place_votes)
             else:
-                winners = [c for c in candidates 
-                           if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+                remaining = [c for c in candidates if not isin(cands_to_ignore, c)]
+                if len(remaining) == 1:
+                    # Only one candidate left
+                    winners = remaining
+                elif exit_on_majority:
+                    winners = [c for c in candidates 
+                               if not isin(cands_to_ignore,c) and _num_rank_first(rs, rcounts, cands_to_ignore, c) >= strict_maj_size]
+                else:
+                    winners = []
          
         return sorted(winners), elims_list
     
     elif isinstance(profile, ProfileWithTies):
+        # Note: exit_on_majority is ignored for ProfileWithTies because approval/split
+        # scores can exceed the number of voters (a voter can approve multiple candidates)
         sm = score_method if score_method is not None else "approval"
         if sm not in ("approval", "split"):
             raise ValueError(f"score_method must be 'approval' or 'split', got '{sm}'")
@@ -686,17 +713,11 @@ def instant_runoff_with_explanation(profile, curr_cands=None, tie_breaker=None, 
         elims_list = list()
         
         # Validate tie_breaker if provided
-        tb_pos = None
-        if tie_breaker is not None:
-            tb_pos = {c: i for i, c in enumerate(tie_breaker)}
-            if len(tb_pos) != len(tie_breaker):
-                raise ValueError("tie_breaker contains duplicates.")
-            missing = [c for c in candidates if c not in tb_pos]
-            if missing:
-                raise ValueError(f"tie_breaker missing candidates: {sorted(missing)}")
+        tb_pos = _validate_tie_breaker(tie_breaker, candidates)
         
         while len(remaining_cands) > 1:
             scores = profile.tops_scores(curr_cands=sorted(remaining_cands), score_type=sm)
+            
             min_score = min(scores.values())
             lowest_cands = sorted([c for c in scores.keys() if _scores_equal(scores[c], min_score)])
             
@@ -2601,18 +2622,18 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
             explanation.append("All remaining candidates have score 0")
             if last_remaining is not None:
                 explanation.append(f"Winners are candidates [{last_remaining}] (highest remaining scores)")
-                return [last_remaining], "\\n".join(explanation)
+                return [last_remaining], "\n".join(explanation)
             else:
                 winners = sorted(active_candidates)
                 explanation.append(f"Winners are candidates {winners} (highest remaining scores)")
-                return winners, "\\n".join(explanation)
+                return winners, "\n".join(explanation)
 
         # If only one candidate remains with positive score, they are the winner
         if len(remaining) == 1:
             winners = sorted(remaining)
             explanation.append(f"Only one candidate remains with positive score")
             explanation.append(f"Winners: {winners} (highest remaining scores)")
-            return winners, "\\n".join(explanation)
+            return winners, "\n".join(explanation)
 
         ranking = profile.rankings[voter]
         # Filter ranking to show only active candidates
@@ -2633,12 +2654,12 @@ def plurality_veto_with_explanation(profile, curr_cands=None, voter_order=None):
 
     if last_remaining is not None:
         explanation.append(f"Winners: [{last_remaining}] (highest remaining scores)")
-        return [last_remaining], "\\n".join(explanation)
+        return [last_remaining], "\n".join(explanation)
     else:
         max_score = max(scores.values())
         winners = sorted([c for c in curr_cands if scores[c] == max_score])
         explanation.append(f"Winners: {winners} (highest remaining scores)")
-        return winners, "\\n".join(explanation)
+        return winners, "\n".join(explanation)
     
 @vm(name="Consensus Builder",
     input_types=[ElectionTypes.PROFILE])
