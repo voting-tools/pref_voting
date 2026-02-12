@@ -1526,7 +1526,7 @@ def baldwin_tb(profile, curr_cands = None, tie_breaker=None):
     cands_to_ignore = np.concatenate((cands_to_ignore, np.array([cand_to_remove])), axis=None)
     
     winners = list()
-    if cands_to_ignore.shape[0] ==  all_num_cands: # all candidates have lowest Borda score
+    if cands_to_ignore.shape[0] ==  num_cands: # all candidates have lowest Borda score
         winners = sorted(last_place_borda_scores)
     else: # remove the candidates with lowest Borda score
         num_cands = len(candidates)
@@ -1660,7 +1660,8 @@ def baldwin_with_explanation(profile, curr_cands = None):
     rcounts = profile._rcounts # get all the ranking data
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
     
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    cands_to_ignore = np.empty(0)
+    num_cands = len(candidates)
 
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
 
@@ -1672,10 +1673,9 @@ def baldwin_with_explanation(profile, curr_cands = None):
     cands_to_ignore = np.concatenate((cands_to_ignore, np.array(last_place_borda_scores)), axis=None)
     
     winners = list()
-    if cands_to_ignore.shape[0] ==  all_num_cands: # all candidates have lowest Borda score
+    if cands_to_ignore.shape[0] ==  num_cands: # all candidates have lowest Borda score
         winners = sorted(last_place_borda_scores)
     else: # remove the candidates with lowest Borda score
-        num_cands = len(candidates)
         updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
         
     while len(winners) == 0:
@@ -1688,7 +1688,7 @@ def baldwin_with_explanation(profile, curr_cands = None):
         
         cands_to_ignore = np.concatenate((cands_to_ignore, np.array(last_place_borda_scores)), axis=None)
                 
-        if cands_to_ignore.shape[0] == all_num_cands: # removed all remaining candidates
+        if cands_to_ignore.shape[0] == num_cands: # removed all remaining candidates
             winners = sorted(last_place_borda_scores)
         elif num_cands - cands_to_ignore.shape[0] ==  1: # only one candidate remains
             winners = sorted([c for c in candidates if c not in cands_to_ignore])
@@ -1735,6 +1735,7 @@ def strict_nanson(profile, curr_cands = None):
     rcounts = profile._rcounts # get all the ranking data
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
     cands_to_ignore = np.empty(0)
+    num_cands = len(candidates)
 
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
     
@@ -1743,10 +1744,9 @@ def strict_nanson(profile, curr_cands = None):
     
     cands_to_ignore = np.concatenate((cands_to_ignore, below_borda_avg_candidates), axis=None)
     winners = list()
-    if cands_to_ignore.shape[0] == all_num_cands:  # all candidates have same Borda score
+    if cands_to_ignore.shape[0] == num_cands:  # all candidates have same Borda score
         winners = sorted(candidates)
     else: 
-        num_cands = len(candidates)
         updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
     while len(winners) == 0: 
         
@@ -1760,7 +1760,7 @@ def strict_nanson(profile, curr_cands = None):
         
         cands_to_ignore = np.concatenate((cands_to_ignore, below_borda_avg_candidates), axis=None)
                 
-        if (below_borda_avg_candidates.shape[0] == 0) or ((all_num_cands - cands_to_ignore.shape[0]) == 1):
+        if (below_borda_avg_candidates.shape[0] == 0) or ((num_cands - cands_to_ignore.shape[0]) == 1):
             winners = sorted([c for c in candidates if c not in cands_to_ignore])
         else:
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
@@ -1798,6 +1798,7 @@ def strict_nanson_with_explanation(profile, curr_cands = None):
     rcounts = profile._rcounts # get all the ranking data
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
     cands_to_ignore = np.empty(0)
+    num_cands = len(candidates)
     elim_list = list()
     
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
@@ -1807,13 +1808,12 @@ def strict_nanson_with_explanation(profile, curr_cands = None):
     
     cands_to_ignore = np.concatenate((cands_to_ignore, np.array(below_borda_avg_candidates)), axis=None)
     winners = list()
-    if cands_to_ignore.shape[0] == all_num_cands:  # all candidates have same Borda score
+    if cands_to_ignore.shape[0] == num_cands:  # all candidates have same Borda score
         elim_list.append({"avg_borda_score": avg_borda_score, 
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
         winners = sorted(candidates)
     else: 
-        num_cands = len(candidates)
         elim_list.append({"avg_borda_score": avg_borda_score, 
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
@@ -1833,7 +1833,7 @@ def strict_nanson_with_explanation(profile, curr_cands = None):
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
                 
-        if (len(below_borda_avg_candidates) == 0) or ((all_num_cands - cands_to_ignore.shape[0]) == 1):
+        if (len(below_borda_avg_candidates) == 0) or ((num_cands - cands_to_ignore.shape[0]) == 1):
             winners = sorted([c for c in candidates if c not in cands_to_ignore])
         else:
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
@@ -1880,7 +1880,8 @@ def weak_nanson(profile, curr_cands = None):
     rcounts = profile._rcounts # get all the ranking data
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
     
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    cands_to_ignore = np.empty(0)
+    num_cands = len(candidates)
 
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
 
@@ -1891,12 +1892,11 @@ def weak_nanson(profile, curr_cands = None):
     cands_to_ignore = np.concatenate((cands_to_ignore, below_borda_avg_candidates), axis=None)
     
     winners = list()
-    if cands_to_ignore.shape[0] == all_num_cands:  # all candidates have same Borda score
+    if cands_to_ignore.shape[0] == num_cands:  # all candidates have same Borda score
         winners = sorted(candidates)
-    elif all_num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
+    elif num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
         winners = [c for c in candidates if not isin(cands_to_ignore, c)]
     else: 
-        num_cands = len(candidates)
         updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
         
     while len(winners) == 0: 
@@ -1912,9 +1912,9 @@ def weak_nanson(profile, curr_cands = None):
         
         cands_to_ignore = np.concatenate((cands_to_ignore, below_borda_avg_candidates), axis=None)
         
-        if cands_to_ignore.shape[0] == all_num_cands:  # all remaining candidates have been removed
+        if cands_to_ignore.shape[0] == num_cands:  # all remaining candidates have been removed
             winners = sorted(below_borda_avg_candidates)
-        elif all_num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
+        elif num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
             winners = [c for c in candidates if not isin(cands_to_ignore, c)]
         else:
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
@@ -1952,7 +1952,8 @@ def weak_nanson_with_explanation(profile, curr_cands = None):
         
     rcounts = profile._rcounts # get all the ranking data
     rankings = profile._rankings if curr_cands is None else _find_updated_profile(profile._rankings, np.array([c for c in profile.candidates if c not in curr_cands]), all_num_cands)
-    cands_to_ignore = np.empty(0) if curr_cands is None else np.array([c for c in profile.candidates if c not in curr_cands])
+    cands_to_ignore = np.empty(0)
+    num_cands = len(candidates)
     elim_list = list()
     
     borda_scores = {c: _borda_score(rankings, rcounts, len(candidates), c) for c in candidates}
@@ -1963,18 +1964,17 @@ def weak_nanson_with_explanation(profile, curr_cands = None):
     
     cands_to_ignore = np.concatenate((cands_to_ignore, np.array(below_borda_avg_candidates)), axis=None)
     winners = list()
-    if cands_to_ignore.shape[0] == all_num_cands:  # all candidates have same Borda score
+    if cands_to_ignore.shape[0] == num_cands:  # all candidates have same Borda score
         elim_list.append({"avg_borda_score": avg_borda_score, 
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
         winners = sorted(candidates)
-    elif all_num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
+    elif num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
         elim_list.append({"avg_borda_score": avg_borda_score, 
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
         winners = [c for c in candidates if not isin(cands_to_ignore, c)]
     else: 
-        num_cands = len(candidates)
         elim_list.append({"avg_borda_score": avg_borda_score, 
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
@@ -1996,9 +1996,9 @@ def weak_nanson_with_explanation(profile, curr_cands = None):
                           "elim_cands": below_borda_avg_candidates,
                           "borda_scores": borda_scores})
                 
-        if cands_to_ignore.shape[0] == all_num_cands:  # all remaining candidates have been removed
+        if cands_to_ignore.shape[0] == num_cands:  # all remaining candidates have been removed
             winners = sorted(below_borda_avg_candidates)
-        elif all_num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
+        elif num_cands - cands_to_ignore.shape[0]  == 1: # one candidate remains
             winners = [c for c in candidates if not isin(cands_to_ignore, c)]
         else:
             updated_rankings = _find_updated_profile(rankings, cands_to_ignore, num_cands)
