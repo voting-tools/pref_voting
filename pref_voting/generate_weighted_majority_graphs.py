@@ -1,5 +1,5 @@
 '''
-    File: generate_margin_graphs.py
+    File: generate_weighted_majority_graphs.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: July 14, 2022
     Updated: December 19, 2022
@@ -7,7 +7,6 @@
     Functions to generate a margin graph
     
 '''
-
 
 import networkx as nx
 from itertools import combinations
@@ -221,7 +220,87 @@ def generate_edge_ordered_tournament_infinite_limit(num_candidates, cov_matrix =
     
     return MarginGraph(candidates, w_edges)
 
-## Generating Canonical MarginGraphs without Tied Margins
+## Enumerating Canonical Majority Graphs
+
+def _canonical_tournament(num_verts, edges):
+    """
+    Return (certificate, canonical_edges) for a tournament on 0,...,num_verts-1.
+
+    The certificate is the lex-smallest upper-triangle bitstring over all
+    relabelings of the vertices.  canonical_edges is the corresponding
+    canonically labeled edge set.
+    """
+    edge_set = set(edges)
+    pairs = list(combinations(range(num_verts), 2))
+
+    best_bits = None
+    for perm in permutations(range(num_verts)):
+        bits = tuple(
+            1 if (perm[i], perm[j]) in edge_set else 0
+            for i, j in pairs
+        )
+        if best_bits is None or bits < best_bits:
+            best_bits = bits
+
+    canonical_edges = [
+        (i, j) if bit else (j, i)
+        for bit, (i, j) in zip(best_bits, pairs)
+    ]
+    return best_bits, canonical_edges
+
+
+def enumerate_tournaments(num_cands, candidates=None, cmap=None):
+    """
+    Enumerate one MajorityGraph representative from each isomorphism class
+    of tournaments on num_cands candidates.
+    """
+    if not isinstance(num_cands, int) or num_cands < 0:
+        raise ValueError("num_cands must be a nonnegative integer.")
+
+    if candidates is None:
+        candidates = list(range(num_cands))
+    else:
+        candidates = list(candidates)
+        if len(candidates) != num_cands:
+            raise ValueError("candidates must have length num_cands.")
+
+    if num_cands <= 1:
+        return [MajorityGraph(candidates, [], cmap=cmap)]
+
+    # One canonically labeled representative on vertices 0,...,k-1
+    # for each isomorphism class at size k.
+    canonical_edge_sets = [[]]
+
+    for new_v in range(1, num_cands):
+        seen = {}
+
+        for old_edges in canonical_edge_sets:
+            # Bit i = 0 means i -> new_v, bit i = 1 means new_v -> i.
+            for mask in range(1 << new_v):
+                new_edges = list(old_edges)
+
+                for i in range(new_v):
+                    if (mask >> i) & 1:
+                        new_edges.append((new_v, i))
+                    else:
+                        new_edges.append((i, new_v))
+
+                cert, canon_edges = _canonical_tournament(new_v + 1, new_edges)
+                if cert not in seen:
+                    seen[cert] = canon_edges
+
+        canonical_edge_sets = [seen[cert] for cert in sorted(seen)]
+
+    return [
+        MajorityGraph(
+            candidates,
+            [(candidates[i], candidates[j]) for i, j in edges],
+            cmap=cmap,
+        )
+        for edges in canonical_edge_sets
+    ]
+
+## Enumerating Canonical MarginGraphs without Tied Margins
 
 def _enumerate_ceots(num_cands, num_edges, partial_ceot, used_nodes, next_node):
 
@@ -338,7 +417,7 @@ def enumerate_uniquely_weighted_margin_graphs(num_cands, weight_domain):
                               [(e[0], e[1], weight_list[eidx]) for eidx, e in enumerate(reversed(ceot))])
 
 
-## Generating Canonical MarginGraphs with Tied Margins
+## Enumerating Canonical MarginGraphs with Tied Margins
 
 def _enumerate_cweots_as_edgelist(num_cands, include_weak_tournaments=True):
     
