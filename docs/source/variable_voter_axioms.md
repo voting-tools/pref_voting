@@ -99,6 +99,26 @@ Variable Voter Axioms
 
 ```
 
+### Single-Voter Resolvability with Truncation
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_single_voter_resolvability_violation_with_truncation
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations_with_truncation
+
+```
+
+### Single-Voter Resolvability with Ties
+
+```{eval-rst}
+
+.. autofunction:: pref_voting.variable_voter_axioms.has_single_voter_resolvability_violation_with_ties
+
+.. autofunction:: pref_voting.variable_voter_axioms.find_all_single_voter_resolvability_violations_with_ties
+
+```
+
 ## Weak Single-Voter Resolvability
 
 ```{eval-rst}

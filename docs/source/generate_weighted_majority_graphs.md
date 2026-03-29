@@ -1,4 +1,4 @@
-Generate Weighted Majority Graphs
+Generate (Weighted) Majority Graphs
 =======================================
 
 ## Generate Linearly Edge-Ordered Tournaments
@@ -33,7 +33,17 @@ Generate Weighted Majority Graphs
 ## Enumerate Canonical Objects
 
 ```{eval-rst}
+.. autofunction:: pref_voting.generate_weighted_majority_graphs.enumerate_tournaments
+
+```
+
+```{eval-rst}
 .. autofunction:: pref_voting.generate_weighted_majority_graphs.enumerate_canonical_edge_ordered_tournaments
+
+```
+
+```{eval-rst}
+.. autofunction:: pref_voting.generate_weighted_majority_graphs.enumerate_canonical_weakly_edge_ordered_tournaments
 
 ```
 
@@ -42,3 +52,7 @@ Generate Weighted Majority Graphs
 
 ```
 
+```{eval-rst}
+.. autofunction:: pref_voting.generate_weighted_majority_graphs.enumerate_margin_graphs
+
+```
