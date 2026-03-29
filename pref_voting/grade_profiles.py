@@ -78,7 +78,7 @@ class GradeProfile(object):
 
         self.use_grade_order = grade_order is not None
 
-        self.compare_function = lambda v1, v2: (v1 > v2) - (v2 > v1) if grade_order is None else lambda v1, v2: (grade_order.index(v1) < grade_order.index(v2)) - (grade_order.index(v2) < grade_order.index(v1))
+        self.compare_function = (lambda v1, v2: (v1 > v2) - (v2 > v1)) if grade_order is None else (lambda v1, v2: (grade_order.index(v1) < grade_order.index(v2)) - (grade_order.index(v2) < grade_order.index(v1)))
 
         self.gmap = gmap if gmap is not None else {g: str(g) for g in self.grades}
         """The candidate map is a dictionary associating an alternative with the name used when displaying a alternative."""
