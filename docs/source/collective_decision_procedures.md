@@ -20,7 +20,7 @@ We further categorize collective decision procedures based on the input from the
       * [Probabilistic Methods](probabilistic_methods.md)
 
 
-  2. Cardinal procedures take as input a [UtilityProfile](utility_profiles.md) and/or a [GradeProfile](grade_profiles.md). These procedures are discussed in the following: 
+  2. Cardinal procedures take as input a [UtilityProfile](utility_profiles.md), a [GradeProfile](grade_profiles.md), and/or a [PrefGradeProfile](pref_grade_profiles.md). These procedures are discussed in the following:
 
       * [Utility Methods](utility_methods.md)
       * [Grade Methods](grade_methods.md)
