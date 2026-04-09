@@ -112,6 +112,7 @@ Contents
    pairwise_profiles
    grade_profiles
    pref_grade_profiles
+   util_grade_profiles
    utility_profiles
    spatial_profiles
    weighted_majority_graphs
