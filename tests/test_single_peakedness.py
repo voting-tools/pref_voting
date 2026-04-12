@@ -189,31 +189,56 @@ def test_num_mavericks_linear_profile():
 
 def test_min_k_linear_profile():
     prof = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0], [2, 1, 0], [0, 2, 1]])
-    min_k, best_axis = min_k_maverick_single_peaked(prof)
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
     assert min_k == 1
     assert best_axis in ([0, 1, 2], [2, 1, 0])
+    assert isinstance(sp_prof, Profile)
+    assert sp_prof.num_voters == 4
 
 
 def test_min_k_sp_profile_is_zero():
     prof = Profile([[0, 1, 2], [1, 0, 2], [2, 1, 0]])
-    min_k, best_axis = min_k_maverick_single_peaked(prof)
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
     assert min_k == 0
     assert best_axis is not None
+    assert sp_prof.num_voters == prof.num_voters
 
 
 def test_min_k_single_candidate():
     prof = Profile([[0], [0]])
-    assert min_k_maverick_single_peaked(prof) == (0, [0])
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
+    assert min_k == 0
+    assert best_axis == [0]
+    assert sp_prof.num_voters == 2
 
 
 def test_min_k_returns_valid_axis_when_all_voters_maverick():
     # Every ballot is fully tied, default handling counts every voter as a
     # maverick for every axis.  best_axis must still be a valid axis, not None.
     prof = ProfileWithTies([{0: 1, 1: 1, 2: 1}] * 3)
-    min_k, best_axis = min_k_maverick_single_peaked(prof)
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
     assert min_k == 3
     assert best_axis is not None
     assert sorted(best_axis) == [0, 1, 2]
+    assert sp_prof is None
+
+
+def test_min_k_sp_profile_preserves_type():
+    # ProfileWithTies input → ProfileWithTies output
+    prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1: 1, 0: 2, 2: 3}])
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
+    assert isinstance(sp_prof, ProfileWithTies)
+    assert sp_prof.num_voters == prof.num_voters - min_k
+
+
+def test_min_k_sp_profile_is_anonymized():
+    # Duplicate rankings should be collapsed with rcounts
+    prof = Profile([[0, 1, 2], [0, 1, 2], [1, 0, 2], [2, 1, 0]])
+    min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
+    assert min_k == 0
+    assert sp_prof.num_voters == 4
+    # Anonymized: 3 distinct ranking types, not 4 individual ballots
+    assert len(sp_prof._rankings) == 3
 
 
 def test_num_mavericks_with_possibly_sp():

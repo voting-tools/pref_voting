@@ -240,8 +240,12 @@ def min_k_maverick_single_peaked(profile, treat_truncated_as_maverick=False,
             See module docstring for details.
 
     Returns:
-        tuple: ``(min_k, best_axis)`` where ``min_k`` (int) is the minimum
-        number of mavericks and ``best_axis`` (list) is an axis achieving it.
+        tuple: ``(min_k, best_axis, sp_profile)`` where ``min_k`` (int) is
+        the minimum number of mavericks, ``best_axis`` (list) is an axis
+        achieving it, and ``sp_profile`` is the anonymized sub-profile of
+        non-maverick voters (a :class:`Profile` if the input is a
+        :class:`Profile`, a :class:`ProfileWithTies` if the input is a
+        :class:`ProfileWithTies`, or ``None`` if all voters are mavericks).
 
     Example:
 
@@ -251,8 +255,8 @@ def min_k_maverick_single_peaked(profile, treat_truncated_as_maverick=False,
         from pref_voting.single_peakedness import min_k_maverick_single_peaked
 
         prof = Profile([[0, 1, 2], [1, 0, 2], [1, 2, 0], [2, 1, 0], [0, 2, 1]])
-        min_k, best_axis = min_k_maverick_single_peaked(prof)
-        # min_k = 1, best_axis = [0, 1, 2]
+        min_k, best_axis, sp_prof = min_k_maverick_single_peaked(prof)
+        # min_k = 1, best_axis = [0, 1, 2], sp_prof has 4 voters
 
     References:
         Faliszewski, Hemaspaandra & Hemaspaandra (2014), "The complexity of
@@ -262,13 +266,15 @@ def min_k_maverick_single_peaked(profile, treat_truncated_as_maverick=False,
     """
     candidates = profile.candidates
     m = len(candidates)
+    is_profile = isinstance(profile, Profile)
+
     if m <= 1:
-        return 0, list(candidates)
+        return 0, list(candidates), profile.anonymize()
 
     num_cands = m
 
     # Use anonymize() to deduplicate rankings
-    if isinstance(profile, Profile):
+    if is_profile:
         anon = profile.to_profile_with_ties().anonymize()
     else:
         anon = profile.anonymize()
@@ -304,7 +310,34 @@ def min_k_maverick_single_peaked(profile, treat_truncated_as_maverick=False,
             if best_k == 0:
                 break
 
-    return best_k, best_axis
+    # Build the anonymized sub-profile of non-maverick voters on best_axis
+    sp_rankings = []
+    sp_counts = []
+    for r, c in rankings_and_counts:
+        if _is_ranking_sp(r, num_cands, best_axis,
+                          treat_truncated_as_maverick, tied_ranking_handling):
+            sp_rankings.append(r)
+            sp_counts.append(int(c))
+
+    if not sp_rankings:
+        sp_profile = None
+    elif is_profile:
+        sp_profile = Profile(
+            [sorted(r.rmap.keys(), key=lambda c: r.rmap[c])
+             for r in sp_rankings],
+            rcounts=sp_counts,
+            cmap=profile.cmap,
+        )
+    else:
+        from pref_voting.profiles_with_ties import ProfileWithTies
+        sp_profile = ProfileWithTies(
+            [r.rmap for r in sp_rankings],
+            rcounts=sp_counts,
+            candidates=list(candidates),
+            cmap=profile.cmap,
+        )
+
+    return best_k, best_axis, sp_profile
 
 
 # Internal helpers
