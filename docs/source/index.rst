@@ -162,7 +162,9 @@ Contents
    :caption: Analysis
 
    analysis_overview
-   
+   analysis_of_procedures
+   analysis_of_profiles
+
 
 Index
 ----------------------

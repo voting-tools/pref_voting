@@ -528,9 +528,9 @@ def generate_pref_approval_profile(
       candidates ranked in the top *k* positions.  The approval set is
       therefore upward closed in the voter's preference relation.
 
-    The preference model (the part before the first ``"_"``) can be any
+    The preference model (the part before the last ``"_"``) can be any
     model accepted by :func:`get_rankings` (e.g., ``"IC"``, ``"MALLOWS"``,
-    ``"URN"``, ``"MALLOWS-RELPHI"``, etc.).  In the future, joint models
+    ``"URN"``, ``"MALLOWS-RELPHI"``, ``"single_peaked_conitzer"``, etc.).  In the future, joint models
     that do not decompose into separate preference and approval components
     can be added as single-token ``probmodel`` values (without an
     underscore separator).
@@ -570,9 +570,9 @@ def generate_pref_approval_profile(
     else:
         probmodel = "IC_uniform"
 
-    # Split into preference model and approval model at the first underscore
+    # Split into preference model and approval model at the last underscore
     if "_" in probmodel:
-        pref_model, approval_model = probmodel.split("_", 1)
+        pref_model, approval_model = probmodel.rsplit("_", 1)
     else:
         # Future: joint models that don't decompose
         raise ValueError(
