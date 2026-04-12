@@ -1,5 +1,6 @@
 import pytest
-from pref_voting.generate_profiles import generate_profile, generate_profile_with_groups, generate_truncated_profile, minimal_profile_from_edge_order
+from pref_voting.generate_profiles import generate_profile, generate_profile_with_groups, generate_truncated_profile, minimal_profile_from_edge_order, generate_pref_approval_profile
+from pref_voting.pref_grade_profile import PrefGradeProfile
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 
@@ -321,6 +322,30 @@ def test_generate_multiple_profiles():
     assert len(profs) == 5
     assert all([len(prof.candidates) == 4 for prof in profs])
     assert all([len(prof.rankings) == 3 for prof in profs])
+
+def test_generate_pref_approval_profile():
+
+    prof = generate_pref_approval_profile(4, 5, seed=1)
+    assert type(prof) == PrefGradeProfile
+    assert len(prof.candidates) == 4
+    assert prof.num_voters == 5
+    assert prof.grades == [0, 1]
+
+    for ranking, grade_function in zip(prof._rankings, prof._grades):
+        ordered_cands = [c for c, _ in sorted(ranking.rmap.items(), key=lambda item: item[1])]
+        grades = [grade_function.as_dict()[c] for c in ordered_cands]
+        assert grades == sorted(grades, reverse=True)
+
+def test_generate_pref_approval_profile_multiple_profiles_have_distinct_rankings():
+
+    profs = generate_pref_approval_profile(4, 5, num_profiles=2, seed=7)
+    assert type(profs) == list
+    assert len(profs) == 2
+    assert all(type(prof) == PrefGradeProfile for prof in profs)
+
+    rankings0 = [r.rmap for r in profs[0]._rankings]
+    rankings1 = [r.rmap for r in profs[1]._rankings]
+    assert rankings0 != rankings1
 
 def test_generate_profile_with_groups():
 

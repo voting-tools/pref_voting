@@ -581,18 +581,21 @@ def generate_pref_approval_profile(
             f"(e.g., 'IC_uniform', 'MALLOWS_uniform')."
         )
 
-    seed = kwargs.get('seed', None)
+    seed = kwargs.pop('seed', None)
     rng = np.random.default_rng(seed)
 
     grades = [0, 1]
     gmap = {0: "Not Approved", 1: "Approved"}
 
-    # Build kwargs for get_rankings (put pref_model back as probmodel)
-    ranking_kwargs = dict(kwargs)
-    ranking_kwargs['probmodel'] = pref_model
-
     profiles = []
     for _ in range(num_profiles):
+        ranking_kwargs = dict(kwargs)
+        ranking_kwargs['probmodel'] = pref_model
+        if seed is not None:
+            ranking_kwargs['seed'] = seed if num_profiles == 1 else int(
+                rng.integers(0, np.iinfo(np.int64).max)
+            )
+
         rankings = get_rankings(num_candidates, num_voters, **ranking_kwargs)
 
         ranking_dicts = []
