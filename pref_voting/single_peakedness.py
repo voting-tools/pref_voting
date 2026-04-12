@@ -307,9 +307,7 @@ def min_k_maverick_single_peaked(profile, treat_truncated_as_maverick=False,
     return best_k, best_axis
 
 
-# =============================================================================
 # Internal helpers
-# =============================================================================
 
 def _validate_axis(axis):
     """Validate that the axis is a duplicate-free list of candidates."""
