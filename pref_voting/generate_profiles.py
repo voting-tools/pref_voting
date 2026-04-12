@@ -2,7 +2,7 @@
     File: gen_profiles.py
     Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
     Date: December 7, 2020
-    Updated: May 25, 2025
+    Updated: April 11, 2026
     
     Functions to generate profiles
 
@@ -18,8 +18,8 @@ import random
 from scipy.stats import gamma
 from itertools import permutations
 from pref_voting.helper import weak_compositions, weak_orders
-
 from pref_voting.profiles_with_ties import ProfileWithTies
+from pref_voting.pref_grade_profile import PrefGradeProfile
 from ortools.linear_solver import pywraplp
 from prefsampling.ordinal import impartial, impartial_anonymous, urn, plackett_luce, didi, stratification, single_peaked_conitzer, single_peaked_walsh, single_peaked_circle, single_crossing, euclidean, mallows
 
@@ -506,6 +506,127 @@ def generate_profile_with_groups(
         profs.append(prof)
 
     return profs[0] if num_profiles == 1 else profs
+
+def generate_pref_approval_profile(
+    num_candidates,
+    num_voters,
+    num_profiles=1,
+    **kwargs,
+):
+    """Generate PrefGradeProfile(s) with approval grades using a given probability model.
+
+    Each voter's ranking is generated using a probability model for
+    preferences, and each voter's approval set is generated using a
+    probability model for approvals.  The two models are specified jointly
+    via the ``probmodel`` keyword argument, which has the form
+    ``"<pref_model>_<approval_model>"``.
+
+    Currently supported approval models:
+
+    * ``"uniform"`` -- each voter independently selects a uniformly random
+      cutoff position *k* in {0, 1, ..., num_candidates}, and approves the
+      candidates ranked in the top *k* positions.  The approval set is
+      therefore upward closed in the voter's preference relation.
+
+    The preference model (the part before the first ``"_"``) can be any
+    model accepted by :func:`get_rankings` (e.g., ``"IC"``, ``"MALLOWS"``,
+    ``"URN"``, ``"MALLOWS-RELPHI"``, etc.).  In the future, joint models
+    that do not decompose into separate preference and approval components
+    can be added as single-token ``probmodel`` values (without an
+    underscore separator).
+
+    Args:
+        num_candidates (int): The number of candidates.
+        num_voters (int): The number of voters.
+        num_profiles (int): The number of profiles to generate (default 1).
+        kwargs: Parameters for the probability model.  The ``probmodel``
+            keyword (default ``"IC_uniform"``) selects the joint model.
+            The ``seed`` keyword controls reproducibility.  Any remaining
+            keywords are forwarded to the preference model (e.g., ``phi``
+            for Mallows).
+
+    Returns:
+        PrefGradeProfile or list[PrefGradeProfile]: A single profile if
+        ``num_profiles`` is 1, otherwise a list of profiles.
+
+    Examples:
+
+        .. code-block:: python
+
+            # IC preferences with uniform approval cutoff (default)
+            pgp = generate_pref_approval_profile(4, 10)
+
+            # Mallows preferences with uniform approval cutoff
+            pgp = generate_pref_approval_profile(4, 10, probmodel="MALLOWS_uniform", phi=0.5)
+
+            # URN preferences with uniform approval cutoff
+            pgp = generate_pref_approval_profile(4, 10, probmodel="URN_uniform", alpha=10)
+    """
+    # --- parse probmodel ---
+    if 'probmodel' in kwargs:
+        probmodel = kwargs.pop('probmodel')
+    elif 'probmod' in kwargs:
+        probmodel = kwargs.pop('probmod')
+    else:
+        probmodel = "IC_uniform"
+
+    # Split into preference model and approval model at the first underscore
+    if "_" in probmodel:
+        pref_model, approval_model = probmodel.split("_", 1)
+    else:
+        # Future: joint models that don't decompose
+        raise ValueError(
+            f"Unrecognized joint probability model: '{probmodel}'. "
+            f"Expected a compound model of the form '<pref_model>_<approval_model>' "
+            f"(e.g., 'IC_uniform', 'MALLOWS_uniform')."
+        )
+
+    seed = kwargs.get('seed', None)
+    rng = np.random.default_rng(seed)
+
+    grades = [0, 1]
+    gmap = {0: "Not Approved", 1: "Approved"}
+
+    # Build kwargs for get_rankings (put pref_model back as probmodel)
+    ranking_kwargs = dict(kwargs)
+    ranking_kwargs['probmodel'] = pref_model
+
+    profiles = []
+    for _ in range(num_profiles):
+        rankings = get_rankings(num_candidates, num_voters, **ranking_kwargs)
+
+        ranking_dicts = []
+        grade_maps = []
+
+        for voter_ranking in rankings:
+            # voter_ranking: list of candidates from most to least preferred
+            rdict = {int(c): pos + 1 for pos, c in enumerate(voter_ranking)}
+            ranking_dicts.append(rdict)
+
+            if approval_model == "uniform":
+                # Approve top k candidates, k uniform in {0, ..., num_candidates}
+                cutoff = int(rng.integers(0, num_candidates + 1))
+            else:
+                raise ValueError(
+                    f"Unrecognized approval model: '{approval_model}'. "
+                    f"Currently supported: 'uniform'."
+                )
+
+            gdict = {}
+            for pos, c in enumerate(voter_ranking):
+                gdict[int(c)] = 1 if pos < cutoff else 0
+            grade_maps.append(gdict)
+
+        profiles.append(
+            PrefGradeProfile(
+                ranking_dicts,
+                grade_maps,
+                grades,
+                gmap=gmap,
+            )
+        )
+
+    return profiles[0] if num_profiles == 1 else profiles
 
 ####
 # Enumerating profiles

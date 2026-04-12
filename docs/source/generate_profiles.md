@@ -350,6 +350,13 @@ We use the [prefsampling](https://comsoc-community.github.io/prefsampling/index.
 
 ```
 
+### Generate a Preference-Approval Profile
+
+```{eval-rst}
+.. autofunction:: pref_voting.generate_profiles.generate_pref_approval_profile
+
+```
+
 ## Enumerating profiles
 
 ### Enumerate anonymous profiles
