@@ -1,68 +1,8 @@
 Overview
 ==========
 
-Functions that can be used to compare and contrast voting methods. 
+``pref_voting`` provides two complementary kinds of analysis tools:
 
+- **Analysis of procedures** — functions that analyze collective decision procedures, for example by finding profiles on which different methods disagree, estimating Condorcet efficiency, measuring resoluteness, or counting axiom violations.
 
-## Profiles with Different Winners
-
-
-```{eval-rst}
-
-
-.. autofunction:: pref_voting.analysis.find_profiles_with_different_winners
-
-
-```
-
-## Condorcet Efficiency  
-
-
-```{eval-rst}
-
-
-.. autofunction:: pref_voting.analysis.condorcet_efficiency_data
-
-
-```
-
-## Resoluteness
-
-
-```{eval-rst}
-
-
-.. autofunction:: pref_voting.analysis.resoluteness_data
-
-
-```
-
-## Axiom Violations  
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.analysis.axiom_violations_data
-
-
-```
-
-## Binomial Confidence Interval
-
-```{eval-rst}
-
-.. autofunction:: pref_voting.analysis.binomial_confidence_interval
-
-```
-
-## Means with Estimated Standard Error  
-
-
-```{eval-rst}
-
-
-.. autofunction:: pref_voting.analysis.means_with_estimated_standard_error
-
-
-```
-
-
+- **Analysis of profiles** — functions that analyze a preference profile independently of any particular procedure, measuring structural properties of the electorate such as how close the profile is to satisfying a domain restriction.
