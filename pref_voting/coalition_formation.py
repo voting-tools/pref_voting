@@ -1,6 +1,6 @@
 """
 An implementation of the algorithm in:
-"AI-Generated Compromises for Coalition Formation", by Eyal Briman, Ehud Shapiro, and Nimrod Talmon (2024), https://arxiv.org/abs/2410.21440
+"AI-Generated Compromises for Coalition Formation", by Eyal Briman, Ehud Shapiro, and Nimrod Talmon (2024), https://arxiv.org/pdf/2512.05983
 
 Programmer: Hillel Ohayon.
 Date: 2025-04-04.

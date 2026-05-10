@@ -3,8 +3,7 @@ Tests for coalition_formation.py (AI textual version).
 
 Paper: "AI-Generated Compromises for Coalition Formation",
        by Eyal Briman, Ehud Shapiro, and Nimrod Talmon (2024),
-       https://arxiv.org/abs/2410.21440
-
+        https://arxiv.org/pdf/2512.05983
 Programmers: Hillel Ohayon.
 Date: 2025-04-04.
 """
