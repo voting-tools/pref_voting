@@ -10,9 +10,10 @@ from pref_voting.voting_method import *
 from pref_voting.iterative_methods import consensus_builder
 from pref_voting.probabilistic_methods import maximal_lottery, RaDiUS
 from pref_voting.grade_profiles import GradeProfile
-from networkx import topological_sort, is_directed_acyclic_graph
+from networkx import topological_sort, is_directed_acyclic_graph, DiGraph
 import math
 import logging
+from sortedcontainers import SortedDict
 
 @vm(name="Random Consensus Builder (Stochastic)")
 def random_consensus_builder_st(profile, curr_cands=None, beta=0.5):
@@ -132,21 +133,35 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
         # Output should be either [1, 0, 2] or [1, 2, 0], with higher probability for [1, 0, 2].
     """
 
-    #TODO: check w
-    
-    
+    w_results = SortedDict()
+
     candidates = curr_cands if curr_cands is not None else gprofile.candidates
     logger.info("Starting RGCR with candidates: %s", candidates)
+
+    def _ranking_graph(gprofile:GradeProfile):
+        # Helper function to create the ranking graph from the GProfile.
+        GB = DiGraph()
+        GB.add_nodes_from(gprofile.candidates)
+        gmap = [g.mapping for g in gprofile._grades]
+        for i in range(len(gmap)):
+            voter = gmap[i]
+            voter_sorted_cands = sorted(voter.keys(), key=lambda c: voter[c], reverse=True)
+            for j in range(len(voter_sorted_cands)-1):
+                for k in range(j+1, len(voter_sorted_cands)):
+                    c1 = voter_sorted_cands[j]
+                    c2 = voter_sorted_cands[k]
+                    if c1 in candidates and c2 in candidates:
+                        GB.add_edge(c1, c2)
+        return GB
     
     # This part isn't in the paper, the contrary - the paper says that ties broken is in order of the indices of the items.
     # However, such an arrangement creates a large bias in favor of the given order of candidates, which hurts the probability.
     # Naturally, I preferred to fix the algorithm rather than change all my probability calculations.
     gmap = [g.mapping for g in gprofile._grades]
     random.shuffle(gmap)
-    Y = GradeProfile(gmap, gprofile.grades) # Create a copy of the evaluations to avoid modifying the original one.
+    Y = GradeProfile(gmap, gprofile.grades, candidates = candidates) # Create a copy of the evaluations to avoid modifying the original one.
     B = Y.to_ranking_profile() # The ordinaly ranking
-    GB = B.majority_graph().to_networkx() # The graph g(B) which represent the ordinal ranking.
-    GB.add_nodes_from(candidates) # Add any candidates that might not be in the majority graph (e.g. candidates that no one graded).
+    GB = _ranking_graph(Y) # The graph g(B) which represent the ordinal ranking.
     if not is_directed_acyclic_graph(GB): # Then someone ranked a higher-ranked item lower, in contrast to the paper's assumption.
         logger.error("Cycle detected in majority graph - RGCR assumes a DAG.")
         raise   ValueError("As the algorithm assumes, there can't be cycles in voting order.")
@@ -156,7 +171,8 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
 
     def _our_can(tuple):
         # Helper random function which get two scores and return true if the first score probablistically beats the second.
-        prob = (1+w(abs(tuple[0]-tuple[1])))/2 # The probanility that the higher-ranked item is really better.
+        w_result = check_w(abs(tuple[0]-tuple[1]))
+        prob = (1+w_result)/2 # The probability that the higher-ranked item is really better.
         result = random.random() < prob # That is, if the first one is bigger then in probability prob we return true - the first beated the second.
         if tuple[0] < tuple[1]: # If the second one is bigger, then in probability 1-prob we return true because in probability 1-prob the first beats the second.
             result = not result
@@ -172,8 +188,29 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
                 reviewer = voter
                 break
         return reviewer
-
     
+    def check_w(argument):
+        # Helper function to check that w is a valid function.
+        w_res = w(argument)
+        if not (0 <= w_res <= 1):
+            logger.error("Invalid w function: w(%g) = %g is not in [0, 1]", argument, w_res)
+            raise ValueError("w must return values in [0, 1]")
+        ind = w_results.bisect_left(argument)
+        if ind > 0:
+            k, prev = w_results.peekitem(ind-1)
+            if prev > w_res:
+                logger.error("Invalid w function: w is not non-decreasing. w(%g) = %g < w(%g) = %g", argument, w_res, w_results.keys()[ind-1], prev)
+                raise ValueError("w must be non-decreasing")
+        if ind < len(w_results):
+            k, next = w_results.peekitem(ind)
+            if next < w_res:
+                logger.error("Invalid w function: w is not non-decreasing. w(%g) = %g > w(%g) = %g", argument, w_res, w_results.keys()[ind], next)
+                raise ValueError("w must be non-decreasing")
+            
+        w_results[argument] = w_res
+        logger.debug("Checked w(%g) = %g", argument, w_res)
+        return w_res
+
     t = 0
     while(t < len(ordering)-1):
         t_th_item = ordering[t]

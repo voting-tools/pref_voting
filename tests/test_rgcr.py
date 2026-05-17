@@ -13,10 +13,15 @@ def random_ordinal_ranking(gprofile:GradeProfile, curr_cands=None):
 	return list(nx.topological_sort(x))
 
 def mean_estimator(gprofile:GradeProfile, curr_cands=None):
-	return sorted(curr_cands, key=lambda c: gprofile.avg(c), reverse=True)
+	gprofile = GradeProfile([g.mapping for g in gprofile._grades], gprofile.grades.tolist(), candidates=gprofile.candidates)
+	if curr_cands is None:
+		curr_cands = gprofile.candidates
+	return sorted(curr_cands, key=lambda c: gprofile.avg(c) if gprofile.has_grade(c) else 0, reverse=True)
 
 def median_estimator(gprofile:GradeProfile, curr_cands=None):
-	return sorted(curr_cands, key=lambda c: gprofile.median(c), reverse=True)
+	if curr_cands is None:
+		curr_cands = gprofile.candidates
+	return sorted(curr_cands, key=lambda c: gprofile.median(c) if gprofile.has_grade(c) else 0, reverse=True)
 
 
 logger = logging.getLogger("test")
@@ -50,6 +55,7 @@ def create_random_legal_gprofile(size=5, num_voters=10, rev_prob=0.3): # creates
 				voter[c] = val + np.random.randint(0, 10)+1
 				val = voter[c] # ensure that the scores are non-decreasing
 		voters.append(voter)
+	logger.debug("Created random legal graph with %s", voters)
 	return GradeProfile(voters, np.arange(0, 10*size+1, 1), candidates=candidates)
 
 
@@ -92,30 +98,32 @@ def test_probability_with_diff_w(w, expected_prob):
 
 @pytest.mark.parametrize("gprofile", [
 	(GradeProfile([{1: 4, 2: 8}, {2: 6, 1: 7}], range(0, 10), candidates=[1, 2, 3])), # cycle
-	(GradeProfile([{1: 3, 2: 4, 5: 5}, {2: 6, 3: 7}, {3: 2, 1: 1}], range(0, 11), candidates=[1,2,3,4,5])) # cycle
+	(GradeProfile([{1: 3, 2: 4, 5: 5}, {2: 6, 3: 7}, {3: 2, 1: 5}], range(0, 11), candidates=[1,2,3,4,5])) # cycle
 ])
 def test_illegal_input(gprofile):
 	with pytest.raises(ValueError):
 		RGCR(gprofile)
 
 @pytest.mark.parametrize("w", [lambda x: x, lambda x: x**2, lambda x: np.sqrt(x), lambda x: 1-x/(1+x)]) #w must be increasing and return value in [0,1].
-def test_illegal_w(w): # Right now not raises because I have no idea how to check such a thing.
+def test_illegal_w(w):
 	with pytest.raises(ValueError):
-		RGCR(GradeProfile([{1: 7}, {2: 3}], range(0, 10), candidates=[1, 2]), w=w)
+		RGCR(GradeProfile([{1: 7}, {2: 3}, {3: 5}, {4: 3}], range(0, 10), candidates=[1, 2, 3, 4]), w=w)
 
 @pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
 def test_strict_uniform_dominance(estimator):
 	rgcr_success = 0
 	another_estimator_success = 0
-	trials = 1000
+	trials = 10000
 	for i in range(1, trials):
-		items = np.random.randint(i,100*i)
-		voters = np.random.randint(int(items/5), 5*items)
+		voters = 10
+		items = np.random.randint(voters, voters*3)
 		gprofile = create_random_legal_gprofile(size=items, num_voters=voters)
 		rgcr_ranking = RGCR(gprofile)
 		another_ranking = estimator(gprofile)
 		if rgcr_ranking == list(range(items)).reverse(): # the true order is always 0 < 1 < ...
+			logger.info("RGCR found the true order in trial %g", i)
 			rgcr_success += 1
 		if another_ranking == list(range(items)).reverse():
+			logger.info("Another estimator found the true order in trial %g", i)
 			another_estimator_success += 1
 	assert rgcr_success > another_estimator_success
