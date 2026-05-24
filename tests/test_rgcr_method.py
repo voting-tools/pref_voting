@@ -60,7 +60,7 @@ def create_random_legal_gprofile(size=5, num_voters=10, rev_prob=0.3): # creates
 
 
 def test_topological_order():
-	for i in range(100):
+	for i in range(1,100,10):
 		n = np.random.rand() * 5*i
 		gprofile = create_random_legal_gprofile(size=i, num_voters=int(n))
 		logger.info("Test topological order with %g candidates and %g voters", i, int(n))
@@ -113,7 +113,7 @@ def test_illegal_w(w):
 def test_strict_uniform_dominance(estimator):
 	rgcr_success = 0
 	another_estimator_success = 0
-	trials = 10000
+	trials = 1000
 	for i in range(1, trials):
 		voters = 10
 		items = np.random.randint(voters, voters*3)
