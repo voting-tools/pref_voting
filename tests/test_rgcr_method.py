@@ -123,7 +123,13 @@ def test_strict_uniform_dominance(estimator):
 		if rgcr_ranking == list(range(items)).reverse(): # the true order is always 0 < 1 < ...
 			logger.info("RGCR found the true order in trial %g", i)
 			rgcr_success += 1
+		else:
+			if i % 100 == 0: # log only every 100 trials to avoid cluttering the logs
+				logger.debug("RGCR did not find the true order in trial %g. RGCR ranking: %s", i, rgcr_ranking)
 		if another_ranking == list(range(items)).reverse():
 			logger.info("Another estimator found the true order in trial %g", i)
 			another_estimator_success += 1
+		else:
+			if i % 100 == 0: # log only every 100 trials to avoid cluttering the logs
+				logger.debug("Another estimator did not find the true order in trial %g. Another ranking: %s", i, another_ranking)
 	assert rgcr_success > another_estimator_success
