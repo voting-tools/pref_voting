@@ -1,3 +1,11 @@
+'''
+Tests for the implementation of the main algorithm in:
+"Your 2 is My 1, Your 3 is My 9: Handling Arbitrary Miscalibrations in Ratings", by J, Wang and N. B. Shah (2018), https://arxiv.org/abs/1806.05085
+
+Programmer: Avital Zar.
+Date: 2026-06-01
+'''
+
 from pref_voting.stochastic_methods import RGCR
 from pref_voting.grade_profiles import GradeProfile
 import networkx as nx
@@ -141,6 +149,7 @@ def test_strict_uniform_dominance(estimator):
 
 
 # Another test for strict uniform dominance, this time using the Kendall tau correlation with the true order as a measure of success, instead of exact equality.
+# We could say we check strict uniform dominance with another loss function, as described in the paper.
 
 @pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
 def test_strict_uniform_dominance_kendall_tau(estimator):
