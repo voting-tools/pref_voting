@@ -3,6 +3,7 @@ from pref_voting.grade_profiles import GradeProfile
 import networkx as nx
 import pytest
 import numpy as np
+from scipy.stats import kendalltau
 import logging
 
 logging.getLogger("RGCR").setLevel(logging.NOTSET)
@@ -109,6 +110,10 @@ def test_illegal_w(w):
 	with pytest.raises(ValueError):
 		RGCR(GradeProfile([{1: 7}, {2: 3}, {3: 5}, {4: 3}], range(0, 10), candidates=[1, 2, 3, 4]), w=w)
 
+
+
+# The following test checks the strict uniform dominance as described in the paper.
+
 @pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
 def test_strict_uniform_dominance(estimator):
 	rgcr_success = 0
@@ -120,16 +125,41 @@ def test_strict_uniform_dominance(estimator):
 		gprofile = create_random_legal_gprofile(size=items, num_voters=voters)
 		rgcr_ranking = RGCR(gprofile)
 		another_ranking = estimator(gprofile)
-		if rgcr_ranking == list(range(items)).reverse(): # the true order is always 0 < 1 < ...
+		if rgcr_ranking == list(range(items))[::-1]: # the true order is always 0 < 1 < ...
 			logger.info("RGCR found the true order in trial %g", i)
 			rgcr_success += 1
 		else:
 			if i % 100 == 0: # log only every 100 trials to avoid cluttering the logs
 				logger.debug("RGCR did not find the true order in trial %g. RGCR ranking: %s", i, rgcr_ranking)
-		if another_ranking == list(range(items)).reverse():
+		if another_ranking == list(range(items))[::-1]:
 			logger.info("Another estimator found the true order in trial %g", i)
 			another_estimator_success += 1
 		else:
 			if i % 100 == 0: # log only every 100 trials to avoid cluttering the logs
 				logger.debug("Another estimator did not find the true order in trial %g. Another ranking: %s", i, another_ranking)
 	assert rgcr_success > another_estimator_success
+
+
+# Another test for strict uniform dominance, this time using the Kendall tau correlation with the true order as a measure of success, instead of exact equality.
+
+@pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
+def test_strict_uniform_dominance_kendall_tau(estimator):
+    rgcr_kendall = 0
+    another_estimator_kendall = 0
+    count = 0
+    trials = 1000
+    for i in range(1, trials):
+        voters = 10
+        items = np.random.randint(voters, voters*3)
+        gprofile = create_random_legal_gprofile(size=items, num_voters=voters)
+        rgcr_ranking = RGCR(gprofile)
+        another_ranking = estimator(gprofile)
+        true_order = list(range(items))[::-1] # the true order is always 0 < 1 < ...
+        rgcr_kendall += kendalltau(rgcr_ranking, true_order).correlation
+        another_estimator_kendall += kendalltau(another_ranking, true_order).correlation
+        diff = rgcr_kendall - another_estimator_kendall
+        if diff > 0:
+            count += 1 
+        if diff < 0:
+            count -= 1
+    assert count > 0
