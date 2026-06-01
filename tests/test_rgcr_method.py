@@ -144,8 +144,6 @@ def test_strict_uniform_dominance(estimator):
 
 @pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
 def test_strict_uniform_dominance_kendall_tau(estimator):
-    rgcr_kendall = 0
-    another_estimator_kendall = 0
     count = 0
     trials = 1000
     for i in range(1, trials):
@@ -155,11 +153,34 @@ def test_strict_uniform_dominance_kendall_tau(estimator):
         rgcr_ranking = RGCR(gprofile)
         another_ranking = estimator(gprofile)
         true_order = list(range(items))[::-1] # the true order is always 0 < 1 < ...
-        rgcr_kendall += kendalltau(rgcr_ranking, true_order).correlation
-        another_estimator_kendall += kendalltau(another_ranking, true_order).correlation
+        rgcr_kendall = kendalltau(rgcr_ranking, true_order).correlation
+        another_estimator_kendall = kendalltau(another_ranking, true_order).correlation
         diff = rgcr_kendall - another_estimator_kendall
         if diff > 0:
             count += 1 
         if diff < 0:
             count -= 1
     assert count > 0
+
+# Another test for strict uniform dominance, this time using the recall of 10 first items.
+
+@pytest.mark.parametrize("estimator", [random_ordinal_ranking, mean_estimator, median_estimator])
+def test_strict_uniform_dominance_recall(estimator):
+	count = 0
+	trials = 1000
+	k = 10
+	for i in range(1, trials):
+		voters = 10
+		items = np.random.randint(voters, voters*3)
+		gprofile = create_random_legal_gprofile(size=items, num_voters=voters)
+		rgcr_ranking = RGCR(gprofile)
+		another_ranking = estimator(gprofile)
+		true_order = list(range(items))[::-1] # the true order is always 0 < 1 < ...
+		rgcr_recall = len(set(rgcr_ranking[:k]) & set(true_order[:k])) / len(set(true_order[:k]))
+		another_estimator_recall = len(set(another_ranking[:k]) & set(true_order[:k])) / len(set(true_order[:k]))
+		diff = rgcr_recall - another_estimator_recall
+		if diff > 0:
+			count += 1
+		if diff < 0:
+			count -= 1
+	assert count > 0
