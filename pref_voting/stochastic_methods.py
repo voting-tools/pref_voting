@@ -164,7 +164,8 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
     GB = _ranking_graph(Y) # The graph g(B) which represent the ordinal ranking.
     if not is_directed_acyclic_graph(GB): # Then someone ranked a higher-ranked item lower, in contrast to the paper's assumption.
         cycle = find_cycle(GB)
-        cycle_str = "".join(f"{u} -> " for u, v in cycle).join(f"{cycle[-1][1]}")
+        nodes = [u for u, v in cycle] + [cycle[-1][1]]
+        cycle_str = " -> ".join(nodes)
         logger.error("Cycle detected in majority graph: %s", cycle_str)
         raise   ValueError("As the algorithm assumes, there can't be cycles in voting order.")
     ordering = list(topological_sort(GB)) # Maybe the ties break could be more efficient
