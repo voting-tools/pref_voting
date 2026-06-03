@@ -113,6 +113,16 @@ def test_illegal_input(gprofile):
 	with pytest.raises(ValueError):
 		RGCR(gprofile)
 
+
+#This is no-use test because the paper assumes there are no ties. In any case it passes, in case we'd want to allow ties. 👑
+@pytest.mark.parametrize("gprofile", [
+	(GradeProfile([{1: 4, 2: 8}, {2: 8, 1: 8}], range(0, 10), candidates=[1, 2, 3])), # cycle
+	(GradeProfile([{2: 8, 8: 0, 10: 10}, {2: 10, 4: 7, 10: 10}, {2: 3, 6: 8, 7: 4, 9: 7}, { 4: 6, 8: 1}, {2: 2, 3: 2, 10: 7}, {1: 2, 2: 9, 7: 9}, {3: 0, 6: 5, 7: 5, 8: 4}], range(0, 11), candidates=[1,2,3,4,5,6,7,8,9,10])) # cycle
+])
+def test_legal_complex_input(gprofile):
+	RGCR(gprofile) # should not raise an error, even though the ties.
+
+
 @pytest.mark.parametrize("w", [lambda x: x, lambda x: x**2, lambda x: np.sqrt(x), lambda x: 1-x/(1+x)]) #w must be increasing and return value in [0,1].
 def test_illegal_w(w):
 	with pytest.raises(ValueError):

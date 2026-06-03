@@ -10,7 +10,7 @@ from pref_voting.voting_method import *
 from pref_voting.iterative_methods import consensus_builder
 from pref_voting.probabilistic_methods import maximal_lottery, RaDiUS
 from pref_voting.grade_profiles import GradeProfile
-from networkx import topological_sort, is_directed_acyclic_graph, DiGraph
+from networkx import topological_sort, is_directed_acyclic_graph, DiGraph, find_cycle
 import math
 import logging
 from sortedcontainers import SortedDict
@@ -150,7 +150,7 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
                 for k in range(j+1, len(voter_sorted_cands)):
                     c1 = voter_sorted_cands[j]
                     c2 = voter_sorted_cands[k]
-                    if c1 in candidates and c2 in candidates:
+                    if c1 in candidates and c2 in candidates and voter[c1] != voter[c2]:
                         GB.add_edge(c1, c2)
         return GB
     
@@ -163,7 +163,9 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
     B = Y.to_ranking_profile() # The ordinaly ranking
     GB = _ranking_graph(Y) # The graph g(B) which represent the ordinal ranking.
     if not is_directed_acyclic_graph(GB): # Then someone ranked a higher-ranked item lower, in contrast to the paper's assumption.
-        logger.error("Cycle detected in majority graph - RGCR assumes a DAG.")
+        cycle = find_cycle(GB)
+        cycle_str = "".join(f"{u} -> " for u, v in cycle).join(f"{cycle[-1][1]}")
+        logger.error("Cycle detected in majority graph: %s", cycle_str)
         raise   ValueError("As the algorithm assumes, there can't be cycles in voting order.")
     ordering = list(topological_sort(GB)) # Maybe the ties break could be more efficient
     ordering = [c for c in ordering if c in set(candidates)] # Remove candidates not in curr_cands
@@ -216,7 +218,7 @@ def RGCR(gprofile:GradeProfile, w=(lambda x: x/(1+x)), curr_cands=None):
         t_th_item = ordering[t]
         t_plus_1_th_item = ordering[t+1]
 
-        logger.debug("Checking pair: (%s, %s) at index %g", t_th_item, t_plus_1_th_item, t)
+        logger.info("Checking pair: (%s, %s) at index %g", t_th_item, t_plus_1_th_item, t)
 
         t_reviewer = _find_reviewer(t_th_item)
         t_plus_1_reviewer = _find_reviewer(t_plus_1_th_item)
