@@ -7,13 +7,13 @@ Other axioms
 ---------------------
 """
 
-from itertools import repeat
 import numpy as np
 
 from pref_voting.axiom import Axiom
 from pref_voting.profiles import Profile
 from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.rankings import Ranking
+from pref_voting.weighted_majority_graphs import MarginGraph
 
 
 def _reverse_ranking(ballot, all_cands):
@@ -29,14 +29,14 @@ def _reverse_ranking(ballot, all_cands):
     all_cands : list | set
         The full candidate set of the profile.
     """
-    if isinstance(ballot, tuple):                 
-        return tuple(reversed(ballot))              
+    if isinstance(ballot, tuple):
+        return tuple(reversed(ballot))
 
     if isinstance(ballot, Ranking):
         full_rmap = ballot.rmap.copy()
         if full_rmap:
             last_rank = max(full_rmap.values()) + 1
-        else:                                        
+        else:
             last_rank = 1
         for c in all_cands:
             if c not in full_rmap:
@@ -45,6 +45,7 @@ def _reverse_ranking(ballot, all_cands):
         max_rank = max(full_rmap.values())
         rev_rmap = {c: max_rank + 1 - k for c, k in full_rmap.items()}
         return Ranking(rev_rmap)
+
 
 def _reverse_profile(P):
     """
@@ -61,7 +62,8 @@ def _reverse_profile(P):
         if P.using_extended_strict_preference:
             P_r.use_extended_strict_preference()
         return P_r
-    
+
+
 def _reverse_margin_graph(mg):
     """
     Return the *edge-reversed* margin graph.
@@ -71,11 +73,12 @@ def _reverse_margin_graph(mg):
     rev_edges = [(v, u, w) for (u, v, w) in mg.edges]
     return MarginGraph(mg.candidates[:], rev_edges, cmap=mg.cmap)
 
+
 def has_reversal_symmetry_violation(edata, vm, verbose=False):
     """
     Returns True iff ``vm`` violates reversal symmetry on *edata*.
 
-    Reversal Symmetry states that if x is a **unique** winner in ``edata``, 
+    Reversal Symmetry states that if x is a **unique** winner in ``edata``,
     then x should not be among the winners in the reversal of ``edata``.
     """
 
@@ -100,7 +103,7 @@ def has_reversal_symmetry_violation(edata, vm, verbose=False):
                 mg.display()
                 print(mg.description())
                 vm.display(mg)
-                print('\nReversed margin graph:')
+                print("\nReversed margin graph:")
                 mg_r.display()
                 print(mg_r.description())
                 vm.display(mg_r)
@@ -150,7 +153,9 @@ def find_all_reversal_symmetry_violations(edata, vm, verbose=False):
     else:
         rev_winners = vm(_reverse_profile(edata))
 
-    rev_winners = rev_winners.tolist() if isinstance(rev_winners, np.ndarray) else rev_winners
+    rev_winners = (
+        rev_winners.tolist() if isinstance(rev_winners, np.ndarray) else rev_winners
+    )
     return [(winners, rev_winners)]
 
 

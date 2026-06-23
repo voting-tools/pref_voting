@@ -1,18 +1,24 @@
 """
-File: profiles_with_ties.py
+File: pref_grade_profile.py
 Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-Date: January 5, 2022
+Date: March 28, 2026
 
-A class that represents profiles of (truncated) strict weak orders.
+A class that represents profiles in which each voter submits both a
+(truncated) strict weak order and an assignment of grades.
 """
 
 import copy
+import functools
 from math import ceil
 
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from tabulate import tabulate
 
-from pref_voting.profiles import Profile
+from pref_voting.grade_profiles import GradeProfile
+from pref_voting.mappings import Grade, _Mapping, default_compare_function
+from pref_voting.profiles_with_ties import ProfileWithTies
 from pref_voting.rankings import Ranking
 from pref_voting.scoring_methods import symmetric_borda_scores
 from pref_voting.weighted_majority_graphs import (
@@ -22,79 +28,86 @@ from pref_voting.weighted_majority_graphs import (
 )
 
 
-def _num_rank_profile_with_ties(rankings, rcounts, cand, level):
-    """
-    Counts the number of voters that rank candidate `cand` at rank `level` (1-based)
-    in a ProfileWithTies object.
-
-    Args:
-        rankings: list of Ranking objects
-        rcounts: list of counts for each ranking
-        cand: candidate
-        level: rank to check (1-based)
-
-    Returns:
-        Total number of voters ranking candidate `cand` at rank `level`
-    """
-    total = 0
-    for ranking, count in zip(rankings, rcounts):
-        if (
-            cand in ranking.rmap and ranking.rmap[cand] == level - 1
-        ):  # Convert 1-based rank to 0-based
-            total += count
-    return total
+def _grade_order_compare(v1, v2, grade_order):
+    return (grade_order.index(v1) < grade_order.index(v2)) - (
+        grade_order.index(v2) < grade_order.index(v1)
+    )
 
 
-def same_ranking_extended_strict_pref(ranking1, ranking2, candidates):
-    # check if ranking1 and ranking2 have the same ranking of candidates
-    for c1 in candidates:
-        for c2 in candidates:
-            if (
-                not ranking1.extended_strict_pref(c1, c2)
-                and ranking2.extended_strict_pref(c1, c2)
-            ) or (
-                not ranking2.extended_strict_pref(c1, c2)
-                and ranking1.extended_strict_pref(c1, c2)
-            ):
-                return False
-    return True
-
-
-class ProfileWithTies(object):
-    """An anonymous profile of (truncated) strict weak orders of :math:`n` candidates.
+class PrefGradeProfile(object):
+    """An anonymous profile in which each voter submits both a (truncated) strict weak order
+    and an assignment of grades.
 
     :param rankings: List of rankings in the profile, where a ranking is either a :class:`Ranking` object or a dictionary.
     :type rankings: list[dict[int or str: int]] or list[Ranking]
-    :param rcounts: List of the number of voters associated with each ranking.  Should be the same length as rankings.  If not provided, it is assumed that 1 voters submitted each element of ``rankings``.
+    :param grade_maps: List of grades in the profile, where a grade is either a :class:`Grade` object or a dictionary.
+    :type grade_maps: list[dict[int or str: int or str]] or list[Grade]
+    :param grades: List of grades.
+    :type grades: list[int or str]
+    :param rcounts: List of the number of voters associated with each ranking/grade pair.  Should be the same length as rankings and grade_maps.  If not provided, it is assumed that 1 voter submitted each element.
     :type rcounts: list[int], optional
-    :param candidates: List of candidates in the profile.  If not provided, this is the list that is ranked by at least on voter.
+    :param candidates: List of candidates in the profile.  If not provided, this is the union of candidates appearing in the rankings and grade maps.
     :type candidates: list[int] or list[str], optional
-    :param cmap: Dictionary mapping candidates (integers) to candidate names (strings).  If not provided, each candidate name is mapped to itself.
-    :type cmap: dict[int: str], optional
+    :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.
+    :type cmap: dict[int or str: str], optional
+    :param gmap: Dictionary mapping grades to grade names (strings).  If not provided, each grade is mapped to itself.
+    :type gmap: dict[int or str: str], optional
+    :param grade_order: A list of the grades representing the order of the grades. It is assumed the grades are listed from largest to smallest.  If not provided, the grades are assumed to be numbers and compared using the greater-than relation.
+    :type grade_order: list[int or str], optional
 
     :Example:
 
-    The following code creates a profile in which
-    2 voters submitted the ranking 0 ranked first, 1 ranked second, and 2 ranked third; 3 voters submitted the ranking 1 and 2 are tied for first place and 0 is ranked second; and 1 voter submitted the ranking in which 2 is ranked first and 0 is ranked second:
+    The following code creates a profile in which 2 voters submit the ranking
+    0 first, 1 second, 2 third along with grades {0: 5, 1: 3, 2: 1};
+    and 3 voters submit the ranking with 1 and 2 tied for first and 0 second
+    along with grades {0: 2, 1: 4, 2: 4}:
 
     .. code-block:: python
 
-            prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
+        pgprof = PrefGradeProfile(
+            [{0: 1, 1: 2, 2: 3}, {1: 1, 2: 1, 0: 2}],
+            [{0: 5, 1: 3, 2: 1}, {0: 2, 1: 4, 2: 4}],
+            [1, 2, 3, 4, 5],
+            rcounts=[2, 3],
+        )
+
+        pgprof.display()
+
     """
 
-    def __init__(self, rankings, rcounts=None, candidates=None, cmap=None):
-        """constructor method"""
+    def __init__(
+        self,
+        rankings,
+        grade_maps,
+        grades,
+        rcounts=None,
+        candidates=None,
+        cmap=None,
+        gmap=None,
+        grade_order=None,
+    ):
+        """Constructor method"""
+
+        assert len(rankings) == len(grade_maps), (
+            "The number of rankings must be the same as the number of grade maps"
+        )
 
         assert rcounts is None or len(rankings) == len(rcounts), (
-            "The number of rankings much be the same as the number of rcounts"
+            "The number of rankings must be the same as the number of rcounts"
         )
 
-        get_cands = lambda r: list(r.keys()) if type(r) == dict else r.cands
-        self.candidates = (
-            sorted(candidates)
-            if candidates is not None
-            else sorted(list(set([c for r in rankings for c in get_cands(r)])))
+        # Determine candidates from both rankings and grade_maps
+        get_cands_ranking = lambda r: list(r.keys()) if type(r) == dict else r.cands
+        get_cands_grade = lambda g: (
+            list(g.keys()) if type(g) == dict else g.graded_candidates
         )
+
+        if candidates is not None:
+            self.candidates = sorted(candidates)
+        else:
+            ranking_cands = set([c for r in rankings for c in get_cands_ranking(r)])
+            grade_cands = set([c for g in grade_maps for c in get_cands_grade(g)])
+            self.candidates = sorted(list(ranking_cands | grade_cands))
         """The candidates in the profile. """
 
         self.num_cands = len(self.candidates)
@@ -103,14 +116,15 @@ class ProfileWithTies(object):
         self.cmap = cmap if cmap is not None else {c: str(c) for c in self.candidates}
         """The candidate map is a dictionary associating a candidate with the name used when displaying a candidate."""
 
+        # --- Ranking data (from ProfileWithTies) ---
+
         self._rankings = [
             Ranking(r, cmap=self.cmap)
             if type(r) == dict
             else Ranking(r.rmap, cmap=self.cmap)
             for r in rankings
         ]
-        """The list of rankings in the Profile (each ranking is a :class:`Ranking` object).
-        """
+        """The list of rankings in the profile (each ranking is a :class:`Ranking` object)."""
 
         self.ranks = list(range(1, self.num_cands + 1))
         """The ranks that are possible in the profile. """
@@ -122,6 +136,55 @@ class ProfileWithTies(object):
         self.cindex_to_cand = lambda i: self._cindex_to_cand[i]
         """Maps candidates to their index in the list of candidates and vice versa. """
 
+        # --- Grade data (from GradeProfile) ---
+
+        self.grades = grades
+        """The grades in the profile. """
+
+        self.can_sum_grades = all([isinstance(g, (float, int)) for g in self.grades])
+
+        self.grade_order = (
+            grade_order
+            if grade_order is not None
+            else sorted(self.grades, reverse=True)
+        )
+        """The order of the grades. If None, then order from largest to smallest"""
+
+        self.use_grade_order = grade_order is not None
+
+        self.compare_function = (
+            default_compare_function
+            if grade_order is None
+            else functools.partial(_grade_order_compare, grade_order=self.grade_order)
+        )
+
+        self.gmap = gmap if gmap is not None else {g: str(g) for g in self.grades}
+        """The grade map is a dictionary associating a grade with the name used when displaying a grade."""
+
+        self._grades = [
+            Grade(
+                g_map,
+                self.grades,
+                candidates=self.candidates,
+                cmap=self.cmap,
+                gmap=self.gmap,
+                compare_function=self.compare_function,
+            )
+            if type(g_map) == dict
+            else Grade(
+                g_map.as_dict(),
+                self.grades,
+                candidates=self.candidates,
+                cmap=self.cmap,
+                gmap=self.gmap,
+                compare_function=self.compare_function,
+            )
+            for g_map in grade_maps
+        ]
+        """The list of grades in the profile (each grade is a :class:`Grade` object)."""
+
+        # --- Shared data ---
+
         self.rcounts = [1] * len(rankings) if rcounts is None else list(rcounts)
 
         self.num_voters = np.sum(self.rcounts)
@@ -130,7 +193,7 @@ class ProfileWithTies(object):
         self.using_extended_strict_preference = False
         """A flag indicating whether the profile is using extended strict preferences when calculating supports, margins, etc."""
 
-        # memoize the supports
+        # memoize the supports (based on rankings)
         self._supports = {
             c1: {
                 c2: sum(
@@ -142,6 +205,10 @@ class ProfileWithTies(object):
             }
             for c1 in self.candidates
         }
+
+    # =========================================================================
+    # Ranking-related methods (from ProfileWithTies)
+    # =========================================================================
 
     def use_extended_strict_preference(self):
         """
@@ -303,7 +370,8 @@ class ProfileWithTies(object):
 
     def strength_matrix(self, curr_cands=None, strength_function=None):
         """
-        Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function."""
+        Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function.
+        """
 
         if curr_cands is not None:
             cindices = [cidx for cidx, _ in enumerate(curr_cands)]
@@ -395,7 +463,6 @@ class ProfileWithTies(object):
 
         The **Copeland score** for candidate :math:`c` is calculated as follows:  :math:`c` receives ``scores[0]`` points for every candidate that  :math:`c` is majority preferred to, ``scores[1]`` points for every candidate that is tied with :math:`c`, and ``scores[2]`` points for every candidate that is majority preferred to :math:`c`. The default ``scores`` is ``(1, 0, -1)``.
 
-
         :param curr_cands: restrict attention to candidates in this list. Defaults to all candidates in the profile if not provided.
         :type curr_cands: list[int], optional
         :param scores: the scores used to calculate the Copeland score of a candidate :math:`c`: ``scores[0]`` is for the candidates that :math:`c` is majority preferred to; ``scores[1]`` is the number of candidates tied with :math:`c`; and ``scores[2]`` is the number of candidate majority preferred to :math:`c`.  The default value is ``scores = (1, 0, -1)``
@@ -429,21 +496,11 @@ class ProfileWithTies(object):
     def plurality_scores(self, curr_cands=None):
         """
         Return the Plurality Scores of the candidates, assuming that each voter ranks a single candidate in first place.
-
-        Parameters:
-        - curr_cands: List of current candidates to consider. If None, use all candidates.
-
-        Returns:
-        - Dictionary with candidates as keys and their plurality scores as values.
-
-        Raises:
-        - ValueError: If any voter ranks multiple candidates in first place.
         """
 
         if curr_cands is None:
             curr_cands = self.candidates
 
-        # Check if any voter ranks multiple candidates in first place
         if any(len(r.first(cs=curr_cands)) > 1 for r in self._rankings):
             raise ValueError(
                 "Cannot find the plurality scores unless all voters rank a unique candidate in first place."
@@ -484,7 +541,7 @@ class ProfileWithTies(object):
     def borda_scores(self, curr_cands=None, borda_score_fnc=symmetric_borda_scores):
 
         curr_cands = self.candidates if curr_cands is None else curr_cands
-        restricted_prof = self.remove_candidates(
+        restricted_prof = self.to_ranking_profile().remove_candidates(
             [c for c in self.candidates if c not in curr_cands]
         )
         return borda_score_fnc(restricted_prof)
@@ -492,13 +549,6 @@ class ProfileWithTies(object):
     def tops_scores(self, curr_cands=None, score_type="approval"):
         """
         Return the tops scores of the candidates.
-
-        Parameters:
-        - curr_cands: List of current candidates to consider. If None, use all candidates.
-        - score_type: Type of tops score to compute. Options are 'approval' or 'split'.
-
-        Returns:
-        - Dictionary with candidates as keys and their tops scores as values.
         """
 
         if curr_cands is None:
@@ -532,14 +582,17 @@ class ProfileWithTies(object):
         Remove the empty rankings from the profile.
         """
         new_rankings = list()
+        new_grades = list()
         new_rcounts = list()
 
-        for r, c in zip(*(self.rankings_counts)):
+        for r, g, c in zip(self._rankings, self._grades, self.rcounts):
             if len(r.cands) != 0:
                 new_rankings.append(r)
+                new_grades.append(g)
                 new_rcounts.append(c)
 
         self._rankings = new_rankings
+        self._grades = new_grades
         self.rcounts = new_rcounts
 
         # update the number of voters
@@ -549,53 +602,6 @@ class ProfileWithTies(object):
             self.use_extended_strict_preference()
         else:
             self.use_strict_preference()
-
-    def truncate_overvotes(self):
-        """Return a new profile in which all rankings with overvotes are truncated."""
-
-        new_profile = copy.deepcopy(self)
-        rankings, rcounts = new_profile.rankings_counts
-
-        report = []
-        for r, c in zip(rankings, rcounts):
-            old_ranking = copy.deepcopy(r)
-            if r.has_overvote():
-                r.truncate_overvote()
-                report.append((old_ranking, r, c))
-
-        if self.using_extended_strict_preference:
-            new_profile.use_extended_strict_preference()
-        else:
-            new_profile.use_strict_preference()
-
-        return new_profile, report
-
-    def add_unranked_candidates(self):
-        """
-        Return a profile in which for each voter, any unranked candidate is added to the bottom of their ranking.
-        """
-        cands = self.candidates
-        ranks = list()
-        rcounts = list()
-
-        for r in self._rankings:
-            min_rank = max(r.ranks) if len(r.ranks) > 0 else 1
-            new_r = {c: r for c, r in r.rmap.items()}
-            for c in cands:
-                if c not in new_r.keys():
-                    new_r[c] = min_rank + 1
-            new_ranking = Ranking(new_r)
-
-            found_it = False
-            for _ridx, _r in enumerate(ranks):
-                if new_ranking == _r:
-                    rcounts[_ridx] += 1
-                    found_it = True
-            if not found_it:
-                ranks.append(new_ranking)
-                rcounts.append(1)
-
-        return ProfileWithTies([r.rmap for r in ranks], rcounts=rcounts, cmap=self.cmap)
 
     @property
     def is_truncated_linear(self):
@@ -609,88 +615,6 @@ class ProfileWithTies(object):
                 for r in self._rankings
             ]
         )
-
-    def to_linear_profile(self):
-        """Return a linear profile from the profile with ties. If the profile is not a linear profile, then return None.
-
-        Note that the candidates in a Profile must be integers, so the candidates in the linear profile will be the indices of the candidates in the original profile.
-
-        """
-        rankings, rcounts = self.rankings_counts
-        _new_rankings = [r.to_linear() for r in rankings]
-        cand_to_cindx = {c: i for i, c in enumerate(sorted(self.candidates))}
-        new_cmap = {cand_to_cindx[c]: self.cmap[c] for c in sorted(self.candidates)}
-        if any([r is None or len(r) != len(self.candidates) for r in _new_rankings]):
-            print("Error: Cannot convert to linear profile.")
-            return None
-        new_rankings = [tuple([cand_to_cindx[c] for c in r]) for r in _new_rankings]
-        return Profile(new_rankings, rcounts=rcounts, cmap=new_cmap)
-
-    def replace_rankings(
-        self,
-        old_ranking,
-        new_ranking,
-        num,
-        use_extended_strict_preference_for_comparison=False,
-    ):
-        """
-
-        Create a new profile by replacing num ballots matching old_ranking with new_ranking.
-
-        If num is greater than the number of ballots matching old_ranking, then all ballots matching old_ranking are replaced with new_ranking.
-
-
-        """
-        using_extended_strict_pref = self.using_extended_strict_preference
-
-        ranking_types, ranking_counts = self.rankings_counts
-
-        if not isinstance(old_ranking, Ranking) or not isinstance(new_ranking, Ranking):
-            raise ValueError("rankings must be of type Ranking")
-
-        if use_extended_strict_preference_for_comparison:
-            same_ranking = lambda r1, r2: same_ranking_extended_strict_pref(
-                r1, r2, self.candidates
-            )
-        else:
-            same_ranking = lambda r1, r2: r1 == r2
-
-        new_ranking_types = []
-        new_ranking_counts = []
-
-        current_num = 0
-        for r, c in zip(ranking_types, ranking_counts):
-            if current_num < num and same_ranking(r, old_ranking):
-                if c > num - current_num:
-                    new_ranking_types.append(new_ranking)
-                    new_ranking_counts.append(num - current_num)
-                    new_ranking_types.append(old_ranking)
-                    new_ranking_counts.append(c - (num - current_num))
-                    current_num = num
-                elif c == num - current_num and same_ranking(r, old_ranking):
-                    new_ranking_types.append(new_ranking)
-                    new_ranking_counts.append(num - current_num)
-                    current_num = num
-                elif c < num - current_num:
-                    new_ranking_types.append(new_ranking)
-                    new_ranking_counts.append(c)
-                    current_num += c
-            else:
-                new_ranking_types.append(r)
-                new_ranking_counts.append(c)
-
-        new_prof = ProfileWithTies(
-            new_ranking_types, new_ranking_counts, self.candidates, cmap=self.cmap
-        )
-
-        if using_extended_strict_pref:
-            new_prof.use_extended_strict_preference()
-
-        assert self.num_voters == new_prof.num_voters, (
-            "Problem: the number of voters is not the same in the new profile!"
-        )
-
-        return new_prof
 
     def num_bullet_votes(self):
         """
@@ -761,54 +685,17 @@ class ProfileWithTies(object):
         }
 
     def margin_graph(self):
-        """Returns the margin graph of the profile.  See :class:`.MarginGraph`.
-
-        :Example:
-
-        .. exec_code:: python
-
-                from pref_voting.profiles_with_ties import ProfileWithTies
-                prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
-
-                mg = prof.margin_graph()
-                print(mg.edges)
-                print(mg.margin_matrix)
-        """
+        """Returns the margin graph of the profile.  See :class:`.MarginGraph`."""
 
         return MarginGraph.from_profile(self)
 
     def support_graph(self):
-        """Returns the support graph of the profile.  See :class:`.SupportGraph`.
-
-        :Example:
-
-        .. exec_code:: python
-
-                from pref_voting.profiles_with_ties import ProfileWithTies
-                prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
-
-                sg = prof.support_graph()
-                print(sg.edges)
-                print(sg.s_matrix)
-
-        """
+        """Returns the support graph of the profile.  See :class:`.SupportGraph`."""
 
         return SupportGraph.from_profile(self)
 
     def majority_graph(self):
-        """Returns the majority graph of the profile.  See :class:`.MarginGraph`.
-
-        :Example:
-
-        .. exec_code:: python
-
-                from pref_voting.profiles_with_ties import ProfileWithTies
-                prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
-
-                mg = prof.majority_graph()
-                print(mg.edges)
-
-        """
+        """Returns the majority graph of the profile.  See :class:`.MajorityGraph`."""
 
         return MajorityGraph.from_profile(self)
 
@@ -831,35 +718,317 @@ class ProfileWithTies(object):
         :param cands_to_ignore: list of candidates to remove from the profile
         :type cands_to_ignore: list[int]
         :returns: a profile with candidates from ``cands_to_ignore`` removed.
-
-        :Example:
-
-        .. exec_code::
-
-            from pref_voting.profiles_with_ties import ProfileWithTies
-            prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
-            prof.display()
-            new_prof = prof.remove_candidates([1])
-            new_prof.display()
-            print(new_prof.ranks)
         """
 
         updated_rankings = [
             {c: r for c, r in rank.rmap.items() if c not in cands_to_ignore}
             for rank in self._rankings
         ]
+        updated_grade_maps = [
+            {c: g.val(c) for c in g.graded_candidates if c not in cands_to_ignore}
+            for g in self._grades
+        ]
         new_candidates = [c for c in self.candidates if c not in cands_to_ignore]
-        restricted_prof = ProfileWithTies(
+
+        restricted_prof = PrefGradeProfile(
             updated_rankings,
+            updated_grade_maps,
+            self.grades,
             rcounts=self.rcounts,
             candidates=new_candidates,
             cmap=self.cmap,
+            gmap=self.gmap,
+            grade_order=self.grade_order if self.use_grade_order else None,
         )
 
         if self.using_extended_strict_preference:
             restricted_prof.use_extended_strict_preference()
 
         return restricted_prof
+
+    # =========================================================================
+    # Grade-related methods (from GradeProfile)
+    # =========================================================================
+
+    @property
+    def grades_counts(self):
+        """Returns the grades and the counts of each grade."""
+
+        return self._grades, self.rcounts
+
+    @property
+    def grade_functions(self):
+        """Return all of the grade functions in the profile."""
+
+        gs = list()
+        for g, c in zip(self._grades, self.rcounts):
+            gs += [g] * c
+        return gs
+
+    def has_grade(self, c):
+        """Return True if ``c`` is assigned a grade by at least one voter."""
+
+        return any([g.has_grade(c) for g in self._grades])
+
+    def grade_margin(self, c1, c2, use_extended=False):
+        """
+        Return the grade-based margin of ``c1`` over ``c2``.
+        """
+        if use_extended:
+            return np.sum(
+                [
+                    num
+                    for g, num in zip(*self.grades_counts)
+                    if g.extended_strict_pref(c1, c2)
+                ]
+            ) - np.sum(
+                [
+                    num
+                    for g, num in zip(*self.grades_counts)
+                    if g.extended_strict_pref(c2, c1)
+                ]
+            )
+        else:
+            return np.sum(
+                [num for g, num in zip(*self.grades_counts) if g.strict_pref(c1, c2)]
+            ) - np.sum(
+                [num for g, num in zip(*self.grades_counts) if g.strict_pref(c2, c1)]
+            )
+
+    def proportion(self, cand, grade):
+        """
+        Return the proportion of voters that assign ``cand`` the grade ``grade``.
+
+        Note that ``grade`` could be None, in which case the proportion of voters that do not assign ``cand`` a grade is returned.
+        """
+        return (
+            np.sum([num for g, num in zip(*self.grades_counts) if g(cand) == grade])
+            / self.num_voters
+        )
+
+    def sum(self, c):
+        """Return the sum of the grades of ``c``.  If ``c`` is not assigned a grade by any voter, return None."""
+
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+
+        return (
+            np.sum(
+                [g(c) * num for g, num in zip(*self.grades_counts) if g.has_grade(c)]
+            )
+            if self.has_grade(c)
+            else None
+        )
+
+    def avg(self, c):
+        """Return the average of the grades of ``c``.  If ``c`` is not assigned a grade by any voter, return None."""
+
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+
+        return (
+            np.mean([g(c) for g in self.grade_functions if g.has_grade(c)])
+            if self.has_grade(c)
+            else None
+        )
+
+    def max(self, c):
+        """Return the maximum of the grade of ``c``.  If ``c`` is not assigned a grade by any voter, return None."""
+
+        grades_for_c = (
+            [-1 * self.grade_order.index(g(c)) for g in self._grades if g.has_grade(c)]
+            if self.use_grade_order
+            else [g(c) for g in self._grades if g.has_grade(c)]
+        )
+
+        return (
+            (
+                self.grade_order[-1 * max(grades_for_c)]
+                if self.use_grade_order
+                else max(grades_for_c)
+            )
+            if self.has_grade(c)
+            else None
+        )
+
+    def min(self, c):
+        """Return the minimum of the grades of ``c``.  If ``c`` is not assigned a grade by any voter, return None."""
+
+        grades_for_c = (
+            [-1 * self.grade_order.index(g(c)) for g in self._grades if g.has_grade(c)]
+            if self.use_grade_order
+            else [g(c) for g in self._grades if g.has_grade(c)]
+        )
+
+        return (
+            (
+                self.grade_order[-1 * min(grades_for_c)]
+                if self.use_grade_order
+                else min(grades_for_c)
+            )
+            if self.has_grade(c)
+            else None
+        )
+
+    def median(self, c, use_lower=True, use_average=False):
+        """Return the median of the grades of ``c``.  If ``c`` is not assigned a grade by any voter, return None."""
+
+        grades_for_c = (
+            [
+                -1 * self.grade_order.index(g(c))
+                for g in self.grade_functions
+                if g.has_grade(c)
+            ]
+            if self.use_grade_order
+            else [g(c) for g in self.grade_functions if g.has_grade(c)]
+        )
+
+        sorted_grades_for_c = sorted(grades_for_c)
+        num_grades = len(sorted_grades_for_c)
+        median_idx = num_grades // 2
+        if num_grades % 2 == 0:
+            median_grades = sorted_grades_for_c[median_idx - 1 : median_idx + 1]
+        else:
+            median_grades = [sorted_grades_for_c[median_idx]]
+
+        if use_lower:
+            return (
+                (
+                    self.grade_order[-1 * median_grades[0]]
+                    if self.use_grade_order
+                    else median_grades[0]
+                )
+                if self.has_grade(c)
+                else None
+            )
+        elif use_average:
+            return (
+                (
+                    np.average([self.grade_order[-1 * m] for m in median_grades])
+                    if self.use_grade_order
+                    else np.average(median_grades)
+                )
+                if self.has_grade(c)
+                else None
+            )
+        else:
+            return (
+                (
+                    [self.grade_order[-1 * m] for m in median_grades]
+                    if self.use_grade_order
+                    else median_grades
+                )
+                if self.has_grade(c)
+                else None
+            )
+
+    def sum_grade_function(self):
+        """Return the sum grade function of the profile."""
+
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+
+        return _Mapping(
+            {c: self.sum(c) for c in self.candidates if self.has_grade(c)},
+            domain=self.candidates,
+            item_map=self.cmap,
+            compare_function=self.compare_function,
+        )
+
+    def avg_grade_function(self):
+        """Return the average grade function of the profile."""
+
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+
+        return _Mapping(
+            {c: self.avg(c) for c in self.candidates if self.has_grade(c)},
+            domain=self.candidates,
+            item_map=self.cmap,
+            compare_function=self.compare_function,
+        )
+
+    def proportion_with_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a ``grade`` to ``cand``.
+        """
+
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+        num_with_higher_grade = 0
+        for g, num in zip(*self.grades_counts):
+            if self.compare_function(g(cand), grade) == 0:
+                num_with_higher_grade += num
+        return num_with_higher_grade / self.num_voters
+
+    def proportion_with_higher_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a strictly higher grade to ``cand`` than ``grade``.
+        """
+
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+        num_with_higher_grade = 0
+        for g, num in zip(*self.grades_counts):
+            if self.compare_function(g(cand), grade) == 1:
+                num_with_higher_grade += num
+        return num_with_higher_grade / self.num_voters
+
+    def proportion_with_lower_grade(self, cand, grade):
+        """
+        Return the proportion of voters that assign a strictly lower grade to ``cand`` than ``grade``.
+        """
+
+        assert cand in self.candidates, f"{cand} is not a candidate in the profile."
+        assert grade in self.grades, f"{grade} is not a grade in the profile."
+
+        num_with_lower_grade = 0
+        for g, num in zip(*self.grades_counts):
+            if self.compare_function(g(cand), grade) == -1:
+                num_with_lower_grade += num
+        return num_with_lower_grade / self.num_voters
+
+    def approval_scores(self):
+        """
+        Return a dictionary representing the approval scores of the candidates in the profile.
+        """
+
+        assert self.can_sum_grades, "The grades in the profile cannot be summed."
+        assert sorted(self.grades) == [
+            0,
+            1,
+        ], "The grades in the profile must be 0 and 1."
+
+        return {c: self.sum(c) for c in self.candidates}
+
+    # =========================================================================
+    # Conversion methods
+    # =========================================================================
+
+    def to_ranking_profile(self):
+        """Return a :class:`ProfileWithTies` corresponding to the ranking data in this profile."""
+
+        return ProfileWithTies(
+            self._rankings,
+            rcounts=self.rcounts,
+            candidates=self.candidates,
+            cmap=self.cmap,
+        )
+
+    def to_grade_profile(self):
+        """Return a :class:`GradeProfile` corresponding to the grade data in this profile."""
+
+        return GradeProfile(
+            [g.as_dict() for g in self._grades],
+            self.grades,
+            gcounts=self.rcounts,
+            candidates=self.candidates,
+            cmap=self.cmap,
+            gmap=self.gmap,
+            grade_order=self.grade_order if self.use_grade_order else None,
+        )
+
+    # =========================================================================
+    # Display and report methods
+    # =========================================================================
 
     def report(self):
         """
@@ -885,7 +1054,8 @@ class ProfileWithTies(object):
 
             if r.has_skipped_rank():
                 num_with_skipped_ranks += c
-        print(f"""There are {len(self.candidates)} candidates and {str(sum(rcounts))} {"ranking: " if sum(rcounts) == 1 else "rankings: "}
+        print(
+            f"""There are {len(self.candidates)} candidates and {str(sum(rcounts))} {"ranking: " if sum(rcounts) == 1 else "rankings: "}
         The number of empty rankings: {num_empty_rankings}
         The number of rankings with ties: {num_ties}
         The number of linear orders: {num_linear_orders}
@@ -893,7 +1063,8 @@ class ProfileWithTies(object):
 
 The number of rankings with skipped ranks: {num_with_skipped_ranks}
 
-        """)
+        """
+        )
 
     def display_rankings(self):
         """
@@ -911,63 +1082,31 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         for r, c in rs.items():
             print(f"{r}: {c}")
 
-    def anonymize(self):
-        """
-        Return a profile which is the anonymized version of this profile.
-        """
-
-        rankings = list()
-        rcounts = list()
-        for r in self.rankings:
-            found_it = False
-            for _ridx, _r in enumerate(rankings):
-                if r == _r:
-                    rcounts[_ridx] += 1
-                    found_it = True
-                    break
-            if not found_it:
-                rankings.append(r)
-                rcounts.append(1)
-
-        prof = ProfileWithTies(rankings, rcounts=rcounts, cmap=self.cmap)
-
-        if self.using_extended_strict_preference:
-            prof.use_extended_strict_preference()
-
-        return prof
-
-    def description(self):
-        """
-        Return the Python code needed to create the profile.
-        """
-        return f"ProfileWithTies({[r.rmap for r in self._rankings]}, rcounts={[int(c) for c in self.rcounts]}, cmap={self.cmap})"
-
     def display(
         self,
         cmap=None,
         style="pretty",
         curr_cands=None,
-        order_by_counts=False,
+        show_grades=True,
+        show_totals=False,
     ):
-        """Display a profile (restricted to ``curr_cands``) as an ascii table (using tabulate).
+        """Display the profile as an ascii table (using tabulate).
+
+        The rankings are displayed as in :class:`ProfileWithTies`. If ``show_grades``
+        is True, the grade assignment for each voter type is also displayed below
+        the ranking table.
 
         :param cmap: the candidate map (overrides the cmap associated with this profile)
         :type cmap: dict[int,str], optional
-        :param style: the candidate map to use (overrides the cmap associated with this profile)
-        :type style: str ---  "pretty" or "fancy_grid" (or any other style option for tabulate)
-        :param curr_cands: list of candidates
+        :param style: the table style for tabulate (default ``"pretty"``)
+        :type style: str, optional
+        :param curr_cands: list of candidates to display
         :type curr_cands: list[int], optional
+        :param show_grades: whether to also display the grade assignments (default True)
+        :type show_grades: bool, optional
+        :param show_totals: whether to display grade totals (sum, median) when showing grades (default False)
+        :type show_totals: bool, optional
         :rtype: None
-
-        :Example:
-
-        .. exec_code::
-
-            from pref_voting.profiles_with_ties import ProfileWithTies
-            prof = ProfileWithTies([{0: 1, 1: 2, 2: 3}, {1:1, 2:1, 0:2}, {2:1, 0:2}], [2, 3, 1])
-            prof.display()
-            prof.display(cmap={0:"a", 1:"b", 2:"c"})
-
         """
 
         _rankings = copy.deepcopy(self._rankings)
@@ -975,23 +1114,18 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         curr_cands = curr_cands if curr_cands is not None else self.candidates
         cmap = cmap if cmap is not None else self.cmap
 
-        _ranked = [r for r in _rankings if len(r.ranks) > 0]
+        # Display rankings table
         existing_ranks = (
             list(
                 range(
-                    min(min(r.ranks) for r in _ranked),
-                    max(max(r.ranks) for r in _ranked) + 1,
+                    min(min(r.ranks) for r in _rankings),
+                    max(max(r.ranks) for r in _rankings) + 1,
                 )
             )
-            if len(_ranked) > 0
+            if len(_rankings) > 0
             else []
         )
-        if order_by_counts:
-            _rankings, rcounts = zip(
-                *sorted(zip(_rankings, self.rcounts), key=lambda x: x[1], reverse=True)
-            )
-        else:
-            rcounts = self.rcounts
+        print("Rankings:")
         print(
             tabulate(
                 [
@@ -1007,10 +1141,31 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
                     ]
                     for rank in existing_ranks
                 ],
-                rcounts,
+                self.rcounts,
                 tablefmt=style,
             )
         )
+
+        # Display grades table
+        if show_grades:
+            print("\nGrades:")
+            if show_totals:
+                sum_grade_fnc = self.sum_grade_function()
+                headers = [""] + self.rcounts + ["Sum", "Median"]
+                tbl = [
+                    [cmap[c]]
+                    + [self.gmap[g(c)] if g.has_grade(c) else "" for g in self._grades]
+                    + [sum_grade_fnc(c), self.median(c)]
+                    for c in curr_cands
+                ]
+            else:
+                headers = [""] + self.rcounts
+                tbl = [
+                    [cmap[c]]
+                    + [self.gmap[g(c)] if g.has_grade(c) else "" for g in self._grades]
+                    for c in curr_cands
+                ]
+            print(tabulate(tbl, headers=headers))
 
     def display_margin_graph(self, cmap=None, curr_cands=None):
         """
@@ -1028,143 +1183,126 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
         cmap = cmap if cmap is not None else self.cmap
         SupportGraph.from_profile(self, cmap=cmap).display(curr_cands=curr_cands)
 
-    def to_preflib_instance(self):
-        """
-        Returns an instance of the ``OrdinalInstance`` class from the ``preflibtools`` package. See ``pref_voting.io.writers.to_preflib_instance``.
+    def visualize_grades(self):
+        """Visualize the grade assignments as a stacked bar plot."""
+        data_for_df = {"Candidate": [], "Grade": [], "Proportion": []}
 
-        """
-        from pref_voting.io.writers import to_preflib_instance
+        for c in self.candidates:
+            for g in [None] + self.grades:
+                data_for_df["Candidate"].append(self.cmap[c])
+                data_for_df["Grade"].append(self.gmap[g] if g is not None else "None")
+                data_for_df["Proportion"].append(self.proportion(c, g))
+        df = pd.DataFrame(data_for_df)
 
-        return to_preflib_instance(self)
+        df_pivot = df.pivot(index="Candidate", columns="Grade", values="Proportion")
 
-    @classmethod
-    def from_preflib(cls, instance_or_preflib_file, include_cmap=False):
-        """
-        Convert an preflib OrdinalInstance or file to a Profile.   See ``pref_voting.io.readers.from_preflib``.
+        ax = df_pivot.plot(kind="barh", stacked=True, figsize=(10, 6), rot=0)
+        ax.set_ylabel("Candidate")
+        ax.set_xlabel("Proportion")
+        for spine in ["top", "right"]:
+            ax.spines[spine].set_visible(False)
 
-        """
-        from pref_voting.io.readers import preflib_to_profile
-
-        return preflib_to_profile(
-            instance_or_preflib_file, include_cmap=include_cmap, as_linear_profile=False
+        ax.legend(
+            loc="upper center",
+            bbox_to_anchor=(0.5, 1.1),
+            ncol=len(self.grades) + 1,
+            title="Grades",
         )
 
-    def write(self, filename, file_format="preflib", csv_format="candidate_columns"):
-        """
-        Write a profile to a file.   See ``pref_voting.io.writers.write``.
-        """
-        from pref_voting.io.writers import write
+        plt.show()
 
-        return write(self, filename, file_format=file_format, csv_format=csv_format)
+    # =========================================================================
+    # Description / code-generation methods
+    # =========================================================================
 
-    @classmethod
-    def read(
-        cls,
-        filename,
-        file_format="preflib",
-        csv_format="candidate_columns",
-        cand_type=None,
-        items_to_skip=None,
-    ):
+    def description(self):
         """
-        Read a profile from a file.  See ``pref_voting.io.readers.read``.
-
+        Return the Python code needed to create the profile.
         """
-        from pref_voting.io.readers import read
-
-        return read(
-            filename,
-            file_format=file_format,
-            csv_format=csv_format,
-            cand_type=cand_type,
-            items_to_skip=items_to_skip,
-            as_linear_profile=False,
+        return (
+            f"PrefGradeProfile("
+            f"{[r.rmap for r in self._rankings]}, "
+            f"{[g.as_dict() for g in self._grades]}, "
+            f"{self.grades}, "
+            f"rcounts={[int(c) for c in self.rcounts]}, "
+            f"cmap={self.cmap})"
         )
 
-    def to_latex(self, cmap=None, curr_cands=None):
+    # =========================================================================
+    # Anonymize
+    # =========================================================================
+
+    def anonymize(self):
         """
-        Returns a LaTeX table representation of the profile with ties.
-
-        :param cmap: Dictionary mapping candidates to their names/labels. If None, use self.cmap.
-        :param curr_cands: List of candidates to include in the table. If None, use all candidates.
-        :return: A string containing the LaTeX table.
+        Return a profile which is the anonymized version of this profile.
         """
-        cmap = self.cmap if cmap is None else cmap
-        curr_cands = self.candidates if curr_cands is None else curr_cands
 
-        prof = copy.deepcopy(self)
-        prof.remove_empty_rankings()
+        anon_rankings = list()
+        anon_grades = list()
+        rcounts = list()
+        for r, g in zip(self.rankings, [gf for gf in self.grade_functions]):
+            found_it = False
+            for _ridx, (_r, _g) in enumerate(zip(anon_rankings, anon_grades)):
+                if r == _r and g.as_dict() == _g.as_dict():
+                    rcounts[_ridx] += 1
+                    found_it = True
+                    break
+            if not found_it:
+                anon_rankings.append(r)
+                anon_grades.append(g)
+                rcounts.append(1)
 
-        _rankings = copy.deepcopy(prof._rankings)
-
-        if len(_rankings) == 0:  # if there are no rankings, return an empty string
-            return ""
-
-        _rankings = [r.normalize_ranks() or r for r in _rankings]
-
-        latex = "\\begin{tabular}{" + "c" * len(_rankings) + "}\n"
-        latex += (
-            " & ".join(["$" + str(count) + "$" for count in self.rcounts]) + "\\\\\n"
+        prof = PrefGradeProfile(
+            anon_rankings,
+            [g.as_dict() for g in anon_grades],
+            self.grades,
+            rcounts=rcounts,
+            cmap=self.cmap,
+            gmap=self.gmap,
+            grade_order=self.grade_order if self.use_grade_order else None,
         )
-        latex += "\\hline\n"
 
-        max_rank = max(max(ranking.rmap.values()) for ranking in _rankings)
+        if self.using_extended_strict_preference:
+            prof.use_extended_strict_preference()
 
-        for rank in range(1, max_rank + 1):
-            row = []
-            for ranking in _rankings:
-                tied_cands = sorted(
-                    [
-                        cmap[c]
-                        for c in curr_cands
-                        if c in ranking.rmap and ranking.rmap[c] == rank
-                    ]
-                )
-                if tied_cands:
-                    row.append("$" + ",".join(tied_cands) + "$")
-                else:
-                    prev_cands = [
-                        c
-                        for c in curr_cands
-                        if c in ranking.rmap and ranking.rmap[c] < rank
-                    ]
-                    if prev_cands:
-                        row.append(" ")
-                    else:
-                        row.append("$\\cdots$")
-            latex += " & ".join(row) + "\\\\\n"
+        return prof
 
-        latex += "\\end{tabular}"
-        return latex
+    # =========================================================================
+    # Dunder methods
+    # =========================================================================
 
     def __eq__(self, other_prof):
         """
-        Returns true if two profiles are equal.  Two profiles are equal if they have the same rankings.  Note that we ignore the cmaps.
+        Returns true if two profiles are equal.  Two profiles are equal if they have the same rankings and grade assignments.  Note that we ignore the cmaps.
         """
 
         rankings = self.rankings
-        other_rankings = other_prof.rankings[:]  # make a copy
-        for r1 in rankings:
-            for i, r2 in enumerate(other_rankings):
-                if r1 == r2:
-                    # Remove the matched item to handle duplicates
+        grades = self.grade_functions
+        other_rankings = other_prof.rankings[:]
+        other_grades = other_prof.grade_functions[:]
+        for r1, g1 in zip(rankings, grades):
+            for i, (r2, g2) in enumerate(zip(other_rankings, other_grades)):
+                if r1 == r2 and g1.as_dict() == g2.as_dict():
                     del other_rankings[i]
+                    del other_grades[i]
                     break
             else:
-                # If we didn't find a match for r1, the profiles are not identical
                 return False
 
         return not other_rankings
 
     def __add__(self, other_prof):
         """
-        Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings from the first in addition to all the rankings from the second profile.
+        Returns the sum of two profiles.  The sum of two profiles is the profile that contains all the rankings and grade assignments from the first in addition to all the rankings and grade assignments from the second profile.
 
         Note: the cmaps of the profiles are ignored.
         """
 
-        return ProfileWithTies(
+        return PrefGradeProfile(
             self._rankings + other_prof._rankings,
+            [g.as_dict() for g in self._grades]
+            + [g.as_dict() for g in other_prof._grades],
+            self.grades,
             rcounts=self.rcounts + other_prof.rcounts,
             candidates=sorted(list(set(self.candidates + other_prof.candidates))),
         )

@@ -1,15 +1,17 @@
 """
-    File: profiles_with_ties.py
-    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: January 5, 2022
-    Updated: July 13, 2022
-    Updated: December 19, 2022
+File: profiles_with_ties.py
+Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
+Date: January 5, 2022
+Updated: July 13, 2022
+Updated: December 19, 2022
 
-    Functions to reason about rankings of candidates.
+Functions to reason about rankings of candidates.
 """
 
 import copy
+
 from tabulate import tabulate
+
 
 class Ranking(object):
     """A ranking of a set of candidates.
@@ -63,14 +65,43 @@ class Ranking(object):
         """Returns a sorted list of the candidates that are ranked."""
         return sorted(list(self.rmap.keys()))
 
-    def num_ranked_candidates(self): 
+    def num_ranked_candidates(self):
         """Returns the number of ranked candidates"""
         return len(self.cands)
-    
-    def is_bullet_vote(self): 
-        """Return True if the ranking is a bullet vote (a vote for a single candidate)"""
 
-        return len(self.first()) == 1 and len(self.ranks) == 2
+    def is_bullet_vote(self, num_cands):
+        """Return True if the ranking is a bullet vote: a vote for a single
+        candidate and that candidate alone.
+
+        This holds for either valid representation of such a ballot:
+
+        * only the favorite is ranked, everyone else is unranked
+            (e.g. ``{0:1}``); or
+        * the favorite is alone on top and all other candidates are tied at the
+            bottom (e.g. ``{0:1, 1:2, 2:2, 3:2}`` with ``num_cands == 4``).
+
+        It is False when more than one candidate shares the top rank
+        (e.g. ``{0:1,1:1,2:1,3:1}``), when any strict preference is expressed
+        among the non-favorites, when the ballot is a complete ranking of the
+        whole field (e.g. ``{0:1,1:2}`` with ``num_cands == 2``), or when there is
+        only one candidate (voting for the whole field).
+
+        :param num_cands: the total number of candidates in the election.
+        :type num_cands: int
+        """
+        num_ranked = self.num_ranked_candidates()
+        if num_ranked == 1:
+            # the favorite is ranked and everyone else is left unranked; this is a
+            # bullet vote only when there is someone else not voted for
+            return num_cands > 1
+        # the favorite is alone on top and all (>= 2) remaining candidates are
+        # tied together at the bottom (so the whole field is ranked)
+        return (
+            len(self.ranks) == 2
+            and num_ranked == num_cands
+            and len(self.cands_at_rank(self.ranks[0])) == 1
+            and len(self.cands_at_rank(self.ranks[1])) >= 2
+        )
 
     def cands_at_rank(self, r):
         """Returns a list of the candidates that are assigned the rank ``r``."""
@@ -140,76 +171,87 @@ class Ranking(object):
     def first(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the highest ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs if c in self.rmap.keys()]
+        _ranks = (
+            list(self.rmap.values())
+            if cs is None
+            else [self.rmap[c] for c in cs if c in self.rmap.keys()]
+        )
         _cands = list(self.rmap.keys()) if cs is None else cs
         min_rank = min(_ranks) if len(_ranks) > 0 else None
-        return sorted([c for c in _cands if c in self.rmap.keys() and self.rmap[c] == min_rank])
+        return sorted(
+            [c for c in _cands if c in self.rmap.keys() and self.rmap[c] == min_rank]
+        )
 
     def last(self, cs=None):
         """Returns the list of candidates from ``cs`` that have the worst ranking.   If ``cs`` is None, then use all the ranked candidates."""
 
-        _ranks = list(self.rmap.values()) if cs is None else [self.rmap[c] for c in cs if c in self.rmap.keys()]
+        _ranks = (
+            list(self.rmap.values())
+            if cs is None
+            else [self.rmap[c] for c in cs if c in self.rmap.keys()]
+        )
         _cands = list(self.rmap.keys()) if cs is None else cs
         max_rank = max(_ranks) if len(_ranks) > 0 else None
-        return sorted([c for c in _cands if c in self.rmap.keys() and self.rmap[c] == max_rank])
+        return sorted(
+            [c for c in _cands if c in self.rmap.keys() and self.rmap[c] == max_rank]
+        )
 
-    def is_empty(self): 
+    def is_empty(self):
         """Return True when the ranking is empty."""
         return len(self.rmap.keys()) == 0
-        
-    def has_tie(self): 
+
+    def has_tie(self):
         """Return True when the ranking has a tie."""
         return len(list(set(self.rmap.values()))) != len(list(self.rmap.values()))
 
     def is_tied(self, cands):
-        """Return True if the ranking contains a tie between the candidates in cands
-        """        
+        """Return True if the ranking contains a tie between the candidates in cands"""
         return set(self.cands_at_rank(self.rmap[cands[0]])) == set(cands)
 
     def is_linear(self, num_cands):
-        """Return True when the ranking is a linear order of ``num_cands`` candidates. 
-        """
+        """Return True when the ranking is a linear order of ``num_cands`` candidates."""
 
         return not self.has_tie() and len(self.rmap.keys()) == num_cands
 
-    def to_linear(self): 
+    def to_linear(self):
         """
-        If the ranking has no ties, return 
+        If the ranking has no ties, return
         a tuple representing the ranking; otherwise, return None.
         """
         if self.has_tie():
             return None
-        else:   
+        else:
             return tuple([c for c, r in sorted(self.rmap.items(), key=lambda x: x[1])])
-        
-    def is_truncated_linear(self, num_cands): 
-        """Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates. 
-        """
-        return  not self.has_tie() and len(self.rmap.keys()) < num_cands
-    
-    def has_skipped_rank(self): 
+
+    def is_truncated_linear(self, num_cands):
+        """Return True when the ranking is a truncated linear order, so it is linear but ranks fewer than ``num_cands`` candidates."""
+        return not self.has_tie() and len(self.rmap.keys()) < num_cands
+
+    def has_skipped_rank(self):
         """Returns True when a rank is skipped."""
 
-        return len(self.ranks) != 0 and self.ranks != list(range(1, len(self.ranks) + 1))
+        return len(self.ranks) != 0 and self.ranks != list(
+            range(1, len(self.ranks) + 1)
+        )
 
-    def has_overvote(self): 
+    def has_overvote(self):
         """
-        Return True if the voter submitted an overvote (a ranking with a tie). 
+        Return True if the voter submitted an overvote (a ranking with a tie).
         """
         return self.has_tie()
-    
+
     def truncate_overvote(self):
         """
-        Truncate the ranking at an overvote.  
-        """ 
-        
+        Truncate the ranking at an overvote.
+        """
+
         new_rmap = dict()
 
         for r in self.ranks:
             cands_at_rank = self.cands_at_rank(r)
             if len(cands_at_rank) == 1:
                 new_rmap[cands_at_rank[0]] = r
-            elif len(cands_at_rank) > 1: 
+            elif len(cands_at_rank) > 1:
                 break
 
         self.rmap = new_rmap
@@ -244,7 +286,6 @@ class Ranking(object):
 
         """
         self.rmap = {c: self.ranks.index(r) + 1 for c, r in self.rmap.items()}
-
 
     def AAdom(self, c1s, c2s, use_extended_preferences=False):
         """
@@ -283,30 +324,30 @@ class Ranking(object):
             c1s, c2s, use_extended_preferences=use_extended_preferences
         ) and any([any([strict_pref(c1, c2) for c2 in c2s]) for c1 in c1s])
 
-    def to_indiff_list(self): 
+    def to_indiff_list(self):
         """
         Returns the ranking as a tuple of indifference classes (represented as a tuple).
         """
         return tuple([tuple(self.cands_at_rank(r)) for r in self.ranks])
-    
+
     @classmethod
-    def from_indiff_list(cls, indiff_list, cmap=None): 
+    def from_indiff_list(cls, indiff_list, cmap=None):
         """
-        Returns a ranking from a list of indifference classes. 
+        Returns a ranking from a list of indifference classes.
         """
         rmap = dict()
-        for r, cands in enumerate(indiff_list): 
-            for c in cands: 
+        for r, cands in enumerate(indiff_list):
+            for c in cands:
                 rmap[c] = r + 1
         return Ranking(rmap, cmap=cmap)
-    
+
     @classmethod
-    def from_linear_order(cls, linear_order, cmap=None): 
+    def from_linear_order(cls, linear_order, cmap=None):
         """
-        Returns a ranking from a list of indifference classes. 
+        Returns a ranking from a list of indifference classes.
         """
         rmap = dict()
-        for r, c in enumerate(linear_order): 
+        for r, c in enumerate(linear_order):
             rmap[c] = r + 1
         return Ranking(rmap, cmap=cmap)
 
@@ -315,40 +356,42 @@ class Ranking(object):
         Returns the ranking as a weak order over the candidates in the list ``candidates``.
         """
         max_rank = max(self.ranks)
-        new_ranks = self.rmap
+        new_ranks = self.rmap.copy()
         for c in candidates:
             if not self.is_ranked(c):
                 new_ranks[c] = max_rank + 1
 
-        new_cmap = {c: self.cmap[c] if c in self.cmap.keys() else f'{c}' for c in candidates}
+        new_cmap = {
+            c: self.cmap[c] if c in self.cmap.keys() else f"{c}" for c in candidates
+        }
         return Ranking(new_ranks, cmap=new_cmap)
-    
-    def reverse(self): 
+
+    def reverse(self):
         """
-        Returns the reverse of the ranking. 
+        Returns the reverse of the ranking.
         """
-        r =  Ranking({c: -r for c, r in self.rmap.items()}, cmap=self.cmap)
+        r = Ranking({c: -r for c, r in self.rmap.items()}, cmap=self.cmap)
         r.normalize_ranks()
         return r
-    
+
     def break_tie(self, lin_order):
         """
-        Given a linear order, break the tie in the ranking by using the linear order.   It is assumed that lin_order is a tuple of candidates such that are a tie according to the ranking. If not, then the function will return the same ranking. 
+        Given a linear order, break the tie in the ranking by using the linear order.   It is assumed that lin_order is a tuple of candidates such that are a tie according to the ranking. If not, then the function will return the same ranking.
         """
 
         new_indiff_list = []
         for cs in self.to_indiff_list():
             if set(cs) == set(lin_order):
-                for c in lin_order: 
+                for c in lin_order:
                     new_indiff_list.append((c,))
             else:
                 new_indiff_list.append(cs)
         return Ranking.from_indiff_list(new_indiff_list, cmap=self.cmap)
 
-    def display(self, cmap = None): 
+    def display(self, cmap=None):
         """
-        Display the ranking vertically as a column of a table. 
-        
+        Display the ranking vertically as a column of a table.
+
         :Example:
 
         .. exec_code:: python
@@ -373,13 +416,15 @@ class Ranking(object):
         _r = copy.deepcopy(self)
         _r.normalize_ranks()
         print(
-            tabulate([[" ".join([
-                str(self.cmap[c])
-                for c in _r.cands_at_rank(rank)])] 
-                      for rank in _r.ranks],
-                     tablefmt="pretty")
+            tabulate(
+                [
+                    [" ".join([str(self.cmap[c]) for c in _r.cands_at_rank(rank)])]
+                    for rank in _r.ranks
+                ],
+                tablefmt="pretty",
+            )
         )
-     
+
     def __str__(self):
         """
         Display the ranking as a string.
@@ -391,7 +436,11 @@ class Ranking(object):
             if len(cands_at_rank) == 1:
                 r_str += str(self.cmap[cands_at_rank[0]]) + " "
             else:
-                r_str += "( " + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank)) + ") "
+                r_str += (
+                    "( "
+                    + " ".join(map(lambda c: str(self.cmap[c]) + " ", cands_at_rank))
+                    + ") "
+                )
         return r_str
 
     def __getitem__(self, r):
@@ -402,44 +451,48 @@ class Ranking(object):
         ranks = sorted(list(set(normalized_ranks.values())))
 
         assert r < len(ranks), "There is no item at rank " + str(r + 1)
-        cands_at_rank = [c for c,crank in normalized_ranks.items() if crank == ranks[r]]
+        cands_at_rank = [
+            c for c, crank in normalized_ranks.items() if crank == ranks[r]
+        ]
 
         return cands_at_rank[0] if len(cands_at_rank) == 1 else cands_at_rank
-    
-    def __eq__(self, other): 
-        
+
+    def __eq__(self, other):
         """
-        Returns True if the rankings are the same.  
-        
+        Returns True if the rankings are the same.
+
         :Example:
 
         .. exec_code:: python
 
             from pref_voting.profiles_with_ties import Ranking
 
-            r = Ranking({1:2, 2:3})            
+            r = Ranking({1:2, 2:3})
             r2 = Ranking({1:1, 2:2})
             r3 = Ranking({1:1})
 
             print(r == r2) # True
             print(r == r3) # False
-        
+
         """
-        
+
         self_ranks = self.ranks
         other_ranks = other.ranks
-        
-        if len(self_ranks) != len(other_ranks): 
+
+        if len(self_ranks) != len(other_ranks):
             return False
 
-        for self_rank, other_rank in zip(self_ranks, other_ranks): 
-            if set(self.cands_at_rank(self_rank)) != set(other.cands_at_rank(other_rank)): 
+        for self_rank, other_rank in zip(self_ranks, other_ranks):
+            if set(self.cands_at_rank(self_rank)) != set(
+                other.cands_at_rank(other_rank)
+            ):
                 return False
         return True
 
-    def __hash__(self): 
-        return hash(tuple(self.to_indiff_list()))
-    
+    def __hash__(self):
+        return hash(tuple(tuple(sorted(c)) for c in self.to_indiff_list()))
+
+
 def break_ties_alphabetically(ranking):
     """Break ties in the ranking alphabetically.
 
@@ -457,7 +510,7 @@ def break_ties_alphabetically(ranking):
     level = 0
 
     while n < len(candidates):
-        sorted_cands_at_rank = ranking.cands_at_rank(level)
+        sorted_cands_at_rank = sorted(ranking.cands_at_rank(level))
         for c in sorted_cands_at_rank:
             new_ranking_dict[c] = n
             n += 1

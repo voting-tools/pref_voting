@@ -1,53 +1,84 @@
-from pref_voting.profiles import Profile
-from pref_voting.profiles_with_ties import ProfileWithTies
-from pref_voting.weighted_majority_graphs import MajorityGraph
-from pref_voting.rankings import Ranking
-from pref_voting.social_welfare_function import *
-from pref_voting.voting_method import *
-from itertools import combinations, chain
 import random
+from itertools import chain, combinations
 
 import networkx as nx
 
-def get_mg(edata, curr_cands = None): 
-    
-    if curr_cands == None: 
-        if type(edata) == Profile or type(edata) == ProfileWithTies: 
+from pref_voting.profiles import Profile
+from pref_voting.profiles_with_ties import ProfileWithTies
+from pref_voting.rankings import Ranking
+from pref_voting.social_welfare_function import *
+from pref_voting.voting_method import *
+from pref_voting.weighted_majority_graphs import MajorityGraph
+
+
+def get_mg(edata, curr_cands=None):
+
+    if curr_cands == None:
+        if type(edata) == Profile or type(edata) == ProfileWithTies:
             mg = MajorityGraph.from_profile(edata).mg
         else:
             mg = edata.mg
-    else: 
-        if type(edata) == Profile or type(edata) == ProfileWithTies:  
+    else:
+        if type(edata) == Profile or type(edata) == ProfileWithTies:
             mg = nx.DiGraph()
             mg.add_nodes_from(curr_cands)
-            mg.add_edges_from([(c1,c2) for c1 in curr_cands for c2 in curr_cands if edata.majority_prefers(c1, c2)])
+            mg.add_edges_from(
+                [
+                    (c1, c2)
+                    for c1 in curr_cands
+                    for c2 in curr_cands
+                    if edata.majority_prefers(c1, c2)
+                ]
+            )
         else:
             mg = edata.mg.copy()
             mg.remove_nodes_from([c for c in edata.candidates if c not in curr_cands])
     return mg
 
 
-def get_weak_mg(edata, curr_cands = None): 
-    
-    if curr_cands == None: 
-        if type(edata) == Profile or type(edata) == ProfileWithTies: 
+def get_weak_mg(edata, curr_cands=None):
+
+    if curr_cands == None:
+        if isinstance(edata, (Profile, ProfileWithTies)):
             wmg = MajorityGraph.from_profile(edata).mg
         else:
-            wmg = edata.mg
-        wmg.add_edges_from([(c1, c2) for c1 in edata.candidates for c2 in edata.candidates if c1 != c2 and edata.is_tied(c1, c2)])
-    else: 
-        if type(edata) == Profile or type(edata) == ProfileWithTies:  
+            wmg = edata.mg.copy()
+        wmg.add_edges_from(
+            [
+                (c1, c2)
+                for c1 in edata.candidates
+                for c2 in edata.candidates
+                if c1 != c2 and edata.is_tied(c1, c2)
+            ]
+        )
+    else:
+        if isinstance(edata, (Profile, ProfileWithTies)):
             wmg = nx.DiGraph()
             wmg.add_nodes_from(curr_cands)
-            wmg.add_edges_from([(c1,c2) for c1 in curr_cands for c2 in curr_cands if c1 != c2 and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))])
+            wmg.add_edges_from(
+                [
+                    (c1, c2)
+                    for c1 in curr_cands
+                    for c2 in curr_cands
+                    if c1 != c2
+                    and (edata.majority_prefers(c1, c2) or edata.is_tied(c1, c2))
+                ]
+            )
         else:
             wmg = edata.mg.copy()
             wmg.remove_nodes_from([c for c in edata.candidates if c not in curr_cands])
-            wmg.add_edges_from([(c1, c2) for c1 in curr_cands for c2 in curr_cands if c1 != c2 and edata.is_tied(c1, c2)])
+            wmg.add_edges_from(
+                [
+                    (c1, c2)
+                    for c1 in curr_cands
+                    for c2 in curr_cands
+                    if c1 != c2 and edata.is_tied(c1, c2)
+                ]
+            )
     return wmg
 
 
-def swf_from_vm(vm, tie_breaker = None):
+def swf_from_vm(vm, tie_breaker=None):
     """
     Given a voting method, returns a social welfare function that uses the voting method to rank the candidates (winners are ranked first; then they are excluded from curr_cands and the new winners are ranked second; etc.).
 
@@ -58,22 +89,21 @@ def swf_from_vm(vm, tie_breaker = None):
     Returns:
         function: A social welfare function that uses the voting method to rank the candidates.
     """
-    
-    def f(prof, curr_cands = None):
+
+    def f(prof, curr_cands=None):
 
         cands = prof.candidates if curr_cands == None else curr_cands
 
         ranked_cands = list()
         ranking_dict = dict()
 
-        n=0
+        n = 0
 
         while n < len(cands):
-
             if len(ranked_cands) == len(cands):
                 break
 
-            ws = vm(prof, curr_cands = [c for c in cands if c not in ranked_cands])
+            ws = vm(prof, curr_cands=[c for c in cands if c not in ranked_cands])
             ranked_cands = ranked_cands + ws
 
             if tie_breaker is None:
@@ -91,11 +121,11 @@ def swf_from_vm(vm, tie_breaker = None):
                 random.shuffle(ws)
                 for c in ws:
                     ranking_dict[c] = n
-                    n += 1            
+                    n += 1
 
         return Ranking(ranking_dict)
-        
-    return SocialWelfareFunction(f, name = f"SWF from {vm.name}")
+
+    return SocialWelfareFunction(f, name=f"SWF from {vm.name}")
 
 
 def vm_from_swf(swf):
@@ -108,51 +138,54 @@ def vm_from_swf(swf):
     Returns:
         function: A voting method that uses the swf to find the winning set.
     """
-    
-    def f(edata, curr_cands = None):
-        return sorted(swf(edata, curr_cands = curr_cands).first())
-        
-    return VotingMethod(f, name = f"VM from {swf.name}")
+
+    def f(edata, curr_cands=None):
+        return sorted(swf(edata, curr_cands=curr_cands).first())
+
+    return VotingMethod(f, name=f"VM from {swf.name}")
 
 
-def create_election(ranking_list, 
-                    rcounts = None,
-                    using_extended_strict_preference=None, 
-                    candidates=None):
+def create_election(
+    ranking_list, rcounts=None, using_extended_strict_preference=None, candidates=None
+):
     """Creates an election from a list of rankings.
-    
+
     Args:
         ranking_list (list): A list of rankings, which may be a list of tuples of candidates, a list of dictionaries or a list of Ranking objects.
         using_extended_strict_preference (bool, optional): Whether to use extended strict preference after creating a ProfileWithTies. Defaults to None.
         candidates (list, optional): A list of candidates.  Only used for creating a ProfileWithTies. Defaults to None (by default the candidates are all the candidates that are ranked by at least on voter).
-    
+
     Returns:
         Profile or ProfileWithTies: The election profile.
     """
 
-    if len(ranking_list) > 0 and (type(ranking_list[0]) == tuple or type(ranking_list[0]) == list):
+    if len(ranking_list) > 0 and (
+        type(ranking_list[0]) == tuple or type(ranking_list[0]) == list
+    ):
         return Profile(ranking_list, rcounts=rcounts)
-    elif len(ranking_list) > 0 and (type(ranking_list[0]) == dict or type(ranking_list[0]) == Ranking):
+    elif len(ranking_list) > 0 and (
+        type(ranking_list[0]) == dict or type(ranking_list[0]) == Ranking
+    ):
         if candidates is not None:
             prof = ProfileWithTies(ranking_list, candidates=candidates, rcounts=rcounts)
         else:
-            prof = ProfileWithTies(ranking_list, rcounts=rcounts)       
+            prof = ProfileWithTies(ranking_list, rcounts=rcounts)
         if using_extended_strict_preference:
             prof.use_extended_strict_preference()
         return prof
-    else: # ranking_list is empty
+    else:  # ranking_list is empty
         print("Warning: list of rankings is empty.")
         return Profile(ranking_list)
-    
+
 
 class SPO(object):
     """A strict partial order class due to Jobst Heitzig.
-    
+
     The strict partial order P as a binary relation is encoded as a 2d numpy array.  The predecessors and successors of each object are precomputed.  The add method adds a new pair to the relation and computes the transitive closure.
 
     Args:
         n (int): The number of objects.
-    
+
     """
 
     n = None
@@ -188,7 +221,7 @@ class SPO(object):
 
     def initial_elements(self):
         """return the initial elements of P (those without predecessors))"""
-        return [i for i in self.objects if len(self.preds[i]) == 0]    
+        return [i for i in self.objects if len(self.preds[i]) == 0]
 
     def _register(self, a, b):
         """register that a P b, without forming the transitive closure"""
@@ -200,13 +233,13 @@ class SPO(object):
     def to_numpy(self):
         """Return the partial order matrix P as a numpy array."""
         return self.P
-    
+
     def to_networkx(self, cmap=None):
         """Convert the SPO to a networkx DiGraph.
-        
+
         Args:
             cmap (dict): A dictionary mapping each number to a candidate name. If None, the identity map is used.
-        
+
         Returns:
             nx.DiGraph: The resulting directed graph with nodes labeled according to cmap if provided.
         """
@@ -228,13 +261,13 @@ class SPO(object):
                     G.add_edge(node_labels[a], node_labels[b])
 
         return G
-    
+
     def to_list(self, cmap=None):
         """If the SPO is a linear order, return a list representing the order.
-        
+
         The list will contain candidate names based on the cmap if provided; otherwise, it will
-        contain the numbers. 
-        
+        contain the numbers.
+
         Returns None if the SPO is not a linear order.
 
         Args:
@@ -266,8 +299,9 @@ class SPO(object):
         # If cmap is provided, map the numbers to candidate names
         if cmap is not None:
             linear_order = [cmap[node] for node in linear_order]
-        
+
         return linear_order
+
 
 def weak_orders(A):
     """A generator for all weak orders on A"""
@@ -291,6 +325,7 @@ def weak_compositions(n, k):
             for comp in weak_compositions(n - i, k - 1):
                 yield [i] + comp
 
+
 def compositions(n):
     """Generates all compositions of the integer n. Adapted from https://stackoverflow.com/questions/10244180/python-generating-integer-partitions."""
 
@@ -308,7 +343,8 @@ def compositions(n):
             y -= x
             k += 1
         a[k] = x + y
-        yield a[:k + 1]
+        yield a[: k + 1]
+
 
 def enumerate_compositions(int_list):
     """Given a list of integers, enumerate all the compositions of the integers."""
@@ -324,23 +360,23 @@ def enumerate_compositions(int_list):
             for comps in enumerate_compositions(int_list[1:]):
                 yield [composition] + comps
 
-def sublists(lst, length, x = None, partial_sublist = None): 
+
+def sublists(lst, length, x=None, partial_sublist=None):
     """Generate all sublists of lst of a specified length."""
-    
+
     x = length if x is None else x
-    
+
     partial_sublist = list() if partial_sublist is None else partial_sublist
-    
-    if len(partial_sublist) == length: 
+
+    if len(partial_sublist) == length:
         yield partial_sublist
-        
-    for i,el in enumerate(lst):
-        
-        if i < x: 
-            
+
+    for i, el in enumerate(lst):
+        if i < x:
             extended_partial_sublist = partial_sublist + [el]
             x += 1
-            yield from sublists(lst[i+1::], length, x, extended_partial_sublist)
+            yield from sublists(lst[i + 1 : :], length, x, extended_partial_sublist)
+
 
 def convex_lexicographic_sublists(l):
     """Given a list l, return all convex sublists S such that S is already sorted lexicographically."""
@@ -352,19 +388,20 @@ def convex_lexicographic_sublists(l):
         if current_list + [p] == sorted(current_list + [p]):
             current_list = current_list + [p]
 
-            if idx == len(l)-1:
+            if idx == len(l) - 1:
                 cl_sublists.append(current_list)
 
         else:
             cl_sublists.append(current_list)
             current_list = [p]
-            
+
             if idx == len(l) - 1:
                 cl_sublists.append(current_list)
 
     return cl_sublists
 
+
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+    return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))

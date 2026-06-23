@@ -101,7 +101,9 @@ def test_view_does_not_raise_errors_with_valid_data(sample_profile):
     sp2.view(show_cand_labels=True, show_voter_labels=True) 
 
     sp2 = SpatialProfile({0:[0.1, 0.2, 0.3], 1:[0.2, 0.25, 0.35]}, {0:[0.1, 0.2, 0.3], 1:[0.25, 0.75, 0.25], 2:[0.1, 0.85, 0.55]})
-    sp2.view() 
+    sp2.view()
+    # 3D view with labels exercises the 3D voter/candidate label branches
+    sp2.view(show_cand_labels=True, show_voter_labels=True)
 
 def test_display_runs_without_errors(sample_profile, capsys):
     try:
@@ -110,3 +112,86 @@ def test_display_runs_without_errors(sample_profile, capsys):
         pytest.fail(f"Display method raised an unexpected exception: {e}")
     captured = capsys.readouterr()
     assert captured.out, "Expected some output from display method, but got nothing."
+
+
+# ---------------------------------------------------------------------------
+#  Counts, candidate types, candidate mutation
+# ---------------------------------------------------------------------------
+
+def test_num_cands_and_num_voters(sample_profile):
+    assert sample_profile.num_cands == 2
+    assert sample_profile.num_voters == 2
+
+def test_candidate_type_defaults_to_unknown(sample_profile):
+    for c in sample_profile.candidates:
+        assert sample_profile.candidate_type(c) == "unknown"
+
+def test_set_candidate_types(sample_profile):
+    sample_profile.set_candidate_types({1: "left", 2: "right"})
+    assert sample_profile.candidate_type(1) == "left"
+    assert sample_profile.candidate_type(2) == "right"
+
+def test_set_candidate_types_requires_all_candidates(sample_profile):
+    with pytest.raises(AssertionError, match="must be specified for all candidates"):
+        sample_profile.set_candidate_types({1: "left"})
+
+def test_add_candidate_single():
+    # use 0-indexed candidates so the new name (= num_cands) does not collide
+    sp = SpatialProfile({0: np.array([0.1, 0.2]), 1: np.array([0.3, 0.4])},
+                        {0: np.array([0.5, 0.6])})
+    sp.add_candidate([0.9, 0.9])
+    assert sp.candidates == [0, 1, 2]
+    np.testing.assert_array_equal(sp.candidate_position(2), [0.9, 0.9])
+    assert sp.num_cands == 3
+
+def test_add_candidate_multiple():
+    sp = SpatialProfile({0: np.array([0.1, 0.2]), 1: np.array([0.3, 0.4])},
+                        {0: np.array([0.5, 0.6])})
+    sp.add_candidate([[0.5, 0.5], [0.6, 0.6]], add_multiple_candidates=True)
+    assert sp.candidates == [0, 1, 2, 3]
+    np.testing.assert_array_equal(sp.candidate_position(2), [0.5, 0.5])
+    np.testing.assert_array_equal(sp.candidate_position(3), [0.6, 0.6])
+
+def test_add_candidate_wrong_dimension():
+    sp = SpatialProfile({0: np.array([0.1, 0.2])}, {0: np.array([0.5, 0.6])})
+    with pytest.raises(AssertionError):
+        sp.add_candidate([0.9, 0.9, 0.9])  # 3 dims into a 2-dim profile
+
+def test_move_candidate(sample_profile):
+    sample_profile.move_candidate(1, [0.0, 0.0])
+    np.testing.assert_array_equal(sample_profile.candidate_position(1), [0.0, 0.0])
+
+def test_move_candidate_wrong_dimension(sample_profile):
+    with pytest.raises(AssertionError):
+        sample_profile.move_candidate(1, [0.0, 0.0, 0.0])
+
+def test_move_candidate_unknown_candidate(sample_profile):
+    with pytest.raises(AssertionError, match="is not in the profile"):
+        sample_profile.move_candidate(99, [0.0, 0.0])
+
+
+# ---------------------------------------------------------------------------
+#  to_utility_profile with an uncertainty function (the stochastic branch)
+# ---------------------------------------------------------------------------
+
+def test_to_utility_profile_with_uncertainty(sample_profile):
+    # uncertainty_function returns (std, rho) consumed by generate_covariance
+    def uncertainty(prof, c, v):
+        return (0.1, 0.0)
+
+    np.random.seed(0)
+    up = sample_profile.to_utility_profile(uncertainty_function=uncertainty)
+    assert type(up) == UtilityProfile
+
+    up2, virtual_positions = sample_profile.to_utility_profile(
+        uncertainty_function=uncertainty, return_virtual_cand_positions=True)
+    assert type(up2) == UtilityProfile
+    assert set(virtual_positions.keys()) == set(sample_profile.candidates)
+
+def test_to_utility_profile_with_uncertainty_batch(sample_profile):
+    def uncertainty(prof, c, v):
+        return (0.1, 0.0)
+
+    np.random.seed(0)
+    up = sample_profile.to_utility_profile(uncertainty_function=uncertainty, batch=True)
+    assert type(up) == UtilityProfile

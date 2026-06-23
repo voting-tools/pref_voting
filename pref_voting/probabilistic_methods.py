@@ -1,21 +1,21 @@
-'''
-    File: voting_methods.py
-    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: Nove 21, 2024
-    
-    Implementations of probabilistic voting methods.
-'''
+"""
+File: voting_methods.py
+Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
+Date: Nove 21, 2024
 
-from pref_voting.prob_voting_method import  *
-from pref_voting.weighted_majority_graphs import  MajorityGraph, MarginGraph
+Implementations of probabilistic voting methods.
+"""
+
+import nashpy as nash
 from scipy.optimize import linprog
 
-import random
-import nashpy as nash
+from pref_voting.prob_voting_method import *
+from pref_voting.weighted_majority_graphs import MajorityGraph, MarginGraph
+
 
 @pvm(name="Random Dictator")
-def random_dictator(profile, curr_cands = None): 
-    '''Returns lottery over the candidates that is proportional to the Plurality scores. 
+def random_dictator(profile, curr_cands=None):
+    """Returns lottery over the candidates that is proportional to the Plurality scores.
 
     Args:
         profile (Profile): A Profile object.
@@ -23,21 +23,24 @@ def random_dictator(profile, curr_cands = None):
 
     Returns:
         dict: A dictionary mapping candidates to probabilities.
-    ''' 
-    
-    plurality_scores = profile.plurality_scores(curr_cands = curr_cands)
+    """
+
+    plurality_scores = profile.plurality_scores(curr_cands=curr_cands)
     total_plurality_scores = sum(list(plurality_scores.values()))
 
-    return {c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()}
+    return {
+        c: plurality_scores[c] / total_plurality_scores for c in plurality_scores.keys()
+    }
+
 
 @pvm(name="Random Dictator on the Beta-Uncovered Set")
-def RaDiUS(profile, curr_cands = None, beta = 0.5):
+def RaDiUS(profile, curr_cands=None, beta=0.5):
     """
     Runs the Random Dictator method on the profile restricted to the beta-uncovered set, as proposed by Charikar et al. (https://arxiv.org/abs/2306.17838).
 
     Args:
         profile (Profile): An anonymous profile of linear orders
-        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided. 
+        curr_cands (List[int], optional): Candidates to consider. Defaults to all candidates if not provided.
 
     Returns:
         dict: Maps each candidate to their probability of winning under the RaDiUS method.
@@ -47,45 +50,53 @@ def RaDiUS(profile, curr_cands = None, beta = 0.5):
 
     curr_cands = profile.candidates if curr_cands is None else curr_cands
 
-    rd_dist = random_dictator(profile, curr_cands = beta_uncovered_set(profile, curr_cands = curr_cands, beta = beta))
-    
-    rd_dist.update({c:0 for c in curr_cands if c not in rd_dist.keys()})
+    rd_dist = random_dictator(
+        profile,
+        curr_cands=beta_uncovered_set(profile, curr_cands=curr_cands, beta=beta),
+    )
+
+    rd_dist.update({c: 0 for c in curr_cands if c not in rd_dist.keys()})
 
     return rd_dist
 
+
 @pvm(name="Proportional Borda")
-def pr_borda(profile, curr_cands=None): 
-    '''Returns lottery over the candidates that is proportional to the Borda scores.
-    
-    Args:   
+def pr_borda(profile, curr_cands=None):
+    """Returns lottery over the candidates that is proportional to the Borda scores.
+
+    Args:
         profile (Profile): A Profile object.
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
 
     Returns:
         dict: A dictionary mapping candidates to probabilities.
-    
-    '''
+
+    """
     borda_scores = profile.borda_scores(curr_cands=curr_cands)
     total_borda_scores = sum(list(borda_scores.values()))
 
     return {c: borda_scores[c] / total_borda_scores for c in borda_scores.keys()}
 
+
 def clean_and_normalize(probs, threshold=1e-10):
     # Set  negative or small positive values to zero
     probs = np.where(probs < threshold, 0, probs)
-    
+
     # Renormalize to ensure the probabilities sum to 1
     total = np.sum(probs)
     if total > 0:
         probs /= total
     return probs
 
-def _maximal_lottery_enumeration(edata, curr_cands=None, margin_transformation=lambda x: x):
-    '''
-    Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf 
-    
+
+def _maximal_lottery_enumeration(
+    edata, curr_cands=None, margin_transformation=lambda x: x
+):
+    """
+    Implementation of maximal lotteries. See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf
+
     Returns a randomly chosen maximal lottery.
-    '''
+    """
 
     candidates = edata.candidates if curr_cands is None else curr_cands
     m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
@@ -97,7 +108,7 @@ def _maximal_lottery_enumeration(edata, curr_cands=None, margin_transformation=l
     equilibria = []
     try:
         equilibria = list(game.vertex_enumeration())
-        #print("Vertex Enumeration found equilibria.")
+        # print("Vertex Enumeration found equilibria.")
     except Exception as e:
         print(f"Vertex Enumeration failed: {e}")
 
@@ -105,7 +116,7 @@ def _maximal_lottery_enumeration(edata, curr_cands=None, margin_transformation=l
     if not equilibria:
         try:
             equilibria = list(game.support_enumeration())
-            #print("Support Enumeration found equilibria.")
+            # print("Support Enumeration found equilibria.")
         except Exception as e:
             print(f"Support Enumeration failed: {e}")
 
@@ -113,19 +124,20 @@ def _maximal_lottery_enumeration(edata, curr_cands=None, margin_transformation=l
         return {c: 1 / len(candidates) for c in candidates}
     else:
         # average the  equilibria component-wise to get a single equilibrium
-        eq_probs = [np.mean([eq[0][idx] for eq in equilibria]) 
-                    for idx in range(len(candidates))]
+        eq_probs = [
+            np.mean([eq[0][idx] for eq in equilibria]) for idx in range(len(candidates))
+        ]
 
         eq_probs = clean_and_normalize(np.array(eq_probs))
-        
+
         # Return the result as a dictionary
         return {c: eq_probs[cand_to_cidx(c)] for c in candidates}
 
 
 def _maximal_lottery_lp(edata, curr_cands=None, margin_transformation=lambda x: x):
-    '''
+    """
     Implementation of maximal lotteries using linear programming.
-    '''
+    """
     candidates = edata.candidates if curr_cands is None else curr_cands
     m_matrix, cand_to_cidx = edata.strength_matrix(curr_cands=candidates)
 
@@ -148,7 +160,9 @@ def _maximal_lottery_lp(edata, curr_cands=None, margin_transformation=lambda x: 
 
     bounds = [(0, None)] * num_cands + [(None, None)]  # p_i >= 0, v free
 
-    res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method='highs')
+    res = linprog(
+        c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method="highs"
+    )
 
     if res.success:
         eq_probs = res.x[:num_cands]
@@ -162,61 +176,76 @@ def _maximal_lottery_lp(edata, curr_cands=None, margin_transformation=lambda x: 
 
 
 @pvm(name="C1 Maximal Lottery")
-def c1_maximal_lottery(edata, curr_cands=None, algorithm='enumeration'): 
+def c1_maximal_lottery(edata, curr_cands=None, algorithm="enumeration"):
+    """Returns the C1 maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
 
-    '''Returns the C1 maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
-    
-    Args:   
+    Args:
         edata (Profile, MarginGraph): A Profile object.
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
         algorithm (str): The algorithm to use. Either 'enumeration' or 'lp'. Defaults to 'enumeration'.
-    
+
     Returns:
         dict: A dictionary mapping candidates to probabilities.
 
     .. note::
         The 'enumeration' algorithm averages over the extremal maximal lotteries.   The 'lp' is faster, but only returns a single maximal lottery (not necessarily the average)
 
-    '''
+    """
 
     if type(edata) == MajorityGraph:
         # if edata is a MajorityGraph, we need to add margins for the following code to work.  The margins do not matter when finding the c1 maximal lottery.
 
-        candidates = edata.candidates if curr_cands is None else curr_cands 
-          
-        edata = MarginGraph(candidates, [(c1, c2, 1) for c1, c2 in edata.edges if (c1 in candidates and c2 in candidates)])
+        candidates = edata.candidates if curr_cands is None else curr_cands
 
-    if algorithm == 'enumeration':
-        return _maximal_lottery_enumeration(edata, curr_cands=curr_cands, margin_transformation = np.sign)
-        
-    elif algorithm == 'lp':
-        return _maximal_lottery_lp(edata, curr_cands=curr_cands, margin_transformation = np.sign)
+        edata = MarginGraph(
+            candidates,
+            [
+                (c1, c2, 1)
+                for c1, c2 in edata.edges
+                if (c1 in candidates and c2 in candidates)
+            ],
+        )
+
+    if algorithm == "enumeration":
+        return _maximal_lottery_enumeration(
+            edata, curr_cands=curr_cands, margin_transformation=np.sign
+        )
+
+    elif algorithm == "lp":
+        return _maximal_lottery_lp(
+            edata, curr_cands=curr_cands, margin_transformation=np.sign
+        )
     else:
         raise ValueError(f"Unknown algorithm: {algorithm}")
 
+
 @pvm(name="Maximal Lottery")
-def maximal_lottery(edata, curr_cands=None, algorithm='lp'): 
-    '''Returns the maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
-    
-    Args:   
+def maximal_lottery(edata, curr_cands=None, algorithm="lp"):
+    """Returns the maximal lottery over the candidates.  See http://dss.in.tum.de/files/brandt-research/fishburn_slides.pdf.
+
+    Args:
         edata (Profile, MarginGraph): A Profile object.
         curr_cands (list): A list of candidates to restrict the ranking to. If ``None``, then the ranking is over the entire domain of the profile.
         algorithm (str): The algorithm to use. Either 'enumeration' or 'lp'. Defaults to 'enumeration'.
 
     Returns:
         dict: A dictionary mapping candidates to probabilities.
-    
+
     .. note::
         The 'enumeration' algorithm averages over the extremal maximal lotteries.   The 'lp' is faster, but only returns a single maximal lottery (not necessarily the average)
-    
-    
-    '''
 
-    if algorithm == 'enumeration':
-        return _maximal_lottery_enumeration(edata, curr_cands=curr_cands, margin_transformation = lambda x: x)
-    
-    elif algorithm == 'lp':
-        return _maximal_lottery_lp(edata, curr_cands=curr_cands, margin_transformation = lambda x: x)
+
+    """
+
+    if algorithm == "enumeration":
+        return _maximal_lottery_enumeration(
+            edata, curr_cands=curr_cands, margin_transformation=lambda x: x
+        )
+
+    elif algorithm == "lp":
+        return _maximal_lottery_lp(
+            edata, curr_cands=curr_cands, margin_transformation=lambda x: x
+        )
     else:
         raise ValueError(f"Unknown algorithm: {algorithm}")
 
@@ -242,7 +271,7 @@ def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     .. seealso::
         :meth:`pref_voting.iterative_methods.consensus_builder`
         :meth:`pref_voting.stochastic_methods.random_consensus_builder_st`
-"""
+    """
     from pref_voting.iterative_methods import consensus_builder
 
     if curr_cands is None:
@@ -255,33 +284,46 @@ def random_consensus_builder(profile, curr_cands=None, beta=0.5):
     for ranking_type in profile.ranking_types:
         # Count number of voters with this ranking type
         num_rankings_with_type = len([r for r in profile.rankings if r == ranking_type])
-        winner = consensus_builder(profile, curr_cands=curr_cands,consensus_building_ranking=ranking_type, beta=beta)[0]
+        winner = consensus_builder(
+            profile,
+            curr_cands=curr_cands,
+            consensus_building_ranking=ranking_type,
+            beta=beta,
+        )[0]
         winner_counts[winner] += num_rankings_with_type
-        total_count += num_rankings_with_type
 
     # Convert counts to probabilities
-    return {c: count/profile.num_voters for c, count in winner_counts.items()}
+    return {c: count / profile.num_voters for c, count in winner_counts.items()}
 
 
 def create_probabilistic_method(vm):
     """
     Create a probabilistic voting method from a voting method.
     """
-    
+
     from pref_voting.voting_method import VotingMethod
+
     if type(vm) != VotingMethod:
         raise TypeError("vm must be a VotingMethod object")
-    
+
     def _pvm(profile, curr_cands=None, **kwargs):
         return vm.prob(profile, curr_cands=curr_cands, **kwargs)
-    
-    return ProbVotingMethod(_pvm, name=f'{vm.name} with Even Chance Tiebreaking')
+
+    return ProbVotingMethod(_pvm, name=f"{vm.name} with Even Chance Tiebreaking")
+
 
 def mixture(pvm1, pvm2, alpha):
     """
     Mixture of the two probabilistic voting methods pvm1 and pvm2 with mixing parameter alpha. With probability alpha, the output is the output of pvm1, and with probability 1-alpha, the output is the output of pvm2.
     """
+
     def _mixture(profile, curr_cands=None, **kwargs):
-        return {c: alpha * pvm1(profile, curr_cands=curr_cands, **kwargs)[c] + (1-alpha) * pvm2(profile, curr_cands=curr_cands, **kwargs)[c] for c in profile.candidates}
-    
-    return ProbVotingMethod(_mixture, name=f'Mixture of {pvm1.name} and {pvm2.name} with alpha={alpha}')
+        return {
+            c: alpha * pvm1(profile, curr_cands=curr_cands, **kwargs)[c]
+            + (1 - alpha) * pvm2(profile, curr_cands=curr_cands, **kwargs)[c]
+            for c in profile.candidates
+        }
+
+    return ProbVotingMethod(
+        _mixture, name=f"Mixture of {pvm1.name} and {pvm2.name} with alpha={alpha}"
+    )

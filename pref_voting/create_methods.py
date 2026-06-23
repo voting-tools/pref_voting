@@ -1,9 +1,12 @@
-'''
-    File: create_methods.py
-    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: August 8, 2024
-    
-'''
+"""
+File: create_methods.py
+Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
+Date: August 8, 2024
+
+"""
+
+from pref_voting.voting_methods import VotingMethod
+
 
 def compose(vm1, vm2):
     """After restricting the profile to the set of vm1 winners, run vm2
@@ -57,6 +60,7 @@ def _compose(vm1, vm2):
 
     return _vm
 
+
 def faceoff(vm1, vm2):
     """If the vm1 and vm2 winners are the same, return that set of winners. Otherwise, for each choice of a vm1 winner A and vm2 winner B, add to the ultimate winners whichever of A or B is majority preferred to the other (or both if they are tied).
 
@@ -77,23 +81,24 @@ def faceoff(vm1, vm2):
 
         if vm1_winners == vm2_winners:
             return vm1_winners
-        
+
         else:
             winners = list()
 
             for a in vm1_winners:
                 for b in vm2_winners:
-                    if edata.margin(a,b) > 0:
+                    if edata.margin(a, b) > 0:
                         winners.append(a)
-                    elif edata.margin(b,a) > 0:
+                    elif edata.margin(b, a) > 0:
                         winners.append(b)
-                    elif edata.margin(a,b) == 0:
+                    elif edata.margin(a, b) == 0:
                         winners.append(a)
-                        winners.append(b) 
+                        winners.append(b)
 
             return list(set(winners))
 
     return VotingMethod(_vm, name=f"{vm1.name}-{vm2.name} Faceoff")
+
 
 def _faceoff(vm1, vm2):
     """
@@ -109,19 +114,19 @@ def _faceoff(vm1, vm2):
 
         if vm1_winners == vm2_winners:
             return vm1_winners
-        
+
         else:
             winners = list()
 
             for a in vm1_winners:
                 for b in vm2_winners:
-                    if edata.margin(a,b) > 0:
+                    if edata.margin(a, b) > 0:
                         winners.append(a)
-                    elif edata.margin(b,a) > 0:
+                    elif edata.margin(b, a) > 0:
                         winners.append(b)
-                    elif edata.margin(a,b) == 0:
+                    elif edata.margin(a, b) == 0:
                         winners.append(a)
-                        winners.append(b) 
+                        winners.append(b)
 
             return list(set(winners))
 

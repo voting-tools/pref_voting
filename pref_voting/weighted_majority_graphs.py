@@ -1,21 +1,21 @@
 """
-    File: weighted_majority_graphs.py
-    Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
-    Date: January 5, 2022
-    Updated: July 12, 2022
-    Updated: December 19, 2022
-    
-    Majority Graphs, Margin Graphs and Support Graphs
+File: weighted_majority_graphs.py
+Author: Wes Holliday (wesholliday@berkeley.edu) and Eric Pacuit (epacuit@umd.edu)
+Date: January 5, 2022
+Updated: July 12, 2022
+Updated: December 19, 2022
+
+Majority Graphs, Margin Graphs and Support Graphs
 """
 
-import networkx as nx
-from tabulate import tabulate
-import matplotlib.pyplot as plt
 import string
 from itertools import combinations, permutations
+
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 from ortools.linear_solver import pywraplp
 
-import numpy as np
 
 class MajorityGraph(object):
     """A majority graph is an asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` means that :math:`c` is majority preferred to :math:`d`.
@@ -48,10 +48,10 @@ class MajorityGraph(object):
         """A networkx DiGraph object representing the majority graph."""
 
         self.cmap = cmap if cmap is not None else {c: str(c) for c in candidates}
-        
+
         self.candidates = list(candidates)
         """The list of candidates."""
-        
+
         self.num_cands = len(self.candidates)
         """The number of candidates."""
 
@@ -67,10 +67,14 @@ class MajorityGraph(object):
 
         for c1_idx in self.cindices:
             for c2_idx in self.cindices:
-                if mg.has_edge(self.cindex_to_cand(c1_idx), self.cindex_to_cand(c2_idx)):
+                if mg.has_edge(
+                    self.cindex_to_cand(c1_idx), self.cindex_to_cand(c2_idx)
+                ):
                     self.maj_matrix[c1_idx][c2_idx] = True
                     self.maj_matrix[c2_idx][c1_idx] = False
-                elif mg.has_edge(self.cindex_to_cand(c2_idx), self.cindex_to_cand(c1_idx)):
+                elif mg.has_edge(
+                    self.cindex_to_cand(c2_idx), self.cindex_to_cand(c1_idx)
+                ):
                     self.maj_matrix[c2_idx][c1_idx] = True
                     self.maj_matrix[c1_idx][c2_idx] = False
 
@@ -93,12 +97,14 @@ class MajorityGraph(object):
     def is_tournament(self):
         """Returns True if the majority graph is a **tournament** (there is an edge between any two distinct nodes)."""
 
-        return all([
-            self.mg.has_edge(c1, c2) or self.mg.has_edge(c2, c1)
-            for c1 in self.candidates
-            for c2 in self.candidates
-            if c1 != c2
-        ])
+        return all(
+            [
+                self.mg.has_edge(c1, c2) or self.mg.has_edge(c2, c1)
+                for c1 in self.candidates
+                for c2 in self.candidates
+                if c1 != c2
+            ]
+        )
 
     def majority_prefers(self, c1, c2):
         """Returns true if there is an edge from `c1` to `c2`."""
@@ -194,7 +200,7 @@ class MajorityGraph(object):
                 break  # if a Condorcet loser exists, then it is unique
         return cl
 
-    def cycles(self, curr_cands = None):
+    def cycles(self, curr_cands=None):
         """Returns True if the margin graph has a cycle.
 
         This uses the networkx method ``networkx.find_cycle`` to find the cycles in ``self.mg``.
@@ -216,12 +222,10 @@ class MajorityGraph(object):
         if curr_cands is None:
             return list(nx.simple_cycles(self.mg))
         else:
-            mg = nx.DiGraph()
-            subgraph = mg.subgraph(curr_cands).copy()
+            subgraph = self.mg.subgraph(curr_cands).copy()
             return list(nx.simple_cycles(subgraph))
 
-
-    def has_cycle(self, curr_cands = None):
+    def has_cycle(self, curr_cands=None):
         """Returns True if there is a cycle in the majority graph."""
         if curr_cands is None:
             try:
@@ -229,8 +233,7 @@ class MajorityGraph(object):
             except:
                 cycle = list()
         else:
-            mg = nx.DiGraph()
-            subgraph = mg.subgraph(curr_cands).copy()
+            subgraph = self.mg.subgraph(curr_cands).copy()
             try:
                 cycle = nx.find_cycle(subgraph)
             except:
@@ -266,14 +269,14 @@ class MajorityGraph(object):
 
         return MajorityGraph(new_cands, new_edges, cmap=new_cmap)
 
-    def to_networkx(self): 
+    def to_networkx(self):
         """
-        Return a networkx weighted DiGraph representing the margin graph. 
+        Return a networkx weighted DiGraph representing the margin graph.
         """
 
         return self.mg
 
-    def description(self): 
+    def description(self):
         """
         Returns a string describing the Majority Graph.
         """
@@ -337,9 +340,11 @@ class MajorityGraph(object):
         """
 
         cycles = self.cycles()
-        
-        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n")
-        for cycle in cycles: 
+
+        print(
+            f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n"
+        )
+        for cycle in cycles:
             cmap = cmap if cmap is not None else self.cmap
             cmap_inverse = {cname: c for c, cname in cmap.items()}
             mg_with_cycle = nx.DiGraph()
@@ -350,18 +355,25 @@ class MajorityGraph(object):
             cands = self.candidates
             mg_edges = list(self.edges)
 
-            cycle_edges = [(cmap[c], cmap[cycle[cidx + 1]]) for cidx,c in enumerate(cycle[0:-1])] + [(cmap[cycle[-1]], cmap[cycle[0]])]
+            cycle_edges = [
+                (cmap[c], cmap[cycle[cidx + 1]]) for cidx, c in enumerate(cycle[0:-1])
+            ] + [(cmap[cycle[-1]], cmap[cycle[0]])]
 
             cands_in_cycle = [cmap[c1] for c1 in cands if c1 in cycle]
 
-            node_colors = ["blue" if n in cands_in_cycle else "lightgray" for n in mg_with_cycle.nodes ]
+            node_colors = [
+                "blue" if n in cands_in_cycle else "lightgray"
+                for n in mg_with_cycle.nodes
+            ]
 
             pos = nx.circular_layout(mg_with_cycle)
             nx.draw(mg_with_cycle, pos, width=1.5, edge_color="white")
             nx.draw_networkx_nodes(
                 mg_with_cycle, pos, node_color=node_colors, node_size=700
             )
-            nx.draw_networkx_labels(mg_with_cycle, pos, font_size=20, font_color="white")
+            nx.draw_networkx_labels(
+                mg_with_cycle, pos, font_size=20, font_color="white"
+            )
             nx.draw_networkx_edges(
                 mg_with_cycle,
                 pos,
@@ -377,17 +389,21 @@ class MajorityGraph(object):
             nx.draw_networkx_edges(
                 mg_with_cycle,
                 pos,
-                edgelist=[(cmap[e[0]], cmap[e[1]]) for e in mg_edges if (cmap[e[0]], cmap[e[1]]) not in cycle_edges],
+                edgelist=[
+                    (cmap[e[0]], cmap[e[1]])
+                    for e in mg_edges
+                    if (cmap[e[0]], cmap[e[1]]) not in cycle_edges
+                ],
                 width=1.5,
-                 edge_color="lightgray",
+                edge_color="lightgray",
                 arrowsize=15,
                 min_target_margin=15,
             )
-            
+
             ax = plt.gca()
             ax.set_frame_on(False)
             plt.show()
-            
+
     def to_latex(self, cmap=None, new_cand=None):
         """Outputs TikZ code for displaying the majority graph.
 
@@ -466,17 +482,22 @@ class MajorityGraph(object):
 
         new_edges = list()
         for c1, c2 in _new_edges:
-            if (self.majority_prefers(c1, c2) and other_mg.majority_prefers(c2, c1)) or (self.majority_prefers(c2, c1) and other_mg.majority_prefers(c1, c2)):
+            if (
+                self.majority_prefers(c1, c2) and other_mg.majority_prefers(c2, c1)
+            ) or (self.majority_prefers(c2, c1) and other_mg.majority_prefers(c1, c2)):
                 continue
-            else: 
+            else:
                 new_edges.append((c1, c2))
         return MajorityGraph(new_cands, new_edges)
-    
-    def __eq__(self, other_mg): 
+
+    def __eq__(self, other_mg):
         """
-        Check if two majority graphs are equal. 
+        Check if two majority graphs are equal.
         """
-        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(other_mg.edges)
+        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(
+            other_mg.edges
+        )
+
 
 class MarginGraph(MajorityGraph):
     """A margin graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that :math:`c` is majority preferred to :math:`d` by a **margin** of :math:`w`.
@@ -508,28 +529,56 @@ class MarginGraph(MajorityGraph):
         """The margin matrix, where the :math:`(i, j)`-entry is the number of voters who rank candidate with index :math:`i` above the candidate with index :math:`j` minus the number of voters  who rank candidate with index :math:`j` above the candidate with index :math:`i`. """
 
         for c1, c2, margin in w_edges:
-            self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] = margin
-            self.margin_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)] = -1 * margin
+            self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)] = (
+                margin
+            )
+            self.margin_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)] = (
+                -1 * margin
+            )
 
     def margin(self, c1, c2):
         """Returns the margin of ``c1`` over ``c2``."""
         return self.margin_matrix[self.cand_to_cindex(c1)][self.cand_to_cindex(c2)]
 
-    def strength_matrix(self, curr_cands = None, strength_function = None): 
+    def strength_matrix(self, curr_cands=None, strength_function=None):
         """
         Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function."""
-        
-        if curr_cands is not None: 
+
+        if curr_cands is not None:
             cindices = [cidx for cidx, _ in enumerate(curr_cands)]
             cindex_to_cand = lambda cidx: curr_cands[cidx]
             cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
-            strength_function = self.margin if strength_function is None else strength_function
-            strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
-        else:  
+            strength_function = (
+                self.margin if strength_function is None else strength_function
+            )
+            strength_matrix = np.array(
+                [
+                    [
+                        strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx))
+                        for b_idx in cindices
+                    ]
+                    for a_idx in cindices
+                ]
+            )
+        else:
             cindices = self.cindices
             cindex_to_cand = self.cindex_to_cand
             cand_to_cindex = self.cand_to_cindex
-            strength_matrix = np.array(self.margin_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+            strength_matrix = (
+                np.array(self.margin_matrix)
+                if strength_function is None
+                else np.array(
+                    [
+                        [
+                            strength_function(
+                                cindex_to_cand(a_idx), cindex_to_cand(b_idx)
+                            )
+                            for b_idx in cindices
+                        ]
+                        for a_idx in cindices
+                    ]
+                )
+            )
 
         return strength_matrix, cand_to_cindex
 
@@ -589,10 +638,9 @@ class MarginGraph(MajorityGraph):
             list(set([self.margin(e[0], e[1]) for e in self.mg.edges]))
         ) == len(self.mg.edges)
 
-
-    def to_networkx(self): 
+    def to_networkx(self):
         """
-        Return a networkx weighted DiGraph representing the margin graph. 
+        Return a networkx weighted DiGraph representing the margin graph.
         """
 
         g = nx.DiGraph()
@@ -601,19 +649,19 @@ class MarginGraph(MajorityGraph):
 
         return g
 
-    def debord_profile(self): 
+    def debord_profile(self):
         """
         Find a profile that generates the margin graph using the algorithm from Debord's (1987) proof.
         """
-        
+
         from pref_voting.profiles import Profile
-    
+
         candidates = self.candidates
 
         ranks = list()
         rcounts = list()
 
-        if all([w % 2 == 0 for _,_,w in self.edges]):
+        if all([w % 2 == 0 for _, _, w in self.edges]):
             for c1, c2, w in self.edges:
                 other_cands = [c for c in candidates if c != c1 and c != c2]
 
@@ -621,33 +669,35 @@ class MarginGraph(MajorityGraph):
                 lin_ord2 = sorted(other_cands, reverse=True)
 
                 ranks.append([c1, c2] + lin_ord1)
-                rcounts.append(w//2)
+                rcounts.append(w // 2)
                 ranks.append(lin_ord2 + [c1, c2])
-                rcounts.append(w//2)
+                rcounts.append(w // 2)
             return Profile(ranks, rcounts, cmap=self.cmap)
-        
-        elif all([w % 2 == 1 for _,_,w in self.edges]): # all weights are odd
+
+        elif all([w % 2 == 1 for _, _, w in self.edges]):  # all weights are odd
             single_prof = Profile([sorted(candidates)], [1])
 
             for c1, c2, w in self.edges:
                 other_cands = [c for c in candidates if c != c1 and c != c2]
                 lin_ord1 = sorted(other_cands)
                 lin_ord2 = sorted(other_cands, reverse=True)
-                if w-single_prof.margin(c1, c2) > 0:
+                if w - single_prof.margin(c1, c2) > 0:
                     ranks.append([c1, c2] + lin_ord1)
-                    rcounts.append((w-single_prof.margin(c1, c2))//2)
+                    rcounts.append((w - single_prof.margin(c1, c2)) // 2)
                     ranks.append(lin_ord2 + [c1, c2])
-                    rcounts.append((w-single_prof.margin(c1, c2))//2)
+                    rcounts.append((w - single_prof.margin(c1, c2)) // 2)
             ranks.append(sorted(candidates))
             rcounts.append(1)
             return Profile(ranks, rcounts, cmap=self.cmap)
-        else: 
-            print("Cannot find a Profile since the weights do not all have the same parity.")
+        else:
+            print(
+                "Cannot find a Profile since the weights do not all have the same parity."
+            )
             return None
-        
-    def minimal_profile(self): 
+
+    def minimal_profile(self):
         """
-        Use an integer linear program to find a minimal profile generating the margin graph. 
+        Use an integer linear program to find a minimal profile generating the margin graph.
         """
         from pref_voting.profiles import Profile
 
@@ -655,27 +705,38 @@ class MarginGraph(MajorityGraph):
 
         num_cands = len(self.candidates)
         rankings = list(permutations(range(num_cands)))
-        
+
         ranking_to_var = dict()
         infinity = solver.infinity()
-        for ridx, r in enumerate(rankings): 
+        for ridx, r in enumerate(rankings):
             _v = solver.IntVar(0.0, infinity, f"x{ridx}")
             ranking_to_var[r] = _v
 
         nv = solver.IntVar(0.0, infinity, "nv")
         equations = list()
-        for c1 in self.candidates: 
-            for c2 in self.candidates: 
-                if c1 != c2: 
+        for c1 in self.candidates:
+            for c2 in self.candidates:
+                if c1 != c2:
                     margin = self.margin(c1, c2)
-                    if margin >= 0: 
-                        rankings_c1_over_c2 = [ranking_to_var[r] for r in rankings if r.index(c1) < r.index(c2)]
-                        rankings_c2_over_c1 = [ranking_to_var[r] for r in rankings if r.index(c2) < r.index(c1)]
-                        equations.append(sum(rankings_c1_over_c2) == margin + sum(rankings_c2_over_c1))
-                        
+                    if margin >= 0:
+                        rankings_c1_over_c2 = [
+                            ranking_to_var[r]
+                            for r in rankings
+                            if r.index(c1) < r.index(c2)
+                        ]
+                        rankings_c2_over_c1 = [
+                            ranking_to_var[r]
+                            for r in rankings
+                            if r.index(c2) < r.index(c1)
+                        ]
+                        equations.append(
+                            sum(rankings_c1_over_c2)
+                            == margin + sum(rankings_c2_over_c1)
+                        )
+
         equations.append(nv == sum(list(ranking_to_var.values())))
 
-        for eq in equations: 
+        for eq in equations:
             solver.Add(eq)
 
         solver.Minimize(nv)
@@ -685,22 +746,21 @@ class MarginGraph(MajorityGraph):
         if status == pywraplp.Solver.INFEASIBLE:
             print("Error: Did not find a solution.")
             return None
-        
-        if status != pywraplp.Solver.OPTIMAL: 
+
+        if status != pywraplp.Solver.OPTIMAL:
             print("Warning: Did not find an optimal solution.")
 
         _ranks = list()
         _rcounts = list()
 
-        for r,v in ranking_to_var.items(): 
-
-            if v.solution_value() > 0: 
+        for r, v in ranking_to_var.items():
+            if v.solution_value() > 0:
                 _ranks.append(r)
                 _rcounts.append(int(v.solution_value()))
-                if not v.solution_value().is_integer(): 
+                if not v.solution_value().is_integer():
                     print("ERROR: Found non integer, ", v.solution_value())
                     return None
-        return Profile(_ranks, rcounts = _rcounts)
+        return Profile(_ranks, rcounts=_rcounts)
 
     def normalize_ordered_weights(self):
         """
@@ -708,8 +768,8 @@ class MarginGraph(MajorityGraph):
 
         .. important::
 
-            This function returns a margin graph that has the same ordering of the edges, but the edges may have different weights.  Qualitative margin graph invariant 
-            voting methods will identify the same winning sets for both graphs. 
+            This function returns a margin graph that has the same ordering of the edges, but the edges may have different weights.  Qualitative margin graph invariant
+            voting methods will identify the same winning sets for both graphs.
 
         """
 
@@ -736,7 +796,7 @@ class MarginGraph(MajorityGraph):
 
         return MarginGraph(self.candidates, new_edges, cmap=self.cmap)
 
-    def description(self): 
+    def description(self):
         """
         Returns a string describing the Margin Graph.
         """
@@ -833,7 +893,6 @@ class MarginGraph(MajorityGraph):
         mg_with_defeat.add_edges_from(edges)
 
         if show_undefeated:
-
             undefeated_cands = [
                 cmap[c1]
                 for c1 in cands
@@ -912,11 +971,13 @@ class MarginGraph(MajorityGraph):
             cmap (dict, optional): The cmap used to map candidates to candidate names.
 
         """
-        
+
         cycles = self.cycles()
-        
-        print(f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n")
-        for cycle in cycles: 
+
+        print(
+            f"There {'are' if len(cycles) != 1 else 'is'} {len(cycles)} {'cycle' if len(cycles) == 1 else 'cycles'}{':' if len(cycles) > 0 else '.'} \n"
+        )
+        for cycle in cycles:
             cmap = cmap if cmap is not None else self.cmap
             mg_with_cycle = nx.DiGraph()
 
@@ -926,18 +987,25 @@ class MarginGraph(MajorityGraph):
             cands = self.candidates
             mg_edges = list(self.edges)
 
-            cycle_edges = [(cmap[c], cmap[cycle[cidx + 1]]) for cidx,c in enumerate(cycle[0:-1])] + [(cmap[cycle[-1]], cmap[cycle[0]])]
+            cycle_edges = [
+                (cmap[c], cmap[cycle[cidx + 1]]) for cidx, c in enumerate(cycle[0:-1])
+            ] + [(cmap[cycle[-1]], cmap[cycle[0]])]
 
             cands_in_cycle = [cmap[c1] for c1 in cands if c1 in cycle]
 
-            node_colors = ["blue" if n in cands_in_cycle else "lightgray" for n in mg_with_cycle.nodes ]
+            node_colors = [
+                "blue" if n in cands_in_cycle else "lightgray"
+                for n in mg_with_cycle.nodes
+            ]
 
             pos = nx.circular_layout(mg_with_cycle)
             nx.draw(mg_with_cycle, pos, width=1.5, edge_color="white")
             nx.draw_networkx_nodes(
                 mg_with_cycle, pos, node_color=node_colors, node_size=700
             )
-            nx.draw_networkx_labels(mg_with_cycle, pos, font_size=20, font_color="white")
+            nx.draw_networkx_labels(
+                mg_with_cycle, pos, font_size=20, font_color="white"
+            )
             nx.draw_networkx_edges(
                 mg_with_cycle,
                 pos,
@@ -953,9 +1021,13 @@ class MarginGraph(MajorityGraph):
             nx.draw_networkx_edges(
                 mg_with_cycle,
                 pos,
-                edgelist=[(cmap[e[0]], cmap[e[1]]) for e in mg_edges if (cmap[e[0]], cmap[e[1]]) not in cycle_edges],
+                edgelist=[
+                    (cmap[e[0]], cmap[e[1]])
+                    for e in mg_edges
+                    if (cmap[e[0]], cmap[e[1]]) not in cycle_edges
+                ],
                 width=1.5,
-                 edge_color="lightgray",
+                edge_color="lightgray",
                 arrowsize=15,
                 min_target_margin=15,
             )
@@ -1010,38 +1082,39 @@ class MarginGraph(MajorityGraph):
             cmap=cmap,
         )
 
-    def __add__(self, edata): 
+    def __add__(self, edata):
         """
-        Return a MarginGraph in which the new margin of candidate :math:`a` over :math:`b` is the sum of the 
-        existing margin of :math:`a` over :math:`b` with with the margin :math:`a` over :math:`b` in ``edata``. 
+        Return a MarginGraph in which the new margin of candidate :math:`a` over :math:`b` is the sum of the
+        existing margin of :math:`a` over :math:`b` with with the margin :math:`a` over :math:`b` in ``edata``.
         """
         candidates = self.candidates
         new_edges = list()
-        for c1, c2 in combinations(candidates, 2): 
-            
+        for c1, c2 in combinations(candidates, 2):
             new_margin = self.margin(c1, c2) + edata.margin(c1, c2)
-            
-            if new_margin > 0: 
+
+            if new_margin > 0:
                 new_edges.append((c1, c2, new_margin))
-            elif new_margin < 0: 
-                
+            elif new_margin < 0:
                 new_edges.append((c2, c1, -1 * new_margin))
-            
+
         return MarginGraph(candidates, new_edges, cmap=self.cmap)
 
-    def __eq__(self, other_mg): 
+    def __eq__(self, other_mg):
         """
         Return True if the margin graphs are equal (the candidates, and all edges and weights are the same); otherwise, return False
         """
 
-        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(other_mg.edges)
-    
+        return self.candidates == other_mg.candidates and sorted(self.edges) == sorted(
+            other_mg.edges
+        )
+
+
 class SupportGraph(MajorityGraph):
     """A support graph is a weighted asymmetric directed graph.  The nodes are the candidates and an edge from candidate :math:`c` to :math:`d` with weight :math:`w` means that the **support** of  :math:`c` over :math:`d` is :math:`w`.
 
     :param candidates: List of the candidates.  To be used as nodes in the majority graph.
     :type candidates: list[int] or  list[str]
-    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the support for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`. 
+    :param w_edges: List representing the edges in the majority graph with supports. If :math:`(c,d,(n,m))` is in the list of edges, then there is an edge from :math:`c` to :math:`d`, the support for :math:`c` over :math:`d` is :math:`n`, and the support for :math:`d` over :math:`c` is :math:`m`.
     :type w_edges: list
     :param cmap: Dictionary mapping candidates to candidate names (strings).  If not provided, each candidate name is mapped to itself.
     :type cmap: dict[int: str], optional
@@ -1119,21 +1192,45 @@ class SupportGraph(MajorityGraph):
             == self.s_matrix[self.cand_to_cindex(c2)][self.cand_to_cindex(c1)]
         )
 
-    def strength_matrix(self, curr_cands = None, strength_function = None): 
+    def strength_matrix(self, curr_cands=None, strength_function=None):
         """
         Return the strength matrix of the profile.  The strength matrix is a matrix where the entry in row :math:`i` and column :math:`j` is the number of voters that rank the candidate with index :math:`i` over the candidate with index :math:`j`.  If ``curr_cands`` is provided, then the strength matrix is restricted to the candidates in ``curr_cands``.  If ``strength_function`` is provided, then the strength matrix is computed using the strength function."""
-        
-        if curr_cands is not None: 
+
+        if curr_cands is not None:
             cindices = [cidx for cidx, _ in enumerate(curr_cands)]
             cindex_to_cand = lambda cidx: curr_cands[cidx]
             cand_to_cindex = lambda c: cindices[curr_cands.index(c)]
-            strength_function = self.support if strength_function is None else strength_function
-            strength_matrix = np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
-        else:  
+            strength_function = (
+                self.support if strength_function is None else strength_function
+            )
+            strength_matrix = np.array(
+                [
+                    [
+                        strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx))
+                        for b_idx in cindices
+                    ]
+                    for a_idx in cindices
+                ]
+            )
+        else:
             cindices = self.cindices
             cindex_to_cand = self.cindex_to_cand
             cand_to_cindex = self.cand_to_cindex
-            strength_matrix = np.array(self.s_matrix) if strength_function is None else np.array([[strength_function(cindex_to_cand(a_idx), cindex_to_cand(b_idx)) for b_idx in cindices] for a_idx in cindices])
+            strength_matrix = (
+                np.array(self.s_matrix)
+                if strength_function is None
+                else np.array(
+                    [
+                        [
+                            strength_function(
+                                cindex_to_cand(a_idx), cindex_to_cand(b_idx)
+                            )
+                            for b_idx in cindices
+                        ]
+                        for a_idx in cindices
+                    ]
+                )
+            )
 
         return strength_matrix, cand_to_cindex
 
@@ -1165,7 +1262,6 @@ class SupportGraph(MajorityGraph):
 
         return SupportGraph(new_cands, new_edges, cmap=new_cmap)
 
-
     def display(self, curr_cands=None, cmap=None):
         """Display a support graph (restricted to ``curr_cands``) using networkx.draw.
 
@@ -1192,9 +1288,11 @@ class SupportGraph(MajorityGraph):
 
         pos = nx.circular_layout(mg)
 
+        fig, ax = plt.subplots()  # <-- a new, guaranteed-2D axes
         nx.draw(
             mg,
             pos,
+            ax=ax,  # <-- draw on THAT axes
             font_size=20,
             font_color="white",
             node_size=700,
@@ -1203,9 +1301,13 @@ class SupportGraph(MajorityGraph):
         )
         labels = nx.get_edge_attributes(mg, "weight")
         nx.draw_networkx_edge_labels(
-            mg, pos, edge_labels=labels, font_size=14, label_pos=0.3
+            mg,
+            pos,
+            ax=ax,  # <-- and here too
+            edge_labels=labels,
+            font_size=14,
+            label_pos=0.3,
         )
-
         plt.show()
 
     @classmethod
@@ -1259,9 +1361,9 @@ def three_cand_tikz_str(g, cmap=None):
     c = g.candidates[2]
 
     if type(g) == MarginGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.margin(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.margin(c, d)}$}}"
     elif type(g) == SupportGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.support(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.support(c, d)}$}}"
     else:
         w = lambda c, d: ""
 
@@ -1269,28 +1371,28 @@ def three_cand_tikz_str(g, cmap=None):
 
     nodes = f"""
 \\begin{{tikzpicture}}
-\\node[circle,draw,minimum width=0.25in] at (0,0) (a) {{${cmap[a]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (3,0) (c) {{${cmap[c]}$}}; 
+\\node[circle,draw,minimum width=0.25in] at (0,0) (a) {{${cmap[a]}$}};
+\\node[circle,draw,minimum width=0.25in] at (3,0) (c) {{${cmap[c]}$}};
 \\node[circle,draw,minimum width=0.25in] at (1.5,1.5) (b) {{${cmap[b]}$}};\n"""
 
     if g.majority_prefers(a, b):
-        ab_edge = f"\\path[->,draw,thick] (a) to {w(a,b)} (b);\n"
+        ab_edge = f"\\path[->,draw,thick] (a) to {w(a, b)} (b);\n"
     elif g.majority_prefers(b, a):
-        ab_edge = f"\\path[->,draw,thick] (b) to {w(b,a)} (a);\n"
+        ab_edge = f"\\path[->,draw,thick] (b) to {w(b, a)} (a);\n"
     else:
         ab_edge = ""
 
     if g.majority_prefers(b, c):
-        bc_edge = f"\\path[->,draw,thick] (b) to {w(b,c)} (c);\n"
+        bc_edge = f"\\path[->,draw,thick] (b) to {w(b, c)} (c);\n"
     elif g.majority_prefers(c, b):
-        bc_edge = f"\\path[->,draw,thick] (c) to {w(c,b)} (b);\n"
+        bc_edge = f"\\path[->,draw,thick] (c) to {w(c, b)} (b);\n"
     else:
         bc_edge = ""
 
     if g.majority_prefers(a, c):
-        ac_edge = f"\\path[->,draw,thick] (a) to {w(a,c)} (c);\n"
+        ac_edge = f"\\path[->,draw,thick] (a) to {w(a, c)} (c);\n"
     elif g.majority_prefers(c, a):
-        ac_edge = f"\\path[->,draw,thick] (c) to {w(c,a)} (a);\n"
+        ac_edge = f"\\path[->,draw,thick] (c) to {w(c, a)} (a);\n"
     else:
         ac_edge = ""
 
@@ -1306,9 +1408,9 @@ def four_cand_tikz_str(g, cmap=None):
     d = g.candidates[3]
 
     if type(g) == MarginGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.margin(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.margin(c, d)}$}}"
     elif type(g) == SupportGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.support(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.support(c, d)}$}}"
     else:
         w = lambda c, d: ""
 
@@ -1316,50 +1418,50 @@ def four_cand_tikz_str(g, cmap=None):
 
     nodes = f"""
 \\begin{{tikzpicture}}
-\\node[circle,draw,minimum width=0.25in] at (0,0)      (a) {{${cmap[a]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (3,0)      (b) {{${cmap[b]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (1.5,1.5)  (c) {{${cmap[c]}$}}; 
+\\node[circle,draw,minimum width=0.25in] at (0,0)      (a) {{${cmap[a]}$}};
+\\node[circle,draw,minimum width=0.25in] at (3,0)      (b) {{${cmap[b]}$}};
+\\node[circle,draw,minimum width=0.25in] at (1.5,1.5)  (c) {{${cmap[c]}$}};
 \\node[circle,draw,minimum width=0.25in] at (1.5,-1.5) (d) {{${cmap[d]}$}};\n"""
 
     if g.majority_prefers(a, b):
-        ab_edge = f"\\path[->,draw,thick] (a) to[pos=.7] {w(a,b)} (b);\n"
+        ab_edge = f"\\path[->,draw,thick] (a) to[pos=.7] {w(a, b)} (b);\n"
     elif g.majority_prefers(b, a):
-        ab_edge = f"\\path[->,draw,thick] (b) to[pos=.7] {w(b,a)} (a);\n"
+        ab_edge = f"\\path[->,draw,thick] (b) to[pos=.7] {w(b, a)} (a);\n"
     else:
         ab_edge = ""
 
     if g.majority_prefers(a, c):
-        ac_edge = f"\\path[->,draw,thick] (a) to {w(a,c)} (c);\n"
+        ac_edge = f"\\path[->,draw,thick] (a) to {w(a, c)} (c);\n"
     elif g.majority_prefers(c, a):
-        ac_edge = f"\\path[->,draw,thick] (c) to {w(c,a)} (a);\n"
+        ac_edge = f"\\path[->,draw,thick] (c) to {w(c, a)} (a);\n"
     else:
         ac_edge = ""
 
     if g.majority_prefers(a, d):
-        ad_edge = f"\\path[->,draw,thick] (a) to {w(a,d)} (d);\n"
+        ad_edge = f"\\path[->,draw,thick] (a) to {w(a, d)} (d);\n"
     elif g.majority_prefers(d, a):
-        ad_edge = f"\\path[->,draw,thick] (d) to {w(d,a)} (a);\n"
+        ad_edge = f"\\path[->,draw,thick] (d) to {w(d, a)} (a);\n"
     else:
         ad_edge = ""
 
     if g.majority_prefers(b, c):
-        bc_edge = f"\\path[->,draw,thick] (b) to {w(b,c)} (c);\n"
+        bc_edge = f"\\path[->,draw,thick] (b) to {w(b, c)} (c);\n"
     elif g.majority_prefers(c, b):
-        bc_edge = f"\\path[->,draw,thick] (c) to {w(c,b)} (b);\n"
+        bc_edge = f"\\path[->,draw,thick] (c) to {w(c, b)} (b);\n"
     else:
         bc_edge = ""
 
     if g.majority_prefers(b, d):
-        bd_edge = f"\\path[->,draw,thick] (b) to {w(b,d)} (d);\n"
+        bd_edge = f"\\path[->,draw,thick] (b) to {w(b, d)} (d);\n"
     elif g.majority_prefers(d, b):
-        bd_edge = f"\\path[->,draw,thick] (d) to {w(d,b)} (b);\n"
+        bd_edge = f"\\path[->,draw,thick] (d) to {w(d, b)} (b);\n"
     else:
         bd_edge = ""
 
     if g.majority_prefers(c, d):
-        cd_edge = f"\\path[->,draw,thick] (c) to[pos=.7]  {w(c,d)} (d);\n"
+        cd_edge = f"\\path[->,draw,thick] (c) to[pos=.7]  {w(c, d)} (d);\n"
     elif g.majority_prefers(d, c):
-        cd_edge = f"\\path[->,draw,thick] (d) to[pos=.7]  {w(d,c)} (c);\n"
+        cd_edge = f"\\path[->,draw,thick] (d) to[pos=.7]  {w(d, c)} (c);\n"
     else:
         cd_edge = ""
 
@@ -1380,7 +1482,6 @@ def five_cand_tikz_str(g, cmap=None, new_cand=None):
     candidates = list(g.candidates)
 
     if new_cand is not None:
-
         e = new_cand
 
         cands_minus = [_c for _c in candidates if _c != new_cand]
@@ -1401,9 +1502,9 @@ def five_cand_tikz_str(g, cmap=None, new_cand=None):
     node_id = {a: "a", b: "b", c: "c", d: "d", e: "e"}
     print(node_id)
     if type(g) == MarginGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.margin(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.margin(c, d)}$}}"
     elif type(g) == SupportGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.support(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.support(c, d)}$}}"
     else:
         w = lambda c, d: ""
 
@@ -1411,10 +1512,10 @@ def five_cand_tikz_str(g, cmap=None, new_cand=None):
 
     nodes = f"""
 \\begin{{tikzpicture}}
-\\node[circle,draw,minimum width=0.25in] at (2,1.5)  (a) {{${cmap[a]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (0,1.5)  (b) {{${cmap[b]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (0,-1.5) (c) {{${cmap[c]}$}}; 
-\\node[circle,draw,minimum width=0.25in] at (2,-1.5) (d) {{${cmap[d]}$}}; 
+\\node[circle,draw,minimum width=0.25in] at (2,1.5)  (a) {{${cmap[a]}$}};
+\\node[circle,draw,minimum width=0.25in] at (0,1.5)  (b) {{${cmap[b]}$}};
+\\node[circle,draw,minimum width=0.25in] at (0,-1.5) (c) {{${cmap[c]}$}};
+\\node[circle,draw,minimum width=0.25in] at (2,-1.5) (d) {{${cmap[d]}$}};
 \\node[circle,draw,minimum width=0.25in] at (3.5,0)  (e) {{${cmap[e]}$}};\n"""
     edges = [(a, b), (a, d), (a, e), (b, c), (c, d), (d, e)]
     edges_with_pos = [(a, c), (b, d), (b, e), (c, e)]
@@ -1423,22 +1524,22 @@ def five_cand_tikz_str(g, cmap=None, new_cand=None):
     for c1, c2 in edges:
         if g.majority_prefers(c1, c2):
             edge_tikz_str.append(
-                f"\\path[->,draw,thick] ({node_id[c1]}) to {w(c1,c2)} ({node_id[c2]});\n"
+                f"\\path[->,draw,thick] ({node_id[c1]}) to {w(c1, c2)} ({node_id[c2]});\n"
             )
         elif g.majority_prefers(c2, c1):
             edge_tikz_str.append(
-                f"\\path[->,draw,thick] ({node_id[c2]}) to {w(c2,c1)} ({node_id[c1]});\n"
+                f"\\path[->,draw,thick] ({node_id[c2]}) to {w(c2, c1)} ({node_id[c1]});\n"
             )
         else:
             edge_tikz_str.append("")
     for c1, c2 in edges_with_pos:
         if g.majority_prefers(c1, c2):
             edge_tikz_str.append(
-                f"\\path[->,draw,thick] ({node_id[c1]}) to[pos=.7] {w(c1,c2)} ({node_id[c2]});\n"
+                f"\\path[->,draw,thick] ({node_id[c1]}) to[pos=.7] {w(c1, c2)} ({node_id[c2]});\n"
             )
         elif g.majority_prefers(c2, c1):
             edge_tikz_str.append(
-                f"\\path[->,draw,thick] ({node_id[c2]}) to[pos=.7] {w(c2,c1)} ({node_id[c1]});\n"
+                f"\\path[->,draw,thick] ({node_id[c2]}) to[pos=.7] {w(c2, c1)} ({node_id[c1]});\n"
             )
         else:
             edge_tikz_str.append("")
@@ -1451,9 +1552,9 @@ def to_tikz_str(g, pos, cmap=None):
     node_id = {c: string.ascii_lowercase[cidx] for cidx, c in enumerate(g.candidates)}
 
     if type(g) == MarginGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.margin(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.margin(c, d)}$}}"
     elif type(g) == SupportGraph:
-        w = lambda c, d: f"node[fill=white] {{${g.support(c,d)}$}}"
+        w = lambda c, d: f"node[fill=white] {{${g.support(c, d)}$}}"
     else:
         w = lambda c, d: ""
 
@@ -1463,7 +1564,7 @@ def to_tikz_str(g, pos, cmap=None):
 
     for c in g.candidates:
         node_tikz_str.append(
-            f"\\node[circle,draw,minimum width=0.25in] at ({float(2.4*list(pos[c])[0])},{float(2.6*list(pos[c])[1])})  ({node_id[c]}) {{${cmap[c]}$}};\n"
+            f"\\node[circle,draw,minimum width=0.25in] at ({float(2.4 * list(pos[c])[0])},{float(2.6 * list(pos[c])[1])})  ({node_id[c]}) {{${cmap[c]}$}};\n"
         )
 
     edges_tikz_str = list()
@@ -1471,11 +1572,11 @@ def to_tikz_str(g, pos, cmap=None):
         for c2 in g.candidates:
             if g.majority_prefers(c1, c2):
                 edges_tikz_str.append(
-                    f"\\path[->,draw,thick] ({node_id[c1]}) to[pos=.7] {w(c1,c2)} ({node_id[c2]});\n"
+                    f"\\path[->,draw,thick] ({node_id[c1]}) to[pos=.7] {w(c1, c2)} ({node_id[c2]});\n"
                 )
             elif g.majority_prefers(c2, c1):
                 edges_tikz_str.append(
-                    f"\\path[->,draw,thick] ({node_id[c2]}) to[pos=.7] {w(c2,c1)} ({node_id[c1]});\n"
+                    f"\\path[->,draw,thick] ({node_id[c2]}) to[pos=.7] {w(c2, c1)} ({node_id[c1]});\n"
                 )
             else:
                 edges_tikz_str.append("")

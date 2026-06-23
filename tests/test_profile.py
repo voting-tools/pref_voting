@@ -1,20 +1,27 @@
-from pref_voting.profiles import Profile
-from pref_voting.profiles import isin, _borda_score, _find_updated_profile, _num_rank, _margin, _support
-from pref_voting.profiles_with_ties import ProfileWithTies
-from pref_voting.weighted_majority_graphs import MarginGraph, MajorityGraph, SupportGraph
-from pref_voting.margin_based_methods import split_cycle_defeat
-import numpy as np
-import pytest
+import pickle
 from collections import Counter
-from preflibtools.instances import OrdinalInstance
 
 import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from preflibtools.instances import OrdinalInstance
+
+from pref_voting.margin_based_methods import split_cycle_defeat
+from pref_voting.profiles import Profile
+from pref_voting.profiles_with_ties import ProfileWithTies
+from pref_voting.weighted_majority_graphs import (
+    MajorityGraph,
+    MarginGraph,
+    SupportGraph,
+)
+
+matplotlib.use("Agg")
+
 
 @pytest.fixture
 def test_profile():
     return Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], [2, 3, 1])
+
 
 def test_create_profile():
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], [2, 3, 1])
@@ -23,17 +30,20 @@ def test_create_profile():
     assert prof.num_voters == 6
     assert prof.cindices == [0, 1, 2]
 
+
 def test_rankings_counts(test_profile):
-    rankings, counts=test_profile.rankings_counts
+    rankings, counts = test_profile.rankings_counts
     expected_rankings = np.array([[0, 1, 2], [1, 2, 0], [2, 0, 1]])
     expected_rcounts = np.array([2, 3, 1])
     np.testing.assert_array_equal(rankings, expected_rankings)
     np.testing.assert_array_equal(counts, expected_rcounts)
 
+
 def test_ranking_types1(test_profile):
     count_ranking_types1 = Counter(test_profile.ranking_types)
     count_ranking_types2 = Counter([(0, 1, 2), (1, 2, 0), (2, 0, 1)])
     assert count_ranking_types1 == count_ranking_types2
+
 
 def test_ranking_types2():
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1], [2, 0, 1]], rcounts=[2, 3, 1, 2])
@@ -41,24 +51,51 @@ def test_ranking_types2():
     count_ranking_types2 = Counter([(0, 1, 2), (1, 2, 0), (2, 0, 1)])
     assert count_ranking_types1 == count_ranking_types2
 
+
 def test_rankings1(test_profile):
     count_ranking_types1 = Counter(test_profile.rankings)
-    count_ranking_types2 = Counter([(0, 1, 2), (0, 1, 2),  (1, 2, 0),(1, 2, 0),(1, 2, 0), (2, 0, 1)])
+    count_ranking_types2 = Counter(
+        [(0, 1, 2), (0, 1, 2), (1, 2, 0), (1, 2, 0), (1, 2, 0), (2, 0, 1)]
+    )
     assert count_ranking_types1 == count_ranking_types2
+
 
 def test_rankings2():
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1], [2, 0, 1]], rcounts=[2, 3, 1, 2])
     count_ranking_types1 = Counter(prof.rankings)
-    count_ranking_types2 = Counter([(0, 1, 2), (0, 1, 2),  (1, 2, 0),(1, 2, 0),(1, 2, 0), (2, 0, 1), (2, 0, 1), (2, 0, 1)])
+    count_ranking_types2 = Counter(
+        [
+            (0, 1, 2),
+            (0, 1, 2),
+            (1, 2, 0),
+            (1, 2, 0),
+            (1, 2, 0),
+            (2, 0, 1),
+            (2, 0, 1),
+            (2, 0, 1),
+        ]
+    )
     assert count_ranking_types1 == count_ranking_types2
+
 
 def test_rankings_as_indifference_list(test_profile):
     count_indiff_lists = Counter(test_profile.rankings_as_indifference_list)
-    count_indiff_lists2 = Counter([((0,), (1,), (2,)), ((0,), (1,), (2,)),  ((1,), (2,), (0,)),((1,), (2,), (0,)),((1,), (2,), (0,)), ((2,), (0,), (1,))])
+    count_indiff_lists2 = Counter(
+        [
+            ((0,), (1,), (2,)),
+            ((0,), (1,), (2,)),
+            ((1,), (2,), (0,)),
+            ((1,), (2,), (0,)),
+            ((1,), (2,), (0,)),
+            ((2,), (0,), (1,)),
+        ]
+    )
     assert count_indiff_lists == count_indiff_lists2
+
 
 def test_counts(test_profile):
     assert test_profile.counts == [2, 3, 1]
+
 
 def test_support(test_profile):
     assert test_profile.support(0, 1) == 3
@@ -68,6 +105,7 @@ def test_support(test_profile):
     assert test_profile.support(1, 2) == 5
     assert test_profile.support(2, 1) == 1
 
+
 def test_margin(test_profile):
     assert test_profile.margin(0, 1) == 0
     assert test_profile.margin(1, 0) == 0
@@ -76,26 +114,35 @@ def test_margin(test_profile):
     assert test_profile.margin(1, 2) == 4
     assert test_profile.margin(2, 1) == -4
 
+
 def test_majority_prefers(test_profile):
     assert not test_profile.majority_prefers(0, 1)
-    assert not test_profile.majority_prefers(1, 0) 
-    assert test_profile.majority_prefers(2, 0) 
-    assert not test_profile.majority_prefers(0, 2) 
-    assert test_profile.majority_prefers(1, 2) 
-    assert not test_profile.majority_prefers(2, 1) 
+    assert not test_profile.majority_prefers(1, 0)
+    assert test_profile.majority_prefers(2, 0)
+    assert not test_profile.majority_prefers(0, 2)
+    assert test_profile.majority_prefers(1, 2)
+    assert not test_profile.majority_prefers(2, 1)
+
 
 def test_is_tied(test_profile):
     assert test_profile.is_tied(0, 1)
-    assert test_profile.is_tied(1, 0) 
-    assert not test_profile.is_tied(2, 0) 
-    assert not test_profile.is_tied(0, 2) 
-    assert not test_profile.is_tied(1, 2) 
-    assert not test_profile.is_tied(2, 1) 
+    assert test_profile.is_tied(1, 0)
+    assert not test_profile.is_tied(2, 0)
+    assert not test_profile.is_tied(0, 2)
+    assert not test_profile.is_tied(1, 2)
+    assert not test_profile.is_tied(2, 1)
 
-def test_strict_maj_size(test_profile): 
+
+def test_strict_maj_size(test_profile):
     assert test_profile.strict_maj_size() == 4
 
-def test_margin_graph(test_profile): 
+
+def test_strict_maj_size_odd():
+    # odd electorate was not covered: 5 voters -> strict majority is 3
+    assert Profile([[0, 1, 2]], [5]).strict_maj_size() == 3
+
+
+def test_margin_graph(test_profile):
     mg = test_profile.margin_graph()
     assert isinstance(mg, MarginGraph)
     assert test_profile.candidates == mg.candidates
@@ -103,7 +150,8 @@ def test_margin_graph(test_profile):
     assert test_profile.margin(0, 2) == mg.margin(0, 2)
     assert test_profile.margin(1, 2) == mg.margin(1, 2)
 
-def test_support_graph(test_profile): 
+
+def test_support_graph(test_profile):
     sg = test_profile.support_graph()
     assert isinstance(sg, SupportGraph)
     assert test_profile.candidates == sg.candidates
@@ -118,7 +166,8 @@ def test_support_graph(test_profile):
     assert test_profile.support(1, 2) == sg.support(1, 2)
     assert test_profile.support(2, 1) == sg.support(2, 1)
 
-def test_majority_graph(test_profile): 
+
+def test_majority_graph(test_profile):
     mg = test_profile.majority_graph()
     assert isinstance(mg, MajorityGraph)
     assert test_profile.candidates == mg.candidates
@@ -126,7 +175,8 @@ def test_majority_graph(test_profile):
     assert test_profile.majority_prefers(0, 2) == mg.majority_prefers(0, 2)
     assert test_profile.majority_prefers(1, 2) == mg.majority_prefers(1, 2)
 
-def test_margin_matrix(test_profile): 
+
+def test_margin_matrix(test_profile):
     mm = test_profile.margin_matrix
     assert mm[0][0] == 0
     assert mm[1][1] == 0
@@ -137,47 +187,73 @@ def test_margin_matrix(test_profile):
     assert mm[0][1] == 0
     assert mm[2][0] == 2
     assert mm[1][2] == 4
-    
-def test_condorcet_winner(test_profile): 
-    prof = Profile([[0, 1, 2], [0, 2, 1], [1, 2, 0]])   
+
+
+def test_condorcet_winner(test_profile):
+    prof = Profile([[0, 1, 2], [0, 2, 1], [1, 2, 0]])
     assert test_profile.condorcet_winner() == None
     assert prof.condorcet_winner() == 0
 
-def test_weak_condorcet_winner(test_profile): 
-    prof = Profile([[0, 1, 2], [1, 0, 2]])   
+
+def test_weak_condorcet_winner(test_profile):
+    prof = Profile([[0, 1, 2], [1, 0, 2]])
     assert test_profile.weak_condorcet_winner() == [1]
     assert prof.weak_condorcet_winner() == [0, 1]
+
+
+def test_condorcet_loser(test_profile):
+    # loser was not covered (only winner / weak winner were)
+    assert test_profile.condorcet_loser() is None
+    # unanimous 0 > 1 > 2: candidate 2 loses to everyone
+    assert Profile([[0, 1, 2]], [3]).condorcet_loser() == 2
+
+
+def test_score_methods(test_profile):
+    # restriction (curr_cands) paths were untested at the Profile level
+    assert test_profile.plurality_scores() == {0: 2, 1: 3, 2: 1}
+    assert test_profile.plurality_scores(curr_cands=[0, 2]) == {0: 2, 2: 4}
+    assert test_profile.borda_scores() == {0: 5, 1: 8, 2: 5}
+    assert test_profile.borda_scores(curr_cands=[0, 2]) == {0: 2, 2: 4}
+    assert test_profile.copeland_scores() == {0: -1.0, 1: 1.0, 2: 0.0}
+
+
+def test_dominators_dominates(test_profile):
+    assert test_profile.dominators(0) == [2]
+    assert test_profile.dominates(1) == [2]
+
 
 def test_is_uniquely_weighted(test_profile):
     assert not test_profile.is_uniquely_weighted()
 
+
 def test_remove_candidates(test_profile):
 
-    updated_prof = Profile([[0,  1], [1, 0], [1, 0]], [2, 3, 1])
+    updated_prof = Profile([[0, 1], [1, 0], [1, 0]], [2, 3, 1])
     new_prof, orig_cnames = test_profile.remove_candidates([1])
-    assert new_prof == updated_prof    
+    assert new_prof == updated_prof
     assert orig_cnames == {0: 0, 1: 2}
+
 
 def test_apply_cand_permutation():
     # Test with a single ranking
-    prof = Profile([[2, 0, 1]], rcounts = [1])
-    perm = {0:1, 1:2, 2:0}
+    prof = Profile([[2, 0, 1]], rcounts=[1])
+    perm = {0: 1, 1: 2, 2: 0}
     new_prof = prof.apply_cand_permutation(perm)
     assert new_prof._rankings.tolist() == [[0, 1, 2]]
     assert new_prof._rcounts.tolist() == [1]
 
     # Test with multiple rankings and counts
-    prof = Profile([[0, 1, 2], [1, 2, 0]], rcounts = [2, 1])
-    perm = {0:2, 1:0, 2:1}
+    prof = Profile([[0, 1, 2], [1, 2, 0]], rcounts=[2, 1])
+    perm = {0: 2, 1: 0, 2: 1}
     new_prof = prof.apply_cand_permutation(perm)
     assert new_prof._rankings.tolist() == [[2, 0, 1], [0, 1, 2]]
     assert new_prof._rcounts.tolist() == [2, 1]
     assert new_prof.num_voters == 3
 
     # Test preservation of cmap
-    cmap = {0: 'A', 1: 'B', 2: 'C'}
+    cmap = {0: "A", 1: "B", 2: "C"}
     prof = Profile([[0, 1, 2]], [1], cmap=cmap)
-    perm = {0:1, 1:2, 2:0}
+    perm = {0: 1, 1: 2, 2: 0}
     new_prof = prof.apply_cand_permutation(perm)
 
     assert new_prof.cmap == cmap
@@ -186,29 +262,37 @@ def test_apply_cand_permutation():
     prof = Profile([[0, 1, 2]], [1])
 
     # Not bijective (two candidates map to same value)
-    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
-        prof.apply_cand_permutation({0:1, 1:1, 2:2})
+    with pytest.raises(
+        AssertionError,
+        match="Permutation must be a bijection on the set all candidates",
+    ):
+        prof.apply_cand_permutation({0: 1, 1: 1, 2: 2})
 
     # Invalid candidate in keys
     with pytest.raises(AssertionError, match="All keys must be valid candidates"):
-        prof.apply_cand_permutation({0:1, 1:2, 3:0})
+        prof.apply_cand_permutation({0: 1, 1: 2, 3: 0})
 
     # Invalid candidate in values
     with pytest.raises(AssertionError, match="All values must be valid candidates"):
-        prof.apply_cand_permutation({0:1, 1:2, 2:3})
+        prof.apply_cand_permutation({0: 1, 1: 2, 2: 3})
 
     # Missing candidate
-    with pytest.raises(AssertionError, match="Permutation must be a bijection on the set all candidates"):
-        prof.apply_cand_permutation({0:1, 1:2})
+    with pytest.raises(
+        AssertionError,
+        match="Permutation must be a bijection on the set all candidates",
+    ):
+        prof.apply_cand_permutation({0: 1, 1: 2})
 
-def test_anonymize(): 
+
+def test_anonymize():
     prof = Profile([[0, 1], [0, 1], [0, 1]])
     anon_prof = prof.anonymize()
     assert anon_prof == prof
     assert list([list(r) for r in anon_prof._rankings]) == [[0, 1]]
     assert anon_prof._rcounts == [3]
 
-def test_to_profile_with_ties(test_profile): 
+
+def test_to_profile_with_ties(test_profile):
     prof_w_ties = test_profile.to_profile_with_ties()
     assert type(prof_w_ties) == ProfileWithTies
     assert test_profile.candidates == prof_w_ties.candidates
@@ -216,11 +300,27 @@ def test_to_profile_with_ties(test_profile):
     assert test_profile.margin(0, 2) == prof_w_ties.margin(0, 2)
     assert test_profile.margin(1, 2) == prof_w_ties.margin(1, 2)
 
-def test_to_latex(condorcet_cycle): 
-    
-    assert condorcet_cycle.to_latex() == '\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$0$ & $1$ & $2$\\\\ \n$1$ & $2$ & $0$\\\\ \n$2$ & $0$ & $1$\n\\end{tabular}'
 
-    assert condorcet_cycle.to_latex(cmap={0:"a", 1:"b", 2:"c"}) == '\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$a$ & $b$ & $c$\\\\ \n$b$ & $c$ & $a$\\\\ \n$c$ & $a$ & $b$\n\\end{tabular}'
+def test_pickle_roundtrip(test_profile):
+    # Profile has custom __getstate__/__setstate__ that recompute _ranks/_tally
+    p2 = pickle.loads(pickle.dumps(test_profile))
+    assert p2 == test_profile
+    assert p2.margin(1, 2) == test_profile.margin(1, 2)
+    assert p2.support(0, 2) == test_profile.support(0, 2)
+
+
+def test_to_latex(condorcet_cycle):
+
+    assert (
+        condorcet_cycle.to_latex()
+        == "\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$0$ & $1$ & $2$\\\\ \n$1$ & $2$ & $0$\\\\ \n$2$ & $0$ & $1$\n\\end{tabular}"
+    )
+
+    assert (
+        condorcet_cycle.to_latex(cmap={0: "a", 1: "b", 2: "c"})
+        == "\\begin{tabular}{ccc}\n$1$ & $1$ & $1$\\\\\\hline \n$a$ & $b$ & $c$\\\\ \n$b$ & $c$ & $a$\\\\ \n$c$ & $a$ & $b$\n\\end{tabular}"
+    )
+
 
 def test_display_margin_matrix(capsys, condorcet_cycle):
     condorcet_cycle.display_margin_matrix()
@@ -228,62 +328,63 @@ def test_display_margin_matrix(capsys, condorcet_cycle):
     # Capture the output
     captured = capsys.readouterr()
 
-    assert"""+----+----+----+
+    assert (
+        """+----+----+----+
 |  0 |  1 | -1 |
 +----+----+----+
 | -1 |  0 |  1 |
 +----+----+----+
 |  1 | -1 |  0 |
 +----+----+----+
-""" in captured.out
+"""
+        in captured.out
+    )
 
-
-def test_display_margin_matrix(capsys, condorcet_cycle):
-    condorcet_cycle.display_margin_matrix()
-
-    # Capture the output
-    captured = capsys.readouterr()
-
-    assert"""+----+----+----+
-|  0 |  1 | -1 |
-+----+----+----+
-| -1 |  0 |  1 |
-+----+----+----+
-|  1 | -1 |  0 |
-+----+----+----+
-""" in captured.out
 
 def test_display_margin_graph(condorcet_cycle):
     # just test that the function runs
     condorcet_cycle.display_margin_graph()
 
+
 def test_display_margin_graph_with_defeat(condorcet_cycle):
     # just test that the function runs
-    condorcet_cycle.display_margin_graph_with_defeat(split_cycle_defeat(condorcet_cycle))
+    condorcet_cycle.display_margin_graph_with_defeat(
+        split_cycle_defeat(condorcet_cycle)
+    )
+
 
 def test_description(condorcet_cycle):
 
-    assert condorcet_cycle.description() == "Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], rcounts=[1, 1, 1], cmap={0: '0', 1: '1', 2: '2'})"
+    assert (
+        condorcet_cycle.description()
+        == "Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]], rcounts=[1, 1, 1], cmap={0: '0', 1: '1', 2: '2'})"
+    )
+
 
 def test_display(capsys, condorcet_cycle):
     # just test that the function runs
     condorcet_cycle.display()
     captured = capsys.readouterr()
-    assert"""+---+---+---+
+    assert (
+        """+---+---+---+
 | 1 | 1 | 1 |
 +---+---+---+
 | 0 | 1 | 2 |
 | 1 | 2 | 0 |
 | 2 | 0 | 1 |
 +---+---+---+
-""" in captured.out
-    
+"""
+        in captured.out
+    )
+
+
 def test_to_from_preflib(condorcet_cycle):
     instance = condorcet_cycle.to_preflib_instance()
     assert isinstance(instance, OrdinalInstance)
     assert instance.num_voters == 3
     prof = Profile.from_preflib(instance)
     assert prof == condorcet_cycle
+
 
 def test_write_read(tmp_path):
     prof = Profile([[0, 1, 2], [1, 2, 0], [2, 0, 1]])
@@ -296,13 +397,16 @@ def test_write_read(tmp_path):
     prof2 = Profile.read(fname, file_format="csv")
     assert prof == prof2
 
-    fname = prof.write(str(tmp_path / "prof"), file_format="csv", csv_format="rank_columns")
+    fname = prof.write(
+        str(tmp_path / "prof"), file_format="csv", csv_format="rank_columns"
+    )
     prof2 = Profile.read(fname, file_format="csv", csv_format="rank_columns")
     assert prof == prof2
 
     fname = prof.write(str(tmp_path / "prof"), file_format="json")
     prof2 = Profile.read(fname, file_format="json")
     assert prof == prof2
+
 
 def test_add(condorcet_cycle):
     r1 = Profile([[0, 1, 2]])
@@ -311,24 +415,15 @@ def test_add(condorcet_cycle):
     prof = r1 + r2 + r3
     assert prof == condorcet_cycle
 
-def test_eq(condorcet_cycle):   
+
+def test_eq(condorcet_cycle):
     prof = Profile([[1, 2, 0], [0, 1, 2], [2, 0, 1]], [1, 1, 1])
     assert prof == condorcet_cycle
 
 
 def test_replace_ranking():
-    prof = Profile([
-        [0, 1, 2], 
-        [1, 2, 0],
-        [0, 1, 2], 
-        [2, 0, 1]
-    ])
-    correct_new_prof = Profile([
-        [2, 1, 0], 
-        [1, 2, 0],
-        [0, 1, 2], 
-        [2, 0, 1]
-    ])
+    prof = Profile([[0, 1, 2], [1, 2, 0], [0, 1, 2], [2, 0, 1]])
+    correct_new_prof = Profile([[2, 1, 0], [1, 2, 0], [0, 1, 2], [2, 0, 1]])
 
     new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 1)
 
@@ -336,18 +431,8 @@ def test_replace_ranking():
     assert new_prof.num_voters == prof.num_voters
     assert new_prof.candidates == prof.candidates
 
-    prof = Profile([
-        [0, 1, 2], 
-        [1, 2, 0],
-        [0, 1, 2], 
-        [2, 0, 1]
-    ])
-    correct_new_prof = Profile([
-        [2, 1, 0], 
-        [1, 2, 0],
-        [2, 1, 0], 
-        [2, 0, 1]
-    ])
+    prof = Profile([[0, 1, 2], [1, 2, 0], [0, 1, 2], [2, 0, 1]])
+    correct_new_prof = Profile([[2, 1, 0], [1, 2, 0], [2, 1, 0], [2, 0, 1]])
 
     new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 2)
 
@@ -355,41 +440,67 @@ def test_replace_ranking():
     assert new_prof.num_voters == prof.num_voters
     assert new_prof.candidates == prof.candidates
 
-    prof = Profile([
-        [1, 2, 0],
-        [2, 0, 1]
-    ])
+    prof = Profile([[1, 2, 0], [2, 0, 1]])
     new_prof = prof.replace_rankings([0, 1, 2], [2, 1, 0], 2)
 
     assert new_prof == prof
     assert new_prof.num_voters == prof.num_voters
     assert new_prof.candidates == prof.candidates
 
-# def test_isin():
-#     assert isin(np.array([1, 2, 3]), 2)
-#     assert not isin(np.array([1, 2, 3]), 4)
 
-# def test__support(test_profile):
-    
-#     assert _support(test_profile._ranks, test_profile._rcounts, 0, 1) == 3
-#     assert _support(test_profile._ranks, test_profile._rcounts, 1, 0) == 3
-#     assert _support(test_profile._ranks, test_profile._rcounts, 2, 0) == 4
-#     assert _support(test_profile._ranks, test_profile._rcounts, 0, 2) == 2
-#     assert _support(test_profile._ranks, test_profile._rcounts, 1, 2) == 5
-#     assert _support(test_profile._ranks, test_profile._rcounts, 2, 1) == 1
-
-# def test__margin(test_profile):
-#     assert _margin(test_profile._tally, 0, 1) == 0
-#     assert _margin(test_profile._tally, 1, 0) == 0
-#     assert _margin(test_profile._tally, 2, 0) == 2
-#     assert _margin(test_profile._tally, 0, 2) == -2
-#     assert _margin(test_profile._tally, 1, 2) == 4
-#     assert _margin(test_profile._tally, 2, 1) == -4
+### truncate preference test
 
 
-# def test__num_rank(test_profile):
-#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=1) == 2
-#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=2) == 1
-#     assert _num_rank(test_profile._rankings, test_profile._rcounts, 0, level=3) == 3
+def _decode_best_to_worst(ranking_obj):
+    """Given a ProfileWithTies Ranking, return candidates ordered best->worst."""
+    rmap = ranking_obj.rmap
+    return [int(c) for c in sorted(rmap, key=lambda c: rmap[c])]
 
 
+def test_randomly_truncate_preserves_order():
+    """With all probability mass on "rank every candidate", no truncation happens,
+    so randomly_truncate must reproduce the input ranking exactly.
+
+    Regression: it previously built the ballot as {cand: ranking[cand]}, indexing the ranking tuple by candidate id instead of by position, which scrambled the ranks.
+    """
+    orig = [2, 0, 1]  # candidate 2 best, then 0, then 1
+    prof = Profile([orig], rcounts=[1])
+
+    # all mass on "rank all 3 candidates" -> no truncation at all
+    tprof = prof.randomly_truncate(truncation_prob_list=[0, 0, 1], seed=0)
+
+    decoded = _decode_best_to_worst(tprof.rankings[0])
+    assert decoded == orig, (
+        f"randomly_truncate corrupted the order: got {decoded}, expected {orig}"
+    )
+
+
+def test_randomly_truncate_partial_keeps_top_k_in_order():
+    """Keeping the top 2 candidates must keep them in the original relative order with ranks 0 and 1."""
+    orig = [1, 2, 0]
+    prof = Profile([orig], rcounts=[1])
+
+    # all mass on "rank exactly 2 candidates" -> outcome is deterministic
+    tprof = prof.randomly_truncate(truncation_prob_list=[0, 1, 0], seed=0)
+
+    rmap = {int(c): int(r) for c, r in tprof.rankings[0].rmap.items()}
+    # only the top two candidates (1 then 2) should be present, with ranks 0,1
+    assert rmap == {1: 0, 2: 1}, f"unexpected truncated ballot: {rmap}"
+
+
+def test_randomly_truncate_seed_is_reproducible():
+    prof = Profile([[0, 1, 2, 3], [3, 2, 1, 0], [1, 0, 3, 2]], rcounts=[5, 5, 5])
+    p1 = prof.randomly_truncate(seed=42)
+    p2 = prof.randomly_truncate(seed=42)
+    # exact, order-preserving equality of the generated ballots
+    assert [r.rmap for r in p1.rankings] == [r.rmap for r in p2.rankings]
+
+
+def test_randomly_truncate_does_not_disturb_global_rng():
+    prof = Profile([[0, 1, 2, 3], [3, 2, 1, 0]], rcounts=[5, 5])
+    np.random.seed(123)
+    expected = np.random.random()  # first global draw after seeding
+    np.random.seed(123)
+    prof.randomly_truncate(seed=0)  # must NOT consume from the global stream
+    got = np.random.random()
+    assert got == expected
