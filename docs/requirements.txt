@@ -22,3 +22,4 @@ numba
 preflibtools
 prefsampling
 filelock
+sortedcontainers
