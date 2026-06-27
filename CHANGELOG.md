@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.18.1] - 2026-06-27
+
 ### Added
 
 - `mappings.Utility.to_truncated_ranking(method, ...)` and `utility_profiles.UtilityProfile.to_truncated_ranking_profile(method, ...)`: convert utilities to truncated ranked ballots (a `Ranking` / `ProfileWithTies`). Two scale-free criteria:  `method="radius"` ranks every candidate whose utility is within `radius` of the voter's favorite (`u(best) - u(c) < radius`); `method="gap"` ranks best-to-worst, stopping once two adjacent utility levels are closer than `min_gap`. `require_at_least_one` (default `True`) keeps a would-be-empty ballot's favorite, otherwise that voter abstains and is dropped (so `num_voters` reflects turnout).
