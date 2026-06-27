@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `mappings.Utility.to_truncated_ranking(method, ...)` and `utility_profiles.UtilityProfile.to_truncated_ranking_profile(method, ...)`: convert utilities to truncated ranked ballots (a `Ranking` / `ProfileWithTies`). Two scale-free criteria:  `method="radius"` ranks every candidate whose utility is within `radius` of the voter's favorite (`u(best) - u(c) < radius`); `method="gap"` ranks best-to-worst, stopping once two adjacent utility levels are closer than `min_gap`. `require_at_least_one` (default `True`) keeps a would-be-empty ballot's favorite, otherwise that voter abstains and is dropped (so `num_voters` reflects turnout).
+- `generate_spatial_profile_from_binned_distribution.generate_spatial_profile_from_binned_distribution(...)`: builds `SpatialProfile`s from a `BinnedDistribution`, with a random candidate model (positions i.i.d. from the distribution) and a structured model (`candidate_counts` for exact composition or `candidate_type_probs` for a probabilistic mix; each candidate's region chosen by the given counts/probabilities, then its position drawn from that region's bins). Generates `num_profiles` profiles (returns a single `SpatialProfile`, or a list when `num_profiles > 1`). Randomness via the `seed=`/`rng=` convention.
+- `analysis.social_utility_performance(utilities, winners)`: the social utility performance of a winning set, normalized so the utilitarian winner(s) score 1 and a uniformly random candidate scores 0. Accepts a `UtilityProfile` or a precomputed `{candidate: social_utility}` mapping, and a winning set (mean over tied winners) or a `{candidate: probability}` mapping (expected utility).
+
 ## [1.18.0] - 2026-06-24
 
 > Contains one or more **⚠ breaking** changes (see below) — existing code may need small updates.

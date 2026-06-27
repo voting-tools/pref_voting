@@ -727,7 +727,7 @@ def weighted_bucklin(
         weighted_bucklin.display(prof)
 
     """
-    if strict_threshold == True:
+    if strict_threshold:
         threshold = profile.strict_maj_size()
     else:
         threshold = profile.num_voters / 2

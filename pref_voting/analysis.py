@@ -536,3 +536,57 @@ def means_with_estimated_standard_error(
         est_std_errors = estimated_std_error(samples, mean_for_each_experiment=means)
 
     return means, est_std_errors, variances, num_trials
+
+
+def social_utility_performance(utilities, winners):
+    """The social utility performance (SUP) of a winning set.
+
+    SUP scores a winning set by how close its social utility is to the utilitarian
+    optimum, normalized so the utilitarian winner(s) score 1 and a uniformly random
+    candidate scores 0:
+
+        SUP(winners) = ( su(winners) - su_mean ) / ( su_max - su_mean )
+
+    where ``su(c)`` is candidate ``c``'s social utility (its average utility over the
+    voters), ``su_mean`` is the meanidates (the expected
+    utility of a uniformly random candidate), ``su_max`` is the maximum (the utilitarian
+    winner), and ``su(winners)`` is f the winning set.
+
+    The winners are passed in ratherocial utility can be
+    measured on the *true* utilities over *all* voters while the winners may come from a
+    different (e.g. truncated / abst
+
+    Args:
+        utilities: the (true) cardinal utilities — either a :class:`UtilityProfile`
+            (social utilities are taon``), or a precomputed
+            mapping ``{candidate: social_utility}``.
+        winners: the winning set — either a list/set of candidates (scored by their mean
+            social utility, i.e. uniform over tied winners) or a
+            ``{candidate: probabilitted social utility, for
+            probabilistic methods).
+
+    Returns:
+        float: the SUP of ``winners` 0.0 = no better than a
+        random candidate, negative = worse than random. When every candidate has the same
+        social utility (the normalizt in any continuous
+        model), every candidate is utilitarian-optimal and the result is 1.0.
+    """
+    if hasattr(utilities, "avg_utility_function"):
+        avg_u = utilities.avg_utility_function()
+        su = {c: float(avg_u(c)) for c in utilities.candidates}
+    else:
+        su = {c: float(u) for c, u in dict(utilities).items()}
+
+    su_vals = np.fromiter(su.values(), dtype=float)
+    su_mean = su_vals.mean()
+    su_max = su_vals.max()
+
+    if isinstance(winners, dict):
+        winner_su = sum(prob * su[c] for c, prob in winners.items())
+    else:
+        winner_su = float(np.mean([su[c] for c in winners]))
+
+    denom = su_max - su_mean
+    if denom == 0:  # every candidate is utilitarian-optimal -> any winner is optimal
+        return 1.0
+    return (winner_su - su_mean) / denom

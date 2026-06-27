@@ -242,6 +242,34 @@ class UtilityProfile(object):
             cmap=self.cmap,
         )
 
+    def to_truncated_ranking_profile(
+        self, method, radius=None, min_gap=None, require_at_least_one=True
+    ):
+        """Return a :class:`ProfileWithTies` of truncated ballots, one per voter.
+
+        Each voter's ballot is ``util.to_truncated_ranking(method, ...)`` (see :meth:`pref_voting.Utility.to_truncated_ranking` for the truncation criteria and arguments). Abstainers (empty rankings) are dropped, so ``prof.num_voters`` reflects turnout. The full candidate set ``self.domain`` is retained, as with :meth:`to_ranking_profile`.
+        """
+        rankings = []
+        rcounts = []
+        for u, count in zip(self._utilities, self.ucounts):
+            ranking = u.to_truncated_ranking(
+                method,
+                radius=radius,
+                min_gap=min_gap,
+                require_at_least_one=require_at_least_one,
+            )
+            if ranking.is_empty():
+                continue  # abstain
+            rankings.append(ranking)
+            rcounts.append(count)
+
+        return ProfileWithTies(
+            rankings,
+            rcounts=rcounts,
+            candidates=self.domain,
+            cmap=self.cmap,
+        )
+
     def write(self):
         """Write the profile to a string."""
 
