@@ -396,6 +396,48 @@ class GradeProfile(object):
             cmap=self.cmap,
         )
 
+    def to_votekit(self):
+        """
+        Returns a VoteKit ``PreferenceProfile`` of score ballots (requires the optional dependency votekit).  Only defined for profiles with numeric grades.  See ``pref_voting.interfaces.votekit_interface.grade_profile_to_votekit``.
+
+        """
+        from pref_voting.interfaces.votekit_interface import grade_profile_to_votekit
+
+        return grade_profile_to_votekit(self)
+
+    @classmethod
+    def from_votekit(cls, vk_profile, grades=None, scale_weights=False):
+        """
+        Convert a VoteKit ``PreferenceProfile`` of score ballots to a GradeProfile (requires the optional dependency votekit).  See ``pref_voting.interfaces.votekit_interface.votekit_to_grade_profile``.
+
+        """
+        from pref_voting.interfaces.votekit_interface import votekit_to_grade_profile
+
+        return votekit_to_grade_profile(
+            vk_profile, grades=grades, scale_weights=scale_weights
+        )
+
+    def to_abcvoting(self):
+        """
+        Returns an abcvoting ``Profile`` (requires the optional dependency abcvoting).  Only defined for profiles with grades 0 and 1.  See ``pref_voting.interfaces.abcvoting_interface.to_abcvoting_profile``.
+
+        """
+        from pref_voting.interfaces.abcvoting_interface import to_abcvoting_profile
+
+        return to_abcvoting_profile(self)
+
+    @classmethod
+    def from_abcvoting(cls, abc_profile, scale_weights=False):
+        """
+        Convert an abcvoting ``Profile`` to a GradeProfile with grades 0 and 1 (requires the optional dependency abcvoting).  See ``pref_voting.interfaces.abcvoting_interface.abcvoting_to_grade_profile``.
+
+        """
+        from pref_voting.interfaces.abcvoting_interface import (
+            abcvoting_to_grade_profile,
+        )
+
+        return abcvoting_to_grade_profile(abc_profile, scale_weights=scale_weights)
+
     def write(self):
         """Write the profile to a string."""
 

@@ -3,6 +3,8 @@ from shutil import move, copymode
 from os import fdopen, remove
 
 import argparse
+import re
+import subprocess
 
 init_file = './pref_voting/__init__.py'
 pyproject_file = './pyproject.toml'
@@ -50,10 +52,13 @@ if check:
     print("pyproject.toml: ")
     with open(pyproject_file) as old_file:
         for line in old_file:
-            if "version" in line:
+            # only the [project] version line, not requires-python or the
+            # python_version markers on the optional dependencies
+            m = re.match(r'version\s*=\s*"(.*)"', line)
+            if m:
                 print(line)
-                versions.append(line.split("=")[1].strip().replace('"',''))
-    if len(list(set(versions))) > 1: 
+                versions.append(m.group(1))
+    if len(list(set(versions))) > 1:
         print("ERROR: Multiple versions found!!")
     print("Versions: ", list(set(versions)))
 else:
@@ -77,3 +82,10 @@ else:
     print("Updated conf.py")
     replace(init_file, f"__version__ = '{old_version}'", f"__version__ = '{new_version}'")
     print("Updated __init__.py")
+
+    # uv.lock records the project's own version, so refresh it after the bump
+    result = subprocess.run(["uv", "lock"])
+    if result.returncode == 0:
+        print("Updated uv.lock")
+    else:
+        print("WARNING: 'uv lock' failed; run it manually to update uv.lock")

@@ -26,6 +26,7 @@ pip3 install pref_voting
 
 * Since the package uses Numba, refer to the [Numba documentation for the latest supported Python version](https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information).
 * If you have both Python 2 and Python 3 installed on your system, make sure to use ``pip3`` instead of pip to install packages for Python 3. Alternatively, you can use ``python3 -m pip`` to ensure you're using the correct version of pip. If you have modified your system's defaults or soft links, adjust accordingly.
+* Optional extras install the interfaces to [VoteKit](https://votekit.readthedocs.io) and [abcvoting](https://abcvoting.readthedocs.io), which convert between the election objects of pref_voting and those packages (see the [demo notebook](examples/interfaces_demo.ipynb)): ``pip3 install "pref_voting[votekit]"`` (requires Python >= 3.11), ``pip3 install "pref_voting[abcvoting]"``, or ``pip3 install "pref_voting[interfaces]"`` for both.
 
 See the [installation guide](https://pref-voting.readthedocs.io/en/latest/installation.html) for more detailed instructions.
 
@@ -110,15 +111,15 @@ To ensure that the package is working correctly, you can run the test suite usin
 
 ### Prerequisites
 
-- **Python 3.9 or higher**: Ensure you have a compatible version of Python installed.
+- **Python 3.10 or higher**: Ensure you have a compatible version of Python installed.
 - **`pytest`**: Install `pytest` if it's not already installed.
 
 ### Running the tests
 
-If you are using **Poetry** to manage your dependencies, run the tests with:
+If you are using **uv** to manage your dependencies, run the tests with:
 
 ```bash
-poetry run pytest
+uv run pytest
 
 ```
  

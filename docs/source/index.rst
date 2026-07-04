@@ -117,6 +117,7 @@ Contents
    spatial_profiles
    weighted_majority_graphs
    io
+   interfaces
    
 .. toctree::
    :maxdepth: 2

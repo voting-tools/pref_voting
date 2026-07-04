@@ -7,6 +7,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.18.2] - 2026-07-04
+
+### Added
+
+- New `pref_voting.interfaces` subpackage with converters between pref_voting election objects and those of two other voting packages, both **optional dependencies** (only imported when a conversion function is called; a plain install is unchanged). Install with `uv pip install "pref_voting[abcvoting]"`, `"pref_voting[votekit]"`, or `"pref_voting[interfaces]"` for both.
+  - `interfaces.votekit_interface` ([VoteKit](https://votekit.readthedocs.io), requires Python >= 3.11): `to_votekit_profile` converts a `Profile` or `ProfileWithTies` to a VoteKit `PreferenceProfile` of ranked ballots (ties and truncation preserved; candidates named via the `cmap`); `votekit_to_profile_with_ties` converts back to a `ProfileWithTies`. `grade_profile_to_votekit` converts a `GradeProfile` with numeric grades to a VoteKit profile of score ballots (note: VoteKit does not store scores of 0); `votekit_to_grade_profile` converts back, with an optional `grades` parameter for the intended grade scale.
+  - `interfaces.abcvoting_interface` ([abcvoting](https://abcvoting.readthedocs.io)): `to_abcvoting_profile` converts a `GradeProfile` with grades 0 and 1 (approval ballots, e.g. from `UtilityProfile.to_approval_profile()`) to an abcvoting `Profile`, with ballot counts as voter weights and candidate names preserved via `cand_names`; `abcvoting_to_grade_profile` converts back losslessly.
+  - Weight policy for both interfaces: VoteKit ballot weights and abcvoting voter weights may be fractional, while pref_voting counts voters. Integer-valued weights convert directly; fractional weights raise a `ValueError` unless `scale_weights=True` is passed, which multiplies all weights by a common denominator (exact, preserves relative weights, changes `num_voters`).
+  - Convenience methods following the `to_preflib_instance` pattern: `Profile.to_votekit()`, `ProfileWithTies.to_votekit()`/`.from_votekit()`, `GradeProfile.to_votekit()`/`.from_votekit()`/`.to_abcvoting()`/`.from_abcvoting()`.
+  - New demo notebook `examples/interfaces_demo.ipynb` walking through all conversions, a documentation page (`docs/source/interfaces.md`, with the extras documented in the installation guide), and test suites `tests/test_votekit_interface.py` and `tests/test_abcvoting_interface.py` (skipped automatically if the optional packages are not installed). CI installs the `interfaces` extra.
+
+### Changed
+
+- Packaging fully migrated to **uv**: `pyproject.toml` now uses standard PEP 621 `[project]` metadata with the `uv_build` backend (previously Poetry-format metadata with `poetry-core`), so `uv lock`/`uv sync`/`uv add` manage the project natively. Optional dependencies are declared as extras; dev dependencies live in `[dependency-groups]`. The unused `MANIFEST.in` was removed. Version constraints are unchanged except **numba**, widened from `<0.62` to `<0.63` (votekit requires numba 0.62.1; the test suite passes on 0.62).
+
 ## [1.18.1] - 2026-06-27
 
 ### Added

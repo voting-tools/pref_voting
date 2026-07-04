@@ -1037,6 +1037,27 @@ The number of rankings with skipped ranks: {num_with_skipped_ranks}
 
         return to_preflib_instance(self)
 
+    def to_votekit(self):
+        """
+        Returns a VoteKit ``PreferenceProfile`` of ranked ballots (requires the optional dependency votekit).  See ``pref_voting.interfaces.votekit_interface.to_votekit_profile``.
+
+        """
+        from pref_voting.interfaces.votekit_interface import to_votekit_profile
+
+        return to_votekit_profile(self)
+
+    @classmethod
+    def from_votekit(cls, vk_profile, scale_weights=False):
+        """
+        Convert a VoteKit ``PreferenceProfile`` of ranked ballots to a ProfileWithTies (requires the optional dependency votekit).  See ``pref_voting.interfaces.votekit_interface.votekit_to_profile_with_ties``.
+
+        """
+        from pref_voting.interfaces.votekit_interface import (
+            votekit_to_profile_with_ties,
+        )
+
+        return votekit_to_profile_with_ties(vk_profile, scale_weights=scale_weights)
+
     @classmethod
     def from_preflib(cls, instance_or_preflib_file, include_cmap=False):
         """
