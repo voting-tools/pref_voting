@@ -3,9 +3,9 @@ Overview
 
 We have three types of collective decision procedures: 
 
-  1. Voting Method: given edata, outputs a sorted list of candidates, representing tied winners;
+  1. Voting Method: given edata, outputs a sorted list of candidates, representing tied winners (aka "social choice function");
   2. Probabilistic Voting Method: given edata, outputs a dictionary whose keys are candidates and whose values are probabilities;
-  2. Social Welfare Function: given edata, outputs a [Ranking](ballots.md#ranking-class) of the candidates.
+  2. Social Welfare Function: given edata, outputs a [Ranking](ballots.md#ranking-class) of the candidates (aka "social ordering function").
 
 We further categorize collective decision procedures based on the input from the voters: 
 
